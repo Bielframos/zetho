@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { appwrite } from './appwrite.client';
+import { appwrite, ID } from './appwrite.client';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -10,7 +10,21 @@ export class AuthService {
    * @param name
    * @param gamertag
    */
-  async register(email: string, password: string, name: string, gamertag: string) {}
+  async register(email: string, password: string, name: string, gamertag: string) {
+    try {
+      await appwrite.account.create({
+        userId: ID.unique(),
+        email,
+        password,
+        name,
+      });
+      await appwrite.account.createEmailPasswordSession({ email, password });
+      appwrite.account.updatePrefs({ prefs: { gamertag } });
+    } catch (error) {
+      console.error('Error registering user:', error);
+      throw error;
+    }
+  }
 
   /**
    * Método de login com e-mail e senha

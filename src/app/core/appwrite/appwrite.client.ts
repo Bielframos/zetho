@@ -9,3 +9,5 @@ export const appwrite = {
   account: new Account(client),
   datababases: new Databases(client),
 };
+
+export { ID } from 'appwrite';
