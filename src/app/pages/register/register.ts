@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../../core/appwrite/auth.service';
-import { UiInput } from '../../shared/ui/atoms/input/input';
 import { FormsModule, NgForm } from '@angular/forms';
+import { AuthService } from '../../core/auth/auth.service';
+import { UiInput } from '../../shared/ui/atoms/input/input';
+import { AuthStore } from '../../core/auth/auth.store';
 
 @Component({
   selector: 'app-register',
@@ -10,6 +11,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 })
 export class Register {
   authService = inject(AuthService);
+  authStore = inject(AuthStore);
 
   name = '';
   gamertag = '';
@@ -29,5 +31,6 @@ export class Register {
     }
 
     await this.authService.register(this.email, this.password, this.name, this.gamertag);
+    this.authStore.refresh();
   }
 }

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { AuthStore } from './core/auth/auth.store';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,10 @@ import { RouterLink, RouterOutlet } from '@angular/router';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App {}
+export class App {
+  authStore = inject(AuthStore);
+
+  ngOnInit() {
+    this.authStore.init();
+  }
+}

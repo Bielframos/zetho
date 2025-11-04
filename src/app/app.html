@@ -1,7 +1,15 @@
 <main>
-  <nav>
-    <a routerLink="/registrar">Registrar</a>
-    <a routerLink="/entrar">Entrar</a>
+  <nav class="flex w-full gap-4 justify-between px-4">
+    <a routerLink="/">Zerei</a>
+
+    <div class="flex gap-4">
+      @if (authStore.user()) {
+      <a routerLink="/perfil">{{authStore.user()?.name}}</a>
+      } @else {
+      <a routerLink="/registrar">Registrar</a>
+      <a routerLink="/entrar">Entrar</a>
+      }
+    </div>
   </nav>
 </main>
 

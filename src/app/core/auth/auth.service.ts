@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { appwrite, ID } from './appwrite.client';
+import { appwrite, ID } from '../appwrite/appwrite.client';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -31,7 +31,14 @@ export class AuthService {
    * @param email
    * @param password
    */
-  async login(email: string, password: string) {}
+  async login(email: string, password: string) {
+    try {
+      await appwrite.account.createEmailPasswordSession({ email, password });
+    } catch (error) {
+      console.error('Error logging in user:', error);
+      throw error;
+    }
+  }
 
   /**
    * Método de logout para encerrar a sessão do usuário
@@ -45,7 +52,7 @@ export class AuthService {
    * Método para obter os dados do usuário atual
    * @returns
    */
-  async me() {
+  async getLoggedInUser() {
     try {
       return await appwrite.account.get();
     } catch {
