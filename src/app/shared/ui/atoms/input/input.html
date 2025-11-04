@@ -1,0 +1,5 @@
+<label [for]="id || name" class="flex flex-col gap-1">
+  {{ label }}
+  <input [type]="type" [id]="id || name" [name]="name" [placeholder]="placeholder" [required]="required" [value]="value"
+    (input)="handleChange($event)" (blur)="handleBlur()" class="border rounded px-2 py-1" />
+</label>
