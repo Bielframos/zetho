@@ -1,0 +1,8 @@
+<main>
+  <form #form="ngForm" (ngSubmit)="login(form)" class="flex flex-col">
+    <ui-input type="email" label="E-mail" placeholder="Seu e-mail" name="email" [(ngModel)]="email" required />
+    <ui-input type="password" labe="Senha" placeholder="Sua senha" name="password" [(ngModel)]="password" required />
+
+    <button type="submit" class="cursor-pointer">Entrar</button>
+  </form>
+</main>
