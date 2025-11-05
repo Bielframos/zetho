@@ -1,35 +1,78 @@
-import { Client, Users } from 'node-appwrite';
+import { Client, Query, TablesDB } from 'node-appwrite';
+import IGDBService from './igdb.js';
 
-// This Appwrite function will be executed every time your function is triggered
 export default async ({ req, res, log, error }) => {
-  // You can use the Appwrite SDK to interact with other services
-  // For this example, we're using the Users service
   const client = new Client()
     .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
     .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
     .setKey(req.headers['x-appwrite-key'] ?? '');
-  const users = new Users(client);
+
+  const databases = new TablesDB(client);
 
   try {
-    const response = await users.list();
-    // Log messages and errors to the Appwrite Console
-    // These logs won't be seen by your end users
-    log(`Total users: ${response.total}`);
-  } catch(err) {
-    error("Could not list users: " + err.message);
-  }
+    // Busca tokens existentes
+    const tokens = await databases.listRows({
+      databaseId: 'app',
+      tableId: 'igdb_tokens',
+      queries: [Query.orderDesc('$createdAt'), Query.limit(1)],
+    });
 
-  // The req object contains the request data
-  if (req.path === "/ping") {
-    // Use res object to respond with text(), json(), or binary()
-    // Don't forget to return a response!
-    return res.text("Pong");
+    let token = tokens.rows[0];
+    const IGDB = new IGDBService(token ? token.secret : '');
+
+    // Verifica se o token existe e se está expirado
+    if (!token || new Date(token.expiresAt) <= new Date()) {
+      const data = await IGDBService.authenticate(
+        process.env.IGDB_CLIENT_ID,
+        process.env.IGDB_CLIENT_SECRET
+      );
+
+      const expiresAt = new Date(
+        Date.now() + data.expires_in * 1000
+      ).toISOString();
+
+      await databases.createRow({
+        databaseId: 'app',
+        tableId: 'igdb_tokens',
+        rowId: 'unique()',
+        data: {
+          secret: data.access_token,
+          expiresAt,
+        },
+      });
+
+      log('New IGDB token created');
+    }
+
+    // Lida com requisições de busca
+    if (req.path === '/search' && req.method === 'POST') {
+      const payload = req.bodyJson;
+      const query = payload.query;
+
+      return res.text(query);
+    }
+
+    // Lida com requisições para popular tipos de jogos
+    if (req.path === '/seed/game-types' && req.method === 'POST') {
+      const data = await IGDB.getGameTypes(50, 0);
+
+      await databases.createRows({
+        databaseId: 'app',
+        tableId: 'game_types',
+        rows: data.map((item) => ({
+          $id: `igdb_${item.id}`,
+          type: item.type,
+          checksum: item.checksum,
+        })),
+      });
+
+      return res.json({ message: 'Game types seeded successfully' });
+    }
+  } catch (e) {
+    error(e);
   }
 
   return res.json({
-    motto: "Build like a team of hundreds_",
-    learn: "https://appwrite.io/docs",
-    connect: "https://appwrite.io/discord",
-    getInspired: "https://builtwith.appwrite.io",
+    message: 'IGDB Core Function is running',
   });
 };

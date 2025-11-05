@@ -41,12 +41,19 @@
     "functions": [
         {
             "$id": "igdb-core",
-            "execute": [],
+            "execute": [
+                "team:zerei"
+            ],
             "name": "IGDB Core",
             "enabled": true,
             "logging": true,
             "runtime": "node-21.0",
-            "scopes": [],
+            "scopes": [
+                "rows.read",
+                "documents.read",
+                "rows.write",
+                "documents.write"
+            ],
             "events": [],
             "schedule": "",
             "timeout": 15,
