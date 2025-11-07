@@ -22,7 +22,7 @@ export default async ({ req, res, log, error }) => {
 
     // Verifica se o token existe e se está expirado
     if (!token || new Date(token.expiresAt) <= new Date()) {
-      const data = await IGDBService.authenticate(
+      const data = await IGDB.authenticate(
         process.env.IGDB_CLIENT_ID,
         process.env.IGDB_CLIENT_SECRET
       );
@@ -50,6 +50,10 @@ export default async ({ req, res, log, error }) => {
       const query = payload.query;
 
       return res.text(query);
+    }
+
+    if (req.path === '/' && req.method === 'GET') {
+
     }
 
     // Lida com requisições para popular tipos de jogos
