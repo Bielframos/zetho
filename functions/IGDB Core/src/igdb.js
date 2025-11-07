@@ -38,14 +38,14 @@ class IGDBService {
   }
 
   async searchGames(query, limit, offset) {
-    const body = `search "${query}"; fields name,game_status,game_type,summary,cover.image_id,first_release_date; limit ${limit}; offset ${offset};`;
+    const body = `search "${query}"; fields name,slug,game_status,game_type,summary,cover.image_id,first_release_date; where game_type != (2,3,5,7,12,13,14); limit ${limit}; offset ${offset};`;
     const data = await this.#fetch('POST', 'games', body);
     return data;
   }
 
   async getGamesByIds(ids) {
     const idsString = ids.join(',');
-    const body = `fields name,game_status,game_type,summary,cover.image_id,first_release_date; where id = (${idsString});`;
+    const body = `fields name,slug,game_status,game_type,summary,cover.image_id,first_release_date; where id = (${idsString});`;
     const data = await this.#fetch('POST', 'games', body);
     return data;
   }

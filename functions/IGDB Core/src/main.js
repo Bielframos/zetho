@@ -1,5 +1,6 @@
 import { Client, Query, TablesDB } from 'node-appwrite';
 import IGDBService from './igdb.js';
+import { normalizeGame } from './utils.js';
 
 export default async ({ req, res, log, error }) => {
   const client = new Client()
@@ -54,11 +55,48 @@ export default async ({ req, res, log, error }) => {
       }
 
       const games = await IGDB.searchGames(query, 12, 0);
-      return res.json({ games });
+      const normalizedGames = games.map(normalizeGame);
+      return res.json({ games: normalizedGames });
     }
 
-    if (req.path === '/sync' && req.method === 'GET') {
+    // Lida com requisições para sincronizar jogos por IDs
+    if (req.path === '/sync' && req.method === 'POST') {
+      const payload = req.bodyJson;
+      const ids = payload.ids;
+      
+      if (!ids || !Array.isArray(ids)) {
+        return res.json({ message: 'Ids parameter is required and must be an array' }, 400);
+      }
+
+      const games = await IGDB.getGamesByIds(ids);
+      const normalizedGames = games.map(normalizeGame);
+
+      await Promise.all(normalizedGames.map(async (game) => {
+        databases.createRow({
+          databaseId: 'app',
+          tableId: 'games',
+          rowId: `igdb_${game.externalReference}`,
+          data: game,
+        });
+      }));
+
+      return res.json({message: 'Games synchronized successfully', games: normalizedGames });
     }
+
+
+    // Lida com requisições para obter jogos por IDs
+     if (req.path === '/get' && req.method === 'POST') {
+      const payload = req.bodyJson;
+      const ids = payload.ids;
+      
+      if (!ids || !Array.isArray(ids)) {
+        return res.json({ message: 'Ids parameter is required and must be an array' }, 400);
+      }
+
+      const games = await IGDB.getGamesByIds(ids);
+      return res.json({ games });
+    }
+    
 
     // Lida com requisições para popular tipos de jogos
     if (req.path === '/seed/game-types' && req.method === 'POST') {
@@ -78,6 +116,7 @@ export default async ({ req, res, log, error }) => {
     }
   } catch (e) {
     error(e);
+    return res.json({ message: e.message, error: e.type }, e.code);
   }
 
   return res.json({
