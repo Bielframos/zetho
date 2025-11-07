@@ -21,19 +21,38 @@ class IGDBService {
     return data;
   }
 
-  async searchGames(token, query) {}
-
-  async getGameTypes(limit, offset) {
-    const response = await fetch('https://api.igdb.com/v4/game_types', {
-      method: 'POST',
+  // Método privado para fazer requisições à API da IGDB
+  async #fetch(method = 'POST', endpoint, body = '') {
+    const response = await fetch(`https://api.igdb.com/v4/${endpoint}`, {
+      method,
       headers: {
         'Client-ID': process.env.IGDB_CLIENT_ID,
         Authorization: `Bearer ${this.token}`,
         'Content-Type': 'text/plain',
       },
-      body: `fields *; limit ${limit}; offset ${offset};`,
+      body,
     });
+
     const data = await response.json();
+    return data;
+  }
+
+  async searchGames(query, limit, offset) {
+    const body = `search "${query}"; fields name,game_status,game_type,summary,cover.image_id,first_release_date; limit ${limit}; offset ${offset};`;
+    const data = await this.#fetch('POST', 'games', body);
+    return data;
+  }
+
+  async getGamesByIds(ids) {
+    const idsString = ids.join(',');
+    const body = `fields name,game_status,game_type,summary,cover.image_id,first_release_date; where id = (${idsString});`;
+    const data = await this.#fetch('POST', 'games', body);
+    return data;
+  }
+
+  async getGameTypes(limit, offset) {
+    const body = `fields id,type,checksum; limit ${limit}; offset ${offset};`;
+    const data = await this.#fetch('POST', 'game_types', body);
     return data;
   }
 

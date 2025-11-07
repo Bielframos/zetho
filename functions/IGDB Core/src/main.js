@@ -49,11 +49,15 @@ export default async ({ req, res, log, error }) => {
       const payload = req.bodyJson;
       const query = payload.query;
 
-      return res.text(query);
+      if (!query) {
+        return res.json({ message: 'Query parameter is required' }, 400);
+      }
+
+      const games = await IGDB.searchGames(query, 12, 0);
+      return res.json({ games });
     }
 
-    if (req.path === '/' && req.method === 'GET') {
-
+    if (req.path === '/sync' && req.method === 'GET') {
     }
 
     // Lida com requisições para popular tipos de jogos
