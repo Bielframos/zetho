@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@import '@phosphor-icons/web/fill';
+@import '@phosphor-icons/web/regular';
 
 @theme {
   /* Cor primária */
@@ -28,4 +30,11 @@
   --color-gray-10: #777b84;
   --color-gray-11: #b0b4ba;
   --color-gray-12: #edeef0;
+}
+
+@layer base {
+  .ph,
+  .ph-fill {
+    font-size: 24px;
+  }
 }
