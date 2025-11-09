@@ -22,20 +22,21 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiInput implements ControlValueAccessor {
-  // Inputs
+  // Input
   @Input() label = '';
   @Input() type: 'text' | 'email' | 'password' = 'text';
   @Input() name = '';
   @Input() id = '';
   @Input() placeholder = '';
   @Input({ transform: booleanAttribute }) required = false;
+  @Input() icon = ''
 
   // Valor interno do input
   value = '';
 
   // Métodos padrão do ControlValueAccessor
-  onChange = (value: any) => {};
-  onTouched = () => {};
+  onChange = (value: any) => { };
+  onTouched = () => { };
 
   // Método chamado pelo Angular para atualizar o valor no template
   writeValue(value: any): void {

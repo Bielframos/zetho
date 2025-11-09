@@ -1,5 +1,13 @@
 <label [for]="id || name" class="flex flex-col gap-1">
   {{ label }}
-  <input [type]="type" [id]="id || name" [name]="name" [placeholder]="placeholder" [required]="required" [value]="value"
-    (input)="handleChange($event)" (blur)="handleBlur()" class="border rounded px-2 py-1" />
+
+  <div class="relative flex w-full items-center">
+    @if(icon) {
+    <i [class]="`absolute ph ph-${icon} ml-4`"></i>
+    }
+
+    <input [type]="type" [id]="id || name" [name]="name" [placeholder]="placeholder" [required]="required"
+      [value]="value" (input)="handleChange($event)" (blur)="handleBlur()"
+      class="border rounded px-2 py-1 flex-1 pl-12 pr-4" />
+  </div>
 </label>
