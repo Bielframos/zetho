@@ -107,6 +107,67 @@ export default async ({ req, res, log, error }) => {
       return res.json({ games });
     }
 
+    // Lida com requisições para popular jogos
+    if (req.path === '/seed/games' && req.method === 'POST') {
+      let currentIteration = 0;
+      let totalFetchedGames = -1;
+
+      const chunkArray = (arr, size) => {
+        const chunks = [];
+        for (let i = 0; i < arr.length; i += size) {
+          chunks.push(arr.slice(i, i + size));
+        }
+        return chunks;
+      };
+
+      while (totalFetchedGames !== 0) {
+        await new Promise((resolve) => setTimeout(resolve, 250));
+
+        const data = await IGDB.getGames(500, currentIteration * 500);
+        totalFetchedGames = data.length;
+
+        if (totalFetchedGames === 0) break;
+
+        const normalizedGames = data.map(normalizeGame);
+        const chunks = chunkArray(normalizedGames, 100);
+
+        for (let i = 0; i < chunks.length; i++) {
+          const chunk = chunks[i];
+
+          await Promise.all(
+            chunk.map(async (game, index) => {
+              try {
+                await databases.createRow({
+                  databaseId: 'app',
+                  tableId: 'games',
+                  rowId: `igdb_${game.externalReference}`,
+                  data: game,
+                });
+
+                console.log(
+                  `  → [${currentIteration + 1}] (${index + 1 + i * 100}/${
+                    normalizedGames.length
+                  }) ${game.name} importado`
+                );
+              } catch (err) {
+                console.error(`❌ Erro ao criar ${game.name}:`, err.message);
+              }
+            })
+          );
+
+          console.log(`💾 Bloco ${i + 1}/${chunks.length} gravado com sucesso`);
+        }
+
+        console.log(
+          `✅ Iteração ${currentIteration} concluída — ${totalFetchedGames} jogos importados`
+        );
+
+        currentIteration++;
+      }
+
+      console.log('🎮 Importação concluída!');
+    }
+
     // Lida com requisições para popular tipos de jogos
     if (req.path === '/seed/game-types' && req.method === 'POST') {
       const data = await IGDB.getGameTypes(50, 0);

@@ -6,23 +6,36 @@ class IGDBService {
   }
 
   /**
-   * Método para autenticar e obter um token de acesso da IGDB
-   * @param {*} clientId
-   * @param {*} clientSecret
+   * Autentica e obtém um novo token de acesso da IGDB (via Twitch API)
    */
   async authenticate(clientId, clientSecret) {
-    const response = await fetch(
-      `https://id.twitch.tv/oauth2/token?client_id=${clientId}&client_secret=${clientSecret}&grant_type=client_credentials`,
-      { method: 'POST' }
-    );
+    const url = new URL('https://id.twitch.tv/oauth2/token');
+    url.search = new URLSearchParams({
+      client_id: clientId,
+      client_secret: clientSecret,
+      grant_type: 'client_credentials',
+    });
 
+    const response = await fetch(url, { method: 'POST' });
     const data = await response.json();
+
     this.setToken(data.access_token);
     return data;
   }
 
-  // Método privado para fazer requisições à API da IGDB
-  async #fetch(method = 'POST', endpoint, body = '') {
+  /**
+   * Define o token de acesso atual
+   */
+  setToken(token) {
+    this.token = token;
+  }
+
+  /**
+   * Executa requisições autenticadas à API da IGDB
+   */
+  async #fetch(endpoint, body, method = 'POST') {
+    if (!this.token) throw new Error('Token de acesso IGDB ausente.');
+
     const response = await fetch(`https://api.igdb.com/v4/${endpoint}`, {
       method,
       headers: {
@@ -33,32 +46,78 @@ class IGDBService {
       body,
     });
 
-    const data = await response.json();
-    return data;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Erro IGDB: ${response.status} ${errorText}`);
+    }
+
+    return await response.json();
   }
 
-  async searchGames(query, limit, offset) {
-    const body = `search "${query}"; fields name,slug,game_status,game_type,summary,cover.image_id,first_release_date; where game_type != (2,3,5,7,12,13,14); limit ${limit}; offset ${offset};`;
-    const data = await this.#fetch('POST', 'games', body);
-    return data;
+  /**
+   * Campos padrão usados em quase todas as consultas de jogos
+   */
+  #gameFields =
+    'name,slug,game_status,game_type,summary,cover.image_id,first_release_date,similar_games,checksum';
+
+  /**
+   * Busca jogos com filtros padrão (exclui versões e tipos indesejados)
+   */
+  async getGames(limit = 50, offset = 0) {
+    const query = `
+      fields ${this.#gameFields};
+      where rating >= 48
+        & version_parent = null
+        & game_type != (3,5,7,12,13,14);
+      limit ${limit};
+      offset ${offset};
+    `.trim();
+
+    return await this.#fetch('games', query);
   }
 
-  async getGamesByIds(ids) {
+  /**
+   * Busca jogos por texto (nome, slug, etc.)
+   */
+  async searchGames(queryText, limit = 20, offset = 0) {
+    const query = `
+      search "${queryText}";
+      fields ${this.#gameFields};
+      where version_parent = null
+        & game_type != (3,5,7,12,13,14);
+      limit ${limit};
+      offset ${offset};
+    `.trim();
+
+    return await this.#fetch('games', query);
+  }
+
+  /**
+   * Busca jogos por IDs específicos
+   */
+  async getGamesByIds(ids = []) {
+    if (!Array.isArray(ids) || ids.length === 0) return [];
     const idsString = ids.join(',');
-    const body = `fields name,slug,game_status,game_type,summary,cover.image_id,first_release_date; where id = (${idsString});`;
-    const data = await this.#fetch('POST', 'games', body);
-    return data;
+
+    const query = `
+      fields ${this.#gameFields};
+      where id = (${idsString});
+    `.trim();
+
+    return await this.#fetch('games', query);
   }
 
-  async getGameTypes(limit, offset) {
-    const body = `fields id,type,checksum; limit ${limit}; offset ${offset};`;
-    const data = await this.#fetch('POST', 'game_types', body);
-    return data;
-  }
+  /**
+   * Lista os tipos de jogos disponíveis
+   */
+  async getGameTypes(limit = 50, offset = 0) {
+    const query = `
+      fields id,type,checksum;
+      limit ${limit};
+      offset ${offset};
+    `.trim();
 
-  // Define o token de acesso
-  setToken(token) {
-    this.token = token;
+    return await this.#fetch('game_types', query);
   }
 }
 
