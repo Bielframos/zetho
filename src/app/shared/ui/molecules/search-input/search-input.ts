@@ -15,6 +15,8 @@ export class UiSerchInput {
     searchControl = new FormControl('')
 
     constructor() {
-        this.searchControl.valueChanges.pipe(debounceTime(400), distinctUntilChanged()).subscribe((value) => this.search.emit(value ?? ''))
+        this.searchControl.valueChanges
+            .pipe(debounceTime(600), distinctUntilChanged())
+            .subscribe((value) => this.search.emit(value ?? ''))
     }
 }   
