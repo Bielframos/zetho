@@ -1,0 +1,1 @@
+export type { Game, GameRow } from './game.types'
