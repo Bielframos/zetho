@@ -61,6 +61,30 @@
             "commands": "npm install",
             "specification": "s-0.5vcpu-512mb",
             "path": "functions/IGDB Core"
+        },
+        {
+            "$id": "igdb-webhook",
+            "name": "IGDB Webhook",
+            "runtime": "node-21.0",
+            "specification": "s-0.5vcpu-512mb",
+            "execute": [
+                "any"
+            ],
+            "events": [],
+            "scopes": [
+                "rows.read",
+                "documents.read",
+                "rows.write",
+                "documents.write",
+                "execution.write"
+            ],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "entrypoint": "src/main.js",
+            "commands": "npm install",
+            "path": "functions/IGDB Webhook"
         }
     ]
 }
