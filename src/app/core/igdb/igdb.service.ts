@@ -1,6 +1,7 @@
 import { Injectable, ɵɵsetComponentScope } from '@angular/core';
 import { appwrite } from '../appwrite/appwrite.client';
 import { ExecutionMethod } from 'appwrite';
+import { Game } from '../types';
 
 type SearchProps = {
   endpoint: '/search',
@@ -23,7 +24,6 @@ export class Igdb {
   async #executeFn(params: EndpointProps) {
     return await this.functions.createExecution({
       functionId: 'igdb-core',
-      async: true,
       body: JSON.stringify(params.payload),
       xpath: params.endpoint,
       method: ExecutionMethod.POST
@@ -32,7 +32,7 @@ export class Igdb {
 
   async searchGames(query: string) {
     const execution = await this.#executeFn({ endpoint: '/search', payload: { query } })
-    return execution.responseBody
+    return JSON.parse(execution.responseBody) as { games: Game[] }
   }
 
   async syncGames(ids: number[]) {
