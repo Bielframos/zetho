@@ -1,4 +1,5 @@
 import { Client, ExecutionMethod, Functions } from 'node-appwrite';
+import { shouldIgnore } from './utils';
 
 export default async ({ req, res, log, error }) => {
   const client = new Client()
@@ -19,6 +20,11 @@ export default async ({ req, res, log, error }) => {
 
   try {
     const game = req.bodyJson;
+
+    if (shouldIgnore(game)) {
+      log(`Ignoring game ID ${game.id} - ${game.name}`);
+      return res.json({ message: 'Game ignored' });
+    }
 
     await functions.createExecution({
       functionId: 'igdb-core',
