@@ -1,5 +1,5 @@
 import { Client, ExecutionMethod, Functions } from 'node-appwrite';
-import { shouldIgnore } from './utils';
+import { shouldIgnore } from './utils.js';
 
 export default async ({ req, res, log, error }) => {
   const client = new Client()
@@ -19,7 +19,7 @@ export default async ({ req, res, log, error }) => {
   }
 
   try {
-    const game = req.bodyJson;
+    const game = req.bodyJson ?? {};
 
     if (shouldIgnore(game)) {
       log(`Ignoring game ID ${game.id} - ${game.name}`);
@@ -39,8 +39,4 @@ export default async ({ req, res, log, error }) => {
     error(e);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
-
-  return res.json({
-    message: 'IGDB Webhook is running',
-  });
 };
