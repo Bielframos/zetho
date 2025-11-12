@@ -1,39 +1,79 @@
-import { Component, inject } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
-import { AuthService } from '../../core/auth/auth.service';
-import { UiInput } from '../../shared/ui/atoms/input/input';
-import { AuthStore } from '../../core/auth/auth.store';
+import { Component, inject, signal } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
+import { UserProfileService } from '../../core/app/userProfiles.service';
+import { AuthService } from '../../core/auth/auth.service';
+import { AuthStore } from '../../core/auth/auth.store';
+import { UiInput } from '../../shared/ui/atoms/input/input';
 
 @Component({
   selector: 'app-register',
-  imports: [UiInput, FormsModule],
+  standalone: true,
+  imports: [UiInput, ReactiveFormsModule],
   templateUrl: './register.html',
 })
 export class Register {
-  authService = inject(AuthService);
-  authStore = inject(AuthStore);
-  router = inject(Router);
+  private router = inject(Router);
+  private auth = inject(AuthService);
+  private authStore = inject(AuthStore);
+  private profile = inject(UserProfileService)
 
-  name = '';
-  gamertag = '';
-  email = '';
-  password = '';
-  confirmPassword = '';
+  isSubmitting = signal(false)
 
-  async register(form: NgForm) {
-    if (form.invalid) {
-      alert('Preencha todos os campos');
-      return;
+  private passwordMatch: ValidatorFn = (group) => {
+    const pass = group.get('password')?.value;
+    const confirm = group.get('confirmPassword')?.value;
+    if (pass && confirm && pass !== confirm) {
+      group.get('confirmPassword')?.setErrors({ passwordsMismatch: true });
+      return { passwordsMismatch: true };
     }
+    return null;
+  };
 
-    if (this.password !== this.confirmPassword) {
-      alert('As senhas não são iguais');
-      return;
-    }
-
-    await this.authService.register(this.email, this.password, this.name, this.gamertag);
-    this.authStore.refresh();
-    this.router.navigate(['/']);
+  private gamertagAsyncValidator = (control: AbstractControl) => {
+    return of(control.value).pipe(
+      distinctUntilChanged(),
+      switchMap(value => value ? this.profile.isValidGamertag(control.value) : of(false)),
+      map(isValid => (isValid ? null : { gamertagTaken: true })),
+      catchError(() => of({ gamertagCheckFailed: true }))
+    )
   }
+
+  form = new FormGroup({
+    name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    gamertag: new FormControl('',
+      {
+        nonNullable: true,
+        validators: [Validators.required, Validators.minLength(3)],
+        asyncValidators: [this.gamertagAsyncValidator.bind(this)],
+        updateOn: 'blur'
+      }),
+    email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+    password: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(8)] }),
+    confirmPassword: new FormControl('', { validators: [Validators.required] })
+  }, { validators: [this.passwordMatch] })
+
+  async submit() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return
+    }
+
+    this.isSubmitting.set(true)
+
+    try {
+      const { email, password, name, gamertag } = this.form.getRawValue()
+      const user = await this.auth.register(email, password, name)
+      await this.profile.createProfile(user.$id, gamertag)
+      await this.authStore.refresh()
+      await this.router.navigate(['/'])
+    } catch (e) {
+      this.form.setErrors({ submitFailed: true })
+    } finally {
+      this.isSubmitting.set(false)
+    }
+  }
+
+  get gamertag() { return this.form.controls.gamertag }
 }

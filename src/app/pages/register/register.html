@@ -1,11 +1,23 @@
 <main>
-  <form #form="ngForm" (ngSubmit)="register(form)" class="flex flex-col">
-    <ui-input label="Nome" type="text" name="name" placeholder="Seu nome" [(ngModel)]="name" required />
-    <ui-input label="Gamertag" type="text" placeholder="Sua gamertag" name="gamertag" [(ngModel)]="gamertag" required />
-    <ui-input label="E-mail" type="email" placeholder="Seu e-mail" name="email" [(ngModel)]="email" required />
-    <ui-input label="Senha" type="password" placeholder="Sua senha" name="password" [(ngModel)]="password" required />
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col">
+    <ui-input label="Nome" type="text" name="name" placeholder="Seu nome" formControlName="name" required />
+    <div class="flex gap-4">
+      <ui-input label="Gamertag" type="text" placeholder="Sua gamertag" name="gamertag" formControlName="gamertag"
+        required />
+
+      @if(gamertag.pending) {
+      <i class="ph ph-spinner animate-spin"></i>
+      } @else if(gamertag.errors?.['gamertagTaken'] && gamertag.dirty) {
+      <i class="ph ph-x"></i>
+      } @else if(gamertag.valid && gamertag.dirty) {
+      <i class="ph ph-check"></i>
+      }
+    </div>
+    <ui-input label="E-mail" type="email" placeholder="Seu e-mail" name="email" formControlName="email" required />
+    <ui-input label="Senha" type="password" placeholder="Sua senha" name="password" formControlName="password"
+      required />
     <ui-input label="Confirme a senha" type="password" placeholder="Confirme sua senha" name="confirmPassword"
-      [(ngModel)]="confirmPassword" required />
+      formControlName="confirmPassword" required />
 
     <button type="submit" class="cursor-pointer">Registrar</button>
   </form>
