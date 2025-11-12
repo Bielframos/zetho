@@ -1,4 +1,4 @@
-import { Account, Client, Databases, Functions, Teams } from 'appwrite';
+import { Account, Client, TablesDB, Functions, Teams } from 'appwrite';
 
 const client = new Client()
   .setEndpoint('https://appwrite.adstrito.com/v1')
@@ -8,7 +8,7 @@ export const appwrite = {
   client,
   account: new Account(client),
   teams: new Teams(client),
-  datababases: new Databases(client),
+  datababases: new TablesDB(client),
   functions: new Functions(client)
 };
 
