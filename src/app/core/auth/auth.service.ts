@@ -10,16 +10,16 @@ export class AuthService {
    * @param name
    * @param gamertag
    */
-  async register(email: string, password: string, name: string, gamertag: string) {
+  async register(email: string, password: string, name: string) {
     try {
-      await appwrite.account.create({
+      const user = await appwrite.account.create({
         userId: ID.unique(),
         email,
         password,
         name,
       });
       await appwrite.account.createEmailPasswordSession({ email, password });
-      appwrite.account.updatePrefs({ prefs: { gamertag } });
+      return user
     } catch (error) {
       console.error('Error registering user:', error);
       throw error;
