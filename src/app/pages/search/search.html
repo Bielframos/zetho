@@ -1,0 +1,25 @@
+<main class="w-full max-w-5xl mx-auto">
+    @if (searchGame(); as search) {
+    @if (search.loading()) {
+    <p><i class="ph ph-circle-spinner animate-spin"></i> Buscando jogos</p>
+    } @else {
+    @if (search.total() === 0) {
+    <p>Nenhum jogo localizado.</p>
+    } @else {
+    <ul class="grid grid-cols-[repeat(4,minmax(168px,1fr))] gap-4">
+        @for (game of search.results(); track game.$id) {
+        <li class="flex flex-col">
+            <ui-game-card [game]="game"></ui-game-card>
+        </li>
+        }
+    </ul>
+
+    <nav>
+        <button (click)="search.prevPage()" [disabled]="search.page() <= 1">Previous</button>
+        <span>Page {{ search.page() }} of {{ search.pageCount() }}</span>
+        <button (click)="search.nextPage()" [disabled]="search.page() >= search.pageCount()">Next</button>
+    </nav>
+    }
+    }
+    }
+</main>

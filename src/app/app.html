@@ -1,8 +1,10 @@
 <div>
-  <nav class="flex w-full gap-4 justify-between px-4">
+  <nav class="flex w-full gap-4 justify-between px-4 items-center">
     <a routerLink="/">Zerei</a>
 
     <div class="flex gap-4">
+      <ui-search-input placeholder="Busque um jogo" (search)="onSearch($event)" />
+
       @if (authStore.user()) {
       <a routerLink="/perfil">{{authStore.user()?.name}}</a>
       <button (click)="authStore.logout()">Sair</button>
