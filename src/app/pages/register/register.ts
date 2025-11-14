@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
-import { UserProfileService } from '../../core/app/userProfiles.service';
+import { UserProfileService } from '../../core/zerei/userProfile.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { AuthStore } from '../../core/auth/auth.store';
 import { UiInput } from '../../shared/ui/atoms/input/input';
