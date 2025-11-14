@@ -125,7 +125,9 @@
         },
         {
             "$id": "games",
-            "$permissions": [],
+            "$permissions": [
+                "read(\"any\")"
+            ],
             "databaseId": "app",
             "name": "Games",
             "enabled": true,
@@ -271,7 +273,10 @@
         },
         {
             "$id": "user_profiles",
-            "$permissions": [],
+            "$permissions": [
+                "create(\"any\")",
+                "read(\"any\")"
+            ],
             "databaseId": "app",
             "name": "User Profiles",
             "enabled": true,
@@ -287,7 +292,7 @@
                     "encrypt": false
                 },
                 {
-                    "key": "username",
+                    "key": "gamertag",
                     "type": "string",
                     "required": true,
                     "array": false,
@@ -366,7 +371,7 @@
                     "type": "unique",
                     "status": "available",
                     "attributes": [
-                        "username"
+                        "gamertag"
                     ],
                     "orders": [
                         "ASC"
