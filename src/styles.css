@@ -37,4 +37,10 @@
   .ph-fill {
     font-size: 24px;
   }
+
+  html,
+  body {
+    background-color: var(--color-blue-1);
+    color: var(--color-gray-12);
+  }
 }
