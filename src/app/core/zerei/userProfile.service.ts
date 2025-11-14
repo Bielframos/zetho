@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
-import { appwrite } from "../appwrite/appwrite.client";
-import { Query } from "appwrite";
+import { appwrite, Query } from "../appwrite/appwrite.client";
 
 const TABLE_ID = 'user_profiles'
 
