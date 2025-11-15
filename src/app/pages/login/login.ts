@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { UiInput } from '../../shared/ui/atoms/input/input';
-import { AuthStore } from '../../core/auth/auth.store';
+import { UserStore } from '../../core/auth/user.store';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
   templateUrl: './login.html',
 })
 export class Login {
-  authStore = inject(AuthStore);
+  userStore = inject(UserStore);
   router = inject(Router);
 
   email = '';
@@ -22,7 +22,7 @@ export class Login {
       return;
     }
 
-    await this.authStore.login(this.email, this.password);
+    await this.userStore.login(this.email, this.password);
     this.router.navigate(['/']);
   }
 }

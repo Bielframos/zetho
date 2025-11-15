@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 import { UserProfileService } from '../../core/zerei/userProfile.service';
 import { AuthService } from '../../core/auth/auth.service';
-import { AuthStore } from '../../core/auth/auth.store';
+import { UserStore } from '../../core/auth/user.store';
 import { UiInput } from '../../shared/ui/atoms/input/input';
 
 @Component({
@@ -16,7 +16,7 @@ import { UiInput } from '../../shared/ui/atoms/input/input';
 export class Register {
   private router = inject(Router);
   private auth = inject(AuthService);
-  private authStore = inject(AuthStore);
+  private userStore = inject(UserStore);
   private profile = inject(UserProfileService)
 
   isSubmitting = signal(false)
@@ -66,7 +66,7 @@ export class Register {
       const { email, password, name, gamertag } = this.form.getRawValue()
       const user = await this.auth.register(email, password, name)
       await this.profile.createProfile(user.$id, gamertag)
-      await this.authStore.refresh()
+      await this.userStore.refresh()
       await this.router.navigate(['/'])
     } catch (e) {
       this.form.setErrors({ submitFailed: true })

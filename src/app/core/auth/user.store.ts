@@ -1,17 +1,19 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { Models } from 'appwrite';
 import { AuthService } from './auth.service';
+import { appwrite } from '../appwrite/appwrite.client';
 
 @Injectable({ providedIn: 'root' })
-export class AuthStore {
+export class UserStore {
   private userSignal = signal<Models.User<Models.Preferences> | null>(null);
   private loadingSignal = signal(false);
 
   readonly user = computed(() => this.userSignal());
   readonly loading = computed(() => this.loadingSignal());
   readonly isAuthenticated = computed(() => this.user() !== null);
+  readonly avatarUrl = computed(() => appwrite.avatars.getInitials({ name: this.user()?.name, width: 40, height: 40, background: '3e63dd' }))
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   /**
    * Método para inicializar o estado de autenticação
@@ -67,7 +69,7 @@ export class AuthStore {
   async logout() {
     try {
       await this.authService.logout();
-    } catch {}
+    } catch { }
     this.clear();
   }
 
