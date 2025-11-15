@@ -1,7 +1,9 @@
 <li>
-    <a [href]="`/jogo/${game().slug}`" class="flex flex-col">
-        <img [src]="game().coverUrl" [alt]="`${game().name} cover`" class="w-full h-auto mb-2 rounded">
-        <h4>{{ game().name }}</h4>
-        <span>{{ game().releaseYear }}</span>
+    <a [href]="`/jogo/${game().slug}`" class="group relative flex border border-gray-6 rounded-xl overflow-hidden">
+        <img [src]="game().coverUrl" [alt]="`${game().name} cover`" class="w-full h-auto">
+        <div
+            class="absolute px-4 py-4 w-full bg-linear-to-t from-blue-1 via-blue-2 to-transparent rounded-b-lg opacity-0 -bottom-4 group-hover:opacity-100 group-hover:bottom-0 transition-all duration-600">
+            <h4>{{ game().name }} <span class="text-gray-11 font-light">{{ game().releaseYear }}</span></h4>
+        </div>
     </a>
 </li>

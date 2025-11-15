@@ -1,4 +1,8 @@
 <main class="w-full max-w-5xl mx-auto">
+    <header class="text-gray-11 font-light mb-10">
+        <h2>Buscando por <span class="font-normal text-gray-12">"{{ query() }}"</span></h2>
+    </header>
+
     @if (searchGame(); as search) {
     @if (search.loading()) {
     <p><i class="ph ph-circle-spinner animate-spin"></i> Buscando jogos</p>
@@ -14,10 +18,12 @@
         }
     </ul>
 
-    <nav>
-        <button (click)="search.prevPage()" [disabled]="search.page() <= 1">Previous</button>
-        <span>Page {{ search.page() }} of {{ search.pageCount() }}</span>
-        <button (click)="search.nextPage()" [disabled]="search.page() >= search.pageCount()">Next</button>
+    <nav class="flex my-10 w-full justify-center gap-4 items-center">
+        <button (click)="search.prevPage()" [disabled]="search.page() <= 1" class="ui-secondary-btn" data-size="icon"><i
+                class="ph ph-caret-left"></i></button>
+        <span>Página {{ search.page() }} de {{ search.pageCount() }}</span>
+        <button (click)="search.nextPage()" [disabled]="search.page() >= search.pageCount()" class="ui-secondary-btn"
+            data-size="icon"><i class="ph ph-caret-right"></i></button>
     </nav>
     }
     }
