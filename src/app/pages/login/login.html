@@ -1,8 +1,17 @@
-<main>
-  <form #form="ngForm" (ngSubmit)="login(form)" class="flex flex-col">
-    <ui-input type="email" label="E-mail" placeholder="Seu e-mail" name="email" [(ngModel)]="email" required />
-    <ui-input type="password" labe="Senha" placeholder="Sua senha" name="password" [(ngModel)]="password" required />
+<main class="mx-auto w-fit flex gap-10 mt-24">
+  <header class="w-3xs">
+    <h1 class="text-3xl">Acesse sua conta</h1>
+    <p class="text-gray-11 font-light">Ainda não possui uma? <a routerLink="/registrar"
+        class="text-blue-9 hover:underline cursor-pointer">Entrar</a>
+    </p>
+  </header>
 
-    <button type="submit" class="cursor-pointer">Entrar</button>
+  <form #form="ngForm" (ngSubmit)="login(form)" class="flex flex-col gap-4 w-md">
+    <ui-input type="email" label="E-mail" placeholder="bielframos@zerei.app" name="email" [(ngModel)]="email"
+      required />
+    <ui-input type="password" label="Senha" placeholder="Sua senha" name="password" [(ngModel)]="password" required />
+
+
+    <button type="submit" class="ui-primary-btn mt-4">Entrar</button>
   </form>
 </main>

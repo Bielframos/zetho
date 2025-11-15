@@ -1,24 +1,34 @@
-<main>
-  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col">
-    <ui-input label="Nome" type="text" name="name" placeholder="Seu nome" formControlName="name" required />
-    <div class="flex gap-4">
-      <ui-input label="Gamertag" type="text" placeholder="Sua gamertag" name="gamertag" formControlName="gamertag"
+<main class="mx-auto flex gap-10 w-fit mt-24">
+  <header class="w-3xs">
+    <h1 class="text-3xl">Crie sua conta</h1>
+    <p class="text-gray-11 font-light">Já possui uma conta? <a routerLink="/login"
+        class="text-blue-9 hover:underline cursor-pointer">Entrar</a>
+    </p>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 w-md">
+    <ui-input label="Nome" type="text" name="name" placeholder="Gabriel França" formControlName="name" required />
+    <div class="relative">
+      <ui-input label="Gamertag" type="text" placeholder="Bielframos" name="gamertag" formControlName="gamertag"
         required />
 
-      @if(gamertag.pending) {
-      <i class="ph ph-spinner animate-spin"></i>
-      } @else if(gamertag.errors?.['gamertagTaken'] && gamertag.dirty) {
-      <i class="ph ph-x"></i>
-      } @else if(gamertag.valid && gamertag.dirty) {
-      <i class="ph ph-check"></i>
-      }
+      <div class="absolute right-2 bottom-1">
+        @if(gamertag.pending) {
+        <i class="ph ph-spinner animate-spin text-md text-gray-6"></i>
+        } @else if(gamertag.errors?.['gamertagTaken'] && gamertag.dirty) {
+        <i class="ph ph-x-circle text-md text-red-600"></i>
+        } @else if(gamertag.valid && gamertag.dirty) {
+        <i class="ph ph-check-circle text-md text-green-600"></i>
+        }
+      </div>
     </div>
-    <ui-input label="E-mail" type="email" placeholder="Seu e-mail" name="email" formControlName="email" required />
+    <ui-input label="E-mail" type="email" placeholder="bielframos@zerei.app" name="email" formControlName="email"
+      required />
     <ui-input label="Senha" type="password" placeholder="Sua senha" name="password" formControlName="password"
       required />
     <ui-input label="Confirme a senha" type="password" placeholder="Confirme sua senha" name="confirmPassword"
       formControlName="confirmPassword" required />
 
-    <button type="submit" class="cursor-pointer">Registrar</button>
+    <button type="submit" class="ui-primary-btn mt-4">Registrar</button>
   </form>
 </main>

@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { AuthStore } from './core/auth/auth.store';
+import { UserStore } from './core/auth/user.store';
 import { UiSerchInput } from './shared/ui/molecules/search-input/search-input';
 
 @Component({
@@ -10,7 +10,7 @@ import { UiSerchInput } from './shared/ui/molecules/search-input/search-input';
   styleUrl: './app.css',
 })
 export class App {
-  authStore = inject(AuthStore);
+  userStore = inject(UserStore);
   private route = inject(Router)
 
   onSearch(query: string) {
@@ -18,6 +18,6 @@ export class App {
   }
 
   ngOnInit() {
-    this.authStore.init();
+    this.userStore.init();
   }
 }

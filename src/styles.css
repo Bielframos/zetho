@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import '@phosphor-icons/web/fill';
 @import '@phosphor-icons/web/regular';
+@import '@fontsource-variable/readex-pro';
 
 @theme {
   /* Cor primária */
@@ -13,7 +14,7 @@
   --color-blue-7: #375097;
   --color-blue-8: #415eb1;
   --color-blue-9: #3e63dd;
-  --color-blue-10: #3f5cb0;
+  --color-blue-10: #5a73ff;
   --color-blue-11: #93b4ff;
   --color-blue-12: #d5e2ff;
 
@@ -40,7 +41,31 @@
 
   html,
   body {
-    background-color: var(--color-blue-1);
+    min-height: 100dvh;
+    background: linear-gradient(180deg, var(--color-blue-1) 0%, var(--color-blue-2) 100%);
     color: var(--color-gray-12);
+    font-family: 'Readex Pro Variable', sans-serif;
+  }
+}
+
+/* Componentes */
+@layer components {
+  /* Link */
+  .ui-link {
+    @apply bg-blue-2 px-4 py-2 h-fit rounded-lg text-gray-11 hover:bg-blue-3 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
+  }
+
+  /* Botões */
+  .ui-primary-btn {
+    @apply cursor-pointer px-4 py-2 h-fit rounded-lg text-gray-12 bg-blue-9 hover:bg-blue-10 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
+  }
+
+  .ui-secondary-btn {
+    @apply cursor-pointer bg-blue-2 px-4 py-2 h-fit rounded-lg text-gray-11 hover:bg-blue-3 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
+  }
+
+  /* Variação de tamanho para botões e links */
+  [data-size='icon'] {
+    @apply w-[42px] h-[42px] rounded-full p-0 flex items-center justify-center;
   }
 }
