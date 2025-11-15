@@ -26,6 +26,9 @@ importers:
       '@angular/router':
         specifier: ^20.3.0
         version: 20.3.9(@angular/common@20.3.9(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@20.3.9(@angular/common@20.3.9(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1)))(rxjs@7.8.2)
+      '@fontsource-variable/readex-pro':
+        specifier: ^5.2.11
+        version: 5.2.11
       '@phosphor-icons/web':
         specifier: ^2.1.2
         version: 2.1.2
@@ -524,6 +527,9 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@fontsource-variable/readex-pro@5.2.11':
+    resolution: {integrity: sha512-qBMhvaJ3yiMEhPmo0UPJA61i08+gFEHbu65WblSENvMYy1zB8ntpNjdXgUbKHCW5LYkaMReWAMD4q+B6LU8Q7Q==}
 
   '@inquirer/ansi@1.0.1':
     resolution: {integrity: sha512-yqq0aJW/5XPhi5xOAL1xRCpe1eh8UFVgYFpFsjEqmIR8rKLyP+HINvFXwUaxYICflJrVlxnp7lLN6As735kVpw==}
@@ -3481,6 +3487,8 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.9':
     optional: true
+
+  '@fontsource-variable/readex-pro@5.2.11': {}
 
   '@inquirer/ansi@1.0.1': {}
 
