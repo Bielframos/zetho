@@ -1,16 +1,16 @@
 import { Component, inject, signal } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
-import { UserProfileService } from '../../core/zerei/userProfile.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { UserStore } from '../../core/auth/user.store';
+import { UserProfileService } from '../../core/zerei/userProfile.service';
 import { UiInput } from '../../shared/ui/atoms/input/input';
 
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [UiInput, ReactiveFormsModule],
+  imports: [UiInput, ReactiveFormsModule, RouterLink],
   templateUrl: './register.html',
 })
 export class Register {
