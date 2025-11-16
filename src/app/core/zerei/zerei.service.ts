@@ -1,8 +1,8 @@
 import { computed, Injectable, signal, Signal } from "@angular/core";
+import { AppwriteException, ExecutionMethod } from "appwrite";
 import { GameRow } from "../types";
+import { appwrite } from "../appwrite/appwrite.client";
 import { GameService } from "./games.service";
-import { IgdbService } from "../igdb/igdb.service";
-import { AppwriteException } from "appwrite";
 
 export interface GameSearchController {
     results: Signal<GameRow[]>,
@@ -19,7 +19,7 @@ export interface GameSearchController {
 
 @Injectable({ providedIn: 'root' })
 export class ZereiService {
-    constructor(private gameService: GameService, private igdbService: IgdbService) { }
+    constructor(private gameService: GameService) { }
 
     /**
      * Método para montar uma busca reativa de jogos
@@ -95,23 +95,23 @@ export class ZereiService {
      */
     async getGame(slug: string) {
         try {
-            const game = await this.gameService.getGame(slug)
+            let execution = await appwrite.functions.createExecution({ functionId: 'zerei-core', method: ExecutionMethod.GET, xpath: `/games/${slug}` })
+
+            if (execution.responseStatusCode === 404) throw { message: 'Jogo não encontrado', code: 404, type: 'game_not_found' }
+            else if (execution.responseStatusCode !== 200) throw { message: 'Erro interno', code: 500, type: 'internal_error' }
+
+            let game = JSON.parse(execution.responseBody) as GameRow
+
+            if (game) {
+                const releaseDate = new Date(game.releaseDate).toLocaleDateString('pt-br')
+                game.releaseDate = releaseDate
+            }
+
             return { success: true, game, error: null }
         } catch (e) {
             const error = e as AppwriteException
             return { success: false, game: null, error }
 
-        }
-    }
-
-    async syncGame(ids: number[]) {
-        try {
-            const syncExecution = await this.igdbService.syncGames(ids)
-            if (syncExecution.responseStatusCode === 200) return { success: true }
-            else return { success: false }
-        } catch (e) {
-            console.error(e)
-            return { success: false }
         }
     }
 
