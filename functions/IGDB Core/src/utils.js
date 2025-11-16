@@ -1,4 +1,5 @@
 export function normalizeGame(game) {
+  const syncedAt = new Date().toISOString();
   let summary = game.summary;
   const summaryLength = summary ? summary.length : 0;
 
@@ -7,23 +8,31 @@ export function normalizeGame(game) {
     summary = truncatedSummary;
   }
 
-  {
-    return {
-      name: game.name,
-      slug: game.slug,
-      coverUrl: game.cover
-        ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover.image_id}.jpg`
-        : null,
-      summary: summary || '',
-      releaseYear: game.first_release_date
-        ? new Date(game.first_release_date * 1000).getFullYear().toString()
-        : null,
-      externalReference: game.id,
-      gameType: `igdb_${game.game_type}`,
-      similarGames: game.similar_games
-        ? game.similar_games.map((g) => `igdb_${g}`)
-        : [],
-      checksum: game.checksum || null,
-    };
-  }
+  return {
+    name: game.name,
+    slug: game.slug,
+    coverUrl: game.cover
+      ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover.image_id}.jpg`
+      : null,
+    summary: summary || '',
+    releaseYear: game.first_release_date
+      ? new Date(game.first_release_date * 1000).getFullYear().toString()
+      : null,
+    releaseDate: game.first_release_date
+      ? new Date(game.first_release_date * 1000).toISOString()
+      : null,
+    genres: game.genres ? game.genres.map((g) => `igdb_${g.id}`) : [],
+    involvedCompanies: game.involved_companies
+      ? game.involved_companies
+          .filter((ic) => ic.developer && ic.company)
+          .map((ic) => `igdb_${ic.company}`)
+      : [],
+    externalReference: game.id,
+    gameType: `igdb_${game.game_type}`,
+    similarGames: game.similar_games
+      ? game.similar_games.map((g) => `igdb_${g}`)
+      : [],
+    checksum: game.checksum || null,
+    syncedAt,
+  };
 }

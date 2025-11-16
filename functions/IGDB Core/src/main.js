@@ -72,17 +72,74 @@ export default async ({ req, res, log, error }) => {
       }
 
       const games = await IGDB.getGamesByIds(ids);
+
+      const developerCompanyIds = [
+        ...new Set(
+          games
+            .flatMap((game) => game.involved_companies ?? [])
+            .filter((ic) => ic.developer && ic.company)
+            .map((ic) => ic.company)
+        ),
+      ];
+
+      const genres = [
+        ...new Map(
+          games
+            .flatMap((game) => (game.genres ? game.genres : []))
+            .map((g) => [g.id, g])
+        ).values(),
+      ];
+
+      let developers;
+
+      if (developerCompanyIds.length > 0) {
+        developers = await IGDB.getCompaniesByIds(developerCompanyIds);
+      }
+
+      const upserts = [];
+
+      if (developers?.length) {
+        upserts.push(
+          databases.upsertRows({
+            databaseId: 'app',
+            tableId: 'companies',
+            rows: developers.map((company) => ({
+              $id: `igdb_${company.id}`,
+              slug: company.slug,
+              name: company.name,
+            })),
+          })
+        );
+      }
+
+      if (genres.length) {
+        upserts.push(
+          databases.upsertRows({
+            databaseId: 'app',
+            tableId: 'genres',
+            rows: genres.map((genre) => ({
+              $id: `igdb_${genre.id}`,
+              name: genre.name,
+              slug: genre.slug,
+              checksum: genre.checksum || null,
+            })),
+          })
+        );
+      }
+
+      await Promise.all(upserts);
+
       const normalizedGames = games.map(normalizeGame);
 
       await Promise.all(
-        normalizedGames.map(async (game) => {
-          databases.createRow({
+        normalizedGames.map((game) =>
+          databases.upsertRow({
             databaseId: 'app',
             tableId: 'games',
             rowId: `igdb_${game.externalReference}`,
             data: game,
-          });
-        })
+          })
+        )
       );
 
       return res.json({

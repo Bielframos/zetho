@@ -58,7 +58,7 @@ class IGDBService {
    * Campos padrão usados em quase todas as consultas de jogos
    */
   #gameFields =
-    'name,slug,game_status,game_type,summary,cover.image_id,first_release_date,similar_games,checksum';
+    'name,slug,game_status,game_type,summary,cover.image_id,first_release_date,similar_games,checksum,genres.*,involved_companies.*';
 
   /**
    * Busca jogos com filtros padrão (exclui versões e tipos indesejados)
@@ -105,6 +105,21 @@ class IGDBService {
     `.trim();
 
     return await this.#fetch('games', query);
+  }
+
+  /**
+   * Busca empresas por IDs específicos
+   */
+  async getCompaniesByIds(ids) {
+    if (!Array.isArray(ids) || ids.length === 0) return [];
+    const idsString = ids.join(',');
+
+    const query = `
+      fields name,slug,checksum;
+      where id = (${idsString});
+    `.trim();
+
+    return await this.#fetch('companies', query);
   }
 
   /**
