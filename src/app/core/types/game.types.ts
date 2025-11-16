@@ -5,9 +5,13 @@ type Game = {
     slug: string,
     coverUrl: string,
     releaseYear: string,
+    releaseDate: string,
     summary: string,
-    externalReference: string,
-    gameType: string | any
+    externalReference: number,
+    gameType: string | any,
+    genres: string | any,
+    involvedCompanies: string | any,
+    syncedAt: string
 }
 
 type GameRow = StoredRow<Game>
