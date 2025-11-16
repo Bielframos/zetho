@@ -1,7 +1,6 @@
-import { Injectable, ɵɵsetComponentScope } from '@angular/core';
-import { appwrite } from '../appwrite/appwrite.client';
+import { Injectable } from '@angular/core';
 import { ExecutionMethod } from 'appwrite';
-import { Game } from '../types';
+import { appwrite } from '../appwrite/appwrite.client';
 
 type SearchProps = {
   endpoint: '/search',
@@ -18,7 +17,7 @@ type EndpointProps = SearchProps | SyncProps
 @Injectable({
   providedIn: 'root',
 })
-export class Igdb {
+export class IgdbService {
   functions = appwrite.functions
 
   async #executeFn(params: EndpointProps) {
@@ -32,11 +31,11 @@ export class Igdb {
 
   async searchGames(query: string) {
     const execution = await this.#executeFn({ endpoint: '/search', payload: { query } })
-    return JSON.parse(execution.responseBody) as { games: Game[] }
+    return execution
   }
 
   async syncGames(ids: number[]) {
     const execution = await this.#executeFn({ endpoint: '/sync', payload: { ids } })
-    return execution.responseBody
+    return execution
   }
 }
