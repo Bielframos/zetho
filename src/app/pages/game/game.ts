@@ -1,14 +1,15 @@
 import { Component, effect, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
+import { map } from 'rxjs/operators';
 import { GameRow } from '../../core/types';
 import { ZereiService } from '../../core/zerei/zerei.service';
-import { map } from 'rxjs/operators';
+import { UiGameCard } from "../../shared/ui/atoms/game-card/game-card";
 
 @Component({
     selector: 'app-game',
     standalone: true,
-    imports: [RouterLink],
+    imports: [UiGameCard],
     templateUrl: './game.html'
 })
 export class Game {
@@ -39,16 +40,10 @@ export class Game {
                 return;
             }
 
-            // 2) Se não estiver sincronizado, faz sync + refetch
-            if (!game.syncedAt) {
-                await this.zerei.syncGame([game.externalReference]);
-                const { game: updated } = await this.zerei.getGame(slug);
-                this.game.set(updated);
-            } else {
-                this.game.set(game);
-            }
-
+            this.game.set(game)
             this.loading.set(false);
+
+            console.log(this.game())
         });
     }
 }
