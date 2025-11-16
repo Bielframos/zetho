@@ -42,7 +42,7 @@
   html,
   body {
     min-height: 100dvh;
-    background: linear-gradient(180deg, var(--color-blue-1) 0%, var(--color-blue-2) 100%);
+    background: linear-gradient(180deg, var(--color-blue-1) 0%, var(--color-blue-3) 100%);
     color: var(--color-gray-12);
     font-family: 'Readex Pro Variable', sans-serif;
   }
