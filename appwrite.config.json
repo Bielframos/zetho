@@ -85,6 +85,30 @@
             "entrypoint": "src/main.js",
             "commands": "npm install",
             "path": "functions/IGDB Webhook"
+        },
+        {
+            "$id": "zerei-core",
+            "execute": [
+                "users"
+            ],
+            "name": "Zerei Core",
+            "enabled": true,
+            "logging": true,
+            "runtime": "node-21.0",
+            "scopes": [
+                "rows.read",
+                "documents.read",
+                "rows.write",
+                "documents.write",
+                "execution.write"
+            ],
+            "events": [],
+            "schedule": "",
+            "timeout": 15,
+            "entrypoint": "src/main.js",
+            "commands": "npm install",
+            "specification": "s-0.5vcpu-512mb",
+            "path": "functions/Zerei Core"
         }
     ],
     "databases": [
