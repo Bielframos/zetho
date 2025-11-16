@@ -1,6 +1,8 @@
 import { computed, Injectable, signal, Signal } from "@angular/core";
 import { GameRow } from "../types";
 import { GameService } from "./games.service";
+import { IgdbService } from "../igdb/igdb.service";
+import { AppwriteException } from "appwrite";
 
 export interface GameSearchController {
     results: Signal<GameRow[]>,
@@ -17,7 +19,7 @@ export interface GameSearchController {
 
 @Injectable({ providedIn: 'root' })
 export class ZereiService {
-    constructor(private gameService: GameService) { }
+    constructor(private gameService: GameService, private igdbService: IgdbService) { }
 
     /**
      * Método para montar uma busca reativa de jogos
@@ -83,6 +85,33 @@ export class ZereiService {
             prevPage,
             goToPage,
             reload: () => loadPage(_page())
+        }
+    }
+
+    /**
+     * Método para buscar um único jogo com base no slug
+     * @param slug 
+     * @returns 
+     */
+    async getGame(slug: string) {
+        try {
+            const game = await this.gameService.getGame(slug)
+            return { success: true, game, error: null }
+        } catch (e) {
+            const error = e as AppwriteException
+            return { success: false, game: null, error }
+
+        }
+    }
+
+    async syncGame(ids: number[]) {
+        try {
+            const syncExecution = await this.igdbService.syncGames(ids)
+            if (syncExecution.responseStatusCode === 200) return { success: true }
+            else return { success: false }
+        } catch (e) {
+            console.error(e)
+            return { success: false }
         }
     }
 

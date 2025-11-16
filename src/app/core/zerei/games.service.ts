@@ -40,10 +40,7 @@ export class GameService {
             })
 
             return games
-        } catch (error) {
-            console.error(error)
-            throw error
-        }
+        } catch (error) { throw error }
     }
 
     async getGame(slug: string) {
@@ -60,9 +57,7 @@ export class GameService {
 
             if (games.total < 1) return null
             return games.rows[0]
-        } catch (error) {
-            console.error(error)
-            throw error
-        }
+        } catch (error) { throw error }
+
     }
 }

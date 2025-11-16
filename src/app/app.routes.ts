@@ -5,10 +5,12 @@ import { guestGuard } from './core/auth/auth.guards';
 import { Admin } from './pages/admin/admin';
 import { adminGuard } from './pages/admin/admin.guard';
 import { Search } from './pages/search/search';
+import { Game } from './pages/game/game';
 
 export const routes: Routes = [
   { path: 'registrar', component: Register, canMatch: [guestGuard] },
   { path: 'entrar', component: Login, canMatch: [guestGuard] },
   { path: 'admin', component: Admin, canMatch: [adminGuard] },
-  { path: 'buscar', component: Search }
+  { path: 'buscar', component: Search },
+  { path: 'jogo/:slug', component: Game }
 ];
