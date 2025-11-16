@@ -1,3 +1,4 @@
+// Função para normalizar o jogo
 export function normalizeGame(game) {
   const syncedAt = new Date().toISOString();
   let summary = game.summary;
@@ -35,4 +36,31 @@ export function normalizeGame(game) {
     checksum: game.checksum || null,
     syncedAt,
   };
+}
+
+// Função para fazer o upsert de um jogo
+export async function upsertGame(databases, game) {
+  const databaseId = 'app';
+  const tableId = 'games';
+  const rowId = `igdb_${game.externalReference}`;
+
+  try {
+    await databases.getRow({ databaseId, tableId, rowId });
+
+    return databases.updateRow({
+      databaseId,
+      tableId,
+      rowId,
+      data: game,
+    });
+  } catch (error) {
+    if (error.code === 404) {
+      return databases.createRow({
+        databaseId,
+        tableId,
+        rowId,
+        data: game,
+      });
+    }
+  }
 }

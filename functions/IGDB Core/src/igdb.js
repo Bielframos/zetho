@@ -47,8 +47,12 @@ class IGDBService {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Erro IGDB: ${response.status} ${errorText}`);
+      const errors = JSON.parse(await response.text());
+      throw {
+        message: 'Error connecting to IGDB',
+        code: 500,
+        response: errors,
+      };
     }
 
     return await response.json();

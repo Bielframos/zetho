@@ -1,12 +1,12 @@
 import { Client, Query, TablesDB } from 'node-appwrite';
 import IGDBService from './igdb.js';
-import { normalizeGame } from './utils.js';
+import { normalizeGame, upsertGame } from './utils.js';
 
-export default async ({ req, res, log, error }) => {
+export default async (ctx) => {
   const client = new Client()
     .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
     .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
-    .setKey(req.headers['x-appwrite-key'] ?? '');
+    .setKey(ctx.req.headers['x-appwrite-key'] ?? '');
 
   const databases = new TablesDB(client);
 
@@ -46,26 +46,26 @@ export default async ({ req, res, log, error }) => {
     }
 
     // Lida com requisições de busca
-    if (req.path === '/search' && req.method === 'POST') {
-      const payload = req.bodyJson;
+    if (ctx.req.path === '/search' && ctx.req.method === 'POST') {
+      const payload = ctx.req.bodyJson;
       const query = payload.query;
 
       if (!query) {
-        return res.json({ message: 'Query parameter is required' }, 400);
+        return ctx.res.json({ message: 'Query parameter is required' }, 400);
       }
 
       const games = await IGDB.searchGames(query, 12, 0);
       const normalizedGames = games.map(normalizeGame);
-      return res.json({ games: normalizedGames });
+      return ctx.res.json({ games: normalizedGames });
     }
 
     // Lida com requisições para sincronizar jogos por IDs
-    if (req.path === '/sync' && req.method === 'POST') {
-      const payload = req.bodyJson;
+    if (ctx.req.path === '/sync' && ctx.req.method === 'POST') {
+      const payload = ctx.req.bodyJson;
       const ids = payload.ids;
 
       if (!ids || !Array.isArray(ids)) {
-        return res.json(
+        return ctx.res.json(
           { message: 'Ids parameter is required and must be an array' },
           400
         );
@@ -98,7 +98,7 @@ export default async ({ req, res, log, error }) => {
 
       const upserts = [];
 
-      if (developers?.length) {
+      if (developers?.length > 0) {
         upserts.push(
           databases.upsertRows({
             databaseId: 'app',
@@ -112,7 +112,7 @@ export default async ({ req, res, log, error }) => {
         );
       }
 
-      if (genres.length) {
+      if (genres?.length > 0) {
         upserts.push(
           databases.upsertRows({
             databaseId: 'app',
@@ -131,41 +131,34 @@ export default async ({ req, res, log, error }) => {
 
       const normalizedGames = games.map(normalizeGame);
 
-      await Promise.all(
-        normalizedGames.map((game) =>
-          databases.upsertRow({
-            databaseId: 'app',
-            tableId: 'games',
-            rowId: `igdb_${game.externalReference}`,
-            data: game,
-          })
-        )
+      const upsertedGames = await Promise.all(
+        normalizedGames.map((game) => upsertGame(databases, game))
       );
 
-      return res.json({
+      return ctx.res.json({
         message: 'Games synchronized successfully',
-        games: normalizedGames,
+        games: upsertedGames,
       });
     }
 
     // Lida com requisições para obter jogos por IDs
-    if (req.path === '/get' && req.method === 'POST') {
-      const payload = req.bodyJson;
+    if (ctx.req.path === '/get' && ctx.req.method === 'POST') {
+      const payload = ctx.req.bodyJson;
       const ids = payload.ids;
 
       if (!ids || !Array.isArray(ids)) {
-        return res.json(
+        return ctx.res.json(
           { message: 'Ids parameter is required and must be an array' },
           400
         );
       }
 
       const games = await IGDB.getGamesByIds(ids);
-      return res.json({ games });
+      return ctx.res.json({ games });
     }
 
     // Lida com requisições para popular jogos
-    if (req.path === '/seed/games' && req.method === 'POST') {
+    if (ctx.req.path === '/seed/games' && ctx.req.method === 'POST') {
       let currentIteration = 0;
       let totalFetchedGames = -1;
 
@@ -201,32 +194,32 @@ export default async ({ req, res, log, error }) => {
                   data: game,
                 });
 
-                console.log(
+                ctx.log(
                   `  → [${currentIteration + 1}] (${index + 1 + i * 100}/${
                     normalizedGames.length
                   }) ${game.name} importado`
                 );
               } catch (err) {
-                console.error(`❌ Erro ao criar ${game.name}:`, err.message);
+                ctx.error(`❌ Erro ao criar ${game.name}:`, err.message);
               }
             })
           );
 
-          console.log(`💾 Bloco ${i + 1}/${chunks.length} gravado com sucesso`);
+          ctx.log(`💾 Bloco ${i + 1}/${chunks.length} gravado com sucesso`);
         }
 
-        console.log(
+        ctx.log(
           `✅ Iteração ${currentIteration} concluída — ${totalFetchedGames} jogos importados`
         );
 
         currentIteration++;
       }
 
-      console.log('🎮 Importação concluída!');
+      ctx.log('🎮 Importação concluída!');
     }
 
     // Lida com requisições para popular tipos de jogos
-    if (req.path === '/seed/game-types' && req.method === 'POST') {
+    if (ctx.req.path === '/seed/game-types' && ctx.req.method === 'POST') {
       const data = await IGDB.getGameTypes(50, 0);
 
       await databases.createRows({
@@ -239,14 +232,14 @@ export default async ({ req, res, log, error }) => {
         })),
       });
 
-      return res.json({ message: 'Game types seeded successfully' });
+      return ctx.res.json({ message: 'Game types seeded successfully' });
     }
   } catch (e) {
-    error(e);
-    return res.json({ message: e.message, error: e.type }, e.code);
+    ctx.error(e);
+    return ctx.res.json(e, e.code);
   }
 
-  return res.json({
+  return ctx.res.json({
     message: 'IGDB Core Function is running',
   });
 };
