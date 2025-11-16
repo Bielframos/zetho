@@ -5,7 +5,7 @@ import { UserStore } from '../../core/auth/user.store';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-login-page',
   imports: [UiInput, FormsModule],
   templateUrl: './login.html',
 })

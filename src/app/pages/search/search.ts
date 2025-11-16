@@ -4,7 +4,7 @@ import { ZereiService } from "../../core/zerei/zerei.service";
 import { UiGameCard } from "../../shared/ui/atoms/game-card/game-card";
 
 @Component({
-    selector: 'app-search',
+    selector: 'app-search-page',
     standalone: true,
     imports: [UiGameCard],
     templateUrl: './search.html'

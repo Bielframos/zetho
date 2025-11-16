@@ -8,7 +8,7 @@ import { UserStore } from '../../core/auth/user.store';
 import { UiInput } from '../../shared/ui/atoms/input/input';
 
 @Component({
-  selector: 'app-register',
+  selector: 'app-register-page',
   standalone: true,
   imports: [UiInput, ReactiveFormsModule],
   templateUrl: './register.html',
