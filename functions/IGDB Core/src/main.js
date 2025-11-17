@@ -60,85 +60,143 @@ export default async (ctx) => {
     }
 
     // Lida com requisições para sincronizar jogos por IDs
-    if (ctx.req.path === '/sync' && ctx.req.method === 'POST') {
-      const payload = ctx.req.bodyJson;
-      const ids = payload.ids;
+    if (ctx.req.path === '/register' && ctx.req.method === 'POST') {
+      try {
+        const payload = ctx.req.bodyJson;
+        const externalId = payload?.externalId;
 
-      if (!ids || !Array.isArray(ids)) {
+        if (!externalId) {
+          return ctx.res.json({ message: 'externalId is required' }, 400);
+        }
+
+        // Verifica se o game já existe
+        const existing = await databases.listRows({
+          databaseId: 'app',
+          tableId: 'games',
+          queries: [
+            Query.select(['$id']),
+            Query.equal('externalReference', externalId),
+            Query.limit(1),
+          ],
+        });
+
+        if (existing.total > 0) {
+          const gameRow = existing.rows[0];
+          return ctx.res.json(
+            {
+              message: 'Game already registered',
+              gameId: gameRow.$id,
+            },
+            200
+          );
+        }
+
+        // Busca do IGDB
+        const games = await IGDB.getGamesByIds([externalId]);
+
+        if (!games || games.length === 0) {
+          return ctx.res.json({ message: 'Game not found on IGDB' }, 404);
+        }
+
+        const igdbGame = games[0];
+
+        // --- Developers ---
+        const developerCompanyIds = [
+          ...new Set(
+            (igdbGame.involved_companies ?? [])
+              .filter((ic) => ic.developer && ic.company)
+              .map((ic) => ic.company)
+          ),
+        ];
+
+        let developers = [];
+        if (developerCompanyIds.length > 0) {
+          developers = await IGDB.getCompaniesByIds(developerCompanyIds);
+        }
+
+        // --- Genres ---
+        const genres = [
+          ...new Map((igdbGame.genres ?? []).map((g) => [g.id, g])).values(),
+        ];
+
+        const normalizedGame = normalizeGame(igdbGame);
+        const gameRowId = `igdb_${normalizedGame.externalReference}`;
+        const zstatsRowId = `zstats_${gameRowId}`;
+
+        const operations = [];
+
+        // Upsert developers
+        for (const company of developers) {
+          operations.push(
+            databases.upsertRow({
+              databaseId: 'app',
+              tableId: 'companies',
+              rowId: `igdb_${company.id}`,
+              data: {
+                slug: company.slug,
+                name: company.name,
+              },
+            })
+          );
+        }
+
+        // Upsert genres
+        for (const genre of genres) {
+          operations.push(
+            databases.upsertRow({
+              databaseId: 'app',
+              tableId: 'genres',
+              rowId: `igdb_${genre.id}`,
+              data: {
+                name: genre.name,
+                slug: genre.slug,
+                checksum: genre.checksum ?? null,
+              },
+            })
+          );
+        }
+
+        // Create game
+        operations.push(
+          databases.createRow({
+            databaseId: 'app',
+            tableId: 'games',
+            rowId: gameRowId,
+            data: normalizedGame,
+          })
+        );
+
+        // Create zstats
+        operations.push(
+          databases.createRow({
+            databaseId: 'app',
+            tableId: 'z_entry_count',
+            rowId: zstatsRowId,
+            data: { game: gameRowId },
+          })
+        );
+
+        // Executa tudo paralelamente
+        await Promise.all(operations);
+
         return ctx.res.json(
-          { message: 'Ids parameter is required and must be an array' },
-          400
+          {
+            message: 'Game registered successfully',
+            gameId: gameRowId,
+          },
+          201
+        );
+      } catch (e) {
+        ctx.error('register-game failed', e);
+
+        return ctx.res.json(
+          {
+            message: e.message ?? 'Internal error',
+            error: e,
+          },
+          e.code ?? 500
         );
       }
-
-      const games = await IGDB.getGamesByIds(ids);
-
-      const developerCompanyIds = [
-        ...new Set(
-          games
-            .flatMap((game) => game.involved_companies ?? [])
-            .filter((ic) => ic.developer && ic.company)
-            .map((ic) => ic.company)
-        ),
-      ];
-
-      const genres = [
-        ...new Map(
-          games
-            .flatMap((game) => (game.genres ? game.genres : []))
-            .map((g) => [g.id, g])
-        ).values(),
-      ];
-
-      let developers;
-
-      if (developerCompanyIds.length > 0) {
-        developers = await IGDB.getCompaniesByIds(developerCompanyIds);
-      }
-
-      const upserts = [];
-
-      if (developers?.length > 0) {
-        upserts.push(
-          databases.upsertRows({
-            databaseId: 'app',
-            tableId: 'companies',
-            rows: developers.map((company) => ({
-              $id: `igdb_${company.id}`,
-              slug: company.slug,
-              name: company.name,
-            })),
-          })
-        );
-      }
-
-      if (genres?.length > 0) {
-        upserts.push(
-          databases.upsertRows({
-            databaseId: 'app',
-            tableId: 'genres',
-            rows: genres.map((genre) => ({
-              $id: `igdb_${genre.id}`,
-              name: genre.name,
-              slug: genre.slug,
-              checksum: genre.checksum || null,
-            })),
-          })
-        );
-      }
-
-      await Promise.all(upserts);
-
-      const normalizedGames = games.map(normalizeGame);
-
-      const upsertedGames = await Promise.all(
-        normalizedGames.map((game) => upsertGame(databases, game))
-      );
-
-      return ctx.res.json({
-        message: 'Games synchronized successfully',
-        games: upsertedGames,
-      });
     }
 
     // Lida com requisições para obter jogos por IDs
@@ -216,23 +274,6 @@ export default async (ctx) => {
       }
 
       ctx.log('🎮 Importação concluída!');
-    }
-
-    // Lida com requisições para popular tipos de jogos
-    if (ctx.req.path === '/seed/game-types' && ctx.req.method === 'POST') {
-      const data = await IGDB.getGameTypes(50, 0);
-
-      await databases.createRows({
-        databaseId: 'app',
-        tableId: 'game_types',
-        rows: data.map((item) => ({
-          $id: `igdb_${item.id}`,
-          type: item.type,
-          checksum: item.checksum,
-        })),
-      });
-
-      return ctx.res.json({ message: 'Game types seeded successfully' });
     }
   } catch (e) {
     ctx.error(e);

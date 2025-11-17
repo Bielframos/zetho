@@ -28,8 +28,8 @@ export default async ({ req, res, log, error }) => {
 
     await functions.createExecution({
       functionId: 'igdb-core',
-      xpath: '/sync',
-      body: JSON.stringify({ ids: [game.id] }),
+      xpath: '/register',
+      body: JSON.stringify({ externalId: game.id }),
       async: true,
       method: ExecutionMethod.POST,
     });
