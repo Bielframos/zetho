@@ -1,3 +1,148 @@
-<main class="w-full max-w-5xl mx-auto">
+@if (game(); as game) {
+<main class="w-full max-w-5xl mx-auto px-10">
+    <div class="flex gap-10">
+        <div class="flex flex-col gap-4">
+            <ui-game-card [game]="game" [width]="240" readonlyMode></ui-game-card>
 
+            <div class="grid grid-cols-2 border bg-blue-2 border-gray-6 rounded-lg overflow-hidden">
+                <button
+                    class="flex flex-col gap-2 items-center justify-center px-4 py-4 border-r border-b border-gray-6 w-full text-gray-11 cursor-pointer hover:bg-blue-9 hover:text-white transition-colors">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M18.3125 11.0996H1.3418L14.0645 23.8223C13.3937 23.9386 12.704 24 12 24C5.37258 24 0 18.6274 0 12C0 6.80406 3.30252 2.37992 7.92285 0.710938L18.3125 11.0996ZM12 0C18.6274 0 24 5.37258 24 12C24 17.1965 20.6963 21.6195 16.0752 23.2881L5.6875 12.9004H22.6582L9.93457 0.176758C10.6056 0.0603575 11.2957 0 12 0Z"
+                            fill="currentcolor" />
+                    </svg>
+                    Zerei
+                </button>
+                <button
+                    class="flex flex-col gap-2 items-center justify-center px-4 py-4 border-b border-gray-6 w-full text-gray-11 cursor-pointer hover:blue-9 hover:text-green-300 transition-colors">
+                    <i class="ph-fill ph-books"></i>
+                    Backlog
+                </button>
+                <button
+                    class="flex flex-col gap-2 items-center justify-center px-4 py-4 border-r border-gray-6 w-full text-gray-11 cursor-pointer hover:blue-9 hover:text-purple-300 transition-colors">
+                    <i class="ph-fill ph-game-controller"></i>
+                    Jogando
+                </button>
+                <button
+                    class="flex flex-col gap-2 items-center justify-center px-4 py-4 w-full text-gray-11 cursor-pointer hover:blue-9 hover:text-red-300 transition-colors">
+                    <i class="ph-fill ph-x-circle"></i>
+                    Dropei
+                </button>
+            </div>
+
+            <button
+                class="flex gap-2 items-center justify-center px-4 py-2 w-full border border-gray-6 rounded-lg bg-blue-2 text-gray-11 cursor-pointer hover:blue-9 hover:text-blue-12 transition-colors">
+                <i class="ph-fill ph-list-star"></i>
+                Quero comprar
+            </button>
+        </div>
+
+        <section class="flex-1 mb-20">
+            @if (typeof game.zStats !== 'string') {
+            <div class="mb-24 flex justify-end">
+                <button
+                    class="cursor-pointer border border-transparent px-2 flex flex-col gap-0.5 text-gray-11 hover:text-red-300">
+                    <i class="ph ph-heart"></i>
+                    <span class="text-xs">{{game.zStats.likes || 0 | shortNumber}}</span>
+                </button>
+            </div>
+            }
+
+            <header>
+                <h1 class="text-4xl">{{ game.name }}</h1>
+                <div class="flex gap-4 mt-6">
+                    <!-- Nome dos desenvolvedores -->
+                    <div class="border-r pr-4 border-blue-6">
+                        <span class="text-sm font-light text-gray-11">Desenvolvido por</span> <br>
+                        @for (company of game.involvedCompanies; track $index) {
+                        <span>{{ company.name }}
+                            @if ($index < game.involvedCompanies.length - 1) {<span>, </span>}
+                        </span>
+                        }
+                    </div>
+
+                    <!-- Data de lançamento -->
+                    <div>
+                        <span class="text-sm font-light text-gray-11">Lançado em</span> <br>
+                        <span>{{ game.releaseDate }}</span>
+                    </div>
+                </div>
+
+                <p class="font-light mt-6">{{ game.summary }}</p>
+
+                <!-- Genêros do game -->
+                <div class="mt-6">
+                    <span class="text-sm font-light text-gray-11">Gêneros</span> <br>
+                    @for (genre of game.genres; track $index) {
+                    <span>{{ genre.name }}
+                        @if ($index < game.genres.length - 1) {<span>, </span>}
+                    </span>
+                    }
+                </div>
+
+                <hr class="border-blue-6 w-full my-10">
+            </header>
+
+            <!-- ZStats do jogo -->
+            @if (typeof game.zStats !== 'string') {
+            <div class="grid grid-cols-3 overflow-hidden border rounded-lg border-gray-6 bg-blue-2">
+                <div class="col-span-2 border-b border-r border-gray-6 px-4 py-4 text-gray-11 flex justify-between">
+                    <div class="flex gap-2 items-center">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M18.3125 11.0996H1.3418L14.0645 23.8223C13.3937 23.9386 12.704 24 12 24C5.37258 24 0 18.6274 0 12C0 6.80406 3.30252 2.37992 7.92285 0.710938L18.3125 11.0996ZM12 0C18.6274 0 24 5.37258 24 12C24 17.1965 20.6963 21.6195 16.0752 23.2881L5.6875 12.9004H22.6582L9.93457 0.176758C10.6056 0.0603575 11.2957 0 12 0Z"
+                                fill="var(--color-gray-11)" />
+                        </svg>
+                        <span>Zerado</span>
+                    </div>
+                    <span>{{game.zStats.completedCount | shortNumber}}</span>
+                </div>
+
+                <div class="border-b border-gray-6 px-4 py-4 text-gray-11 flex justify-between">
+                    <div class="flex gap-2 items-center">
+                        <i class="ph-fill ph-books text-gray-11"></i>
+                        <span>Backlog</span>
+                    </div>
+                    <span>{{game.zStats.backlogCount | shortNumber}}</span>
+                </div>
+
+                <div class="border-r border-gray-6 px-4 py-4 text-gray-11 flex justify-between">
+                    <div class="flex gap-2 items-center">
+                        <i class="ph-fill ph-game-controller text-gray-11"></i>
+                        <span>Jogando</span>
+                    </div>
+                    <span>{{game.zStats.playingCount | shortNumber}}</span>
+                </div>
+
+                <div class="border-r border-gray-6 px-4 py-4 text-gray-11 flex justify-between">
+                    <div class="flex gap-2 items-center">
+                        <i class="ph-fill ph-x-circle text-gray-11"></i>
+                        <span>Droparam</span>
+                    </div>
+                    <span>{{game.zStats.droppedCount | shortNumber}}</span>
+                </div>
+
+                <div class=" px-4 py-4 text-gray-11 flex justify-between">
+                    <div class="flex gap-2 items-center">
+                        <i class="ph-fill ph-list-star text-gray-11"></i>
+                        <span>Lista de Desejos</span>
+                    </div>
+                    <span>{{game.zStats.wishlistCount | shortNumber}}</span>
+                </div>
+            </div>
+            }
+
+            @if (similarGames(); as similarGames) {
+            <hr class="border-blue-6 w-full my-10">
+            <h3 class="text-2xl mb-6">Talvez você goste</h3>
+            <ul class="grid grid-cols-4 gap-2">
+                @for (game of similarGames; track $index) {
+                <li><ui-game-card [game]="game"></ui-game-card></li>
+                }
+            </ul>
+            }
+        </section>
+    </div>
 </main>
+}
