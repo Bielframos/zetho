@@ -52,7 +52,8 @@
                 "rows.read",
                 "documents.read",
                 "rows.write",
-                "documents.write"
+                "documents.write",
+                "execution.write"
             ],
             "events": [],
             "schedule": "",

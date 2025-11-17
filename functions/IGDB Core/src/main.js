@@ -1,6 +1,6 @@
 import { Client, Query, TablesDB } from 'node-appwrite';
 import IGDBService from './igdb.js';
-import { normalizeGame, upsertGame } from './utils.js';
+import { normalizeGame, registerGame } from './utils.js';
 
 export default async (ctx) => {
   const client = new Client()
@@ -42,242 +42,135 @@ export default async (ctx) => {
         },
       });
 
-      log('New IGDB token created');
-    }
-
-    // Lida com requisições de busca
-    if (ctx.req.path === '/search' && ctx.req.method === 'POST') {
-      const payload = ctx.req.bodyJson;
-      const query = payload.query;
-
-      if (!query) {
-        return ctx.res.json({ message: 'Query parameter is required' }, 400);
-      }
-
-      const games = await IGDB.searchGames(query, 12, 0);
-      const normalizedGames = games.map(normalizeGame);
-      return ctx.res.json({ games: normalizedGames });
+      ctx.log('New IGDB token created');
     }
 
     // Lida com requisições para sincronizar jogos por IDs
     if (ctx.req.path === '/register' && ctx.req.method === 'POST') {
-      try {
-        const payload = ctx.req.bodyJson;
-        const externalId = payload?.externalId;
+      const payload = ctx.req.bodyJson;
+      const rawId = payload?.externalId ?? payload?.id;
+      const externalId = String(rawId);
 
-        if (!externalId) {
-          return ctx.res.json({ message: 'externalId is required' }, 400);
-        }
+      if (!/^\d+$/.test(externalId)) {
+        throw { message: 'externalId must be numeric', code: 400 };
+      }
 
-        // Verifica se o game já existe
-        const existing = await databases.listRows({
+      const response = await registerGame({ externalId }, IGDB, databases);
+      return ctx.res.json(response.data, response.status);
+    }
+
+    // Lida com sincronização de 1 jogo (update)
+    if (ctx.req.path === '/sync' && ctx.req.method === 'POST') {
+      const payload = ctx.req.bodyJson;
+      const rawId = payload?.externalId ?? payload?.id;
+      const externalId = String(rawId);
+
+      if (!/^\d+$/.test(externalId)) {
+        throw { message: 'externalId must be numeric', code: 400 };
+      }
+
+      ctx.log(`🔄 Sync requested for IGDB ID: ${externalId}`);
+
+      // 1. Verifica se o jogo existe no banco
+      const existing = await databases
+        .getRow({
           databaseId: 'app',
           tableId: 'games',
-          queries: [
-            Query.select(['$id']),
-            Query.equal('externalReference', externalId),
-            Query.limit(1),
-          ],
+          rowId: `igdb_${externalId}`,
+        })
+        .catch((e) => {
+          if (e.code === 404) return null;
+          throw { message: e.message, code: e.code };
         });
 
-        if (existing.total > 0) {
-          const gameRow = existing.rows[0];
-          return ctx.res.json(
-            {
-              message: 'Game already registered',
-              gameId: gameRow.$id,
-            },
-            200
-          );
-        }
-
-        // Busca do IGDB
-        const games = await IGDB.getGamesByIds([externalId]);
-
-        if (!games || games.length === 0) {
-          return ctx.res.json({ message: 'Game not found on IGDB' }, 404);
-        }
-
-        const igdbGame = games[0];
-
-        // --- Developers ---
-        const developerCompanyIds = [
-          ...new Set(
-            (igdbGame.involved_companies ?? [])
-              .filter((ic) => ic.developer && ic.company)
-              .map((ic) => ic.company)
-          ),
-        ];
-
-        let developers = [];
-        if (developerCompanyIds.length > 0) {
-          developers = await IGDB.getCompaniesByIds(developerCompanyIds);
-        }
-
-        // --- Genres ---
-        const genres = [
-          ...new Map((igdbGame.genres ?? []).map((g) => [g.id, g])).values(),
-        ];
-
-        const normalizedGame = normalizeGame(igdbGame);
-        const gameRowId = `igdb_${normalizedGame.externalReference}`;
-        const zstatsRowId = `zstats_${gameRowId}`;
-
-        const operations = [];
-
-        // Upsert developers
-        for (const company of developers) {
-          operations.push(
-            databases.upsertRow({
-              databaseId: 'app',
-              tableId: 'companies',
-              rowId: `igdb_${company.id}`,
-              data: {
-                slug: company.slug,
-                name: company.name,
-              },
-            })
-          );
-        }
-
-        // Upsert genres
-        for (const genre of genres) {
-          operations.push(
-            databases.upsertRow({
-              databaseId: 'app',
-              tableId: 'genres',
-              rowId: `igdb_${genre.id}`,
-              data: {
-                name: genre.name,
-                slug: genre.slug,
-                checksum: genre.checksum ?? null,
-              },
-            })
-          );
-        }
-
-        // Create game
-        operations.push(
-          databases.createRow({
-            databaseId: 'app',
-            tableId: 'games',
-            rowId: gameRowId,
-            data: normalizedGame,
-          })
+      if (!existing) {
+        ctx.log(
+          `🆕 Game ${externalId} not found in database → delegating to /register`
         );
 
-        // Create zstats
-        operations.push(
-          databases.createRow({
-            databaseId: 'app',
-            tableId: 'z_entry_count',
-            rowId: zstatsRowId,
-            data: { game: gameRowId },
-          })
+        const response = await registerGame(
+          { externalId, calledBySync: true },
+          IGDB,
+          databases
         );
-
-        // Executa tudo paralelamente
-        await Promise.all(operations);
-
-        return ctx.res.json(
-          {
-            message: 'Game registered successfully',
-            gameId: gameRowId,
-          },
-          201
-        );
-      } catch (e) {
-        ctx.error('register-game failed', e);
-
-        return ctx.res.json(
-          {
-            message: e.message ?? 'Internal error',
-            error: e,
-          },
-          e.code ?? 500
-        );
-      }
-    }
-
-    // Lida com requisições para obter jogos por IDs
-    if (ctx.req.path === '/get' && ctx.req.method === 'POST') {
-      const payload = ctx.req.bodyJson;
-      const ids = payload.ids;
-
-      if (!ids || !Array.isArray(ids)) {
-        return ctx.res.json(
-          { message: 'Ids parameter is required and must be an array' },
-          400
-        );
+        return ctx.res.json(response.data, response.status);
       }
 
-      const games = await IGDB.getGamesByIds(ids);
-      return ctx.res.json({ games });
-    }
+      const appwriteGameId = existing.$id;
 
-    // Lida com requisições para popular jogos
-    if (ctx.req.path === '/seed/games' && ctx.req.method === 'POST') {
-      let currentIteration = 0;
-      let totalFetchedGames = -1;
+      const igdbGames = await IGDB.getGamesByIds([externalId]);
+      const igdbGame = igdbGames?.[0] ?? null;
 
-      const chunkArray = (arr, size) => {
-        const chunks = [];
-        for (let i = 0; i < arr.length; i += size) {
-          chunks.push(arr.slice(i, i + size));
-        }
-        return chunks;
-      };
-
-      while (totalFetchedGames !== 0) {
-        await new Promise((resolve) => setTimeout(resolve, 250));
-
-        const data = await IGDB.getGames(500, currentIteration * 500);
-        totalFetchedGames = data.length;
-
-        if (totalFetchedGames === 0) break;
-
-        const normalizedGames = data.map(normalizeGame);
-        const chunks = chunkArray(normalizedGames, 100);
-
-        for (let i = 0; i < chunks.length; i++) {
-          const chunk = chunks[i];
-
-          await Promise.all(
-            chunk.map(async (game, index) => {
-              try {
-                await databases.createRow({
-                  databaseId: 'app',
-                  tableId: 'games',
-                  rowId: `igdb_${game.externalReference}`,
-                  data: game,
-                });
-
-                ctx.log(
-                  `  → [${currentIteration + 1}] (${index + 1 + i * 100}/${
-                    normalizedGames.length
-                  }) ${game.name} importado`
-                );
-              } catch (err) {
-                ctx.error(`❌ Erro ao criar ${game.name}:`, err.message);
-              }
-            })
-          );
-
-          ctx.log(`💾 Bloco ${i + 1}/${chunks.length} gravado com sucesso`);
-        }
+      // Caso o game tenha sido removido do IGDB
+      if (!igdbGame) {
+        await databases.updateRow({
+          databaseId: 'app',
+          tableId: 'games',
+          rowId: appwriteGameId,
+          data: {
+            syncedAt: new Date().toISOString(),
+            syncStatus: 'missingOnIGDB',
+          },
+        });
 
         ctx.log(
-          `✅ Iteração ${currentIteration} concluída — ${totalFetchedGames} jogos importados`
+          `⚠️ IGDB ID ${externalId} não encontrado → marcado como missing`
         );
-
-        currentIteration++;
+        return ctx.res.json({
+          message: 'Game marked as missingOnIGDB',
+          externalId,
+        });
       }
 
-      ctx.log('🎮 Importação concluída!');
+      // Buscar developers
+      const developers = (await IGDB.getGameDevelopers([igdbGame.id])) ?? [];
+      const developersIds = developers.map((dev) => `igdb_${dev.company.id}`);
+
+      // Upsert developers
+      if (developers.length > 0) {
+        await databases.upsertRows({
+          databaseId: 'app',
+          tableId: 'companies',
+          rows: developers.map((dev) => ({
+            $id: `igdb_${dev.company.id}`,
+            name: dev.company.name,
+            slug: dev.company.slug,
+            checksum: dev.company.checksum,
+          })),
+        });
+      }
+
+      // Normalizar jogo
+      const normalized = normalizeGame(igdbGame, developersIds);
+
+      // Atualizar jogo
+      await databases.updateRow({
+        databaseId: 'app',
+        tableId: 'games',
+        rowId: appwriteGameId,
+        data: normalized,
+      });
+
+      return ctx.res.json(
+        {
+          message: 'Game synced successfully',
+          gameId: appwriteGameId,
+        },
+        200
+      );
     }
   } catch (e) {
-    ctx.error(e);
-    return ctx.res.json(e, e.code);
+    ctx.error('IGDB core function failed', e);
+
+    const status = e.code && Number.isInteger(e.code) ? e.code : 500;
+
+    return ctx.res.json(
+      {
+        message: e.message ?? 'Internal error',
+        error: e,
+      },
+      status
+    );
   }
 
   return ctx.res.json({

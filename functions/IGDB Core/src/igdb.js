@@ -47,11 +47,20 @@ class IGDBService {
     });
 
     if (!response.ok) {
-      const errors = JSON.parse(await response.text());
+      const text = await response.text();
+      let parsed;
+
+      try {
+        parsed = JSON.parse(text);
+      } catch {
+        parsed = text;
+      }
+
       throw {
         message: 'Error connecting to IGDB',
         code: 500,
-        response: errors,
+        status: response.status,
+        response: parsed,
       };
     }
 
@@ -62,7 +71,7 @@ class IGDBService {
    * Campos padrão usados em quase todas as consultas de jogos
    */
   #gameFields =
-    'name,slug,game_status,game_type,summary,cover.image_id,first_release_date,similar_games,checksum,genres.*,involved_companies.*';
+    'name,slug,game_status,game_type,summary,cover.image_id,first_release_date,similar_games,checksum,genres,involved_companies';
 
   /**
    * Busca jogos com filtros padrão (exclui versões e tipos indesejados)
@@ -99,13 +108,14 @@ class IGDBService {
   /**
    * Busca jogos por IDs específicos
    */
-  async getGamesByIds(ids = []) {
+  async getGamesByIds(ids = [], limit = 12) {
     if (!Array.isArray(ids) || ids.length === 0) return [];
     const idsString = ids.join(',');
 
     const query = `
       fields ${this.#gameFields};
       where id = (${idsString});
+      limit ${limit};
     `.trim();
 
     return await this.#fetch('games', query);
@@ -114,16 +124,17 @@ class IGDBService {
   /**
    * Busca empresas por IDs específicos
    */
-  async getCompaniesByIds(ids) {
+  async getGameDevelopers(ids = []) {
     if (!Array.isArray(ids) || ids.length === 0) return [];
+
     const idsString = ids.join(',');
 
     const query = `
-      fields name,slug,checksum;
-      where id = (${idsString});
-    `.trim();
+    fields game, company.name, company.slug, company.checksum;
+    where game = (${idsString}) & developer = true;
+  `.trim();
 
-    return await this.#fetch('companies', query);
+    return await this.#fetch('involved_companies', query);
   }
 
   /**

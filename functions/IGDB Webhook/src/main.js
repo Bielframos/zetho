@@ -1,4 +1,4 @@
-import { Client, ExecutionMethod, Functions } from 'node-appwrite';
+import { Client, ExecutionMethod, Functions, TablesDB } from 'node-appwrite';
 import { shouldIgnore } from './utils.js';
 
 export default async ({ req, res, log, error }) => {
@@ -7,11 +7,8 @@ export default async ({ req, res, log, error }) => {
     .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
     .setKey(req.headers['x-appwrite-key'] ?? '');
 
+  const databases = new TablesDB(client);
   const functions = new Functions(client);
-
-  if (req.path === '/ping') {
-    return res.text('Pong');
-  }
 
   const secret = req.headers['x-secret'];
   if (secret !== process.env.WEBHOOK_SECRET) {
@@ -19,24 +16,96 @@ export default async ({ req, res, log, error }) => {
   }
 
   try {
-    const game = req.bodyJson ?? {};
+    const payload = req.bodyJson ?? {};
 
-    if (shouldIgnore(game)) {
-      log(`Ignoring game ID ${game.id} - ${game.name}`);
-      return res.json({ message: 'Game ignored' });
+    //
+    // ──────────────────────────────────────────
+    //   GAMES → CREATE
+    // ──────────────────────────────────────────
+    //
+    if (req.path === '/games/create') {
+      log(`🎮 Game created → ID: ${payload.id}`);
+
+      if (shouldIgnore(payload)) {
+        return res.json({ message: 'Game ignored' });
+      }
+
+      await functions.createExecution({
+        functionId: 'igdb-core',
+        xpath: '/register',
+        method: ExecutionMethod.POST,
+        async: true,
+        body: JSON.stringify({ externalId: payload.id }),
+      });
+
+      return res.json({ message: 'Game create dispatched' });
     }
 
-    await functions.createExecution({
-      functionId: 'igdb-core',
-      xpath: '/register',
-      body: JSON.stringify({ externalId: game.id }),
-      async: true,
-      method: ExecutionMethod.POST,
-    });
+    //
+    // ──────────────────────────────────────────
+    //   GAMES → UPDATE
+    // ──────────────────────────────────────────
+    //
+    if (req.path === '/games/update') {
+      log(`♻️ Game updated → ID: ${payload.id}`);
 
-    return res.json({ message: `Sync of ${game.name} was requested` });
+      await functions.createExecution({
+        functionId: 'igdb-core',
+        xpath: '/sync',
+        method: ExecutionMethod.POST,
+        async: true,
+        body: JSON.stringify({ ids: [payload.id] }),
+      });
+
+      return res.json({ message: 'Game update dispatched' });
+    }
+
+    //
+    // ──────────────────────────────────────────
+    //   GENRES → CREATE / UPDATE
+    // ──────────────────────────────────────────
+    //
+    if (req.path === '/genres/upsert') {
+      log(`🏷 Genre upsert → ID: ${payload.id}`);
+
+      await databases.upsertRow({
+        databaseId: 'app',
+        tableId: 'genres',
+        rowId: `igdb_${payload.id}`,
+        data: {
+          name: payload.name,
+          slug: payload.slug,
+          checksum: payload.checksum,
+        },
+      });
+
+      return res.json({ message: 'Genre upsert dispatched' });
+    }
+
+    //
+    // ──────────────────────────────────────────
+    //   GENRES → DELETE
+    // ──────────────────────────────────────────
+    //
+    if (req.path === '/genres/delete') {
+      if (!payload.id) {
+        return res.status(400).json({ message: 'Missing ID for deletion' });
+      }
+
+      log(`🏷 Genre deleted → ID: ${payload.id}`);
+
+      await databases.deleteRow({
+        databaseId: 'app',
+        tableId: 'genres',
+        rowId: `igdb_${payload.id}`,
+      });
+
+      return res.json({ message: 'Genre deletion dispatched' });
+    }
+
+    return res.json({ message: 'No handler for this path' });
   } catch (e) {
     error(e);
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: 'Internal Server Error', error: e });
   }
 };
