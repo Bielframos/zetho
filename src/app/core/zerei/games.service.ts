@@ -44,20 +44,35 @@ export class GameService {
     }
 
     async getGame(slug: string) {
-        try {
-            const games = await appwrite.datababases.listRows<GameRow>({
-                databaseId: 'app',
-                tableId: GAMES_TABLE_ID,
-                queries: [
-                    Query.equal('slug', slug),
-                    Query.limit(1),
+        const games = await appwrite.datababases.listRows<GameRow>({
+            databaseId: 'app',
+            tableId: GAMES_TABLE_ID,
+            queries: [
+                Query.equal('slug', slug),
+                Query.limit(1),
+                Query.select(['*', 'genres.name', 'genres.slug', 'involvedCompanies.name', 'involvedCompanies.slug', 'zStats.*'])
+            ]
+        })
 
-                ]
-            })
+        if (games.total < 1) return null
+        return games.rows[0]
+    }
 
-            if (games.total < 1) return null
-            return games.rows[0]
-        } catch (error) { throw error }
+    async getGames(ids: string[], opts?: { summarized?: boolean }) {
+        if (ids.length === 0) return null
 
+        const queries = opts?.summarized ? ['$id', 'name', 'slug', 'releaseYear'] : ['*', 'genres.name', 'genres.slug', 'involvedCompanies.name', 'involvedCompanies.slug']
+
+        const games = await appwrite.datababases.listRows<GameRow>({
+            databaseId: 'app',
+            tableId: GAMES_TABLE_ID,
+            queries: [
+                Query.equal('$id', ids),
+                Query.select(queries),
+                Query.limit(8)
+            ]
+        })
+
+        return games.rows
     }
 }

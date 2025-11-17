@@ -1,7 +1,6 @@
 import { computed, Injectable, signal, Signal } from "@angular/core";
-import { AppwriteException, ExecutionMethod } from "appwrite";
 import { GameRow } from "../types";
-import { appwrite } from "../appwrite/appwrite.client";
+import { appwrite, Query, type AppwriteException } from "../appwrite/appwrite.client";
 import { GameService } from "./games.service";
 
 export interface GameSearchController {
@@ -95,23 +94,24 @@ export class ZereiService {
      */
     async getGame(slug: string) {
         try {
-            let execution = await appwrite.functions.createExecution({ functionId: 'zerei-core', method: ExecutionMethod.GET, xpath: `/games/${slug}` })
-
-            if (execution.responseStatusCode === 404) throw { message: 'Jogo não encontrado', code: 404, type: 'game_not_found' }
-            else if (execution.responseStatusCode !== 200) throw { message: 'Erro interno', code: 500, type: 'internal_error' }
-
-            let game = JSON.parse(execution.responseBody) as GameRow
-
-            if (game) {
-                const releaseDate = new Date(game.releaseDate).toLocaleDateString('pt-br')
-                game.releaseDate = releaseDate
-            }
-
+            let game = await this.gameService.getGame(slug)
+            if (!game) throw { message: 'Game not found', code: 404 }
+            game.releaseDate = new Date(game.releaseDate).toLocaleDateString('pt-br')
             return { success: true, game, error: null }
         } catch (e) {
             const error = e as AppwriteException
             return { success: false, game: null, error }
 
+        }
+    }
+
+    async getGames(ids: string[], opts?: { summarized?: boolean }) {
+        try {
+            const games = await this.gameService.getGames(ids, opts)
+            return { success: true, games, error: null }
+        } catch (e) {
+            const error = e as AppwriteException
+            return { success: false, games: null, error }
         }
     }
 
