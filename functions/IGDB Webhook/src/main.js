@@ -54,7 +54,7 @@ export default async ({ req, res, log, error }) => {
         xpath: '/sync',
         method: ExecutionMethod.POST,
         async: true,
-        body: JSON.stringify({ ids: [payload.id] }),
+        body: JSON.stringify({ externalId: payload.id }),
       });
 
       return res.json({ message: 'Game update dispatched' });
