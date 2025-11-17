@@ -13,4 +13,5 @@ export const appwrite = {
   avatars: new Avatars(client)
 };
 
-export { ID, Query } from 'appwrite';
+export { ID, Query, ExecutionMethod } from 'appwrite';
+export type { AppwriteException } from 'appwrite'
