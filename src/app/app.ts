@@ -17,6 +17,12 @@ export class App {
     this.route.navigate(['/buscar'], { queryParams: { q: query } })
   }
 
+  isAuthRoute() {
+    const path = this.route.url
+    const authRoutes = ['/entrar', '/registrar']
+    return authRoutes.some(route => path.startsWith(route))
+  }
+
   ngOnInit() {
     this.userStore.init();
   }

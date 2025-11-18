@@ -3,6 +3,8 @@
 @import '@phosphor-icons/web/regular';
 @import '@fontsource-variable/readex-pro';
 
+@plugin "@tailwindcss/container-queries";
+
 @theme {
   /* Cor primária */
   --color-blue-1: #0c111c;

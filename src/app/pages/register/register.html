@@ -1,4 +1,4 @@
-<main class="mx-auto flex gap-10 w-fit mt-24">
+<main class="mx-auto flex flex-wrap gap-10 w-fit lg:mt-24 px-6">
   <header class="w-3xs">
     <h1 class="text-3xl">Crie sua conta</h1>
     <p class="text-gray-11 font-light">Já possui uma conta? <a routerLink="/entrar"
@@ -6,7 +6,7 @@
     </p>
   </header>
 
-  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 w-md">
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 w-full lg:w-md">
     <ui-input label="Nome" type="text" name="name" placeholder="Gabriel França" formControlName="name" required />
     <div class="relative">
       <ui-input label="Gamertag" type="text" placeholder="Bielframos" name="gamertag" formControlName="gamertag"

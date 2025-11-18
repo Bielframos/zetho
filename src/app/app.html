@@ -1,20 +1,34 @@
 <div>
-  <nav class="flex w-full max-w-5xl mx-auto gap-4 justify-between px-10 items-center py-6">
-    <a routerLink="/"><img src="zerei-logo.svg" alt="Zerei Logo" class="h-5"></a>
+  <nav class="w-full max-w-5xl mx-auto px-6 md:px-10 py-6">
+    <div class="flex gap-4 justify-between items-center">
+      <a routerLink="/"><img src="zerei-logo.svg" alt="Zerei Logo" class="h-5"></a>
 
-    <div class="flex gap-4 items-center">
-      <ui-search-input placeholder="Busque um jogo" (search)="onSearch($event)" />
+      <div class="flex gap-4 items-center">
+        <!-- Barra de busca desktop — Só exibe se não for página de autenticação -->
+        @if (!isAuthRoute()) {
+        <div class="hidden md:block">
+          <ui-search-input placeholder="Busque um jogo" (search)="onSearch($event)" />
+        </div>
+        }
 
-      @if (userStore.user()) {
-      <a routerLink="/perfil" class="rounded-full overflow-hidden bg-blue-12"><img [src]="userStore.avatarUrl()"
-          alt="{{`Avatar do ${userStore.user()?.name}`}}"></a>
-      <button (click)="userStore.logout()" class="ui-secondary-btn" data-size="icon"><i
-          class="ph ph-sign-out"></i></button>
-      } @else {
-      <a routerLink="/registrar" class="ui-link">Criar conta</a>
-      <a routerLink="/entrar" class="ui-link" data-size="icon"><i class="ph ph-sign-in"></i></a>
-      }
+        @if (userStore.user()) {
+        <a routerLink="/perfil" class="rounded-full overflow-hidden bg-blue-12"><img [src]="userStore.avatarUrl()"
+            alt="{{`Avatar do ${userStore.user()?.name}`}}"></a>
+        <button (click)="userStore.logout()" class="ui-secondary-btn" data-size="icon"><i
+            class="ph ph-sign-out"></i></button>
+        } @else {
+        <a routerLink="/registrar" class="ui-link">Criar conta</a>
+        <a routerLink="/entrar" class="ui-link" data-size="icon"><i class="ph ph-sign-in"></i></a>
+        }
+      </div>
     </div>
+
+    <!-- Barra de busca mobile — Só exibe se não for página de autenticação -->
+    @if (!isAuthRoute()) {
+    <div class="md:hidden mt-4">
+      <ui-search-input placeholder="Busque um jogo" (search)="onSearch($event)" />
+    </div>
+    }
   </nav>
 
   <router-outlet />
