@@ -23,7 +23,7 @@ export function normalizeGame(game, developers = []) {
     releaseDate: game.first_release_date
       ? new Date(game.first_release_date * 1000).toISOString()
       : null,
-    genres: game.genres.map((genreId) => `igdb_${genreId}`) ?? [],
+    genres: game.genres ? game.genres.map((genreId) => `igdb_${genreId}`) : [],
     involvedCompanies: developers,
     externalReference: game.id,
     gameType: `igdb_${game.game_type}`,
