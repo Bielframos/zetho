@@ -1,7 +1,9 @@
 import { computed, Injectable, signal, Signal } from "@angular/core";
-import { GameRow } from "../types";
-import { appwrite, Query, type AppwriteException } from "../appwrite/appwrite.client";
+import { type AppwriteException } from "../appwrite/appwrite.client";
+import { GameRow, ZEntryRow } from "../types";
 import { GameService } from "./games.service";
+import { ZEntryService } from "./zEntries.service";
+import { UserStore } from "../auth/user.store";
 
 export interface GameSearchController {
     results: Signal<GameRow[]>,
@@ -18,7 +20,85 @@ export interface GameSearchController {
 
 @Injectable({ providedIn: 'root' })
 export class ZereiService {
-    constructor(private gameService: GameService) { }
+    constructor(
+        private gameService: GameService,
+        private zEntryService: ZEntryService,
+        private userStore: UserStore
+    ) { }
+
+    /**
+     * Função para montar o estado da página individual de um jogo
+     * @param slug 
+     * @returns 
+     */
+    createGamePageState() {
+        const gameService = this.gameService
+        const zEntryService = this.zEntryService
+        const user = this.userStore.user()
+
+        const _game = signal<GameRow | null>(null)
+        const _similarGames = signal<GameRow[] | null>(null)
+        const _zEntry = signal<ZEntryRow | null>(null)
+        const _errors = signal<Record<string, any>>({})
+        const _loading = signal(false)
+
+        async function fetch(slug: string) {
+            try {
+                _loading.set(true)
+                let game = await gameService.getGame(slug)
+                if (!game) throw { message: 'Game not found', code: 404 }
+                game.releaseDate = new Date(game.releaseDate).toLocaleDateString('pt-br')
+                _game.set(game)
+            } catch (e) {
+                const error = e as AppwriteException
+                _errors.update((state => {
+                    state['game'] = error
+                    return state
+                }))
+            } finally {
+                _loading.set(false)
+            }
+
+            const game = _game()
+
+            if (game !== null) {
+                if (user) {
+                    try {
+                        const zEntry = await zEntryService.getEntry(user.$id, game.$id)
+                        _zEntry.set(zEntry)
+                    } catch (e) {
+                        const error = e as AppwriteException
+                        _errors.update(state => {
+                            state['zEntry'] = error
+                            return error
+                        })
+                    }
+                }
+
+                if (game.similarGames?.length > 0) {
+                    try {
+                        const similarGames = await gameService.getGames(game.similarGames, { summarized: true })
+                        _similarGames.set(similarGames)
+                    } catch (e) {
+                        const error = e as AppwriteException
+                        _errors.update(state => {
+                            state['similarGames'] = error
+                            return state
+                        })
+                    }
+                }
+            }
+        }
+
+        return {
+            game: computed(() => _game()),
+            similarGames: computed(() => _similarGames()),
+            zEntry: computed(() => _zEntry()),
+            loading: computed(() => _loading()),
+            errors: computed(() => _errors()),
+            fetch
+        }
+    }
 
     /**
      * Método para montar uma busca reativa de jogos
@@ -84,34 +164,6 @@ export class ZereiService {
             prevPage,
             goToPage,
             reload: () => loadPage(_page())
-        }
-    }
-
-    /**
-     * Método para buscar um único jogo com base no slug
-     * @param slug 
-     * @returns 
-     */
-    async getGame(slug: string) {
-        try {
-            let game = await this.gameService.getGame(slug)
-            if (!game) throw { message: 'Game not found', code: 404 }
-            game.releaseDate = new Date(game.releaseDate).toLocaleDateString('pt-br')
-            return { success: true, game, error: null }
-        } catch (e) {
-            const error = e as AppwriteException
-            return { success: false, game: null, error }
-
-        }
-    }
-
-    async getGames(ids: string[], opts?: { summarized?: boolean }) {
-        try {
-            const games = await this.gameService.getGames(ids, opts)
-            return { success: true, games, error: null }
-        } catch (e) {
-            const error = e as AppwriteException
-            return { success: false, games: null, error }
         }
     }
 
