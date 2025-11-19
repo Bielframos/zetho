@@ -61,7 +61,7 @@ export class GameService {
     async getGames(ids: string[], opts?: { summarized?: boolean }) {
         if (ids.length === 0) return null
 
-        const queries = opts?.summarized ? ['$id', 'name', 'slug', 'releaseYear'] : ['*', 'genres.name', 'genres.slug', 'involvedCompanies.name', 'involvedCompanies.slug']
+        const queries = opts?.summarized ? ['$id', 'name', 'slug', 'releaseYear', 'coverUrl'] : ['*', 'genres.name', 'genres.slug', 'involvedCompanies.name', 'involvedCompanies.slug']
 
         const games = await appwrite.datababases.listRows<GameRow>({
             databaseId: 'app',
