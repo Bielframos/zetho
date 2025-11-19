@@ -57,7 +57,7 @@
             ],
             "events": [],
             "schedule": "",
-            "timeout": 15,
+            "timeout": 25,
             "entrypoint": "src/main.js",
             "commands": "npm install",
             "specification": "s-0.5vcpu-512mb",
