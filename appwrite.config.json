@@ -119,14 +119,25 @@
             "logging": true,
             "runtime": "node-21.0",
             "scopes": [
+                "databases.read",
+                "databases.write",
+                "tables.read",
+                "collections.read",
+                "tables.write",
+                "collections.write",
+                "columns.read",
+                "attributes.read",
+                "columns.write",
+                "attributes.write",
+                "indexes.read",
+                "indexes.write",
                 "rows.read",
                 "documents.read",
                 "rows.write",
                 "documents.write"
             ],
             "events": [
-                "databases.*.tables.z_entries.rows.*.create",
-                "databases.*.tables.z_entries.rows.*.update"
+                "databases.app.tables.z_entries.rows.*"
             ],
             "schedule": "",
             "timeout": 15,
