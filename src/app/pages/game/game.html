@@ -7,8 +7,10 @@
             @if (userStore.isAuthenticated()) {
             <div
                 class="grid grid-cols-4 md:grid-cols-2 border-t md:border bg-blue-2 border-gray-6 rounded-lg overflow-hidden fixed md:relative bottom-0 w-full z-999">
-                <button
-                    class="flex flex-col gap-2 items-center justify-center px-4 py-4 md:border-r md:border-b border-gray-6 w-full text-gray-11 cursor-pointer hover:bg-blue-9 hover:text-white transition-colors text-sm md:text-md">
+                <button [class]="[
+                        'flex flex-col gap-2 items-center justify-center px-4 py-4 md:border-r md:border-b border-gray-6 w-full cursor-pointer transition-colors text-sm md:text-md',
+                        pageState.zEntry()?.status === 'completed' ? 'bg-blue-9 text-white hover:bg-blue-10' : 'text-gray-11 hover:bg-blue-9 hover:text-white',
+                        ].join(' ')" (click)="handleZEntry('completed')">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M18.3125 11.0996H1.3418L14.0645 23.8223C13.3937 23.9386 12.704 24 12 24C5.37258 24 0 18.6274 0 12C0 6.80406 3.30252 2.37992 7.92285 0.710938L18.3125 11.0996ZM12 0C18.6274 0 24 5.37258 24 12C24 17.1965 20.6963 21.6195 16.0752 23.2881L5.6875 12.9004H22.6582L9.93457 0.176758C10.6056 0.0603575 11.2957 0 12 0Z"
@@ -16,27 +18,35 @@
                     </svg>
                     Zerei
                 </button>
-                <button
-                    class="flex flex-col gap-2 items-center justify-center px-4 py-4 md:border-b border-gray-6 w-full text-gray-11 cursor-pointer hover:blue-9 hover:text-green-300 transition-colors text-sm md:text-md">
+                <button [class]="[
+                    'flex flex-col gap-2 items-center justify-center px-4 py-4 md:border-b border-gray-6 w-full cursor-pointer transition-colors text-sm md:text-md',
+                    pageState.zEntry()?.status === 'backlog' ? 'bg-green-400 text-white hover:text-green-300 hover:bg-transparent' : 'text-gray-11 hover:text-green-300',
+                    ].join(' ')" (click)="handleZEntry('backlog')">
                     <i class="ph-fill ph-books"></i>
                     Backlog
                 </button>
-                <button
-                    class="flex flex-col gap-2 items-center justify-center px-4 py-4 md:border-r border-gray-6 w-full text-gray-11 cursor-pointer hover:blue-9 hover:text-purple-300 transition-colors text-sm md:text-md">
+                <button [class]="[
+                    'flex flex-col gap-2 items-center justify-center px-4 py-4 md:border-r border-gray-6 w-full cursor-pointer transition-colors text-sm md:text-md',
+                    pageState.zEntry()?.status === 'playing' ? 'bg-purple-400 text-white hover:text-purple-300 hover:bg-transparent' : 'text-gray-11 hover:text-purple-300',
+                    ].join(' ')" (click)="handleZEntry('playing')">
                     <i class="ph-fill ph-game-controller"></i>
                     Jogando
                 </button>
-                <button
-                    class="flex flex-col gap-2 items-center justify-center px-4 py-4 w-full text-gray-11 cursor-pointer hover:blue-9 hover:text-red-300 transition-colors text-sm md:text-md">
+                <button [class]="[
+                    'flex flex-col gap-2 items-center justify-center px-4 py-4 border-gray-6 w-full cursor-pointer transition-colors text-sm md:text-md',
+                    pageState.zEntry()?.status === 'dropped' ? 'bg-red-400 text-white hover:text-red-300 hover:bg-transparent' : 'text-gray-11 hover:text-red-300',
+                    ].join(' ')" (click)="handleZEntry('dropped')">
                     <i class="ph-fill ph-x-circle"></i>
                     Dropei
                 </button>
             </div>
 
-            <button
-                class="flex gap-2 items-center justify-center px-4 py-2 w-full border border-gray-6 rounded-lg bg-blue-2 text-gray-11 cursor-pointer hover:blue-9 hover:text-blue-12 transition-colors hidden md:block">
-                <i class="ph-fill ph-list-star"></i>
-                Quero comprar
+            <button [class]="[
+                    'gap-2 items-center justify-center px-4 py-2 w-full border border-gray-6 rounded-lg bg-blue-2 cursor-pointer hover:blue-9 transition-colors hidden md:flex',
+                    pageState.zEntry()?.status === 'wishlist' ? 'text-blue-12 hover:text-gray-11' : 'text-gray-11 hover:text-blue-12'
+                    ].join(' ')" (click)="handleZEntry('wishlist')">
+                <i class="ph ph-list-star"></i>
+                {{pageState.zEntry()?.status === 'wishlist' ? 'Na lista de desejos' : 'Quero comprar'}}
             </button>
             } @else {
             <div class="rounded-lg border border-gray-6 p-6 bg-blue-2 flex flex-col items-center w-[260px] text-center">
@@ -52,16 +62,25 @@
             @if (typeof game.zStats !== 'string') {
             <div class="mb-6 -mt-4 md:mb-24 flex justify-center md:justify-end">
                 <button aria-label="Adicionar a lista de desejos"
-                    class="cursor-pointer border border-transparent px-2 flex flex-col gap-0.5 text-gray-11 hover:text-red-300 md:hidden"
-                    [disabled]="!userStore.isAuthenticated()">
+                    class="cursor-pointer border border-transparent px-2 flex flex-col gap-0.5 text-gray-11 hover:text-blue-12 md:hidden"
+                    (click)="handleZEntry('wishlist')" [disabled]="!userStore.isAuthenticated()">
+
+                    @if (pageState.zEntry()?.liked) {
+                    <i class="ph-fill ph-list-star text-blue-9"></i>
+                    } @else {
                     <i class="ph ph-list-star"></i>
+                    }
                     <span class="text-xs">{{game.zStats.wishlistCount | shortNumber}}</span>
                 </button>
 
                 <button aria-label="Curtir"
                     class="cursor-pointer border border-transparent px-2 flex flex-col gap-0.5 text-gray-11 hover:text-red-300"
-                    [disabled]="!userStore.isAuthenticated()">
+                    (click)="handleLike()" [disabled]="!userStore.isAuthenticated()">
+                    @if (pageState.zEntry()?.liked) {
+                    <i class="ph-fill ph-heart text-red-400"></i>
+                    } @else {
                     <i class="ph ph-heart"></i>
+                    }
                     <span class="text-xs">{{game.zStats.likes || 0 | shortNumber}}</span>
                 </button>
             </div>

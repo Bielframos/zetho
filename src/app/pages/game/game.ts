@@ -1,11 +1,12 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
+import { UserStore } from '../../core/auth/user.store';
 import { ShortNumberPipe } from '../../core/modules/pipes';
+import { ZEntry } from '../../core/types';
 import { ZereiService } from '../../core/zerei/zerei.service';
 import { UiGameCard } from "../../shared/ui/atoms/game-card/game-card";
-import { UserStore } from '../../core/auth/user.store';
 
 @Component({
     selector: 'app-game',
@@ -24,6 +25,22 @@ export class Game {
         this.route.paramMap.pipe(map(params => params.get('slug'))),
         { initialValue: null }
     );
+
+    async handleZEntry(status: ZEntry['status']) {
+        const game = this.pageState.game()
+        if (game) {
+            const zEntry = await this.zerei.createZEntry(game.$id, status, this.pageState.zEntry())
+            if (zEntry) this.pageState.updateZEntry(zEntry)
+        }
+    }
+
+    async handleLike() {
+        const game = this.pageState.game()
+        if (game) {
+            const zEntry = await this.zerei.likeAGame(game.$id, this.pageState.zEntry())
+            if (zEntry) this.pageState.updateZEntry(zEntry)
+        }
+    }
 
     constructor() {
         effect(async () => {

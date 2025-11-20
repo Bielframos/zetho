@@ -94,6 +94,7 @@ export class ZereiService {
             game: computed(() => _game()),
             similarGames: computed(() => _similarGames()),
             zEntry: computed(() => _zEntry()),
+            updateZEntry: (entry: ZEntryRow) => _zEntry.set(entry),
             loading: computed(() => _loading()),
             errors: computed(() => _errors()),
             fetch
@@ -167,11 +168,27 @@ export class ZereiService {
         }
     }
 
-    async createZEntry() { }
+    async createZEntry(gameId: string, status: ZEntryRow['status'], prev: ZEntryRow | null) {
+        const user = this.userStore.user()
+        if (!user) alert('Só usuários logados podem criar ou atualizar seus registros.')
 
-    async updateZEntry() { }
+        try {
+            return await this.zEntryService.createEntry(user!.$id, gameId, status, prev)
+        } catch (e) {
+            console.error(e)
+            return null
+        }
+    }
 
-    async updateProfile() { }
+    async likeAGame(gameId: string, prev: ZEntryRow | null) {
+        const user = this.userStore.user()
+        if (!user) alert('Só usuários logados podem curtir um jogo.')
 
-    async deleteProfile() { }
+        try {
+            return await this.zEntryService.likeAGame(user!.$id, gameId, prev)
+        } catch (e) {
+            console.error(e)
+            return null
+        }
+    }
 }

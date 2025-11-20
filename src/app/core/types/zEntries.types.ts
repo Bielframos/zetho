@@ -1,18 +1,18 @@
 import { StoredList, StoredRow } from "../appwrite/appwrite.types"
-import { GameRow } from "./game.types"
 
 type ZEntry = {
     userId: string,
-    game: GameRow,
-    status: 'completed' | 'backlog' | 'dropped' | 'playing',
+    gameId: string,
+    liked?: boolean,
+    status?: 'completed' | 'backlog' | 'dropped' | 'playing' | 'wishlist',
     startedAt?: string,
     finishedAt?: string,
     replays?: number,
-    review?: string
+    prevState?: string,
 
 }
 
 type ZEntryRow = StoredRow<ZEntry>
 type ZEntryList = StoredList<ZEntryRow>
 
-export type { ZEntry, ZEntryRow, ZEntryList }
+export type { ZEntry, ZEntryList, ZEntryRow }
