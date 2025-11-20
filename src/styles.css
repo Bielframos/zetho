@@ -44,7 +44,7 @@
   html,
   body {
     min-height: 100dvh;
-    background: linear-gradient(180deg, var(--color-blue-1) 0%, var(--color-blue-3) 100%);
+    background: var(--color-blue-1);
     color: var(--color-gray-12);
     font-family: 'Readex Pro Variable', sans-serif;
   }
@@ -54,7 +54,7 @@
 @layer components {
   /* Link */
   .ui-link {
-    @apply bg-blue-2 px-4 py-2 h-fit rounded-lg text-gray-11 hover:bg-blue-3 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
+    @apply bg-blue-2 px-4 py-2 h-fit rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
   }
 
   /* Botões */
@@ -63,7 +63,7 @@
   }
 
   .ui-secondary-btn {
-    @apply cursor-pointer bg-blue-2 px-4 py-2 h-fit rounded-lg text-gray-11 hover:bg-blue-3 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
+    @apply cursor-pointer bg-blue-2 px-4 py-2 h-fit rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
   }
 
   /* Variação de tamanho para botões e links */
