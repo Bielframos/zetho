@@ -110,6 +110,30 @@
             "commands": "npm install",
             "specification": "s-0.5vcpu-512mb",
             "path": "functions/Zerei Core"
+        },
+        {
+            "$id": "stats-sync",
+            "execute": [],
+            "name": "Stats Sync",
+            "enabled": true,
+            "logging": true,
+            "runtime": "node-21.0",
+            "scopes": [
+                "rows.read",
+                "documents.read",
+                "rows.write",
+                "documents.write"
+            ],
+            "events": [
+                "databases.*.tables.z_entries.rows.*.create",
+                "databases.*.tables.z_entries.rows.*.update"
+            ],
+            "schedule": "",
+            "timeout": 15,
+            "entrypoint": "src/main.js",
+            "commands": "npm install",
+            "specification": "s-0.5vcpu-512mb",
+            "path": "functions/Stats Sync"
         }
     ],
     "databases": [
