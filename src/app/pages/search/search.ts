@@ -2,11 +2,12 @@ import { Component, effect, inject, signal } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ZereiService } from "../../core/zerei/zerei.service";
 import { UiGameCard } from "../../shared/ui/atoms/game-card/game-card";
+import { UiLoading } from "../../shared/ui/molecules/loading";
 
 @Component({
     selector: 'app-search-page',
     standalone: true,
-    imports: [UiGameCard],
+    imports: [UiGameCard, UiLoading],
     templateUrl: './search.html'
 })
 export class Search {
