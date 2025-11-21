@@ -4,7 +4,7 @@ type ZEntry = {
     userId: string,
     gameId: string,
     liked?: boolean,
-    status?: 'completed' | 'backlog' | 'dropped' | 'playing' | 'wishlist',
+    status?: 'completed' | 'backlog' | 'dropped' | 'playing' | 'wishlist' | null,
     startedAt?: string,
     finishedAt?: string,
     replays?: number,

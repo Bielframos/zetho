@@ -1,11 +1,46 @@
-import { Injectable } from '@angular/core'
-import { appwrite } from '../appwrite/appwrite.client'
+import { Injectable, QueryList } from '@angular/core'
+import { appwrite, Query } from '../appwrite/appwrite.client'
 import { ZEntry, ZEntryRow } from '../types'
 
 const Z_ENTRIES_TABLE_ID = 'z_entries'
 
 @Injectable({ providedIn: 'root' })
 export class ZEntryService {
+    async getUserStats() {
+        const statusToGet: ZEntryRow['status'][] = ['completed', 'backlog', 'playing', 'dropped', 'wishlist']
+
+        function createRequest(status: ZEntryRow['status']) {
+            return appwrite.datababases.listRows({
+                databaseId: 'app',
+                tableId: 'z_entries',
+                queries: [Query.select(['$id']), Query.equal('status', status!), Query.limit(1)]
+            })
+        }
+
+        const [completed, backlog, playing, dropped, wishlist] = await Promise.all(statusToGet.map(status => createRequest(status)))
+
+        return {
+            completedCount: completed.total,
+            backlogCount: backlog.total,
+            playingCount: playing.total,
+            droppedCount: dropped.total,
+            wishlistCount: wishlist.total
+        }
+    }
+
+    async getUserEntries(status: Exclude<ZEntryRow['status'], null | undefined>, opts?: { pageSize?: number, offset?: number }) {
+        return await appwrite.datababases.listRows<ZEntryRow>({
+            databaseId: 'app',
+            tableId: Z_ENTRIES_TABLE_ID,
+            queries: [
+                Query.select(['$id', 'status', 'gameId']),
+                Query.equal('status', status),
+                Query.limit(opts?.pageSize || 12),
+                Query.offset(opts?.offset || 0)
+            ]
+        })
+    }
+
     async getEntry(userId: string, gameId: string) {
         const zEntry = await appwrite.datababases.getRow<ZEntryRow>({
             databaseId: 'app',
@@ -19,7 +54,7 @@ export class ZEntryService {
         return zEntry
     }
 
-    async createEntry(userId: string, gameId: string, status: ZEntry['status'], prev: ZEntryRow | null) {
+    async createEntry(userId: string, gameId: string, status: ZEntry['status'] | null, prev: ZEntryRow | null) {
         const prevState = JSON.stringify({
             status: prev?.status ?? null,
             liked: prev?.liked ?? null

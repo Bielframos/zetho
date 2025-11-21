@@ -58,7 +58,7 @@ export class GameService {
         return games.rows[0]
     }
 
-    async getGames(ids: string[], opts?: { summarized?: boolean }) {
+    async getGames(ids: string[], opts?: { summarized?: boolean, pageSize?: number, offset?: number }) {
         if (ids.length === 0) return null
 
         const queries = opts?.summarized ? ['$id', 'name', 'slug', 'releaseYear', 'coverUrl'] : ['*', 'genres.name', 'genres.slug', 'involvedCompanies.name', 'involvedCompanies.slug']
@@ -69,7 +69,8 @@ export class GameService {
             queries: [
                 Query.equal('$id', ids),
                 Query.select(queries),
-                Query.limit(8)
+                Query.limit(opts?.pageSize || 12),
+                Query.offset(opts?.offset || 0)
             ]
         })
 

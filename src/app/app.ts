@@ -10,7 +10,7 @@ import { UiSerchInput } from './shared/ui/molecules/search-input/search-input';
   styleUrl: './app.css',
 })
 export class App {
-  userStore = inject(UserStore);
+  userStore = inject(UserStore)
   private route = inject(Router)
 
   onSearch(query: string) {
@@ -23,7 +23,7 @@ export class App {
     return authRoutes.some(route => path.startsWith(route))
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.userStore.init();
   }
 }

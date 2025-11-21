@@ -1,9 +1,9 @@
 import { computed, Injectable, signal, Signal } from "@angular/core";
 import { type AppwriteException } from "../appwrite/appwrite.client";
+import { UserStore } from "../auth/user.store";
 import { GameRow, ZEntryRow } from "../types";
 import { GameService } from "./games.service";
 import { ZEntryService } from "./zEntries.service";
-import { UserStore } from "../auth/user.store";
 
 export interface GameSearchController {
     results: Signal<GameRow[]>,
@@ -25,6 +25,108 @@ export class ZereiService {
         private zEntryService: ZEntryService,
         private userStore: UserStore
     ) { }
+
+    /**
+     * Função para obter as estatísticas do jogador logado
+     * @returns 
+     */
+    async getMyStats() {
+        try {
+            return await this.zEntryService.getUserStats()
+        } catch (e) {
+            console.error(e)
+            return null
+        }
+
+    }
+
+    /**
+     * Estado da página principal, com jogos do usuário e carregamento incremental
+     * @param status 
+     * @param pageSize 
+     * @returns 
+     */
+    createHomePageState(pageSize: number = 12) {
+        const zEntryService = this.zEntryService
+        const gameService = this.gameService
+        const user = this.userStore.user()
+
+        const _status = signal<Exclude<ZEntryRow['status'], null | undefined>>('completed')
+        const _games = signal<GameRow[]>([])
+        const _entries = signal<ZEntryRow[]>([])
+        const _loading = signal(false)
+        const _errors = signal<Record<string, any>>({})
+        const _offset = signal(0)
+        const _total = signal(0)
+        const _hasMore = signal(true)
+
+        function init(status?: Exclude<ZEntryRow['status'], null | undefined>) {
+            _games.set([])
+            _entries.set([])
+            _offset.set(0)
+            _total.set(0)
+            _hasMore.set(true)
+
+            if (status) _status.set(status)
+
+            void loadMore()
+        }
+
+        async function loadMore() {
+            if (!user) {
+                _errors.update(s => ({ ...s, auth: 'Usuário não autenticado.' }))
+                return
+            }
+
+            if (_loading()) return
+
+            _loading.set(true)
+
+            try {
+                const entries = await zEntryService.getUserEntries(_status(), {
+                    pageSize,
+                    offset: _offset()
+                })
+
+                _entries.update(prev => [...prev, ...entries.rows])
+                _total.set(entries.total)
+
+                const ids = entries.rows.map(e => e.gameId).filter(Boolean)
+
+                if (ids.length > 0) {
+                    const games = await gameService.getGames(ids, { summarized: true })
+                    if (games) {
+                        _games.update(prev => [...prev, ...games])
+                    }
+                }
+
+                const newOffset = _offset() + pageSize
+                _offset.set(newOffset)
+                _hasMore.set(newOffset < entries.total)
+            } catch (e) {
+                const error = e as AppwriteException
+                _errors.update(prev => {
+                    prev['loadMore'] = error
+                    return prev
+                })
+            } finally {
+                _loading.set(false)
+            }
+        }
+
+
+        return {
+            games: computed(() => _games()),
+            entries: computed(() => _entries()),
+            total: computed(() => _total()),
+            loading: computed(() => _loading()),
+            errors: computed(() => _errors()),
+            hasMore: computed(() => _hasMore()),
+            init,
+            loadMore
+        }
+    }
+
 
     /**
      * Função para montar o estado da página individual de um jogo
@@ -77,7 +179,7 @@ export class ZereiService {
 
                 if (game.similarGames?.length > 0) {
                     try {
-                        const similarGames = await gameService.getGames(game.similarGames, { summarized: true })
+                        const similarGames = await gameService.getGames(game.similarGames, { summarized: true, pageSize: 8 })
                         _similarGames.set(similarGames)
                     } catch (e) {
                         const error = e as AppwriteException
@@ -168,7 +270,7 @@ export class ZereiService {
         }
     }
 
-    async createZEntry(gameId: string, status: ZEntryRow['status'], prev: ZEntryRow | null) {
+    async createZEntry(gameId: string, status: ZEntryRow['status'] | null, prev: ZEntryRow | null) {
         const user = this.userStore.user()
         if (!user) alert('Só usuários logados podem criar ou atualizar seus registros.')
 

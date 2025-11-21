@@ -1,0 +1,75 @@
+<main class="w-full max-w-5xl mx-auto px-6 md:px-10 mb-20">
+    <header class="mb-6">
+        <ul class="w-fit mx-auto flex overflow-x-auto font-light bg-blue-2 border border-gray-6 rounded-lg">
+            <li class="flex gap-2 whitespace-nowrap px-4 py-2 rounded-lg hover:bg-blue-3 hover:text-white transition-colors data-[active=true]:bg-blue-9"
+                [attr.data-active]="currentTab() === 'completed'">
+                <a [routerLink]="['/']" [queryParams]="{ t: 'completed' }">
+                    Zerados
+                    <span class="px-1 text-gray-11 rounded-lg bg-blue-2 border border-gray-6 min-w-6 text-center">
+                        {{myStats()?.completedCount}}
+                    </span>
+                </a>
+            </li>
+            <li class="flex gap-2 whitespace-nowrap px-4 py-2 rounded-lg hover:bg-blue-3 hover:text-white transition-colors data-[active=true]:bg-blue-9"
+                [attr.data-active]="currentTab() === 'backlog'">
+                <a [routerLink]="['/']" [queryParams]="{ t: 'backlog' }">
+                    Backlog
+                    <span class="px-1 text-gray-11 rounded-lg bg-blue-2 border border-gray-6 min-w-6 text-center">
+                        {{myStats()?.backlogCount}}
+                    </span>
+                </a>
+            </li>
+            <li class="flex gap-2 whitespace-nowrap px-4 py-2 rounded-lg hover:bg-blue-3 hover:text-white transition-colors data-[active=true]:bg-blue-9"
+                [attr.data-active]="currentTab() === 'playing'">
+                <a [routerLink]="['/']" [queryParams]="{ t: 'playing' }">
+                    Jogando
+                    <span class="px-1 text-gray-11 rounded-lg bg-blue-2 border border-gray-6 min-w-6 text-center">
+                        {{myStats()?.playingCount}}
+                    </span>
+                </a>
+            </li>
+            <li class="flex gap-2 whitespace-nowrap px-4 py-2 rounded-lg hover:bg-blue-3 hover:text-white transition-colors data-[active=true]:bg-blue-9"
+                [attr.data-active]="currentTab() === 'dropped'">
+                <a [routerLink]="['/']" [queryParams]="{ t: 'dropped' }">
+                    Dropados
+                    <span class="px-1 text-gray-11 rounded-lg bg-blue-2 border border-gray-6 min-w-6 text-center">
+                        {{myStats()?.droppedCount}}
+                    </span>
+                </a>
+            </li>
+            <li class="flex gap-2 whitespace-nowrap px-4 py-2 rounded-lg hover:bg-blue-3 hover:text-white transition-colors data-[active=true]:bg-blue-9"
+                [attr.data-active]="currentTab() === 'wishlist'">
+                <a [routerLink]="['/']" [queryParams]="{ t: 'wishlist' }">
+                    Lista de desejos
+                    <span class="px-1 text-gray-11 rounded-lg bg-blue-2 border border-gray-6 min-w-6 text-center">
+                        {{myStats()?.wishlistCount}}
+                    </span>
+                </a>
+            </li>
+        </ul>
+    </header>
+
+    @if (pageState(); as state) {
+    @if (state.loading()) {
+    <ui-loading></ui-loading>
+    } @else {
+    @if (state.total() === 0) {
+    <div></div>
+    } @else {
+    <ul class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-2 md:gap-4">
+        @for (game of state.games(); track game.$id) {
+        <li class="flex flex-col">
+            <ui-game-card [game]="game"></ui-game-card>
+        </li>
+        }
+    </ul>
+
+    @if (state.hasMore()) {
+    <footer class="w-full flex justify-center mt-10">
+        <button class="ui-primary-btn" (click)="state.loadMore()">Carregar mais</button>
+    </footer>
+    }
+    }
+    }
+    }
+</main>
