@@ -35,6 +35,7 @@ export class ZEntryService {
             queries: [
                 Query.select(['$id', 'status', 'gameId']),
                 Query.equal('status', status),
+                Query.orderDesc('$updatedAt'),
                 Query.limit(opts?.pageSize || 12),
                 Query.offset(opts?.offset || 0)
             ]
