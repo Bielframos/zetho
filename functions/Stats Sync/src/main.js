@@ -1,4 +1,4 @@
-import { Client, TablesDB } from 'node-appwrite';
+import { Client, Query, TablesDB } from 'node-appwrite';
 
 export default async ({ req, res, log, error }) => {
   const client = new Client()
@@ -28,18 +28,38 @@ export default async ({ req, res, log, error }) => {
           : null;
     }
 
+    async function setLikeOperation() {
+      const prevLiked = prevState.liked;
+      const currentLiked = payload.liked;
+
+      if (prevLiked === currentLiked) return null;
+
+      const zStats = await databases.getRow({
+        databaseId: 'app',
+        tableId: 'z_entry_count',
+        rowId: `zstats_${payload.gameId}`,
+        queries: [Query.select('likes')],
+      });
+
+      const currentValue = zStats.likes ?? 0;
+      const delta = currentLiked ? +1 : -1;
+      const newValue = Math.max(0, currentValue + delta);
+
+      return {
+        action: 'update',
+        databaseId: 'app',
+        tableId: 'z_entry_count',
+        rowId: `zstats_${payload.gameId}`,
+        data: { likes: newValue },
+      };
+    }
+
     const statsOperations = {
       completed: setStatusOperation('completed', prevStatus, currentStatus),
       backlog: setStatusOperation('backlog', prevStatus, currentStatus),
       dropped: setStatusOperation('dropped', prevStatus, currentStatus),
       playing: setStatusOperation('playing', prevStatus, currentStatus),
       wishlist: setStatusOperation('wishlist', prevStatus, currentStatus),
-      likes:
-        prevState.liked === payload.liked
-          ? null
-          : payload.liked
-            ? 'increment'
-            : 'decrement',
     };
 
     const operations = Object.entries(statsOperations)
@@ -52,13 +72,17 @@ export default async ({ req, res, log, error }) => {
         data: { value: 1, column: key !== 'likes' ? `${key}Count` : 'likes' },
       }));
 
+    const likeOp = await setLikeOperation();
+    if (likeOp) operations.push(likeOp);
+
     let retries = 0;
 
     do {
+      let tx = null;
       let retry = false;
 
       try {
-        const tx = await databases.createTransaction();
+        tx = await databases.createTransaction();
 
         await databases.createOperations({
           transactionId: tx.$id,
