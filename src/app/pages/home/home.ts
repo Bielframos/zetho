@@ -1,10 +1,11 @@
 import { Component, effect, inject, signal } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { ZEntryRow } from "../../core/types";
+import { GameRow, ZEntryRow } from "../../core/types";
 import { ZereiService } from "../../core/zerei/zerei.service";
 import { UiLoading } from "../../shared/ui/molecules/loading";
 import { UiGameCard } from "../../shared/ui/atoms/game-card/game-card";
 import { distinctUntilChanged, filter, map } from "rxjs";
+import { UserStore } from "../../core/auth/user.store";
 
 const validStatuses: Exclude<ZEntryRow['status'], null | undefined>[] = [
     'completed',
@@ -28,16 +29,31 @@ export class Home {
     private route = inject(ActivatedRoute)
     private zerei = inject(ZereiService)
     private initialTab = (this.route.snapshot.queryParams['t'] as Exclude<ZEntryRow['status'], null | undefined>) ?? 'completed'
+    userStore = inject(UserStore)
 
     myStats = signal<Awaited<ReturnType<ZereiService['getMyStats']>>>(null)
     pageState = signal(this.zerei.createHomePageState())
     currentTab = signal<Exclude<ZEntryRow['status'], null | undefined>>(this.initialTab)
+
+    // Estatísticas da plataforma para usuários não logados
+    platformStats = signal<Awaited<ReturnType<ZereiService['getPlatformStats']>>>(null)
+    trendingGames = signal<GameRow[]>([])
+
+    constructor() {
+        effect(async () => {
+            if (!this.userStore.isAuthenticated()) {
+                this.platformStats.set(await this.zerei.getPlatformStats())
+                this.trendingGames.set(await this.zerei.getTrendingGames())
+            }
+        })
+    }
 
     async ngOnInit() {
         try {
             const userStats = await this.zerei.getMyStats()
             this.myStats.set(userStats)
             this.pageState().init(this.currentTab())
+
         } catch (e) {
             console.error(e)
         }

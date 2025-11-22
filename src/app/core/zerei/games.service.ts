@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import slugify from 'slugify'
+import slugify from 'slugify';
 import { appwrite, Query } from "../appwrite/appwrite.client";
 import { GameRow } from "../types";
 
@@ -58,10 +58,12 @@ export class GameService {
         return games.rows[0]
     }
 
-    async getGames(ids: string[], opts?: { summarized?: boolean, pageSize?: number, offset?: number }) {
+    async getGames(ids: string[], opts?: { onlyIds?: string, summarized?: boolean, pageSize?: number, offset?: number }) {
         if (ids.length === 0) return null
 
-        const queries = opts?.summarized ? ['$id', 'name', 'slug', 'releaseYear', 'coverUrl'] : ['*', 'genres.name', 'genres.slug', 'involvedCompanies.name', 'involvedCompanies.slug']
+        const queries = opts?.onlyIds ? ['$id'] :
+            opts?.summarized ? ['$id', 'name', 'slug', 'releaseYear', 'coverUrl'] :
+                ['*', 'genres.name', 'genres.slug', 'involvedCompanies.name', 'involvedCompanies.slug']
 
         const games = await appwrite.datababases.listRows<GameRow>({
             databaseId: 'app',
@@ -75,5 +77,9 @@ export class GameService {
         })
 
         return games.rows
+    }
+
+    // TODO: Implementar solução para obter contagem real do total de jogos na plataforma
+    async getGamesCount() {
     }
 }

@@ -3,7 +3,9 @@ import { type AppwriteException } from "../appwrite/appwrite.client";
 import { UserStore } from "../auth/user.store";
 import { GameRow, ZEntryRow } from "../types";
 import { GameService } from "./games.service";
+import { UserProfileService } from "./userProfile.service";
 import { ZEntryService } from "./zEntries.service";
+import { ZStatsService } from "./zStats.service";
 
 export interface GameSearchController {
     results: Signal<GameRow[]>,
@@ -23,6 +25,8 @@ export class ZereiService {
     constructor(
         private gameService: GameService,
         private zEntryService: ZEntryService,
+        private zStatsService: ZStatsService,
+        private userProfileService: UserProfileService,
         private userStore: UserStore
     ) { }
 
@@ -47,85 +51,101 @@ export class ZereiService {
      * @returns 
      */
     createHomePageState(pageSize: number = 12) {
-        const zEntryService = this.zEntryService
-        const gameService = this.gameService
-        const user = this.userStore.user()
+        const zEntryService = this.zEntryService;
+        const gameService = this.gameService;
+        const user = this.userStore.user();
 
-        const _status = signal<Exclude<ZEntryRow['status'], null | undefined>>('completed')
-        const _games = signal<GameRow[]>([])
-        const _entries = signal<ZEntryRow[]>([])
-        const _loading = signal(false)
-        const _errors = signal<Record<string, any>>({})
-        const _offset = signal(0)
-        const _total = signal(0)
-        const _hasMore = signal(true)
+        const _status = signal<Exclude<ZEntryRow['status'], null | undefined>>('completed');
+
+        const _games = signal<GameRow[]>([]);
+        const _entries = signal<ZEntryRow[]>([]);
+
+        const _initialLoading = signal(true);
+        const _loadingMore = signal(false);
+
+        const _errors = signal<Record<string, any>>({});
+        const _offset = signal(0);
+        const _total = signal(0);
+        const _hasMore = signal(true);
 
         function init(status?: Exclude<ZEntryRow['status'], null | undefined>) {
-            _games.set([])
-            _entries.set([])
-            _offset.set(0)
-            _total.set(0)
-            _hasMore.set(true)
+            _games.set([]);
+            _entries.set([]);
+            _offset.set(0);
+            _total.set(0);
+            _hasMore.set(true);
 
-            if (status) _status.set(status)
+            _initialLoading.set(true);
+            _loadingMore.set(false);
 
-            void loadMore()
+            if (status) _status.set(status);
+
+            void loadMore();
         }
 
         async function loadMore() {
             if (!user) {
-                _errors.update(s => ({ ...s, auth: 'Usuário não autenticado.' }))
-                return
+                _errors.update(s => ({ ...s, auth: 'Usuário não autenticado.' }));
+                return;
             }
 
-            if (_loading()) return
-
-            _loading.set(true)
+            if (_loadingMore()) return;
+            _loadingMore.set(true);
 
             try {
-                const entries = await zEntryService.getUserEntries(_status(), {
-                    pageSize,
-                    offset: _offset()
-                })
+                const entries = await zEntryService.getUserEntries(
+                    user.$id,
+                    _status(),
+                    {
+                        pageSize,
+                        offset: _offset()
+                    }
+                );
 
-                _entries.update(prev => [...prev, ...entries.rows])
-                _total.set(entries.total)
+                _entries.update(prev => [...prev, ...entries.rows]);
+                _total.set(entries.total);
 
-                const ids = entries.rows.map(e => e.gameId).filter(Boolean)
+                const ids = entries.rows.map(e => e.gameId).filter(Boolean);
 
                 if (ids.length > 0) {
-                    const games = await gameService.getGames(ids, { summarized: true })
+                    const games = await gameService.getGames(ids, { summarized: true });
                     if (games) {
-                        _games.update(prev => [...prev, ...games])
+                        _games.update(prev => [...prev, ...games]);
                     }
                 }
 
-                const newOffset = _offset() + pageSize
-                _offset.set(newOffset)
-                _hasMore.set(newOffset < entries.total)
+                const newOffset = _offset() + pageSize;
+                _offset.set(newOffset);
+                _hasMore.set(newOffset < entries.total);
+
             } catch (e) {
-                const error = e as AppwriteException
-                _errors.update(prev => {
-                    prev['loadMore'] = error
-                    return prev
-                })
+                const error = e as AppwriteException;
+                _errors.update(prev => ({ ...prev, loadMore: error }));
             } finally {
-                _loading.set(false)
+                if (_initialLoading()) {
+                    _initialLoading.set(false);
+                }
+
+                if (_loadingMore()) {
+                    _loadingMore.set(false);
+                }
             }
         }
-
 
         return {
             games: computed(() => _games()),
             entries: computed(() => _entries()),
             total: computed(() => _total()),
-            loading: computed(() => _loading()),
+            loading: computed(() => _initialLoading()),
+            loadingMore: computed(() => _loadingMore()),
             errors: computed(() => _errors()),
             hasMore: computed(() => _hasMore()),
             init,
             loadMore
-        }
+        };
     }
+
+
 
 
     /**
@@ -291,6 +311,27 @@ export class ZereiService {
         } catch (e) {
             console.error(e)
             return null
+        }
+    }
+
+    async getPlatformStats() {
+        try {
+            const zEntryCount = await this.zEntryService.getZEntryCount()
+            const profileCount = await this.userProfileService.getProfileCount()
+
+            return { zEntryCount, profileCount }
+        } catch (e) {
+            console.error(e)
+            return null
+        }
+    }
+
+    async getTrendingGames(): Promise<GameRow[]> {
+        try {
+            return await this.zStatsService.getTrendingGames()
+        } catch (e) {
+            console.error(e)
+            return []
         }
     }
 }

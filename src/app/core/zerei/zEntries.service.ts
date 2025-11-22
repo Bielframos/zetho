@@ -28,12 +28,13 @@ export class ZEntryService {
         }
     }
 
-    async getUserEntries(status: Exclude<ZEntryRow['status'], null | undefined>, opts?: { pageSize?: number, offset?: number }) {
+    async getUserEntries(userId: string, status: Exclude<ZEntryRow['status'], null | undefined>, opts?: { pageSize?: number, offset?: number }) {
         return await appwrite.datababases.listRows<ZEntryRow>({
             databaseId: 'app',
             tableId: Z_ENTRIES_TABLE_ID,
             queries: [
                 Query.select(['$id', 'status', 'gameId']),
+                Query.equal('userId', userId),
                 Query.equal('status', status),
                 Query.orderDesc('$updatedAt'),
                 Query.limit(opts?.pageSize || 12),
@@ -93,5 +94,15 @@ export class ZEntryService {
                 prevState
             }
         });
+    }
+
+    async getZEntryCount() {
+        const response = await appwrite.datababases.listRows<ZEntryRow>({
+            databaseId: 'app',
+            tableId: Z_ENTRIES_TABLE_ID,
+            queries: [Query.select(['$id']), Query.limit(1)]
+        });
+
+        return response.total
     }
 }

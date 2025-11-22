@@ -24,6 +24,11 @@ export class UserProfileService {
         }
     }
 
+    /**
+     * Verifica a disponibilidade de uma gamertag
+     * @param gamertagToCheck 
+     * @returns 
+     */
     async isValidGamertag(gamertagToCheck: string) {
         try {
             const response = await appwrite.datababases.listRows({
@@ -37,5 +42,15 @@ export class UserProfileService {
         } catch (error) {
             throw error
         }
+    }
+
+    async getProfileCount() {
+        const response = await appwrite.datababases.listRows({
+            databaseId: 'app',
+            tableId: TABLE_ID,
+            queries: [Query.select(['$id']), Query.limit(1)]
+        })
+
+        return response.total
     }
 }

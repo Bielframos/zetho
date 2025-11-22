@@ -1,4 +1,5 @@
 <main class="w-full max-w-5xl mx-auto px-6 md:px-10 mb-20">
+    @if (userStore.isAuthenticated()) {
     <header class="mb-6">
         <ul class="w-fit mx-auto flex overflow-x-auto font-light bg-blue-2 border border-gray-6 rounded-lg">
             <li class="flex gap-2 whitespace-nowrap px-4 py-2 rounded-lg hover:bg-blue-3 hover:text-white transition-colors data-[active=true]:bg-blue-9"
@@ -71,5 +72,139 @@
     }
     }
     }
+    }
+    } @else {
+    <!-- Seção hero -->
+    <section id="hero" class="flex flex-col items-center mt-6 md:mt-24">
+        <h1
+            class="text-center text-5xl text-transparent bg-clip-text bg-linear-to-r to-blue-12 from-blue-11 max-w-xl font-bold md:leading-relaxed">
+            Zere. Registre. Evolua.
+        </h1>
+        <p class="text-xl text-center max-w-md mt-6">
+            Guarde seu histórico de jogos, descubra novas experiências e <span
+                class="underline underline-offset-4 decoration-blue-9">veja sua evolução como gamer,</span> tudo em um
+            só lugar.
+        </p>
+
+        <div class="flex gap-6 flex-wrap mt-10">
+            <a routerLink="/registrar" class="ui-primary-btn">Criar conta</a>
+            <a routerLink="/entrar" class="ui-link"><i class="ph ph-sign-in"></i> Entrar</a>
+        </div>
+
+        <article class="mt-16 flex flex-col items-center">
+            <div class="flex gap-4 items-center mb-10">
+                <div class="w-16 h-px bg-blue-6"></div>
+                <h4 class="uppercase text-sm text-blue-12 bg-blue-2 px-2 py-1 rounded-lg border border-gray-6">
+                    Jogos em alta
+                </h4>
+                <div class="w-16 h-px bg-blue-6"></div>
+            </div>
+
+            @if (trendingGames().length === 0) {
+            <div class="w-full h-[232px] flex items-center justify-center">
+                <ui-loading></ui-loading>
+            </div>
+            } @else {
+            <ul class="flex flex-wrap justify-center gap-2 md:gap-4">
+                @for (game of trendingGames(); track game.$id) {
+                <li class="flex flex-col w-24 md:w-40">
+                    <ui-game-card [game]="game"></ui-game-card>
+                </li>
+                }
+            </ul>
+            }
+        </article>
+    </section>
+
+    <hr class="max-w-sm mx-auto border-blue-6 my-24">
+
+    <!-- Estatísticas da plataforma -->
+    <section id="our-numbers">
+        <div
+            class="flex flex-col md:flex-row rounded-lg border bg-blue-2 border-gray-6 divide-y md:divide-x divide-gray-6">
+            <div class="p-6 flex gap-4 items-center flex-1">
+                <i class="ph-fill ph-game-controller text-[32px] text-blue-9"></i>
+                <div>
+                    <span class="text-3xl font-bold align-middle">+39k</span> <br>
+                    <span class="text-gray-11">Jogos registrados</span>
+                </div>
+            </div>
+            <div class="p-6 flex gap-4 items-center flex-1">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    class="text-blue-9">
+                    <path
+                        d="M18.3125 11.0996H1.3418L14.0645 23.8223C13.3937 23.9386 12.704 24 12 24C5.37258 24 0 18.6274 0 12C0 6.80406 3.30252 2.37992 7.92285 0.710938L18.3125 11.0996ZM12 0C18.6274 0 24 5.37258 24 12C24 17.1965 20.6963 21.6195 16.0752 23.2881L5.6875 12.9004H22.6582L9.93457 0.176758C10.6056 0.0603575 11.2957 0 12 0Z"
+                        fill="currentcolor" />
+                </svg>
+                <div>
+                    <span class="text-3xl font-bold">{{platformStats()?.zEntryCount}}</span> <br>
+                    <span class="text-gray-11">Registros criados</span>
+                </div>
+            </div>
+            <div class="p-6 flex gap-4 items-center flex-1">
+                <i class="ph-fill ph-user text-[32px] text-blue-9"></i>
+                <div>
+                    <span class="text-3xl font-bold">{{platformStats()?.profileCount}}</span> <br>
+                    <span class="text-gray-11">Registros criados</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="max-w-sm mx-auto border-blue-6 my-24">
+
+    <!-- Sobre o Zerei -->
+    <section class="p-10 bg-blue-2 rounded-lg border border-gray-6">
+        <h3 class="text-3xl font-bold text-blue-12">O que é o Zerei?</h3>
+        <div class="flex gap-10 flex-wrap mt-10">
+            <div class="flex-1 min-w-60">
+                <p>
+                    O Zerei nasceu de uma necessidade muito pessoal. Eu sempre gostei de registrar os jogos que
+                    finalizei, acompanhar meu progresso e revisitar minhas próprias memórias gamer. Mas, por muito
+                    tempo, usei planilhas, listas soltas e apps que não conversavam com o que eu realmente queria.
+                </p>
+
+                <br>
+
+                <p>
+                    Com o tempo, percebi que esse hábito era importante pra mim — não só para lembrar o que joguei, mas
+                    para ver minha evolução como jogador, revisitar histórias que marcaram minha vida e até descobrir
+                    padrões no meu próprio gosto.
+                </p>
+
+                <br>
+
+                <p>
+                    Então pensei: <span class="text-blue-12">"Por que não criar minha própria solução?"</span> Algo
+                    simples, bonita, prática e feita do jeito que eu, como gamer, sempre quis.
+                </p>
+            </div>
+
+            <div class="flex-1 min-w-60">
+                <p>
+                    O Zerei é uma plataforma feita de gamer para gamers, criada para quem ama registrar jogos,
+                    acompanhar seu progresso e construir um histórico que faça sentido.
+                </p>
+
+                <br>
+
+                <h6 class="text-xl font-bol text-blue-12">Aqui, você pode:</h6>
+
+                <ul class="list-disc">
+                    <li>Organizar seus jogos de um jeito intuitivo</li>
+                    <li>Registrar o que está jogando, no backlog ou zerou</li>
+                </ul>
+
+                <br>
+
+                <p>
+                    E, acima de tudo, celebrar suas próprias conquistas. O objetivo é simples:
+                    tornar sua jornada gamer mais organizada, significativa e divertida.
+                </p>
+            </div>
+        </div>
+
+        <div class="flex justify-end font-mono mt-6"><span class="text-gray-11 mr-2">—</span> Gabriel França</div>
+    </section>
     }
 </main>
