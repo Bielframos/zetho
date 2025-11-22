@@ -35,8 +35,12 @@ export class ZereiService {
      * @returns 
      */
     async getMyStats() {
+        const user = this.userStore.user();
+
+        if (!user) return null
+
         try {
-            return await this.zEntryService.getUserStats()
+            return await this.zEntryService.getUserStats(user.$id)
         } catch (e) {
             console.error(e)
             return null

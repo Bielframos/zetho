@@ -6,14 +6,14 @@ const Z_ENTRIES_TABLE_ID = 'z_entries'
 
 @Injectable({ providedIn: 'root' })
 export class ZEntryService {
-    async getUserStats() {
+    async getUserStats(userId: string) {
         const statusToGet: ZEntryRow['status'][] = ['completed', 'backlog', 'playing', 'dropped', 'wishlist']
 
         function createRequest(status: ZEntryRow['status']) {
             return appwrite.datababases.listRows({
                 databaseId: 'app',
                 tableId: 'z_entries',
-                queries: [Query.select(['$id']), Query.equal('status', status!), Query.limit(1)]
+                queries: [Query.select(['$id']), Query.equal('userId', userId), Query.equal('status', status!), Query.limit(1)]
             })
         }
 
