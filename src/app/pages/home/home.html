@@ -2,51 +2,29 @@
     @if (userStore.isAuthenticated()) {
     <header class="mb-6">
         <ul class="w-fit mx-auto flex overflow-x-auto font-light bg-blue-2 border border-gray-6 rounded-lg">
-            <li class="flex gap-2 whitespace-nowrap px-4 py-2 rounded-lg hover:bg-blue-3 hover:text-white transition-colors data-[active=true]:bg-blue-9"
-                [attr.data-active]="currentTab() === 'completed'">
-                <a [routerLink]="['/']" [queryParams]="{ t: 'completed' }">
-                    Zerados
+            @for (tab of tabs(); track tab.key) {
+            <li class="flex gap-2 whitespace-nowrap px-4 py-2 rounded-lg transition-colors
+             hover:bg-blue-3 hover:text-white
+             data-[active=true]:bg-blue-9" [attr.data-active]="currentTab() === tab.key"
+                [class.pointer-events-none]="tab.count === 0">
+
+                @if (tab.count > 0) {
+                <a [routerLink]="['/']" [queryParams]="{ t: tab.key }">
+                    {{ tab.label }}
                     <span class="px-1 text-gray-11 rounded-lg bg-blue-2 border border-gray-6 min-w-6 text-center">
-                        {{myStats()?.completedCount}}
+                        {{ tab.count }}
                     </span>
                 </a>
-            </li>
-            <li class="flex gap-2 whitespace-nowrap px-4 py-2 rounded-lg hover:bg-blue-3 hover:text-white transition-colors data-[active=true]:bg-blue-9"
-                [attr.data-active]="currentTab() === 'backlog'">
-                <a [routerLink]="['/']" [queryParams]="{ t: 'backlog' }">
-                    Backlog
+                } @else {
+                <span class="cursor-not-allowed">
+                    {{ tab.label }}
                     <span class="px-1 text-gray-11 rounded-lg bg-blue-2 border border-gray-6 min-w-6 text-center">
-                        {{myStats()?.backlogCount}}
+                        0
                     </span>
-                </a>
+                </span>
+                }
             </li>
-            <li class="flex gap-2 whitespace-nowrap px-4 py-2 rounded-lg hover:bg-blue-3 hover:text-white transition-colors data-[active=true]:bg-blue-9"
-                [attr.data-active]="currentTab() === 'playing'">
-                <a [routerLink]="['/']" [queryParams]="{ t: 'playing' }">
-                    Jogando
-                    <span class="px-1 text-gray-11 rounded-lg bg-blue-2 border border-gray-6 min-w-6 text-center">
-                        {{myStats()?.playingCount}}
-                    </span>
-                </a>
-            </li>
-            <li class="flex gap-2 whitespace-nowrap px-4 py-2 rounded-lg hover:bg-blue-3 hover:text-white transition-colors data-[active=true]:bg-blue-9"
-                [attr.data-active]="currentTab() === 'dropped'">
-                <a [routerLink]="['/']" [queryParams]="{ t: 'dropped' }">
-                    Dropados
-                    <span class="px-1 text-gray-11 rounded-lg bg-blue-2 border border-gray-6 min-w-6 text-center">
-                        {{myStats()?.droppedCount}}
-                    </span>
-                </a>
-            </li>
-            <li class="flex gap-2 whitespace-nowrap px-4 py-2 rounded-lg hover:bg-blue-3 hover:text-white transition-colors data-[active=true]:bg-blue-9"
-                [attr.data-active]="currentTab() === 'wishlist'">
-                <a [routerLink]="['/']" [queryParams]="{ t: 'wishlist' }">
-                    Lista de desejos
-                    <span class="px-1 text-gray-11 rounded-lg bg-blue-2 border border-gray-6 min-w-6 text-center">
-                        {{myStats()?.wishlistCount}}
-                    </span>
-                </a>
-            </li>
+            }
         </ul>
     </header>
 

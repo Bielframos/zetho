@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from "@angular/core";
+import { Component, computed, effect, inject, signal } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { GameRow, ZEntryRow } from "../../core/types";
 import { ZereiService } from "../../core/zerei/zerei.service";
@@ -6,6 +6,7 @@ import { UiLoading } from "../../shared/ui/molecules/loading";
 import { UiGameCard } from "../../shared/ui/atoms/game-card/game-card";
 import { distinctUntilChanged, filter, map } from "rxjs";
 import { UserStore } from "../../core/auth/user.store";
+import { CommonModule } from "@angular/common";
 
 const validStatuses: Exclude<ZEntryRow['status'], null | undefined>[] = [
     'completed',
@@ -38,6 +39,35 @@ export class Home {
     // Estatísticas da plataforma para usuários não logados
     platformStats = signal<Awaited<ReturnType<ZereiService['getPlatformStats']>>>(null)
     trendingGames = signal<GameRow[]>([])
+
+    // Guias do dashboard
+    tabs = computed(() => [
+        {
+            key: 'completed',
+            label: 'Zerados',
+            count: this.myStats()?.completedCount ?? 0
+        },
+        {
+            key: 'backlog',
+            label: 'Backlog',
+            count: this.myStats()?.backlogCount ?? 0
+        },
+        {
+            key: 'playing',
+            label: 'Jogando',
+            count: this.myStats()?.playingCount ?? 0
+        },
+        {
+            key: 'dropped',
+            label: 'Dropados',
+            count: this.myStats()?.droppedCount ?? 0
+        },
+        {
+            key: 'wishlist',
+            label: 'Lista de desejos',
+            count: this.myStats()?.wishlistCount ?? 0
+        }
+    ]);
 
     constructor() {
         effect(async () => {
