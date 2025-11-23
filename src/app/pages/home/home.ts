@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from "@angular/core";
+import { Component, computed, effect, inject, OnInit, signal } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { distinctUntilChanged, filter, map } from "rxjs";
 import { UserStore } from "../../core/auth/user.store";
@@ -25,7 +25,7 @@ function isValidStatus(value: any): value is Exclude<ZEntryRow['status'], null |
     imports: [RouterLink, UiLoading, UiGameCard],
     templateUrl: './home.html'
 })
-export class Home {
+export class Home implements OnInit {
     private route = inject(ActivatedRoute)
     private zerei = inject(ZereiService)
     private initialTab = (this.route.snapshot.queryParams['t'] as Exclude<ZEntryRow['status'], null | undefined>) ?? 'completed'
@@ -69,12 +69,12 @@ export class Home {
     ]);
 
     constructor() {
-        effect(async () => {
+        effect(() => {
             if (!this.userStore.isAuthenticated()) {
-                this.platformStats.set(await this.zerei.getPlatformStats())
-                this.trendingGames.set(await this.zerei.getTrendingGames())
+                this.zerei.getPlatformStats().then(v => this.platformStats.set(v))
+                this.zerei.getTrendingGames().then(v => this.trendingGames.set(v))
             }
-        })
+        });
     }
 
     async ngOnInit() {

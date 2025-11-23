@@ -22,8 +22,4 @@ export class App {
     const authRoutes = ['/entrar', '/registrar']
     return authRoutes.some(route => path.startsWith(route))
   }
-
-  async ngOnInit() {
-    this.userStore.init();
-  }
 }

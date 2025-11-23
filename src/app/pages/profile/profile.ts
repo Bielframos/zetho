@@ -32,8 +32,4 @@ export class Profile {
             this.mailVerification.set({ error: true })
         }
     }
-
-    constructor() {
-        console.log(this.user)
-    }
 }
