@@ -1,7 +1,7 @@
 <main class="w-full max-w-5xl mx-auto px-6 md:px-10 mb-20">
     @if (userStore.isAuthenticated()) {
-    <header class="mb-6">
-        <ul class="w-fit mx-auto flex overflow-x-auto font-light bg-blue-2 border border-gray-6 rounded-lg">
+    <header class="mb-6 max-md:mt-1">
+        <ul class="w-full md:w-fit mx-auto flex overflow-x-auto font-light bg-blue-2 border border-gray-6 rounded-lg">
             @for (tab of tabs(); track tab.key) {
             <li class="flex gap-2 whitespace-nowrap px-4 py-2 rounded-lg transition-colors
              hover:bg-blue-3 hover:text-white
@@ -33,7 +33,17 @@
     <ui-loading></ui-loading>
     } @else {
     @if (state.total() === 0) {
-    <div></div>
+    <div class="flex flex-col items-center mt-24">
+        <i class="ph-fill ph-game-controller text-[56px] text-blue-11 mb-4"></i>
+        <h1
+            class="text-center text-4xl md:text-5xl text-transparent bg-clip-text bg-linear-to-r to-blue-12 from-blue-11 max-w-xl font-bold pb-6">
+            Cada jogo tem uma história, comece a sua.
+        </h1>
+        <p class="text-xl text-center max-w-md mt-2">
+            Busque por um jogo <span class="underline underline-offset-4 decoration-blue-9">e crie um registro</span>
+            para acompanhar sua jornada.
+        </p>
+    </div>
     } @else {
     <ul class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-2 md:gap-4">
         @for (game of state.games(); track game.$id) {
