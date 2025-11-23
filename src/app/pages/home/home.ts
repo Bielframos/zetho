@@ -1,12 +1,11 @@
 import { Component, computed, effect, inject, signal } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { GameRow, ZEntryRow } from "../../core/types";
-import { ZereiService } from "../../core/zerei/zerei.service";
-import { UiLoading } from "../../shared/ui/molecules/loading";
-import { UiGameCard } from "../../shared/ui/atoms/game-card/game-card";
 import { distinctUntilChanged, filter, map } from "rxjs";
 import { UserStore } from "../../core/auth/user.store";
-import { CommonModule } from "@angular/common";
+import { GameRow, ZEntryRow } from "../../core/types";
+import { ZereiService } from "../../core/zerei/zerei.service";
+import { UiGameCard } from "../../shared/ui/atoms/game-card/game-card";
+import { UiLoading } from "../../shared/ui/molecules/loading";
 
 const validStatuses: Exclude<ZEntryRow['status'], null | undefined>[] = [
     'completed',

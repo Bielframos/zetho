@@ -1,5 +1,5 @@
-import { Component, effect, inject, signal } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { Component, inject, signal } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
@@ -93,10 +93,4 @@ export class Register {
   }
 
   get gamertag() { return this.form.controls.gamertag }
-
-  constructor() {
-    effect(() => {
-      console.log(this.form.controls.gamertag.errors)
-    })
-  }
 }
