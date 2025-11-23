@@ -1,12 +1,12 @@
-<main class="mx-auto flex flex-wrap gap-10 w-fit lg:mt-24 px-6">
-  <header class="flex-1 max-w-xs">
+<main class="mx-auto md:grid grid-cols-[320px_1fr] gap-10 w-full max-w-4xl py-10 lg:mt-24 px-6">
+  <header class="max-md:mb-10">
     <h1 class="text-3xl">Crie sua conta</h1>
-    <p class="text-gray-11 font-light mt-4">Já possui uma conta? <a routerLink="/entrar"
+    <p class="text-gray-11 font-light mt-2">Já possui uma conta? <a routerLink="/entrar"
         class="text-blue-9 hover:underline cursor-pointer">Entrar</a>
     </p>
   </header>
 
-  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 w-full lg:w-md">
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
     <ui-input label="Nome" type="text" name="name" placeholder="Gabriel França" formControlName="name" required />
     @if (form.controls.name.errors?.['invalidName']) {
     <small class="text-red px-4 text-red-300 -mt-2">O nome é inválido</small>
