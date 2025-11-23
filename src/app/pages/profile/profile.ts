@@ -1,8 +1,9 @@
-import { Component, inject, signal } from "@angular/core";
+import { Component, effect, inject, signal } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { UserStore } from "../../core/auth/user.store";
 import { UiInput } from "../../shared/ui/atoms/input/input";
 import { AuthService } from "../../core/auth/auth.service";
+import { Router } from "@angular/router";
 
 @Component({
     selector: 'app-profile-page',
@@ -10,6 +11,7 @@ import { AuthService } from "../../core/auth/auth.service";
     templateUrl: './profile.html'
 })
 export class Profile {
+    private router = inject(Router)
     private authService = inject(AuthService)
     userStore = inject(UserStore)
     user = this.userStore.user()
@@ -31,5 +33,13 @@ export class Profile {
             console.error(e)
             this.mailVerification.set({ error: true })
         }
+    }
+
+    constructor() {
+        effect(() => {
+            if (!this.userStore.isAuthenticated()) {
+                this.router.navigate(['/']);
+            }
+        })
     }
 }
