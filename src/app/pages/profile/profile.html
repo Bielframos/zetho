@@ -1,8 +1,8 @@
-<main class="mx-auto w-fit flex flex-wrap gap-10 lg:mt-24 px-6">
+<main class="mx-auto w-full max-w-4xl flex flex-wrap gap-10 lg:mt-24 px-6 mb-20">
     <div class="flex-1 max-w-xs">
         <header>
             <h1 class="text-3xl">Olá, {{user?.name}}</h1>
-            <p class="text-gray-11 font-light mt-4">
+            <p class="text-gray-11 font-light mt-2">
                 Gerencie seu perfil e as informações da sua conta no Zerei.
             </p>
         </header>
@@ -21,7 +21,7 @@
                     <small class="text-red text-red-300">Erro ao enviar e-mail de verificação.</small>
                     }
 
-                    <button class="ui-primary-btn whitespace-nowrap mt-4 ml-auto" (click)="requestMailVerification()">
+                    <button class="ui-primary-btn whitespace-nowrap mt-4" (click)="requestMailVerification()">
                         Verificar e-mail
                     </button>
                 </div>
@@ -29,18 +29,20 @@
         </div>
         }
 
-
+        <button (click)="userStore.logout()" class="ui-secondary-btn w-full mt-4">
+            <i class="ph ph-sign-out"></i> Sair
+        </button>
     </div>
 
-    <div>
-        <div class="flex flex-col gap-2.5 w-full lg:w-md">
+    <div class="flex-1">
+        <div class="flex flex-col gap-2.5 w-full">
             <ui-input type="text" label="Nome" placeholder="Gabriel França" name="name" [formControl]="name" required />
             <button type="submit" class="ui-primary-btn w-fit ml-auto">Editar nome</button>
         </div>
 
         <hr class="w-full border-blue-6 my-10">
 
-        <div class="flex flex-col gap-2.5 w-full lg:w-md">
+        <div class="flex flex-col gap-2.5 w-full">
             <ui-input type="text" label="Gamertag" placeholder="Bielframos" name="gamertag" [formControl]="gamertag"
                 required />
             <button type="submit" class="ui-primary-btn w-fit ml-auto">Editar gamertag</button>
@@ -48,7 +50,7 @@
 
         <hr class="w-full border-blue-6 my-10">
 
-        <div class="flex flex-col gap-2.5 w-full lg:w-md">
+        <div class="flex flex-col gap-2.5 w-full">
             <ui-input type="email" label="E-nail" placeholder="bielframos@zerei.com" name="email" [formControl]="email"
                 required />
             <button type="submit" class="ui-primary-btn w-fit ml-auto">Alterar e-mail</button>
@@ -56,10 +58,32 @@
 
         <hr class="w-full border-blue-6 my-10">
 
-        <div class="flex flex-col gap-2.5 w-full lg:w-md">
+        <div class="flex flex-col gap-2.5 w-full">
             <ui-input type="password" label="Nova senha" placeholder="Sua nova senha" name="newPassword"
                 [formControl]="newPassword" required />
             <button type="submit" class="ui-primary-btn w-fit ml-auto">Alterar senha</button>
+        </div>
+    </div>
+
+
+    <hr class="w-full border-gray-6 my-10">
+
+
+    <header class="flex-1 max-w-xs">
+        <h1 class="text-3xl">Zona de risco</h1>
+        <p class="text-gray-11 font-light mt-2">
+            Ações tomadas aqui podem não ser reversíveis.
+        </p>
+    </header>
+
+
+    <div class="flex-1">
+        <div class="flex flex-col gap-4">
+            <div>
+                <h4 class="text-xl font-medium">Excluir minha conta</h4>
+                <span class="text-gray-11">Ao excluir sua conta todos os seus dados e registros serão perdidos.</span>
+            </div>
+            <button type="submit" class="ui-destructive-btn">Excluir minha conta</button>
         </div>
     </div>
 </main>

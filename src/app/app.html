@@ -27,8 +27,6 @@
         @if (userStore.user()) {
         <a routerLink="/perfil" class="rounded-full overflow-hidden bg-blue-12"><img [src]="userStore.avatarUrl()"
             alt="{{`Avatar do ${userStore.user()?.name}`}}"></a>
-        <button (click)="userStore.logout()" class="ui-secondary-btn" data-size="icon"><i
-            class="ph ph-sign-out"></i></button>
         } @else {
         <a routerLink="/registrar" class="ui-link">Criar conta</a>
         <a routerLink="/entrar" class="ui-link" data-size="icon"><i class="ph ph-sign-in"></i></a>
