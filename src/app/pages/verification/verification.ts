@@ -1,0 +1,49 @@
+import { Component, inject, signal } from "@angular/core";
+import { ActivatedRoute, RouterLink } from "@angular/router";
+import { UiLoading } from "../../shared/ui/molecules/loading";
+import { AuthService } from "../../core/auth/auth.service";
+import { UserStore } from "../../core/auth/user.store";
+
+@Component({
+    selector: 'app-verification-page',
+    standalone: true,
+    imports: [UiLoading, RouterLink],
+    templateUrl: './verification.html'
+})
+export class Verification {
+    private route = inject(ActivatedRoute)
+    private authService = inject(AuthService)
+    private userStore = inject(UserStore)
+
+    loading = signal(true)
+    verified = signal(false)
+    error = signal('')
+
+    userId = this.route.snapshot.queryParams['userId'] as string
+    secret = this.route.snapshot.queryParams['secret'] as string
+    expire = this.route.snapshot.queryParams['expire'] as string
+
+    constructor() {
+        if (!this.userId || !this.secret) {
+            this.error.set('Não conseguimos localizar dados importantes para validar sua verificação, retorne para a página do seu perfil e tente verificar novamente.')
+            this.loading.set(false)
+            return
+        }
+
+        if (new Date(Date.now()) > new Date(this.expire)) {
+            this.error.set('A tempo para efetuar sua verificação expirou. Retorne para a página do seu perfil e solicite um novo e-mail de verificação.')
+            this.loading.set(false)
+            return
+        }
+
+        this.authService.verifyEmail(this.userId, this.secret).then(() => {
+            this.verified.set(true)
+            this.userStore.refresh()
+            this.loading.set(false)
+        }).catch((e) => {
+            console.error(e)
+            this.loading.set(false)
+            this.error.set('Erro desconhecido, retorne para a página do seu perfil e tente a verificação novamente.')
+        })
+    }
+}

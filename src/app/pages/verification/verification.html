@@ -1,0 +1,31 @@
+<main class="mx-auto flex flex-wrap gap-10 w-fit lg:mt-24 px-6">
+    @if (loading()) {
+    <ui-loading></ui-loading>
+    } @else if (error(); as error) {
+    <div class="flex flex-col items-center">
+        <i class="ph ph-smiley-x-eyes text-[56px] text-red-300 mb-4"></i>
+        <h1
+            class="text-center text-4xl md:text-5xl text-transparent bg-clip-text bg-linear-to-r to-red-300 from-red-400 max-w-xl font-bold pb-6">
+            Ops, ocorreu um erro.
+        </h1>
+        <p class="text-xl text-center max-w-md mt-2">
+            {{ error }}
+        </p>
+
+        <a routerLink="/perfil" class="ui-link mt-6">Ir para o perfil</a>
+    </div>
+    } @else if (verified(); as verified) {
+    <div class="flex flex-col items-center">
+        <i class="ph ph-shield-check text-[56px] text-green-300 mb-4"></i>
+        <h1
+            class="text-center text-4xl md:text-5xl text-transparent bg-clip-text bg-linear-to-r to-green-300 from-green-400 max-w-xl font-bold pb-6">
+            Agora nós sabemos que você não é um smurf.
+        </h1>
+        <p class="text-xl text-center max-w-md mt-2">
+            Seu e-mail foi verificado com sucesso.
+        </p>
+
+        <a routerLink="/perfil" class="ui-link mt-6">Ir para o perfil</a>
+    </div>
+    }
+</main>

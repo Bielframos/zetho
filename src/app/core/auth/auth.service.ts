@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { appwrite, ID } from '../appwrite/appwrite.client';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -58,5 +59,16 @@ export class AuthService {
     } catch {
       return null;
     }
+  }
+
+  /**
+   * Método para gerar uma verificação de e-mail
+   */
+  async createEmailVerification() {
+    await appwrite.account.createEmailVerification({ url: new URL('/verificacao', environment.appUrl).toString() })
+  }
+
+  async verifyEmail(userId: string, secret: string) {
+    await appwrite.account.updateEmailVerification({ userId, secret })
   }
 }
