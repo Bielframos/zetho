@@ -8,6 +8,10 @@
 
   <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 w-full lg:w-md">
     <ui-input label="Nome" type="text" name="name" placeholder="Gabriel França" formControlName="name" required />
+    @if (form.controls.name.errors?.['invalidName']) {
+    <small class="text-red px-4 text-red-300 -mt-2">O nome é inválido</small>
+    }
+
     <div class="relative">
       <ui-input label="Gamertag" type="text" placeholder="Bielframos" name="gamertag" formControlName="gamertag"
         required />
@@ -21,6 +25,10 @@
         <i class="ph ph-check-circle text-md text-green-600"></i>
         }
       </div>
+
+      @if (form.controls.gamertag.errors?.['invalidGamertagFormat']) {
+      <small class="text-red px-4 text-red-300">Use apenas letras, números e _</small>
+      }
     </div>
     <ui-input label="E-mail" type="email" placeholder="bielframos@zerei.app" name="email" formControlName="email"
       required />
