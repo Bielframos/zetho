@@ -1,14 +1,20 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Models } from 'appwrite';
 import { AuthService } from './auth.service';
 import { appwrite } from '../appwrite/appwrite.client';
+import { UserProfileService } from '../zerei/userProfile.service';
+import { UserProfileRow } from '../types';
 
 @Injectable({ providedIn: 'root' })
 export class UserStore {
+  private userProfileService = inject(UserProfileService)
+
   private userSignal = signal<Models.User<Models.Preferences> | null>(null);
+  private profileSignal = signal<UserProfileRow | null>(null);
   private loadingSignal = signal(false);
 
   readonly user = computed(() => this.userSignal());
+  readonly profile = computed(() => this.profileSignal());
   readonly loading = computed(() => this.loadingSignal());
   readonly isAuthenticated = computed(() => this.user() !== null);
   readonly avatarUrl = computed(() => appwrite.avatars.getInitials({ name: this.user()?.name, width: 40, height: 40, background: '3e63dd' }))
@@ -27,7 +33,11 @@ export class UserStore {
 
     try {
       const user = await this.authService.getLoggedInUser();
+      const profile = await this.userProfileService.getProfile(user!.$id)
+
       this.userSignal.set(user);
+      this.profileSignal.set(profile)
+
       sessionStorage.setItem('user', JSON.stringify(user));
     } catch (e) {
       this.clear();

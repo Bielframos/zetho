@@ -12,3 +12,14 @@ export const guestGuard: CanMatchFn = () => {
 
   return true;
 };
+
+export const userGuard: CanMatchFn = () => {
+  const userStore = inject(UserStore);
+  const router = inject(Router);
+
+  if (!userStore.isAuthenticated()) {
+    return router.parseUrl('/');
+  }
+
+  return true;
+};

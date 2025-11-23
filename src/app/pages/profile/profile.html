@@ -1,0 +1,65 @@
+<main class="mx-auto w-fit flex flex-wrap gap-10 lg:mt-24 px-6">
+    <div class="flex-1 max-w-xs">
+        <header>
+            <h1 class="text-3xl">Olá, {{user?.name}}</h1>
+            <p class="text-gray-11 font-light mt-4">
+                Gerencie seu perfil e as informações da sua conta no Zerei.
+            </p>
+        </header>
+
+        @if (!user?.emailVerification) {
+        <div class="bg-blue-2 overflow-hidden border border-gray-6 rounded-lg mt-6">
+            <div class="w-full h-1 bg-amber-400"></div>
+
+            <div class="p-4">
+                <h4 class="font-bold text-lg mb-2 w-full">E-mail não verificado</h4>
+                <span class="text-gray-11">Para manter sua conta ativa, verifique seu e-mail.</span>
+                <div class="flex items-end justify-between gap-4">
+                    @if (mailVerification().sended) {
+                    <small class="text-red text-green-300">Confira sua caixa de e-mail.</small>
+                    } @else if (mailVerification().error) {
+                    <small class="text-red text-red-300">Erro ao enviar e-mail de verificação.</small>
+                    }
+
+                    <button class="ui-primary-btn whitespace-nowrap mt-4 ml-auto" (click)="requestMailVerification()">
+                        Verificar e-mail
+                    </button>
+                </div>
+            </div>
+        </div>
+        }
+
+
+    </div>
+
+    <div>
+        <div class="flex flex-col gap-2.5 w-full lg:w-md">
+            <ui-input type="text" label="Nome" placeholder="Gabriel França" name="name" [formControl]="name" required />
+            <button type="submit" class="ui-primary-btn w-fit ml-auto">Editar nome</button>
+        </div>
+
+        <hr class="w-full border-blue-6 my-10">
+
+        <div class="flex flex-col gap-2.5 w-full lg:w-md">
+            <ui-input type="text" label="Gamertag" placeholder="Bielframos" name="gamertag" [formControl]="gamertag"
+                required />
+            <button type="submit" class="ui-primary-btn w-fit ml-auto">Editar gamertag</button>
+        </div>
+
+        <hr class="w-full border-blue-6 my-10">
+
+        <div class="flex flex-col gap-2.5 w-full lg:w-md">
+            <ui-input type="email" label="E-nail" placeholder="bielframos@zerei.com" name="email" [formControl]="email"
+                required />
+            <button type="submit" class="ui-primary-btn w-fit ml-auto">Alterar e-mail</button>
+        </div>
+
+        <hr class="w-full border-blue-6 my-10">
+
+        <div class="flex flex-col gap-2.5 w-full lg:w-md">
+            <ui-input type="password" label="Nova senha" placeholder="Sua nova senha" name="newPassword"
+                [formControl]="newPassword" required />
+            <button type="submit" class="ui-primary-btn w-fit ml-auto">Alterar senha</button>
+        </div>
+    </div>
+</main>
