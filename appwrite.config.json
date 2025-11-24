@@ -145,6 +145,29 @@
             "commands": "npm install",
             "specification": "s-0.5vcpu-512mb",
             "path": "functions/Stats Sync"
+        },
+        {
+            "$id": "users-core",
+            "execute": [],
+            "name": "Users Core",
+            "enabled": true,
+            "logging": true,
+            "runtime": "node-21.0",
+            "scopes": [
+                "users.read",
+                "users.write",
+                "rows.read",
+                "documents.read",
+                "rows.write",
+                "documents.write"
+            ],
+            "events": [],
+            "schedule": "",
+            "timeout": 15,
+            "entrypoint": "src/main.js",
+            "commands": "npm install",
+            "specification": "s-0.5vcpu-512mb",
+            "path": "functions/Users Core"
         }
     ],
     "databases": [
