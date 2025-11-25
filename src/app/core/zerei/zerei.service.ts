@@ -40,7 +40,7 @@ export class ZereiService {
         if (!user) return null
 
         try {
-            return await this.zEntryService.getUserStats(user.$id)
+            return await this.zEntryService.getUserStats()
         } catch (e) {
             console.error(e)
             return null
@@ -98,7 +98,6 @@ export class ZereiService {
 
             try {
                 const entries = await zEntryService.getUserEntries(
-                    user.$id,
                     _status(),
                     {
                         pageSize,
@@ -190,7 +189,7 @@ export class ZereiService {
             if (game !== null) {
                 if (user) {
                     try {
-                        const zEntry = await zEntryService.getEntry(user.$id, game.$id)
+                        const zEntry = await zEntryService.getEntry(game.$id)
                         _zEntry.set(zEntry)
                     } catch (e) {
                         const error = e as AppwriteException
@@ -294,30 +293,49 @@ export class ZereiService {
         }
     }
 
-    async createZEntry(gameId: string, status: ZEntryRow['status'] | null, prev: ZEntryRow | null) {
+    /**
+     * Cria um registro Z
+     * @param gameId 
+     * @param status 
+     * @param prev 
+     * @returns 
+     */
+    async createZEntry(payload: { zEntryId?: string, gameId: string, status: ZEntryRow['status'] | null, prev: ZEntryRow | null }) {
         const user = this.userStore.user()
         if (!user) alert('Só usuários logados podem criar ou atualizar seus registros.')
 
+        const { zEntryId, gameId, status, prev } = payload
+
         try {
-            return await this.zEntryService.createEntry(user!.$id, gameId, status, prev)
+            return await this.zEntryService.createEntry({ zEntryId, gameId, status, prev })
         } catch (e) {
             console.error(e)
             return null
         }
     }
 
+    /**
+     * Curte um jogo
+     * @param gameId 
+     * @param prev 
+     * @returns 
+     */
     async likeAGame(gameId: string, prev: ZEntryRow | null) {
         const user = this.userStore.user()
         if (!user) alert('Só usuários logados podem curtir um jogo.')
 
         try {
-            return await this.zEntryService.likeAGame(user!.$id, gameId, prev)
+            return await this.zEntryService.likeAGame(gameId, prev)
         } catch (e) {
             console.error(e)
             return null
         }
     }
 
+    /**
+     * Obtém as estatísticas de das entradas z de toda o Zerei
+     * @returns 
+     */
     async getPlatformStats() {
         try {
             const zEntryCount = await this.zEntryService.getZEntryCount()
@@ -330,6 +348,10 @@ export class ZereiService {
         }
     }
 
+    /**
+     * Obtém os jogos mais curtidos com base nos registros Z
+     * @returns 
+     */
     async getTrendingGames(): Promise<GameRow[]> {
         try {
             return await this.zStatsService.getTrendingGames()

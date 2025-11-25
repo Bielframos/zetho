@@ -21,6 +21,18 @@ export class UserStore {
 
   constructor(private authService: AuthService) { }
 
+  async register(email: string, password: string, name: string, gamertag: string) {
+    try {
+      const { user, profile } = await this.authService.register(email, password, name, gamertag)
+
+      this.userSignal.set(user)
+      this.profileSignal.set(profile)
+
+    } catch (e: any) {
+      alert(e.message)
+    }
+  }
+
   /**
    * Método para inicializar o estado de autenticação
    * @returns
@@ -52,7 +64,10 @@ export class UserStore {
   async refresh() {
     try {
       const user = await this.authService.getLoggedInUser();
+      const profile = await this.userProfileService.getProfile(user!.$id)
+
       this.userSignal.set(user);
+      this.profileSignal.set(profile)
       sessionStorage.setItem('user', JSON.stringify(user));
     } catch (e) {
       this.clear();

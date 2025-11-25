@@ -2,7 +2,6 @@ import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
-import { AuthService } from '../../core/auth/auth.service';
 import { UserStore } from '../../core/auth/user.store';
 import { UserProfileService } from '../../core/zerei/userProfile.service';
 import { UiInput } from '../../shared/ui/atoms/input/input';
@@ -15,7 +14,6 @@ import { UiInput } from '../../shared/ui/atoms/input/input';
 })
 export class Register {
   private router = inject(Router);
-  private auth = inject(AuthService);
   private userStore = inject(UserStore);
   private profile = inject(UserProfileService)
 
@@ -81,9 +79,7 @@ export class Register {
 
     try {
       const { email, password, name, gamertag } = this.form.getRawValue()
-      const user = await this.auth.register(email, password, name)
-      await this.profile.createProfile(user.$id, gamertag)
-      await this.userStore.refresh()
+      await this.userStore.register(email, password, name, gamertag)
       await this.router.navigate(['/'])
     } catch (e) {
       this.form.setErrors({ submitFailed: true })

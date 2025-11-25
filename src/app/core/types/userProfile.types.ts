@@ -8,7 +8,8 @@ type UserProfile = {
     totalsCompleted: number,
     totalsBacklog: number,
     totalsDropped: number,
-    totalsPlaying: number
+    totalsPlaying: number,
+    fingerprint: string
 }
 
 type UserProfileRow = StoredRow<UserProfile>

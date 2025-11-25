@@ -1,19 +1,25 @@
-import { Injectable, QueryList } from '@angular/core'
-import { appwrite, Query } from '../appwrite/appwrite.client'
+import { Injectable } from '@angular/core'
+import { appwrite, ID, Query } from '../appwrite/appwrite.client'
+import { UserStore } from '../auth/user.store'
 import { ZEntry, ZEntryRow } from '../types'
 
 const Z_ENTRIES_TABLE_ID = 'z_entries'
 
 @Injectable({ providedIn: 'root' })
 export class ZEntryService {
-    async getUserStats(userId: string) {
+    constructor(private userStore: UserStore) { }
+
+    async getUserStats() {
+        const profile = this.userStore.profile()
+        if (!profile) return {}
+
         const statusToGet: ZEntryRow['status'][] = ['completed', 'backlog', 'playing', 'dropped', 'wishlist']
 
         function createRequest(status: ZEntryRow['status']) {
-            return appwrite.datababases.listRows({
+            return appwrite.databases.listRows({
                 databaseId: 'app',
                 tableId: 'z_entries',
-                queries: [Query.select(['$id']), Query.equal('userId', userId), Query.equal('status', status!), Query.limit(1)]
+                queries: [Query.select(['$id']), Query.equal('ownerFingerprint', profile!.fingerprint), Query.equal('status', status!), Query.limit(1)]
             })
         }
 
@@ -28,13 +34,16 @@ export class ZEntryService {
         }
     }
 
-    async getUserEntries(userId: string, status: Exclude<ZEntryRow['status'], null | undefined>, opts?: { pageSize?: number, offset?: number }) {
-        return await appwrite.datababases.listRows<ZEntryRow>({
+    async getUserEntries(status: Exclude<ZEntryRow['status'], null | undefined>, opts?: { pageSize?: number, offset?: number }) {
+        const profile = this.userStore.profile()
+        if (!profile) return { total: 0, rows: [] }
+
+        return await appwrite.databases.listRows<ZEntryRow>({
             databaseId: 'app',
             tableId: Z_ENTRIES_TABLE_ID,
             queries: [
                 Query.select(['$id', 'status', 'gameId']),
-                Query.equal('userId', userId),
+                Query.equal('ownerFingerprint', profile!.fingerprint),
                 Query.equal('status', status),
                 Query.orderDesc('$updatedAt'),
                 Query.limit(opts?.pageSize || 12),
@@ -43,39 +52,48 @@ export class ZEntryService {
         })
     }
 
-    async getEntry(userId: string, gameId: string) {
-        const zEntry = await appwrite.datababases.getRow<ZEntryRow>({
+    async getEntry(gameId: string) {
+        const profile = this.userStore.profile()
+        if (!profile) return null
+
+        const zEntries = await appwrite.databases.listRows<ZEntryRow>({
             databaseId: 'app',
             tableId: Z_ENTRIES_TABLE_ID,
-            rowId: `${userId}_${gameId}`
-        }).catch((e) => {
-            if (e.code === 404) return null
-            else throw e
+            queries: [Query.equal('ownerFingerprint', profile.fingerprint), Query.equal('gameId', gameId)]
         })
 
-        return zEntry
+        if (zEntries.total > 0) return zEntries.rows[0]
+        else return null
     }
 
-    async createEntry(userId: string, gameId: string, status: ZEntry['status'] | null, prev: ZEntryRow | null) {
+    async createEntry(payload: { zEntryId?: string, gameId: string, status: ZEntry['status'] | null, prev: ZEntryRow | null }) {
+        const profile = this.userStore.profile()
+        if (!profile) return null
+
+        const { zEntryId, gameId, status, prev } = payload
+
         const prevState = JSON.stringify({
             status: prev?.status ?? null,
             liked: prev?.liked ?? null
         });
 
-        return await appwrite.datababases.upsertRow<ZEntryRow>({
+        return await appwrite.databases.upsertRow<ZEntryRow>({
             databaseId: 'app',
             tableId: Z_ENTRIES_TABLE_ID,
-            rowId: `${userId}_${gameId}`,
+            rowId: zEntryId || ID.unique(),
             data: {
-                userId,
                 gameId,
                 status,
-                prevState
+                prevState,
+                ownerFingerprint: profile!.fingerprint
             }
         });
     }
 
-    async likeAGame(userId: string, gameId: string, prev: ZEntryRow | null) {
+    async likeAGame(gameId: string, prev: ZEntryRow | null) {
+        const profile = this.userStore.profile()
+        if (!profile) return
+
         const prevState = JSON.stringify({
             status: prev?.status ?? null,
             liked: prev?.liked ?? null
@@ -83,21 +101,21 @@ export class ZEntryService {
 
         const liked = prev ? !prev.liked : true;
 
-        return await appwrite.datababases.upsertRow<ZEntryRow>({
+        return await appwrite.databases.upsertRow<ZEntryRow>({
             databaseId: 'app',
             tableId: Z_ENTRIES_TABLE_ID,
-            rowId: `${userId}_${gameId}`,
+            rowId: `${profile!.fingerprint}_${gameId}`,
             data: {
-                userId,
                 gameId,
                 liked,
-                prevState
+                prevState,
+                ownerFingerprint: profile!.fingerprint
             }
         });
     }
 
     async getZEntryCount() {
-        const response = await appwrite.datababases.listRows<ZEntryRow>({
+        const response = await appwrite.databases.listRows<ZEntryRow>({
             databaseId: 'app',
             tableId: Z_ENTRIES_TABLE_ID,
             queries: [Query.select(['$id']), Query.limit(1)]

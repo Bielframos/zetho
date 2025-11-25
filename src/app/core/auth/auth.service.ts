@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { appwrite, ID } from '../appwrite/appwrite.client';
 import { environment } from '../../../environments/environment';
+import { appwrite, ExecutionMethod } from '../appwrite/appwrite.client';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -11,21 +11,46 @@ export class AuthService {
    * @param name
    * @param gamertag
    */
-  async register(email: string, password: string, name: string) {
+  async register(email: string, password: string, name: string, gamertag: string) {
     try {
-      const user = await appwrite.account.create({
-        userId: ID.unique(),
-        email,
-        password,
-        name,
+      const execution = await appwrite.functions.createExecution({
+        functionId: 'users-core',
+        xpath: '/register',
+        method: ExecutionMethod.POST,
+        body: JSON.stringify({ email, name, gamertag, password }),
       });
+
+      let body: any;
+
+      try {
+        body = JSON.parse(execution.responseBody || '{}');
+      } catch (e) {
+        throw { message: 'Invalid JSON returned by server.', code: 500 };
+      }
+
+      // Se a function retornou um código 4xx ou 5xx, trate como erro
+      if (execution.responseStatusCode >= 400 || body.error) {
+        throw { message: body.message || 'Registration failed.', code: execution.responseStatusCode };
+      }
+
+      // Profile retornado pelo backend
+      const profile = body.profile;
+      if (!profile) {
+        throw { message: 'Missing profile in server response.', code: 500 };
+      }
+
+      // Cria sessão automaticamente
       await appwrite.account.createEmailPasswordSession({ email, password });
-      return user
+      const user = await appwrite.account.get()
+
+      return { user, profile };
+
     } catch (error) {
       console.error('Error registering user:', error);
       throw error;
     }
   }
+
 
   /**
    * Método de login com e-mail e senha

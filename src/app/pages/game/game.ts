@@ -28,9 +28,11 @@ export class Game {
 
     async handleZEntry(status: ZEntry['status']) {
         const game = this.pageState.game()
+        const existingZEntry = this.pageState.zEntry()
+
         if (game) {
             const newStatus = status === this.pageState.zEntry()?.status ? null : status
-            const zEntry = await this.zerei.createZEntry(game.$id, newStatus, this.pageState.zEntry())
+            const zEntry = await this.zerei.createZEntry({ zEntryId: existingZEntry?.$id, gameId: game.$id, status: newStatus, prev: this.pageState.zEntry() })
             if (zEntry) this.pageState.updateZEntry(zEntry)
         }
     }
