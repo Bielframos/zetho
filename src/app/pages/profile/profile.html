@@ -12,7 +12,7 @@
             <div class="w-full h-1 bg-amber-400"></div>
 
             <div class="p-4">
-                <h4 class="font-bold text-lg mb-2 w-full">E-mail não verificado</h4>
+                <h4 class="font-medium text-lg mb-2 w-full">E-mail não verificado</h4>
                 <span class="text-gray-11">Para manter sua conta ativa, verifique seu e-mail.</span>
                 <div class="flex items-end justify-between gap-4">
                     @if (mailVerification().sended) {
@@ -21,7 +21,8 @@
                     <small class="text-red text-red-300">Erro ao enviar e-mail de verificação.</small>
                     }
 
-                    <button class="ui-primary-btn whitespace-nowrap mt-4" (click)="requestMailVerification()">
+                    <button class="ui-primary-btn whitespace-nowrap max-md:w-full mt-4"
+                        (click)="requestMailVerification()">
                         Verificar e-mail
                     </button>
                 </div>
@@ -82,7 +83,7 @@
     <div>
         <div class="flex flex-col gap-4">
             <div>
-                <h4 class="text-xl font-medium">Excluir minha conta</h4>
+                <h4 class="text-lg font-medium">Excluir minha conta</h4>
                 <span class="text-gray-11">Ao excluir sua conta todos os seus dados e registros serão perdidos.</span>
             </div>
             <button type="submit" class="ui-destructive-btn">Excluir minha conta</button>
