@@ -13,7 +13,7 @@ export class GameService {
         try {
             const slug = slugify(query, { lower: true })
 
-            const bySlug = await appwrite.datababases.listRows<GameRow>({
+            const bySlug = await appwrite.databases.listRows<GameRow>({
                 databaseId: 'app',
                 tableId: GAMES_TABLE_ID,
                 queries: [
@@ -28,7 +28,7 @@ export class GameService {
                 return bySlug;
             }
 
-            const games = await appwrite.datababases.listRows<GameRow>({
+            const games = await appwrite.databases.listRows<GameRow>({
                 databaseId: 'app',
                 tableId: GAMES_TABLE_ID,
                 queries: [
@@ -44,7 +44,7 @@ export class GameService {
     }
 
     async getGame(slug: string) {
-        const games = await appwrite.datababases.listRows<GameRow>({
+        const games = await appwrite.databases.listRows<GameRow>({
             databaseId: 'app',
             tableId: GAMES_TABLE_ID,
             queries: [
@@ -65,7 +65,7 @@ export class GameService {
             opts?.summarized ? ['$id', 'name', 'slug', 'releaseYear', 'coverUrl'] :
                 ['*', 'genres.name', 'genres.slug', 'involvedCompanies.name', 'involvedCompanies.slug']
 
-        const games = await appwrite.datababases.listRows<GameRow>({
+        const games = await appwrite.databases.listRows<GameRow>({
             databaseId: 'app',
             tableId: GAMES_TABLE_ID,
             queries: [

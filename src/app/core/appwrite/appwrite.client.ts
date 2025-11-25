@@ -8,7 +8,7 @@ export const appwrite = {
   client,
   account: new Account(client),
   teams: new Teams(client),
-  datababases: new TablesDB(client),
+  databases: new TablesDB(client),
   functions: new Functions(client),
   avatars: new Avatars(client)
 };

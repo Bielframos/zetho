@@ -8,7 +8,7 @@ const Z_STATS_TABLE_ID = 'z_entry_count'
 export class ZStatsService {
 
     async getTrendingGames() {
-        const response = await appwrite.datababases.listRows<ZStatsRow>({
+        const response = await appwrite.databases.listRows<ZStatsRow>({
             databaseId: 'app',
             tableId: Z_STATS_TABLE_ID,
             queries: [

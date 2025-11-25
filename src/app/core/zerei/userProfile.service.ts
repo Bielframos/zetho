@@ -12,7 +12,7 @@ export class UserProfileService {
      * @returns 
      */
     async getProfile(userId: string) {
-        const response = await appwrite.datababases.listRows<UserProfileRow>({
+        const response = await appwrite.databases.listRows<UserProfileRow>({
             databaseId: 'app',
             tableId: TABLE_ID,
             queries: [Query.equal('userId', userId), Query.limit(1)],
@@ -29,7 +29,7 @@ export class UserProfileService {
      */
     async createProfile(userId: string, gamertag: string) {
         try {
-            await appwrite.datababases.createRow({
+            await appwrite.databases.createRow({
                 databaseId: 'app',
                 tableId: TABLE_ID,
                 rowId: 'unique()',
@@ -48,7 +48,7 @@ export class UserProfileService {
      */
     async isValidGamertag(gamertagToCheck: string) {
         try {
-            const response = await appwrite.datababases.listRows({
+            const response = await appwrite.databases.listRows({
                 databaseId: 'app',
                 tableId: TABLE_ID,
                 queries: [Query.equal('gamertag', gamertagToCheck)]
@@ -66,7 +66,7 @@ export class UserProfileService {
      * @returns 
      */
     async getProfileCount() {
-        const response = await appwrite.datababases.listRows({
+        const response = await appwrite.databases.listRows({
             databaseId: 'app',
             tableId: TABLE_ID,
             queries: [Query.select(['$id']), Query.limit(1)]
