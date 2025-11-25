@@ -1,6 +1,7 @@
 @if (userStore.isAuthenticated()) {
 <header class="mb-10">
-    <ul class="w-full mx-auto flex justify-center py-1 overflow-x-auto font-light bg-blue-2 border-b border-gray-6">
+    <ul
+        class="w-full mx-auto flex px-6 md:justify-center py-1 overflow-x-auto font-light bg-blue-2 border-b border-gray-6">
         @for (tab of tabs(); track tab.key) {
         <li class="flex gap-2 whitespace-nowrap px-4 py-2 rounded-lg transition-colors
              hover:bg-blue-4 hover:text-white data-[active=true]:bg-blue-3 data-[active=true]:hover:bg-blue-4"
