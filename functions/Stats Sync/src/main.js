@@ -5,113 +5,161 @@ export default async ({ req, res, log, error }) => {
     .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
     .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
     .setKey(req.headers['x-appwrite-key'] ?? '');
-  const databases = new TablesDB(client);
 
+  const databases = new TablesDB(client);
   const event = req.headers['x-appwrite-event'];
 
-  if (event.endsWith('.upsert')) {
-    const payload = req.bodyJson;
+  if (!event.endsWith('.upsert')) {
+    return res.json({ message: 'Function Stats Sync is running' });
+  }
 
-    let prevState = {};
+  const payload = req.bodyJson;
+
+  // ---------------------------
+  // PARSE prevState
+  // ---------------------------
+  let prevState = {};
+  try {
+    prevState = JSON.parse(payload.prevState || '{}');
+  } catch {}
+
+  const prevStatus = prevState.status;
+  const currentStatus = payload.status;
+
+  const prevLiked = prevState.liked;
+  const currentLiked = payload.liked;
+
+  // ---------------------------
+  // HELPER: Detectar operação de status
+  // ---------------------------
+  const setStatusOperation = (status) => {
+    return prevStatus !== status && currentStatus === status
+      ? 'increment'
+      : prevStatus === status && currentStatus !== status
+        ? 'decrement'
+        : null;
+  };
+
+  // ---------------------------
+  // HELPER: Gerar op para Appwrite (genérica)
+  // ---------------------------
+  const makeOp = (action, databaseId, tableId, rowId, column) => ({
+    action,
+    databaseId,
+    tableId,
+    rowId,
+    data: { value: 1, column },
+  });
+
+  // ---------------------------
+  // BUSCA user_profile
+  // ---------------------------
+  const userProfiles = await databases.listRows({
+    databaseId: 'app',
+    tableId: 'user_profiles',
+    queries: [Query.equal('fingerprint', payload.ownerFingerprint)],
+  });
+
+  const userProfile = userProfiles.rows[0];
+
+  if (!userProfile) {
+    return res.json({ error: true, message: 'User profile not found' });
+  }
+
+  // ---------------------------
+  // GERAR: Op estatísticas do jogo
+  // ---------------------------
+  const statuses = ['completed', 'backlog', 'dropped', 'playing', 'wishlist'];
+
+  const statsOps = statuses
+    .map((status) => {
+      const action = setStatusOperation(status);
+      if (!action) return null;
+
+      return makeOp(
+        action,
+        'app',
+        'z_entry_count',
+        `zstats_${payload.gameId}`,
+        `${status}Count`
+      );
+    })
+    .filter(Boolean);
+
+  // ---------------------------
+  // GERAR: Op no perfil do usuário
+  // ---------------------------
+  const profileOps = statuses
+    .map((status) => {
+      const key = `totals${status.charAt(0).toUpperCase() + status.slice(1)}`;
+      const action = setStatusOperation(status);
+      if (!action) return null;
+
+      return makeOp(action, 'app', 'user_profiles', userProfile.$id, key);
+    })
+    .filter(Boolean);
+
+  // ---------------------------
+  // GERAR: Like Operation (não atômico)
+  // ---------------------------
+  let likeOp = null;
+
+  if (prevLiked !== currentLiked) {
+    const zStats = await databases.getRow({
+      databaseId: 'app',
+      tableId: 'z_entry_count',
+      rowId: `zstats_${payload.gameId}`,
+      queries: [Query.select('likes')],
+    });
+
+    const newLikes = Math.max(0, (zStats.likes ?? 0) + (currentLiked ? 1 : -1));
+
+    likeOp = {
+      action: 'update',
+      databaseId: 'app',
+      tableId: 'z_entry_count',
+      rowId: `zstats_${payload.gameId}`,
+      data: { likes: newLikes },
+    };
+  }
+
+  // Agrupa tudo
+  const allOperations = [...statsOps, ...profileOps];
+  if (likeOp) allOperations.push(likeOp);
+
+  // ---------------------------
+  // TRANSAÇÃO COM RETRY
+  // ---------------------------
+  for (let retries = 1; retries <= 3; retries++) {
+    let tx = null;
+
     try {
-      prevState = JSON.parse(payload.prevState || '{}');
-    } catch {}
+      tx = await databases.createTransaction();
 
-    const prevStatus = prevState.status;
-    const currentStatus = payload.status;
-
-    function setStatusOperation(status, prev, current) {
-      return prev !== status && current === status
-        ? 'increment'
-        : prev === status && current !== status
-          ? 'decrement'
-          : null;
-    }
-
-    async function setLikeOperation() {
-      const prevLiked = prevState.liked;
-      const currentLiked = payload.liked;
-
-      if (prevLiked === currentLiked) return null;
-
-      const zStats = await databases.getRow({
-        databaseId: 'app',
-        tableId: 'z_entry_count',
-        rowId: `zstats_${payload.gameId}`,
-        queries: [Query.select('likes')],
+      await databases.createOperations({
+        transactionId: tx.$id,
+        operations: allOperations,
       });
 
-      const currentValue = zStats.likes ?? 0;
-      const delta = currentLiked ? +1 : -1;
-      const newValue = Math.max(0, currentValue + delta);
+      await databases.updateTransaction({
+        transactionId: tx.$id,
+        commit: true,
+      });
 
-      return {
-        action: 'update',
-        databaseId: 'app',
-        tableId: 'z_entry_count',
-        rowId: `zstats_${payload.gameId}`,
-        data: { likes: newValue },
-      };
-    }
-
-    const statsOperations = {
-      completed: setStatusOperation('completed', prevStatus, currentStatus),
-      backlog: setStatusOperation('backlog', prevStatus, currentStatus),
-      dropped: setStatusOperation('dropped', prevStatus, currentStatus),
-      playing: setStatusOperation('playing', prevStatus, currentStatus),
-      wishlist: setStatusOperation('wishlist', prevStatus, currentStatus),
-    };
-
-    const operations = Object.entries(statsOperations)
-      .filter(([_, action]) => action !== null)
-      .map(([key, action]) => ({
-        action,
-        databaseId: 'app',
-        tableId: 'z_entry_count',
-        rowId: `zstats_${payload.gameId}`,
-        data: { value: 1, column: key !== 'likes' ? `${key}Count` : 'likes' },
-      }));
-
-    const likeOp = await setLikeOperation();
-    if (likeOp) operations.push(likeOp);
-
-    let retries = 0;
-
-    do {
-      let tx = null;
-      let retry = false;
-
-      try {
-        tx = await databases.createTransaction();
-
-        await databases.createOperations({
-          transactionId: tx.$id,
-          operations,
-        });
-
-        await databases.updateTransaction({
-          transactionId: tx.$id,
-          commit: true,
-        });
-
-        return res.json({ message: `ZStats from ${payload.gameId} is synced` });
-      } catch (e) {
-        retries++;
-
+      return res.json({ message: `ZStats from ${payload.gameId} synced` });
+    } catch (e) {
+      if (tx?.$id) {
         await databases.updateTransaction({
           transactionId: tx.$id,
           rollback: true,
         });
-
-        if (retries <= 3) {
-          retry = true;
-          await new Promise((r) => setTimeout(r, retries * 50));
-        } else {
-          return res.json({ error: true, message: 'Max retries exceeded' });
-        }
       }
-    } while (true);
-  }
 
-  return res.json({ message: 'Function Stats Sync is running' });
+      if (retries === 3) {
+        return res.json({ error: true, message: 'Max retries exceeded' });
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, retries * 50));
+    }
+  }
 };
