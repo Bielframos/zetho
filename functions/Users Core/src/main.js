@@ -1,28 +1,30 @@
-import { Client, Users } from 'node-appwrite';
+import { Client, TablesDB, Users } from 'node-appwrite';
+import registerHandler from './handlers/register.handler.js';
 
-export default async ({ req, res, log, error }) => {
+const routes = {
+  'POST /register': registerHandler,
+};
+
+export default async (context) => {
   const client = new Client()
     .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
     .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
-    .setKey(req.headers['x-appwrite-key'] ?? '');
-    
+    .setKey(context.req.headers['x-appwrite-key'] ?? '');
+
   const users = new Users(client);
+  const databases = new TablesDB(client);
+
+  const ctx = { ...context, users, databases };
+
+  const key = `${ctx.req.method} ${ctx.req.path}`;
+  const handler = routes[key];
+
+  if (!handler) return ctx.res.send('Not Found', 404);
 
   try {
-    const response = await users.list();
-    log(`Total users: ${response.total}`);
-  } catch(err) {
-    error("Could not list users: " + err.message);
+    return await handler(ctx);
+  } catch (err) {
+    ctx.error(err.message);
+    return ctx.res.send('Internal Error', 500);
   }
-
-  if (req.path === "/ping") {
-    return res.text("Pong");
-  }
-
-  return res.json({
-    motto: "Build like a team of hundreds_",
-    learn: "https://appwrite.io/docs",
-    connect: "https://appwrite.io/discord",
-    getInspired: "https://builtwith.appwrite.io",
-  });
 };
