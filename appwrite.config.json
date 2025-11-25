@@ -148,7 +148,9 @@
         },
         {
             "$id": "users-core",
-            "execute": [],
+            "execute": [
+                "any"
+            ],
             "name": "Users Core",
             "enabled": true,
             "logging": true,
