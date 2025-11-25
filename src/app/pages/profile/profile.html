@@ -70,7 +70,7 @@
                 <small class="text-red px-4 text-red-300">Use apenas letras, números e _</small>
                 }
             </div>
-            <div class="flex gap-2 justify-end">
+            <div class="flex gap-2 justify-end flex-wrap">
                 <button class="ui-secondary-btn">Validar gamertag</button>
                 <button type="submit" class="ui-primary-btn w-fit" [disabled]="gamertag.errors?.['notChanged']"
                     (click)="updateGamertag()">Editar
