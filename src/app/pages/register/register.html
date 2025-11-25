@@ -36,7 +36,15 @@
       required />
     <ui-input label="Confirme a senha" type="password" placeholder="Confirme sua senha" name="confirmPassword"
       formControlName="confirmPassword" required />
+    @if (form.errors?.['passwordsMismatch']) {
+    <small class="text-red px-4 text-red-300 -mt-2">As senhas precisam ser iguais</small>
+    }
 
-    <button type="submit" class="ui-primary-btn mt-4">Registrar</button>
+    <button type="submit" class="ui-primary-btn mt-4" [disabled]="form.invalid || isSubmitting()">
+      @if (isSubmitting()) {
+      <i class="ph ph-spinner animate-spin"></i>
+      }
+      Registrar
+    </button>
   </form>
 </main>
