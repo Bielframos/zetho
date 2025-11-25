@@ -6,6 +6,7 @@ import { GameRow, ZEntryRow } from "../../core/types";
 import { ZereiService } from "../../core/zerei/zerei.service";
 import { UiGameCard } from "../../shared/ui/atoms/game-card/game-card";
 import { UiLoading } from "../../shared/ui/molecules/loading";
+import { Meta } from "@angular/platform-browser";
 
 const validStatuses: Exclude<ZEntryRow['status'], null | undefined>[] = [
     'completed',
@@ -26,6 +27,7 @@ function isValidStatus(value: any): value is Exclude<ZEntryRow['status'], null |
     templateUrl: './home.html'
 })
 export class Home implements OnInit {
+    private meta = inject(Meta)
     private route = inject(ActivatedRoute)
     private zerei = inject(ZereiService)
     private initialTab = (this.route.snapshot.queryParams['t'] as Exclude<ZEntryRow['status'], null | undefined>) ?? 'completed'
@@ -78,6 +80,20 @@ export class Home implements OnInit {
     }
 
     async ngOnInit() {
+        // Metadados
+        const description = 'A melhor forma de registrar e acompanhar os jogos que você zerou.';
+        const image = 'https://api.zereiapp.com/v1/storage/buckets/zerei-medias/files/zerei-placeholder-img/view?project=690a16460002c718253a&mode=admin';
+        const url = 'https://www.zereiapp.com';
+
+        this.meta.updateTag({ name: 'description', content: description });
+        this.meta.updateTag({ name: 'keywords', content: 'jogos, zerei, games' });
+
+        this.meta.updateTag({ property: 'og:title', content: 'Zerei App' });
+        this.meta.updateTag({ property: 'og:description', content: description });
+        this.meta.updateTag({ property: 'og:image', content: image });
+        this.meta.updateTag({ property: 'og:url', content: url });
+        this.meta.updateTag({ property: 'og:type', content: 'website' });
+
         try {
             const userStats = await this.zerei.getMyStats()
             this.myStats.set(userStats)
