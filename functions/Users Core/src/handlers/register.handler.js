@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { Query } from 'node-appwrite';
+import { Permission, Query, Role } from 'node-appwrite';
 
 function normalizeEmail(email) {
   email = email.trim().toLowerCase();
@@ -54,6 +54,7 @@ async function registerHandler(ctx) {
         tableId: 'user_profiles',
         rowId: existingProfile.$id,
         data: { userId: user.$id, gamertag, fingerprint },
+        permissions: [Permission.update(Role.user(user.$id))],
       });
     } else {
       profile = await ctx.databases.createRow({
@@ -61,6 +62,7 @@ async function registerHandler(ctx) {
         tableId: 'user_profiles',
         rowId: 'unique()',
         data: { userId: user.$id, gamertag, fingerprint },
+        permissions: [Permission.update(Role.user(user.$id))],
       });
     }
 
