@@ -1,10 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 import { UserStore } from '../../core/auth/user.store';
 import { UserProfileService } from '../../core/zerei/userProfile.service';
 import { UiInput } from '../../shared/ui/atoms/input/input';
+import { gamertagAsyncValidator, gamertagFormatValidator, nameValidator } from '../../core/modules/validators';
 
 @Component({
   selector: 'app-register-page',
@@ -15,32 +15,9 @@ import { UiInput } from '../../shared/ui/atoms/input/input';
 export class Register {
   private router = inject(Router);
   private userStore = inject(UserStore);
-  private profile = inject(UserProfileService)
+  private profileService = inject(UserProfileService)
 
   isSubmitting = signal(false)
-
-  private nameValidator(control: AbstractControl) {
-    const value = control.value as string;
-    if (!value) return null;
-    const regex = /^[A-Za-zÀ-ÿ]+(?: [A-Za-zÀ-ÿ]+)*$/;
-    return regex.test(value) ? null : { invalidName: true };
-  }
-
-  private gamertagFormatValidator(control: AbstractControl) {
-    const value = control.value as string;
-    if (!value) return null;
-    const regex = /^[a-zA-Z0-9_]+$/;
-    return regex.test(value) ? null : { invalidGamertagFormat: true };
-  }
-
-  private gamertagAsyncValidator = (control: AbstractControl) => {
-    return of(control.value).pipe(
-      distinctUntilChanged(),
-      switchMap(value => value ? this.profile.isValidGamertag(control.value) : of(false)),
-      map(isValid => (isValid ? null : { gamertagTaken: true })),
-      catchError(() => of({ gamertagCheckFailed: true }))
-    )
-  }
 
   private passwordMatch: ValidatorFn = (group) => {
     const pass = group.get('password')?.value;
@@ -53,15 +30,15 @@ export class Register {
   };
 
   form = new FormGroup({
-    name: new FormControl('', { nonNullable: true, validators: [Validators.required, this.nameValidator] }),
+    name: new FormControl('', { nonNullable: true, validators: [Validators.required, nameValidator] }),
     gamertag: new FormControl('', {
       nonNullable: true,
       validators: [
         Validators.required,
         Validators.minLength(3),
-        this.gamertagFormatValidator
+        gamertagFormatValidator
       ],
-      asyncValidators: [this.gamertagAsyncValidator.bind(this)],
+      asyncValidators: [gamertagAsyncValidator(this.profileService)],
       updateOn: 'blur'
     }),
     email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),

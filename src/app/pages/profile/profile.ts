@@ -1,26 +1,44 @@
 import { Component, effect, inject, signal } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
 import { UserStore } from "../../core/auth/user.store";
 import { UiInput } from "../../shared/ui/atoms/input/input";
 import { AuthService } from "../../core/auth/auth.service";
 import { Router } from "@angular/router";
+import { changedValidator, gamertagAsyncValidator, gamertagFormatValidator, nameValidator } from "../../core/modules/validators";
+import { UserProfileService } from "../../core/zerei/userProfile.service";
 
 @Component({
     selector: 'app-profile-page',
+    standalone: true,
     imports: [UiInput, ReactiveFormsModule],
     templateUrl: './profile.html'
 })
 export class Profile {
     private router = inject(Router)
     private authService = inject(AuthService)
+    private userProfileService = inject(UserProfileService)
     userStore = inject(UserStore)
-    user = this.userStore.user()
-    profile = this.userStore.profile()
 
-    name = new FormControl(this.user?.name ?? '', { nonNullable: true })
-    gamertag = new FormControl(this.profile?.gamertag ?? '', { nonNullable: true })
-    email = new FormControl(this.user?.email ?? '', { nonNullable: true })
-    newPassword = new FormControl('', { nonNullable: true })
+    private getNameValidators() {
+        return [Validators.required, nameValidator, changedValidator(this.userStore.user()?.name)]
+    }
+    private getGamertagValidators() {
+        return [
+            Validators.required,
+            Validators.minLength(3),
+            changedValidator(this.userStore.profile()?.gamertag),
+            gamertagFormatValidator,
+        ]
+    }
+
+    name = new FormControl(this.userStore.user()?.name ?? '', { nonNullable: true, validators: this.getNameValidators() })
+    gamertag = new FormControl(this.userStore.profile()?.gamertag ?? '', {
+        nonNullable: true,
+        validators: this.getGamertagValidators(),
+        asyncValidators: [gamertagAsyncValidator(this.userProfileService)],
+        updateOn: 'blur'
+    })
+    email = new FormControl(this.userStore.user()?.email ?? '', { nonNullable: true, validators: [Validators.required, changedValidator(this.userStore.user()?.email)] })
 
     // Estado reativo da página
     mailVerification = signal<{ sended?: boolean, error?: boolean }>({})
@@ -32,6 +50,28 @@ export class Profile {
         } catch (e) {
             console.error(e)
             this.mailVerification.set({ error: true })
+        }
+    }
+
+    async updateName() {
+        try {
+            await this.userStore.updateName(this.name.value)
+            this.name.setValidators(this.getNameValidators())
+            this.name.updateValueAndValidity()
+        } catch (e) {
+            console.error(e)
+            alert('Ocorreu um erro ao atualizar o seu nome.')
+        }
+    }
+
+    async updateGamertag() {
+        try {
+            await this.userStore.updateGamertag(this.gamertag.value)
+            this.gamertag.setValidators(this.getGamertagValidators())
+            this.gamertag.updateValueAndValidity()
+        } catch (e) {
+            console.error(e)
+            alert('Ocorreu um erro ao atualizar a sua gamertag.')
         }
     }
 

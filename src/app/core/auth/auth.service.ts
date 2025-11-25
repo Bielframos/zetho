@@ -93,6 +93,11 @@ export class AuthService {
     await appwrite.account.createEmailVerification({ url: new URL('/verificacao', environment.appUrl).toString() })
   }
 
+  /**
+   * Método que confirma a verificação do e-mail
+   * @param userId 
+   * @param secret 
+   */
   async verifyEmail(userId: string, secret: string) {
     await appwrite.account.updateEmailVerification({ userId, secret })
   }

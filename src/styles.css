@@ -59,11 +59,11 @@
 
   /* Botões */
   .ui-primary-btn {
-    @apply cursor-pointer inline-flex gap-2 items-center justify-center px-4 py-2 h-fit rounded-lg text-gray-12 bg-blue-9 hover:bg-blue-10 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
+    @apply cursor-pointer border border-transparent inline-flex gap-2 items-center justify-center px-4 py-2 h-fit rounded-lg text-gray-12 bg-blue-9 hover:bg-blue-10 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:border-gray-3 disabled:text-gray-10;
   }
 
   .ui-secondary-btn {
-    @apply cursor-pointer inline-flex gap-2 items-center justify-center bg-blue-2 px-4 py-2 h-fit rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
+    @apply cursor-pointer border border-transparent inline-flex gap-2 items-center justify-center bg-blue-2 px-4 py-2 h-fit rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
   }
 
   .ui-destructive-btn {

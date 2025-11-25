@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { appwrite, Query } from "../appwrite/appwrite.client";
-import { UserProfileRow } from "../types";
+import { UserProfile, UserProfileRow } from "../types";
 
 const TABLE_ID = 'user_profiles'
 
@@ -59,6 +59,15 @@ export class UserProfileService {
         } catch (error) {
             throw error
         }
+    }
+
+    async updateProfile(profileId: string, newProfile: Partial<UserProfile>) {
+        return await appwrite.databases.updateRow<UserProfileRow>({
+            databaseId: 'app',
+            tableId: TABLE_ID,
+            rowId: profileId,
+            data: newProfile
+        })
     }
 
     /**

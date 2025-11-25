@@ -99,6 +99,32 @@ export class UserStore {
   }
 
   /**
+   * Método para atualizar o nome do usuário
+   * @param newName
+   */
+  async updateName(newName: string) {
+    try {
+      const updatedUser = await appwrite.account.updateName({ name: newName })
+      this.userSignal.set(updatedUser)
+    } catch (e) {
+      throw e
+    }
+  }
+
+  /**
+   * Método para atualizar a gamertag de um usuário
+   * @param newGamertag 
+   */
+  async updateGamertag(newGamertag: string) {
+    try {
+      const updatedProfile = await this.userProfileService.updateProfile(this.profile()!.$id, { gamertag: newGamertag })
+      this.profileSignal.set(updatedProfile)
+    } catch (e) {
+      throw e
+    }
+  }
+
+  /**
    * Método para limpar o estado de autenticação
    */
   clear() {
