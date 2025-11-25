@@ -12,11 +12,11 @@ import { Verification } from './pages/verification/verification';
 
 export const routes: Routes = [
   { path: '', component: Home },
-  { path: 'registrar', component: Register, canMatch: [guestGuard] },
-  { path: 'entrar', component: Login, canMatch: [guestGuard] },
-  { path: 'admin', component: Admin, canMatch: [adminGuard] },
-  { path: 'buscar', component: Search },
+  { path: 'registrar', component: Register, canMatch: [guestGuard], title: 'Zerei | Registro' },
+  { path: 'entrar', component: Login, canMatch: [guestGuard], title: 'Zerei | Login' },
+  { path: 'admin', component: Admin, canMatch: [adminGuard], title: 'Zerie | Admin' },
+  { path: 'buscar', component: Search, title: 'Zerei | Busque um jogo' },
   { path: 'jogo/:slug', component: Game },
-  { path: 'perfil', component: Profile, canMatch: [userGuard] },
-  { path: 'verificacao', component: Verification, canMatch: [userGuard] }
+  { path: 'perfil', component: Profile, canMatch: [userGuard], title: 'Zerei | Meu perfil' },
+  { path: 'verificacao', component: Verification, canMatch: [userGuard], title: 'Zerei | Verificação de e-mail' }
 ];

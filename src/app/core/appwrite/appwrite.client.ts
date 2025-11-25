@@ -1,8 +1,9 @@
-import { Account, Client, TablesDB, Functions, Teams, Query, Avatars } from 'appwrite';
+import { Account, Avatars, Client, Functions, TablesDB, Teams } from 'appwrite';
+import { environment } from '../../../environments/environment';
 
 const client = new Client()
-  .setEndpoint('https://appwrite.adstrito.com/v1')
-  .setProject('690a16460002c718253a');
+  .setEndpoint(environment.appwriteEndpoint)
+  .setProject(environment.appwriteProject);
 
 export const appwrite = {
   client,
@@ -13,5 +14,5 @@ export const appwrite = {
   avatars: new Avatars(client)
 };
 
-export { ID, Query, ExecutionMethod } from 'appwrite';
-export type { AppwriteException } from 'appwrite'
+export { ExecutionMethod, ID, Query } from 'appwrite';
+export type { AppwriteException } from 'appwrite';

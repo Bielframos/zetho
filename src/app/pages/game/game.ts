@@ -7,6 +7,7 @@ import { ShortNumberPipe } from '../../core/modules/pipes';
 import { ZEntry } from '../../core/types';
 import { ZereiService } from '../../core/zerei/zerei.service';
 import { UiGameCard } from "../../shared/ui/atoms/game-card/game-card";
+import { Title } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-game',
@@ -15,6 +16,7 @@ import { UiGameCard } from "../../shared/ui/atoms/game-card/game-card";
     templateUrl: './game.html'
 })
 export class Game {
+    private title = inject(Title)
     private zerei = inject(ZereiService);
     private route = inject(ActivatedRoute);
     userStore = inject(UserStore);
@@ -46,11 +48,16 @@ export class Game {
     }
 
     constructor() {
-        effect(async () => {
+        effect(() => {
             const slug = this.slug();
             if (!slug) return;
 
-            await this.pageState.fetch(slug)
+            this.pageState.fetch(slug)
         });
+
+        effect(() => {
+            const game = this.pageState.game()
+            this.title.setTitle(`${game?.name} — Zerei`)
+        })
     }
 }
