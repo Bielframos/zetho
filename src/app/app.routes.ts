@@ -12,11 +12,11 @@ import { Verification } from './pages/verification/verification';
 
 export const routes: Routes = [
   { path: '', component: Home },
-  { path: 'registrar', component: Register, canMatch: [guestGuard], title: 'Zerei | Registro' },
-  { path: 'entrar', component: Login, canMatch: [guestGuard], title: 'Zerei | Login' },
+  { path: 'registrar', component: Register, canMatch: [guestGuard], title: 'Zetho | Registro' },
+  { path: 'entrar', component: Login, canMatch: [guestGuard], title: 'Zetho | Login' },
   { path: 'admin', component: Admin, canMatch: [adminGuard], title: 'Zerie | Admin' },
-  { path: 'buscar', component: Search, title: 'Zerei | Busque um jogo' },
+  { path: 'buscar', component: Search, title: 'Zetho | Busque um jogo' },
   { path: 'jogo/:slug', component: Game },
-  { path: 'perfil', component: Profile, canMatch: [userGuard], title: 'Zerei | Meu perfil' },
-  { path: 'verificacao', component: Verification, canMatch: [userGuard], title: 'Zerei | Verificação de e-mail' }
+  { path: 'perfil', component: Profile, canMatch: [userGuard], title: 'Zetho | Meu perfil' },
+  { path: 'verificacao', component: Verification, canMatch: [userGuard], title: 'Zetho | Verificação de e-mail' }
 ];
