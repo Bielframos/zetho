@@ -147,6 +147,7 @@ export class GameService {
             queries: [
                 Query.equal('$id', ids),
                 Query.select(queries),
+                Query.orderDesc('$createdAt'),
                 Query.limit(opts?.pageSize || 12),
                 Query.offset(opts?.offset || 0)
             ]

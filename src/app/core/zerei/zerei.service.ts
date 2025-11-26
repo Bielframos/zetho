@@ -150,9 +150,6 @@ export class ZereiService {
         };
     }
 
-
-
-
     /**
      * Função para montar o estado da página individual de um jogo
      * @param slug 
