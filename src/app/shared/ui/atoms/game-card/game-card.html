@@ -1,33 +1,31 @@
 <ng-template #cardImg>
-    @if(game().coverUrl) {
-    <img [src]="game().coverUrl" [alt]="`${game().name} cover`" class="w-full h-auto" />
+    @if (game()?.coverUrl) {
+    <img [src]="game()?.coverUrl" [alt]="game()?.name + ' cover'" class="w-full h-auto" />
     } @else {
-    <div class="p-6 flex flex-col items-center justify-center text-center w-full aspect-3/4 bg-blue-2 bg-pattern">
-        <h4>{{ game().name }} <span class="text-gray-11 font-light">{{ game().releaseYear }}</span></h4>
+    <div class="fallback-cover">
+        <h4>
+            {{ game()?.name }}
+            <span class="text-gray-11 font-light">{{ game()?.releaseYear }}</span>
+        </h4>
     </div>
-
-    <style>
-        .bg-pattern {
-            background-color: #111725;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='199' viewBox='0 0 100 199'%3E%3Cg fill='%232e4484' fill-opacity='0.25'%3E%3Cpath d='M0 199V0h1v1.99L100 199h-1.12L1 4.22V199H0zM100 2h-.12l-1-2H100v2z'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
-        }
-    </style>
     }
 </ng-template>
 
-
 @if (readonlyMode()) {
-<div class="flex border border-gray-6 rounded-xl overflow-hidden" [style.width.px]="width()">
-    <ng-container [ngTemplateOutlet]="cardImg"></ng-container>
+<div class="base-card" [style.width.px]="width()" [style.view-transition-name]="game()!.$id">
+    <ng-container [ngTemplateOutlet]="cardImg" />
 </div>
 } @else {
-<a [href]="`/jogo/${game().slug}`" class="group relative flex border border-gray-6 rounded-xl overflow-hidden"
-    [style.width.px]="width()">
-    <ng-container [ngTemplateOutlet]="cardImg"></ng-container>
-    @if (game().coverUrl) {
-    <div
-        class="absolute px-4 py-4 w-full bg-linear-to-t from-blue-1 via-blue-2 to-transparent rounded-b-lg opacity-0 -bottom-4 group-hover:opacity-100 group-hover:bottom-0 transition-all duration-600">
-        <h4>{{ game().name }} <span class="text-gray-11 font-light">{{ game().releaseYear }}</span></h4>
+<a [routerLink]="['/jogo', game()?.slug]" class="base-card group relative" [style.width.px]="width()"
+    [style.view-transition-name]="game()!.$id" (click)="updateGame()">
+    <ng-container [ngTemplateOutlet]="cardImg" />
+
+    @if (game()?.coverUrl) {
+    <div class="hover-overlay">
+        <h4>
+            {{ game()?.name }}
+            <span class="text-gray-11 font-light">{{ game()?.releaseYear }}</span>
+        </h4>
     </div>
     }
 </a>

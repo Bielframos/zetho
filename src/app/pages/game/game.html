@@ -1,189 +1,32 @@
-@if (pageState.game(); as game) {
-<main class="w-full max-w-5xl mx-auto px-6 md:px-10">
-    <div class="flex flex-col md:flex-row gap-10 mt-6 md:mt-10">
-        <div class="flex flex-col gap-4 items-center md:items-start">
-            <ui-game-card [game]=" game" [width]="260" readonlyMode></ui-game-card>
-
-            @if (userStore.isAuthenticated()) {
-            <div
-                class="grid grid-cols-4 md:grid-cols-2 border-t md:border bg-blue-2 border-gray-6 rounded-lg overflow-hidden fixed md:relative bottom-0 w-full z-999">
-                <button [class]="[
-                        'flex flex-col gap-2 items-center justify-center px-4 py-4 md:border-r md:border-b border-gray-6 w-full cursor-pointer transition-colors text-sm md:text-md',
-                        pageState.zEntry()?.status === 'completed' ? 'bg-blue-9 text-white hover:bg-blue-10' : 'text-gray-11 hover:bg-blue-9 hover:text-white',
-                        ].join(' ')" (click)="handleZEntry('completed')">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M18.3125 11.0996H1.3418L14.0645 23.8223C13.3937 23.9386 12.704 24 12 24C5.37258 24 0 18.6274 0 12C0 6.80406 3.30252 2.37992 7.92285 0.710938L18.3125 11.0996ZM12 0C18.6274 0 24 5.37258 24 12C24 17.1965 20.6963 21.6195 16.0752 23.2881L5.6875 12.9004H22.6582L9.93457 0.176758C10.6056 0.0603575 11.2957 0 12 0Z"
-                            fill="currentcolor" />
-                    </svg>
-                    Zerei
-                </button>
-                <button [class]="[
-                    'flex flex-col gap-2 items-center justify-center px-4 py-4 md:border-b border-gray-6 w-full cursor-pointer transition-colors text-sm md:text-md',
-                    pageState.zEntry()?.status === 'backlog' ? 'bg-green-400 text-white hover:text-green-300 hover:bg-transparent' : 'text-gray-11 hover:text-green-300',
-                    ].join(' ')" (click)="handleZEntry('backlog')">
-                    <i class="ph-fill ph-books"></i>
-                    Backlog
-                </button>
-                <button [class]="[
-                    'flex flex-col gap-2 items-center justify-center px-4 py-4 md:border-r border-gray-6 w-full cursor-pointer transition-colors text-sm md:text-md',
-                    pageState.zEntry()?.status === 'playing' ? 'bg-purple-400 text-white hover:text-purple-300 hover:bg-transparent' : 'text-gray-11 hover:text-purple-300',
-                    ].join(' ')" (click)="handleZEntry('playing')">
-                    <i class="ph-fill ph-game-controller"></i>
-                    Jogando
-                </button>
-                <button [class]="[
-                    'flex flex-col gap-2 items-center justify-center px-4 py-4 border-gray-6 w-full cursor-pointer transition-colors text-sm md:text-md',
-                    pageState.zEntry()?.status === 'dropped' ? 'bg-red-400 text-white hover:text-red-300 hover:bg-transparent' : 'text-gray-11 hover:text-red-300',
-                    ].join(' ')" (click)="handleZEntry('dropped')">
-                    <i class="ph-fill ph-x-circle"></i>
-                    Dropei
-                </button>
-            </div>
-
-            <button [class]="[
-                    'gap-2 items-center justify-center px-4 py-2 w-full border border-gray-6 rounded-lg bg-blue-2 cursor-pointer hover:blue-9 transition-colors hidden md:flex',
-                    pageState.zEntry()?.status === 'wishlist' ? 'text-blue-12 hover:text-gray-11' : 'text-gray-11 hover:text-blue-12'
-                    ].join(' ')" (click)="handleZEntry('wishlist')">
-                <i class="ph ph-list-star"></i>
-                {{pageState.zEntry()?.status === 'wishlist' ? 'Na lista de desejos' : 'Quero comprar'}}
-            </button>
-            } @else {
-            <div class="rounded-lg border border-gray-6 p-6 bg-blue-2 flex flex-col items-center w-[260px] text-center">
-                <i class="ph ph-game-controller text-[40px] mb-2"></i>
-                <h3 class="text-lg mb-1">Ei, player! Que tal acessar sua conta?</h3>
-                <span class="text-gray-11 font-light">Entre para salvar este jogo na sua coleção.</span>
-                <a routerLink="/entrar" class="ui-primary-btn mt-4">Acessar minha conta</a>
-            </div>
-            }
+<main class="w-full max-w-5xl md:grid grid-cols-[320px_1fr] gap-10 mx-auto px-6 md:px-10 py-10">
+    <aside class="w-full max-w-80">
+        <ui-game-card [game]="pageState.game()" [width]="320" readonlyMode></ui-game-card>
+        @if (pageState.game() && userStore.isAuthenticated()) {
+        <ui-game-user-actions [gameId]="pageState.game()!.$id" [zEntry]="pageState.zEntry()"
+            (onZEntryUpdate)="pageState.updateZEntry($event)"></ui-game-user-actions>
+        } @else {
+        <div
+            class="flex w-80 flex-col items-center rounded-lg border border-gray-6 bg-blue-2 p-6 text-center animate-fade-in-slide">
+            <i class="ph ph-game-controller mb-2 text-[40px]"></i>
+            <h3 class="mb-1 text-lg">Ei, player! Que tal <br> acessar sua conta?</h3>
+            <span class="font-light text-gray-11"> Entre para salvar <br> este jogo na sua coleção. </span>
+            <a routerLink="/entrar" class="ui-primary-btn mt-4"> Acessar minha conta </a>
         </div>
+        }
+    </aside>
 
-        <section class="flex-1 mb-[132px] md:mb-24">
-            @if (typeof game.zStats !== 'string') {
-            <div class="mb-6 max-md:-mt-4 md:mb-24 flex justify-center md:justify-end">
-                <button aria-label="Adicionar a lista de desejos"
-                    class="cursor-pointer border border-transparent px-2 flex flex-col gap-0.5 text-gray-11 hover:text-blue-12 md:hidden"
-                    (click)="handleZEntry('wishlist')" [disabled]="!userStore.isAuthenticated()">
+    <section class="mt-10 md:mt-40 animate-fade-in-slide" style="animation-delay: 400ms;">
+        <ui-game-header [game]="pageState.game()"></ui-game-header>
+        <ui-game-stats [stats]="pageState.game()?.zStats"></ui-game-stats>
 
-                    @if (pageState.zEntry()?.status === 'wishlist') {
-                    <i class="ph-fill ph-list-star text-blue-9"></i>
-                    } @else {
-                    <i class="ph ph-list-star"></i>
-                    }
-                    <span class="text-xs">{{game.zStats.wishlistCount | shortNumber}}</span>
-                </button>
-
-                <button aria-label="Curtir"
-                    class="cursor-pointer border border-transparent px-2 flex flex-col gap-0.5 text-gray-11 hover:text-red-300"
-                    (click)="handleLike()" [disabled]="!userStore.isAuthenticated()">
-                    @if (pageState.zEntry()?.liked) {
-                    <i class="ph-fill ph-heart text-red-400"></i>
-                    } @else {
-                    <i class="ph ph-heart"></i>
-                    }
-                    <span class="text-xs">{{game.zStats.likes || 0 | shortNumber}}</span>
-                </button>
-            </div>
+        @if (pageState.similarGames(); as similarGames) {
+        <hr class="border-blue-6 w-full my-10">
+        <h3 class="text-2xl mb-6">Talvez você goste</h3>
+        <ul class="grid grid-cols-4 gap-2">
+            @for (game of similarGames; track $index) {
+            <li><ui-game-card [game]="game"></ui-game-card></li>
             }
-
-            <header>
-                <h1 class="text-4xl text-center md:text-start">{{ game.name }}</h1>
-                <div class="flex gap-4 mt-6">
-                    <!-- Nome dos desenvolvedores -->
-                    <div class="border-r pr-4 border-blue-6">
-                        <span class="text-sm font-light text-gray-11">Desenvolvido por</span> <br>
-                        @for (company of game.involvedCompanies; track $index) {
-                        <span>{{ company.name }}
-                            @if ($index < game.involvedCompanies.length - 1) {<span>, </span>}
-                        </span>
-                        }
-                    </div>
-
-                    <!-- Data de lançamento -->
-                    <div>
-                        <span class="text-sm font-light text-gray-11">Lançado em</span> <br>
-                        <span>{{ game.releaseDate }}</span>
-                    </div>
-                </div>
-
-                <p class="font-light mt-6">{{ game.summary }}</p>
-
-                <!-- Genêros do game -->
-                <div class="mt-6">
-                    <span class="text-sm font-light text-gray-11">Gêneros</span> <br>
-                    @for (genre of game.genres; track $index) {
-                    <span>{{ genre.name }}
-                        @if ($index < game.genres.length - 1) {<span>, </span>}
-                    </span>
-                    }
-                </div>
-
-                <hr class="border-blue-6 w-full my-10">
-            </header>
-
-            <!-- ZStats do jogo -->
-            @if (typeof game.zStats !== 'string') {
-            <div class="@container">
-                <div
-                    class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden border rounded-lg border-gray-6 bg-blue-2">
-                    <div class="col-span-2 @md:border-b border-gray-6 px-4 py-4 text-gray-11 flex justify-between">
-                        <div class="flex gap-2 items-center">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M18.3125 11.0996H1.3418L14.0645 23.8223C13.3937 23.9386 12.704 24 12 24C5.37258 24 0 18.6274 0 12C0 6.80406 3.30252 2.37992 7.92285 0.710938L18.3125 11.0996ZM12 0C18.6274 0 24 5.37258 24 12C24 17.1965 20.6963 21.6195 16.0752 23.2881L5.6875 12.9004H22.6582L9.93457 0.176758C10.6056 0.0603575 11.2957 0 12 0Z"
-                                    fill="var(--color-gray-11)" />
-                            </svg>
-                            <span>Zerado</span>
-                        </div>
-                        <span>{{game.zStats.completedCount | shortNumber}}</span>
-                    </div>
-
-                    <div class="@md:border-b @md:border-r border-gray-6 px-4 py-4 text-gray-11 flex justify-between">
-                        <div class="flex gap-2 items-center">
-                            <i class="ph-fill ph-books text-gray-11"></i>
-                            <span>Backlog</span>
-                        </div>
-                        <span>{{game.zStats.backlogCount | shortNumber}}</span>
-                    </div>
-
-                    <div class="@md:border-b border-gray-6 px-4 py-4 text-gray-11 flex justify-between">
-                        <div class="flex gap-2 items-center">
-                            <i class="ph-fill ph-game-controller text-gray-11"></i>
-                            <span>Jogando</span>
-                        </div>
-                        <span>{{game.zStats.playingCount | shortNumber}}</span>
-                    </div>
-
-                    <div class="@md:border-r border-gray-6 px-4 py-4 text-gray-11 flex justify-between">
-                        <div class="flex gap-2 items-center">
-                            <i class="ph-fill ph-x-circle text-gray-11"></i>
-                            <span>Droparam</span>
-                        </div>
-                        <span>{{game.zStats.droppedCount | shortNumber}}</span>
-                    </div>
-
-                    <div class="px-4 py-4 text-gray-11 flex justify-between">
-                        <div class="flex gap-2 items-center">
-                            <i class="ph-fill ph-list-star text-gray-11"></i>
-                            <span>Lista de Desejos</span>
-                        </div>
-                        <span>{{game.zStats.wishlistCount | shortNumber}}</span>
-                    </div>
-                </div>
-            </div>
-            }
-
-            @if (pageState.similarGames(); as similarGames) {
-            <hr class="border-blue-6 w-full my-10">
-            <h3 class="text-2xl mb-6">Talvez você goste</h3>
-            <ul class="grid grid-cols-4 gap-2">
-                @for (game of similarGames; track $index) {
-                <li><ui-game-card [game]="game"></ui-game-card></li>
-                }
-            </ul>
-            }
-        </section>
-    </div>
+        </ul>
+        }
+    </section>
 </main>
-}

@@ -6,6 +6,7 @@ import { GameService } from "./games.service";
 import { UserProfileService } from "./userProfile.service";
 import { ZEntryService } from "./zEntries.service";
 import { ZStatsService } from "./zStats.service";
+import { GameStore } from "./game.store";
 
 export interface GameSearchController {
     results: Signal<GameRow[]>,
@@ -27,6 +28,7 @@ export class ZereiService {
         private zEntryService: ZEntryService,
         private zStatsService: ZStatsService,
         private userProfileService: UserProfileService,
+        private gameStore: GameStore,
         private userStore: UserStore
     ) { }
 
@@ -161,7 +163,7 @@ export class ZereiService {
         const zEntryService = this.zEntryService
         const user = this.userStore.user()
 
-        const _game = signal<GameRow | null>(null)
+        const _game = signal<GameRow | null>(this.gameStore.currentGame())
         const _similarGames = signal<GameRow[] | null>(null)
         const _zEntry = signal<ZEntryRow | null>(null)
         const _errors = signal<Record<string, any>>({})

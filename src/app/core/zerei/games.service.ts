@@ -1,6 +1,7 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { appwrite, Query } from "../appwrite/appwrite.client";
 import { GameRow } from "../types";
+import { GameStore } from "./game.store";
 
 const GAMES_TABLE_ID = 'games'
 
@@ -14,8 +15,10 @@ function normalize(text: string) {
 
 function extractKeywords(query: string) {
     return normalize(query)
+        .replace(/-/g, " ")
+        .replace(/_/g, " ")
         .split(/\s+/)
-        .filter(w => w.length > 1);
+        .filter(w => w.length > 0);
 }
 
 function scoreResult(game: GameRow, query: string, keywords: string[]) {
@@ -40,6 +43,8 @@ function scoreResult(game: GameRow, query: string, keywords: string[]) {
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
+    gameStore = inject(GameStore)
+
     async searchGame(query: string, opts: { pageSize?: number, offset?: number }) {
         const pageSize = opts.pageSize ?? 12;
         const offset = opts.offset ?? 0;
@@ -105,20 +110,28 @@ export class GameService {
         };
     }
 
-
     async getGame(slug: string) {
+        const cachedGame = this.gameStore.currentGame()
+        let fields = ['genres.name', 'genres.slug', 'involvedCompanies.name', 'involvedCompanies.slug', 'zStats.*']
+
+        if (!cachedGame) fields.push('*')
+        else fields.push('summary', 'similarGames')
+
         const games = await appwrite.databases.listRows<GameRow>({
             databaseId: 'app',
             tableId: GAMES_TABLE_ID,
             queries: [
                 Query.equal('slug', slug),
                 Query.limit(1),
-                Query.select(['*', 'genres.name', 'genres.slug', 'involvedCompanies.name', 'involvedCompanies.slug', 'zStats.*'])
+                Query.select(fields)
             ]
         })
 
         if (games.total < 1) return null
-        return games.rows[0]
+
+        const game = games.rows[0]
+        if (cachedGame) return { ...cachedGame, ...game }
+        else return game
     }
 
     async getGames(ids: string[], opts?: { onlyIds?: string, summarized?: boolean, pageSize?: number, offset?: number }) {
