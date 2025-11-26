@@ -90,9 +90,11 @@ export class ZEntryService {
         });
     }
 
-    async likeAGame(gameId: string, prev: ZEntryRow | null) {
+    async likeAGame(payload: { zEntryId?: string, gameId: string, prev: ZEntryRow | null }) {
         const profile = this.userStore.profile()
         if (!profile) return
+
+        const { zEntryId, gameId, prev } = payload
 
         const prevState = JSON.stringify({
             status: prev?.status ?? null,
@@ -104,7 +106,7 @@ export class ZEntryService {
         return await appwrite.databases.upsertRow<ZEntryRow>({
             databaseId: 'app',
             tableId: Z_ENTRIES_TABLE_ID,
-            rowId: `${profile!.fingerprint}_${gameId}`,
+            rowId: zEntryId || ID.unique(),
             data: {
                 gameId,
                 liked,

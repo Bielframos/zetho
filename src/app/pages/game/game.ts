@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
@@ -22,7 +22,9 @@ export class Game {
     userStore = inject(UserStore);
     pageState = this.zerei.createGamePageState()
 
-    // Converte params da rota em signal
+    // Evita spam de likes
+    private isLiking = signal(false);
+
     slug = toSignal(
         this.route.paramMap.pipe(map(params => params.get('slug'))),
         { initialValue: null }
@@ -34,16 +36,35 @@ export class Game {
 
         if (game) {
             const newStatus = status === this.pageState.zEntry()?.status ? null : status
-            const zEntry = await this.zerei.createZEntry({ zEntryId: existingZEntry?.$id, gameId: game.$id, status: newStatus, prev: this.pageState.zEntry() })
+            const zEntry = await this.zerei.createZEntry({
+                zEntryId: existingZEntry?.$id,
+                gameId: game.$id,
+                status: newStatus,
+                prev: this.pageState.zEntry()
+            })
             if (zEntry) this.pageState.updateZEntry(zEntry)
         }
     }
 
     async handleLike() {
         const game = this.pageState.game()
-        if (game) {
-            const zEntry = await this.zerei.likeAGame(game.$id, this.pageState.zEntry())
-            if (zEntry) this.pageState.updateZEntry(zEntry)
+        const existingZEntry = this.pageState.zEntry()
+
+        if (this.isLiking()) return;
+        this.isLiking.set(true);
+
+        try {
+            if (game) {
+                const zEntry = await this.zerei.likeAGame({
+                    zEntryId: existingZEntry?.$id,
+                    gameId: game.$id,
+                    prev: this.pageState.zEntry()
+                });
+
+                if (zEntry) this.pageState.updateZEntry(zEntry)
+            }
+        } finally {
+            this.isLiking.set(false);
         }
     }
 

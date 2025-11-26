@@ -320,12 +320,14 @@ export class ZereiService {
      * @param prev 
      * @returns 
      */
-    async likeAGame(gameId: string, prev: ZEntryRow | null) {
+    async likeAGame(payload: { zEntryId?: string, gameId: string, prev: ZEntryRow | null }) {
         const user = this.userStore.user()
         if (!user) alert('Só usuários logados podem curtir um jogo.')
 
+        const { zEntryId, gameId, prev } = payload
+
         try {
-            return await this.zEntryService.likeAGame(gameId, prev)
+            return await this.zEntryService.likeAGame({ zEntryId, gameId, prev })
         } catch (e) {
             console.error(e)
             return null
