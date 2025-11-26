@@ -2,6 +2,7 @@
 @import '@phosphor-icons/web/fill';
 @import '@phosphor-icons/web/regular';
 @import '@fontsource-variable/readex-pro';
+@import '@fontsource/jersey-10';
 
 @plugin "@tailwindcss/container-queries";
 
@@ -33,6 +34,8 @@
   --color-gray-10: #777b84;
   --color-gray-11: #b0b4ba;
   --color-gray-12: #edeef0;
+
+  --font-display: 'Jersey 10', system-ui;
 
   --animate-fade-in-slide: fade-in-slide 0.4s ease-out backwards;
 

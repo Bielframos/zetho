@@ -22,17 +22,18 @@ import { ZereiService } from '../../../core/zerei/zerei.service';
       >
         @switch (action.key) { @case ('completed') {
         <svg
-          width="20"
-          height="20"
+          width="22"
+          height="22"
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M18.3125 11.0996H1.3418L14.0645 23.8223C13.3937 23.9386 12.704 24 12 24C5.37258 24 0 18.6274 0 12C0 6.80406 3.30252 2.37992 7.92285 0.710938L18.3125 11.0996ZM12 0C18.6274 0 24 5.37258 24 12C24 17.1965 20.6963 21.6195 16.0752 23.2881L5.6875 12.9004H22.6582L9.93457 0.176758C10.6056 0.0603575 11.2957 0 12 0Z"
-            fill="currentcolor"
+            d="M14.7695 1.84668H18.4619V3.69238H20.3076V5.53809H22.1543V9.23047H24V14.7695H22.1543V18.4619H20.3076V20.3076H18.4619V22.1543H14.7695V24H9.23047V22.1543H5.53809V20.3076H3.69238V18.4619H1.8457V14.7695H0V9.23047H1.8457V5.53809H3.69238V3.69238H5.53809V1.84668H9.23047V0H14.7695V1.84668ZM5.53809 4.61523V8.30762H12.9229V10.1543H11.0771V12H9.23047V13.8457H7.38477V15.6924H5.53809V19.3848H18.4619V15.6924H12.9229V13.8457H14.7695V12H16.6152V10.1543H18.4619V4.61523H5.53809Z"
+            fill="white"
           />
         </svg>
+
         } @case ('backlog') {
         <i class="ph-fill ph-books"></i>
         } @case ('playing') {
@@ -51,10 +52,7 @@ import { ZereiService } from '../../../core/zerei/zerei.service';
       class="mt-4 border border-gray-6 divide-y divide-gray-6 rounded-lg overflow-hidden animate-fade-in-slide"
       style="animation-delay: 300ms"
     >
-      <button
-      (click)="handleLike()"
-        class="ui-secondary-btn w-full rounded-b-none"
-      >
+      <button (click)="handleLike()" class="ui-secondary-btn w-full rounded-b-none">
         @if (zEntry()?.liked) {
         <i class="ph-fill ph-heart text-red-400"></i>
         } @else {
@@ -63,7 +61,7 @@ import { ZereiService } from '../../../core/zerei/zerei.service';
         {{ zEntry()?.liked ? 'Descurtir' : 'Curtir' }}
       </button>
       <button
-       (click)="handleZEntry('wishlist')"
+        (click)="handleZEntry('wishlist')"
         [ngClass]="[
           'ui-secondary-btn w-full rounded-t-none',
           zEntry()?.status === 'wishlist' ? 'text-blue-12' : ''
@@ -136,7 +134,7 @@ export class UiGameUserActions {
       const updated = await this.zerei.likeAGame({
         zEntryId: existing?.$id,
         gameId: gameId,
-        prev: existing
+        prev: existing,
       });
 
       if (updated) this.onZEntryUpdate.emit(updated);

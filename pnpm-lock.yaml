@@ -29,6 +29,9 @@ importers:
       '@fontsource-variable/readex-pro':
         specifier: ^5.2.11
         version: 5.2.11
+      '@fontsource/jersey-10':
+        specifier: ^5.2.8
+        version: 5.2.8
       '@phosphor-icons/web':
         specifier: ^2.1.2
         version: 2.1.2
@@ -533,6 +536,9 @@ packages:
 
   '@fontsource-variable/readex-pro@5.2.11':
     resolution: {integrity: sha512-qBMhvaJ3yiMEhPmo0UPJA61i08+gFEHbu65WblSENvMYy1zB8ntpNjdXgUbKHCW5LYkaMReWAMD4q+B6LU8Q7Q==}
+
+  '@fontsource/jersey-10@5.2.8':
+    resolution: {integrity: sha512-5kjCLWNO/3n4zQ6fFvYratSSe61rgY/KRpQIayrblv6dW9jvOxAQXa8MJmWCJUHQlFK9GHH5bj/GSE7C6vgZHQ==}
 
   '@inquirer/ansi@1.0.1':
     resolution: {integrity: sha512-yqq0aJW/5XPhi5xOAL1xRCpe1eh8UFVgYFpFsjEqmIR8rKLyP+HINvFXwUaxYICflJrVlxnp7lLN6As735kVpw==}
@@ -3497,6 +3503,8 @@ snapshots:
     optional: true
 
   '@fontsource-variable/readex-pro@5.2.11': {}
+
+  '@fontsource/jersey-10@5.2.8': {}
 
   '@inquirer/ansi@1.0.1': {}
 
