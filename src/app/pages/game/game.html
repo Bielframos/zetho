@@ -65,7 +65,7 @@
                     class="cursor-pointer border border-transparent px-2 flex flex-col gap-0.5 text-gray-11 hover:text-blue-12 md:hidden"
                     (click)="handleZEntry('wishlist')" [disabled]="!userStore.isAuthenticated()">
 
-                    @if (pageState.zEntry()?.liked) {
+                    @if (pageState.zEntry()?.status === 'wishlist') {
                     <i class="ph-fill ph-list-star text-blue-9"></i>
                     } @else {
                     <i class="ph ph-list-star"></i>
