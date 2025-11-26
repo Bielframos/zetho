@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { UiInput } from '../../shared/ui/atoms/input/input';
 import { UserStore } from '../../core/auth/user.store';
@@ -15,6 +15,8 @@ export class Login {
 
   email = '';
   password = '';
+  isLoading = signal(false)
+  result = signal<{ error?: boolean, message?: string }>({})
 
   async login(form: NgForm) {
     if (form.invalid) {
@@ -22,7 +24,17 @@ export class Login {
       return;
     }
 
-    await this.userStore.login(this.email, this.password);
-    this.router.navigate(['/']);
+    this.isLoading.set(true)
+
+    try {
+      await this.userStore.login(this.email, this.password);
+      this.router.navigate(['/']);
+    } catch (e: any) {
+      if (e.code === 401) this.result.set({ error: true, message: 'Verifique o e-mail e senha inseridos.' })
+      else if (e.code === 429) this.result.set({ error: true, message: 'Você realizou muitas tentativas em sequência. Para sua segurança, aguarde alguns minutos e tente novamente.' })
+      else this.result.set({ error: true, message: 'Ocorreu um erro ao efetuar o login.' })
+    }
+
+    this.isLoading.set(false)
   }
 }

@@ -81,10 +81,11 @@ export class UserStore {
    */
   async login(email: string, password: string) {
     try {
-      await this.authService.login(email, password);
-      await this.refresh();
+      const session = await this.authService.login(email, password);
+      if (session) await this.refresh()
     } catch (e) {
       this.clear();
+      throw e
     }
   }
 

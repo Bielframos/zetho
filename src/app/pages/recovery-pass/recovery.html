@@ -1,0 +1,27 @@
+<main
+  class="mx-auto md:grid grid-cols-[320px_1fr] place-content-center min-h-[calc(100vh-215px)] gap-10 w-full max-w-4xl py-10 lg:py-24 px-6">
+  <header class="max-md:mb-10">
+    <h1 class="text-3xl">Recupere sua senha</h1>
+    <p class="text-gray-11 font-light mt-2">Lembrou da senha? <a routerLink="/entrar"
+        class="text-blue-9 hover:underline cursor-pointer">Entrar</a>
+    </p>
+  </header>
+
+  <form #form="ngForm" (ngSubmit)="createRecovery(form)" class="flex flex-col gap-4">
+    <ui-input type="email" label="E-mail" placeholder="bielframos@zetho.app" name="email" [(ngModel)]="email"
+      required />
+
+    @if (result().message) {
+    <small [class.text-red-300]="result().error" [class.text-green-300]="result().success">
+      {{ result().message }}
+    </small>
+    }
+
+    <button type="submit" class="ui-primary-btn mt-4" [disabled]="isLoading()">
+      @if (isLoading()) {
+      <i class="ph ph-spinner animate-spin"></i>
+      }
+      Recuperar senha
+    </button>
+  </form>
+</main>

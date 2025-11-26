@@ -9,11 +9,15 @@ import { Game } from './pages/game/game';
 import { Home } from './pages/home/home';
 import { Profile } from './pages/profile/profile';
 import { Verification } from './pages/verification/verification';
+import { Recovery } from './pages/recovery-pass/recovery';
+import { ResetPass } from './pages/reset-pass/reset-pass';
 
 export const routes: Routes = [
   { path: '', component: Home },
   { path: 'registrar', component: Register, canMatch: [guestGuard], title: 'Zetho | Registro' },
   { path: 'entrar', component: Login, canMatch: [guestGuard], title: 'Zetho | Login' },
+  { path: 'recuperar-senha', component: Recovery, canMatch: [guestGuard], title: 'Zetho | Recuperar senha' },
+  { path: 'redefinir-senha', component: ResetPass, canMatch: [guestGuard], title: 'Zetho | Recuperar senha' },
   { path: 'admin', component: Admin, canMatch: [adminGuard], title: 'Zerie | Admin' },
   { path: 'buscar', component: Search, title: 'Zetho | Busque um jogo' },
   { path: 'jogo/:slug', component: Game },

@@ -58,12 +58,7 @@ export class AuthService {
    * @param password
    */
   async login(email: string, password: string) {
-    try {
-      await appwrite.account.createEmailPasswordSession({ email, password });
-    } catch (error) {
-      console.error('Error logging in user:', error);
-      throw error;
-    }
+    return await appwrite.account.createEmailPasswordSession({ email, password });
   }
 
   /**
@@ -100,5 +95,13 @@ export class AuthService {
    */
   async verifyEmail(userId: string, secret: string) {
     await appwrite.account.updateEmailVerification({ userId, secret })
+  }
+
+  async createRecoveryPass(email: string) {
+    await appwrite.account.createRecovery({ email, url: new URL('/redefinir-senha', environment.appUrl).toString() })
+  }
+
+  async recoveryPass(userId: string, secret: string, password: string) {
+    await appwrite.account.updateRecovery({ userId, secret, password })
   }
 }

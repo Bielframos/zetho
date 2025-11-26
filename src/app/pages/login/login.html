@@ -1,4 +1,5 @@
-<main class="mx-auto md:grid grid-cols-[320px_1fr] gap-10 w-full max-w-4xl py-10 lg:mt-24 px-6">
+<main
+  class="mx-auto md:grid grid-cols-[320px_1fr] place-content-center min-h-[calc(100vh-215px)] gap-10 w-full max-w-4xl py-10 lg:py-24 px-6">
   <header class="max-md:mb-10">
     <h1 class="text-3xl">Acesse sua conta</h1>
     <p class="text-gray-11 font-light mt-2">Ainda não possui uma? <a routerLink="/registrar"
@@ -10,8 +11,21 @@
     <ui-input type="email" label="E-mail" placeholder="bielframos@zetho.app" name="email" [(ngModel)]="email"
       required />
     <ui-input type="password" label="Senha" placeholder="Sua senha" name="password" [(ngModel)]="password" required />
+    <a routerLink="/recuperar-senha" class="text-gray-11 hover:text-blue-12 hover:underline text-sm -mt-2 self-end">
+      Esqueceu sua senha?
+    </a>
 
+    @if (result().message) {
+    <small class="text-red-300">
+      {{ result().message }}
+    </small>
+    }
 
-    <button type="submit" class="ui-primary-btn mt-4">Entrar</button>
+    <button type="submit" class="ui-primary-btn mt-4" [disabled]="isLoading()">
+      @if (isLoading()) {
+      <i class="ph ph-spinner animate-spin"></i>
+      }
+      Entrar
+    </button>
   </form>
 </main>

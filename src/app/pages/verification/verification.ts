@@ -31,7 +31,7 @@ export class Verification {
         }
 
         if (new Date(Date.now()) > new Date(this.expire)) {
-            this.error.set('A tempo para efetuar sua verificação expirou. Retorne para a página do seu perfil e solicite um novo e-mail de verificação.')
+            this.error.set('O tempo para efetuar sua verificação expirou. Retorne para a página do seu perfil e solicite um novo e-mail de verificação.')
             this.loading.set(false)
             return
         }
