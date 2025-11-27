@@ -1,70 +1,4 @@
-@if (userStore.isAuthenticated()) {
-<header class="mb-10">
-    <ul
-        class="w-full mx-auto flex px-6 md:justify-center py-1 overflow-x-auto font-light bg-blue-2 border-b border-gray-6">
-        @for (tab of tabs(); track tab.key) {
-        <li class="flex gap-2 whitespace-nowrap px-4 py-2 rounded-lg transition-colors
-             hover:bg-blue-4 hover:text-white data-[active=true]:bg-blue-3 data-[active=true]:hover:bg-blue-4"
-            [attr.data-active]="currentTab() === tab.key" [class.pointer-events-none]="tab.count === 0">
-
-            @if (tab.count > 0) {
-            <a [routerLink]="['/']" [queryParams]="{ t: tab.key }">
-                {{ tab.label }}
-                <span class="px-1 text-gray-11 rounded-lg bg-blue-2 border border-gray-6 min-w-6 text-center">
-                    {{ tab.count }}
-                </span>
-            </a>
-            } @else {
-            <span class="cursor-not-allowed">
-                {{ tab.label }}
-                <span class="px-1 text-gray-11 rounded-lg bg-blue-2 border border-gray-6 min-w-6 text-center">
-                    0
-                </span>
-            </span>
-            }
-        </li>
-        }
-    </ul>
-</header>
-}
-
 <main class="flex flex-col w-full max-w-5xl min-h-[calc(100vh-304px)] justify-center mx-auto px-6 md:px-10 md:pb-10">
-    @if (userStore.isAuthenticated()) {
-    @if (pageState(); as state) {
-    @if (state.loading()) {
-    <ui-loading></ui-loading>
-    } @else {
-    @if (state.total() === 0) {
-    <div class="flex flex-col items-center mt-24">
-        <i class="ph-fill ph-game-controller text-[56px] text-blue-11 mb-4"></i>
-        <h1
-            class="text-center text-4xl md:text-5xl text-transparent bg-clip-text bg-linear-to-r to-blue-12 from-blue-11 max-w-xl font-bold pb-6">
-            Cada jogo tem uma história, comece a sua.
-        </h1>
-        <p class="text-xl text-center max-w-md mt-2">
-            Busque por um jogo <span class="underline underline-offset-4 decoration-blue-9">e crie um registro</span>
-            para acompanhar sua jornada.
-        </p>
-    </div>
-    } @else {
-    <ul class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-2 md:gap-4">
-        @for (game of state.games(); track game.$id) {
-        <li class="flex flex-col">
-            <ui-game-card [game]="game"></ui-game-card>
-        </li>
-        }
-    </ul>
-
-    @if (state.hasMore()) {
-    <footer class="w-full flex justify-center mt-10">
-        <button class="ui-primary-btn" (click)="state.loadMore()">Carregar mais</button>
-    </footer>
-    }
-    }
-    }
-    }
-    } @else {
-    <!-- Seção hero -->
     <section id="hero" class="flex flex-col items-center mt-6 md:mt-24">
         <h1
             class="text-center text-5xl text-transparent bg-clip-text bg-linear-to-r to-blue-12 from-blue-11 max-w-xl font-bold md:leading-relaxed">
@@ -198,5 +132,4 @@
 
         <div class="flex justify-end font-mono mt-6"><span class="text-gray-11 mr-2">—</span> Gabriel França</div>
     </section>
-    }
 </main>

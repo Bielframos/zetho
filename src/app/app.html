@@ -1,9 +1,8 @@
 <div>
   <nav class="w-full bg-linear-to-br from-blue-2 to-blue-3 px-6 md:px-10 py-4 border-b border-gray-6 relative z-10">
     <div class="flex gap-4 justify-between items-center">
-      <a routerLink="/">
-        <h3 class="font-display text-[40px] leading-0">zetho
-        </h3>
+      <a [routerLink]="userStore.isAuthenticated() ? '/app' : '/'">
+        <h3 class="font-display text-[40px] leading-0">zetho</h3>
       </a>
 
       <div class="flex gap-4 items-center">
@@ -15,8 +14,9 @@
         }
 
         @if (userStore.user()) {
-        <a routerLink="/perfil" class="rounded-full overflow-hidden bg-blue-12"><img [src]="userStore.avatarUrl()"
-            alt="{{`Avatar do ${userStore.user()?.name}`}}"></a>
+        <a routerLink="/perfil" class="rounded-full overflow-hidden bg-blue-12">
+          <img [src]="userStore.avatarUrl()" alt="{{`Avatar do ${userStore.user()?.name}`}}" class="h-10 w-10">
+        </a>
         } @else {
         <a routerLink="/registrar" class="ui-link">Criar conta</a>
         <a routerLink="/entrar" class="ui-link" data-size="icon"><i class="ph ph-sign-in"></i></a>
@@ -36,7 +36,8 @@
     <router-outlet />
   </div>
 
-  <footer class="w-full flex flex-col items-center border-t border-gray-6 px-6 md:px-10 py-10">
+  <footer class="w-full flex flex-col items-center border-t border-gray-6 px-6 md:px-10 py-4 md:py-10"
+    [class.max-md:mb-[84px]]="isGameRoute()">
     <h6 class="text-4xl font-display text-blue-9">Zetho</h6>
     <small class="text-gray-11">Powered by <a href="https://www.igdb.com/" class="font-semibold"
         class="text-blue-12">IGDB</a></small>

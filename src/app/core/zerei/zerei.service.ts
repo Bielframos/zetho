@@ -51,28 +51,30 @@ export class ZereiService {
     }
 
     /**
-     * Estado da página principal, com jogos do usuário e carregamento incremental
+     * Estado do dashboard, com jogos do usuário e carregamento incremental
      * @param status 
      * @param pageSize 
      * @returns 
      */
-    createHomePageState(pageSize: number = 12) {
+    createDashboardController(pageSize: number = 12) {
         const zEntryService = this.zEntryService;
         const gameService = this.gameService;
         const user = this.userStore.user();
 
-        const _status = signal<Exclude<ZEntryRow['status'], null | undefined>>('completed');
+        // Estado
+        const _initialized = signal(false);
 
+        const _status = signal<Exclude<ZEntryRow['status'], null | undefined>>('completed');
         const _games = signal<GameRow[]>([]);
         const _entries = signal<ZEntryRow[]>([]);
-
-        const _initialLoading = signal(true);
-        const _loadingMore = signal(false);
-
-        const _errors = signal<Record<string, any>>({});
         const _offset = signal(0);
         const _total = signal(0);
         const _hasMore = signal(true);
+
+        const _initialLoading = signal(false);
+        const _loadingMore = signal(false);
+
+        const _errors = signal<Record<string, any>>({});
 
         function init(status?: Exclude<ZEntryRow['status'], null | undefined>) {
             _games.set([]);
@@ -83,6 +85,8 @@ export class ZereiService {
 
             _initialLoading.set(true);
             _loadingMore.set(false);
+
+            _initialized.set(true);
 
             if (status) _status.set(status);
 
@@ -138,6 +142,7 @@ export class ZereiService {
         }
 
         return {
+            isInitialized: computed(() => _initialized()),
             games: computed(() => _games()),
             entries: computed(() => _entries()),
             total: computed(() => _total()),
