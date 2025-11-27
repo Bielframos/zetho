@@ -3,12 +3,12 @@ import { ZStatsRow } from '../../../core/types';
 import { ShortNumberPipe } from '../../../core/modules/pipes';
 
 @Component({
-    selector: 'ui-game-stats',
-    standalone: true,
-    template: `
+  selector: 'ui-game-stats',
+  standalone: true,
+  template: `
     <div class="@container">
       <div
-        class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden border rounded-lg border-gray-6 bg-blue-2"
+        class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden border rounded-lg border-gray-6 bg-blue-2 my-10"
       >
         <!-- Zerado -->
         <div
@@ -45,36 +45,36 @@ import { ShortNumberPipe } from '../../../core/modules/pipes';
       </div>
     </div>
   `,
-    imports: [ShortNumberPipe],
+  imports: [ShortNumberPipe],
 })
 export class UiGameStats {
-    stats = input<ZStatsRow>();
+  stats = input<ZStatsRow>();
 
-    // Estrutura para reduzir repetição no template
-    entries = [
-        {
-            key: 'backlogCount',
-            label: 'Backlog',
-            icon: 'ph-fill ph-books',
-            classes: '@md:border-b @md:border-r border-gray-6',
-        },
-        {
-            key: 'playingCount',
-            label: 'Jogando',
-            icon: 'ph-fill ph-game-controller',
-            classes: '@md:border-b border-gray-6',
-        },
-        {
-            key: 'droppedCount',
-            label: 'Droparam',
-            icon: 'ph-fill ph-x-circle',
-            classes: '@md:border-r border-gray-6',
-        },
-        {
-            key: 'wishlistCount',
-            label: 'Lista de Desejos',
-            icon: 'ph-fill ph-list-star',
-            classes: '',
-        },
-    ] as const;
+  // Estrutura para reduzir repetição no template
+  entries = [
+    {
+      key: 'backlogCount',
+      label: 'Backlog',
+      icon: 'ph-fill ph-books',
+      classes: '@md:border-b @md:border-r border-gray-6',
+    },
+    {
+      key: 'playingCount',
+      label: 'Jogando',
+      icon: 'ph-fill ph-game-controller',
+      classes: '@md:border-b border-gray-6',
+    },
+    {
+      key: 'droppedCount',
+      label: 'Droparam',
+      icon: 'ph-fill ph-x-circle',
+      classes: '@md:border-r border-gray-6',
+    },
+    {
+      key: 'wishlistCount',
+      label: 'Lista de Desejos',
+      icon: 'ph-fill ph-list-star',
+      classes: '',
+    },
+  ] as const;
 }

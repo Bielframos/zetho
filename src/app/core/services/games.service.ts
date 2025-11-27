@@ -116,7 +116,7 @@ export class GameService {
         let fields = ['genres.name', 'genres.slug', 'involvedCompanies.name', 'involvedCompanies.slug', 'zStats.*']
 
         if (!cachedGame) fields.push('*')
-        else fields.push('summary', 'similarGames')
+        else fields.push('releaseDate', 'summary', 'similarGames')
 
         const games = await appwrite.databases.listRows<GameRow>({
             databaseId: 'app',
@@ -130,9 +130,10 @@ export class GameService {
 
         if (games.total < 1) return null
 
-        const game = games.rows[0]
-        if (cachedGame) return { ...cachedGame, ...game }
-        else return game
+        let game = games.rows[0]
+        if (cachedGame) game = { ...cachedGame, ...game }
+        this.gameStore.setGame(game)
+        return game
     }
 
     async getGames(ids: string[], opts?: { onlyIds?: string, summarized?: boolean, pageSize?: number, offset?: number }) {

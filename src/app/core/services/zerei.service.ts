@@ -4,6 +4,8 @@ import { GameRow, ZEntryRow } from "../types";
 import { UserProfileService } from "./userProfile.service";
 import { ZEntryService } from "./zEntries.service";
 import { ZStatsService } from "./zStats.service";
+import { GameStore } from "../stores/game.store";
+import { CommentService } from "./comments.service";
 
 export interface GameSearchController {
     results: Signal<GameRow[]>,
@@ -24,7 +26,9 @@ export class ZereiService {
         private zEntryService: ZEntryService,
         private zStatsService: ZStatsService,
         private userProfileService: UserProfileService,
-        private userStore: UserStore
+        private commentService: CommentService,
+        private userStore: UserStore,
+        private gameStore: GameStore
     ) { }
 
     /**
@@ -66,6 +70,10 @@ export class ZereiService {
             console.error(e)
             return null
         }
+    }
+
+    async addAComment(comment: string) {
+        await this.commentService.createComment(comment)
     }
 
     /**
