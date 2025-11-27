@@ -1,44 +1,51 @@
-import { Component, input } from "@angular/core";
-import { ZStatsRow } from "../../../core/types";
-import { ShortNumberPipe } from "../../../core/modules/pipes";
+import { Component, input } from '@angular/core';
+import { ZStatsRow } from '../../../core/types';
+import { ShortNumberPipe } from '../../../core/modules/pipes';
 
 @Component({
     selector: 'ui-game-stats',
     standalone: true,
     template: `
     <div class="@container">
+      <div
+        class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden border rounded-lg border-gray-6 bg-blue-2"
+      >
+        <!-- Zerado -->
         <div
-            class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden border rounded-lg border-gray-6 bg-blue-2">
-
-            <!-- Zerado -->
-            <div class="col-span-2 @md:border-b border-gray-6 px-4 py-4 text-gray-11 flex justify-between">
-                <div class="flex gap-2 items-center">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M18.3125 11.0996H1.3418L14.0645 23.8223C13.3937 23.9386 12.704 24 12 24C5.37258 24 0 18.6274 0 12C0 6.80406 3.30252 2.37992 7.92285 0.710938L18.3125 11.0996ZM12 0C18.6274 0 24 5.37258 24 12C24 17.1965 20.6963 21.6195 16.0752 23.2881L5.6875 12.9004H22.6582L9.93457 0.176758C10.6056 0.0603575 11.2957 0 12 0Z"
-                            fill="var(--color-gray-11)" />
-                    </svg>
-                    <span>Zerado</span>
-                </div>
-                <span>{{ stats()?.completedCount | shortNumber }}</span>
-            </div>
-
-            <!-- Demais categorias -->
-            @for (item of entries; track $index) {
-                <div
-                    class="{{ item.classes }} px-4 py-4 text-gray-11 flex justify-between">
-                    <div class="flex gap-2 items-center">
-                        <i class="{{ item.icon }} text-gray-11"></i>
-                        <span>{{ item.label }}</span>
-                    </div>
-                    <span>{{ stats()?.[item.key] | shortNumber }}</span>
-                </div>
-            }
+          class="col-span-2 @md:border-b border-gray-6 px-4 py-4 text-gray-11 flex justify-between"
+        >
+          <div class="flex gap-2 items-center">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M14.7695 1.84668H18.4619V3.69238H20.3076V5.53809H22.1543V9.23047H24V14.7695H22.1543V18.4619H20.3076V20.3076H18.4619V22.1543H14.7695V24H9.23047V22.1543H5.53809V20.3076H3.69238V18.4619H1.8457V14.7695H0V9.23047H1.8457V5.53809H3.69238V3.69238H5.53809V1.84668H9.23047V0H14.7695V1.84668ZM5.53809 4.61523V8.30762H12.9229V10.1543H11.0771V12H9.23047V13.8457H7.38477V15.6924H5.53809V19.3848H18.4619V15.6924H12.9229V13.8457H14.7695V12H16.6152V10.1543H18.4619V4.61523H5.53809Z"
+                fill="var(--color-gray-11)"
+              />
+            </svg>
+            <span>Zerado</span>
+          </div>
+          <span>{{ stats()?.completedCount | shortNumber }}</span>
         </div>
+
+        <!-- Demais categorias -->
+        @for (item of entries; track $index) {
+        <div class="{{ item.classes }} px-4 py-4 text-gray-11 flex justify-between">
+          <div class="flex gap-2 items-center">
+            <i class="{{ item.icon }} text-gray-11"></i>
+            <span>{{ item.label }}</span>
+          </div>
+          <span>{{ stats()?.[item.key] | shortNumber }}</span>
+        </div>
+        }
+      </div>
     </div>
-    `,
-    imports: [ShortNumberPipe]
+  `,
+    imports: [ShortNumberPipe],
 })
 export class UiGameStats {
     stats = input<ZStatsRow>();
@@ -49,25 +56,25 @@ export class UiGameStats {
             key: 'backlogCount',
             label: 'Backlog',
             icon: 'ph-fill ph-books',
-            classes: '@md:border-b @md:border-r border-gray-6'
+            classes: '@md:border-b @md:border-r border-gray-6',
         },
         {
             key: 'playingCount',
             label: 'Jogando',
             icon: 'ph-fill ph-game-controller',
-            classes: '@md:border-b border-gray-6'
+            classes: '@md:border-b border-gray-6',
         },
         {
             key: 'droppedCount',
             label: 'Droparam',
             icon: 'ph-fill ph-x-circle',
-            classes: '@md:border-r border-gray-6'
+            classes: '@md:border-r border-gray-6',
         },
         {
             key: 'wishlistCount',
             label: 'Lista de Desejos',
             icon: 'ph-fill ph-list-star',
-            classes: ''
-        }
+            classes: '',
+        },
     ] as const;
 }

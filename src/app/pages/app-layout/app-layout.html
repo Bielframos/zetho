@@ -1,0 +1,31 @@
+<main class="relative w-full max-w-5xl md:grid grid-cols-[320px_1fr] gap-10 mx-auto md:px-10 md:pt-10 pb-10">
+    <aside class="w-full md:max-w-80 rounded-lg border-b md:border border-gray-6 bg-blue-2 h-fit">
+        <header class="flex flex-col items-center w-full gap-2 p-6 border-b border-gray-6">
+            <img [src]="userStore.avatarUrl()" alt="{{`Avatar do ${userStore.user()?.name}`}}" class="rounded-full">
+            <div class="text-center">
+                <h3 class="text-xl">{{profile?.gamertag}}</h3>
+                <span class="text-sm text-gray-11">{{user?.name}}</span>
+            </div>
+        </header>
+
+        <ul class="flex md:flex-col p-2 space-y-1 overflow-x-auto">
+            @for (tab of tabs(); track tab.key) {
+            <li class="group" [attr.data-active]="currentTab() === tab.key"
+                [class.pointer-events-none]="tab.count === 0">
+                <a [routerLink]="['/app']" [queryParams]="{ t: tab.key }"
+                    class="flex gap-2 justify-between w-fit md:w-full whitespace-nowrap pl-4 pr-2 py-2 rounded-lg hover:bg-blue-4 hover:text-white group-data-[active=true]:bg-blue-3 group-data-[active=true]:hover:bg-blue-4 transition-colors">
+                    {{ tab.label }}
+                    <span class="px-1 text-gray-11 rounded-lg bg-blue-2 border border-gray-6 min-w-6 text-center">
+                        {{ tab.count }}
+                    </span>
+                </a>
+
+            </li>
+            }
+        </ul>
+    </aside>
+
+    <section>
+        <router-outlet />
+    </section>
+</main>

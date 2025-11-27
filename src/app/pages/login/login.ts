@@ -28,7 +28,7 @@ export class Login {
 
     try {
       await this.userStore.login(this.email, this.password);
-      this.router.navigate(['/']);
+      this.router.navigate(['/app']);
     } catch (e: any) {
       if (e.code === 401) this.result.set({ error: true, message: 'Verifique o e-mail e senha inseridos.' })
       else if (e.code === 429) this.result.set({ error: true, message: 'Você realizou muitas tentativas em sequência. Para sua segurança, aguarde alguns minutos e tente novamente.' })
