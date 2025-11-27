@@ -7,7 +7,6 @@ import { UiSerchInput } from './shared/ui/molecules/search-input/search-input';
   selector: 'app-root',
   imports: [UiSerchInput, RouterLink, RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.css',
 })
 export class App {
   userStore = inject(UserStore)

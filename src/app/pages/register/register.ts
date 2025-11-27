@@ -11,6 +11,9 @@ import { gamertagAsyncValidator, gamertagFormatValidator, nameValidator } from '
   standalone: true,
   imports: [UiInput, ReactiveFormsModule, RouterLink],
   templateUrl: './register.html',
+  host: {
+    class: 'h-full'
+  }
 })
 export class Register {
   private router = inject(Router);

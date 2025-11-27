@@ -8,6 +8,9 @@ import { UiInput } from '../../shared/ui/atoms/input/input';
   selector: 'app-recovery-pass-page',
   imports: [UiInput, FormsModule, RouterLink],
   templateUrl: './recovery.html',
+  host: {
+    class: 'h-full'
+  }
 })
 export class Recovery {
   authService = inject(AuthService);

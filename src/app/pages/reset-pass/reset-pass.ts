@@ -8,7 +8,10 @@ import { UiInput } from "../../shared/ui/atoms/input/input";
     selector: 'app-reset-pass-page',
     standalone: true,
     imports: [UiInput, FormsModule, RouterLink],
-    templateUrl: './reset-pass.html'
+    templateUrl: './reset-pass.html',
+    host: {
+        class: 'h-full'
+    }
 })
 export class ResetPass {
     private route = inject(ActivatedRoute)

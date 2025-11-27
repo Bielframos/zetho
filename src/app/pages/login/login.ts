@@ -8,6 +8,9 @@ import { Router, RouterLink } from '@angular/router';
   selector: 'app-login-page',
   imports: [UiInput, FormsModule, RouterLink],
   templateUrl: './login.html',
+  host: {
+    class: 'h-full'
+  }
 })
 export class Login {
   userStore = inject(UserStore);

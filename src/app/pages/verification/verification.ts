@@ -8,7 +8,10 @@ import { UserStore } from "../../core/auth/user.store";
     selector: 'app-verification-page',
     standalone: true,
     imports: [UiLoading, RouterLink],
-    templateUrl: './verification.html'
+    templateUrl: './verification.html',
+    host: {
+        class: 'h-full'
+    }
 })
 export class Verification {
     private route = inject(ActivatedRoute)

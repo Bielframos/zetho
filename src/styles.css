@@ -59,6 +59,7 @@
 
   html,
   body {
+    height: 100%;
     min-height: 100dvh;
     background: var(--color-blue-1);
     color: var(--color-gray-12);
