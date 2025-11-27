@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { UserStore } from '../../core/auth/user.store';
-import { UserProfileService } from '../../core/zerei/userProfile.service';
+import { UserProfileService } from '../../core/services/userProfile.service';
 import { UiInput } from '../../shared/ui/atoms/input/input';
 import { gamertagAsyncValidator, gamertagFormatValidator, nameValidator } from '../../core/modules/validators';
 

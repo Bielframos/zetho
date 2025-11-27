@@ -1,14 +1,14 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { UserStore } from '../../core/auth/user.store';
-import { ZereiService } from '../../core/zerei/zerei.service';
+import { GamePageController } from '../../core/controllers/gamePage.controller';
 import { UiGameCard } from '../../shared/ui/atoms/game-card/game-card';
-import { UiGameUserActions } from './modules/game-user-actions';
 import { UiGameHeader } from "./modules/game-header";
 import { UiGameStats } from "./modules/game-stats";
+import { UiGameUserActions } from './modules/game-user-actions';
 
 @Component({
     selector: 'app-game',
@@ -21,14 +21,14 @@ export class Game {
      * INJEÇÕES DE DEPENDÊNCIA
      * --------------------------------------------------------- */
     private title = inject(Title);
-    private zerei = inject(ZereiService);
+    private gameController = inject(GamePageController)
     private route = inject(ActivatedRoute);
     userStore = inject(UserStore);
 
     /* ---------------------------------------------------------
      * ESTADO
      * --------------------------------------------------------- */
-    pageState = this.zerei.createGamePageState();
+    pageState = this.gameController.create();
 
     // Slug vindo da rota
     slug = toSignal(

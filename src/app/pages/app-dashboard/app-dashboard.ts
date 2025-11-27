@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { UserStore } from "../../core/auth/user.store";
-import { DashboardStore } from "../../core/zerei/dashboard.store";
+import { DashboardStore } from "../../core/stores/dashboard.store";
 import { UiGameCard } from "../../shared/ui/atoms/game-card/game-card";
 import { UiLoading } from "../../shared/ui/molecules/loading";
 

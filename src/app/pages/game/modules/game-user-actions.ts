@@ -1,7 +1,7 @@
 import { NgClass } from '@angular/common';
 import { Component, inject, input, output, signal } from '@angular/core';
 import { ZEntry, ZEntryRow } from '../../../core/types';
-import { ZereiService } from '../../../core/zerei/zerei.service';
+import { ZereiService } from '../../../core/services/zerei.service';
 
 @Component({
   selector: 'ui-game-user-actions',

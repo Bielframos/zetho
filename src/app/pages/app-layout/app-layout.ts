@@ -1,8 +1,8 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { RouterLink, RouterOutlet } from "@angular/router";
 import { UserStore } from "../../core/auth/user.store";
-import { DashboardStore } from "../../core/zerei/dashboard.store";
-import { ZereiService } from "../../core/zerei/zerei.service";
+import { DashboardStore } from "../../core/stores/dashboard.store";
+import { ZereiService } from "../../core/services/zerei.service";
 
 @Component({
     selector: 'app-layout',

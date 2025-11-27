@@ -2,7 +2,7 @@ import { booleanAttribute, Component, computed, inject, input } from "@angular/c
 import { GameRow } from "../../../../core/types";
 import { NgTemplateOutlet } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { GameStore } from "../../../../core/zerei/game.store";
+import { GameStore } from "../../../../core/stores/game.store";
 
 @Component({
     selector: 'ui-game-card',

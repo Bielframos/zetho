@@ -2,7 +2,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { Models } from 'appwrite';
 import { AuthService } from './auth.service';
 import { appwrite } from '../appwrite/appwrite.client';
-import { UserProfileService } from '../zerei/userProfile.service';
+import { UserProfileService } from '../services/userProfile.service';
 import { UserProfileRow } from '../types';
 
 @Injectable({ providedIn: 'root' })

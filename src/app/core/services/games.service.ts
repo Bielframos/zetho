@@ -1,7 +1,8 @@
 import { inject, Injectable } from "@angular/core";
 import { appwrite, Query } from "../appwrite/appwrite.client";
 import { GameRow } from "../types";
-import { GameStore } from "./game.store";
+import { GameStore } from "../stores/game.store";
+
 
 const GAMES_TABLE_ID = 'games'
 

@@ -2,7 +2,7 @@ import { Component, effect, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { UserStore } from "../../core/auth/user.store";
 import { GameRow } from "../../core/types";
-import { ZereiService } from "../../core/zerei/zerei.service";
+import { ZereiService } from "../../core/services/zerei.service";
 import { UiGameCard } from "../../shared/ui/atoms/game-card/game-card";
 import { UiLoading } from "../../shared/ui/molecules/loading";
 

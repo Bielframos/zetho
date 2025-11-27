@@ -1,6 +1,6 @@
 import { Component, effect, inject, signal } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { ZereiService } from "../../core/zerei/zerei.service";
+import { GameSearchController } from "../../core/controllers/gameSearch.controller";
 import { UiGameCard } from "../../shared/ui/atoms/game-card/game-card";
 import { UiLoading } from "../../shared/ui/molecules/loading";
 
@@ -11,11 +11,11 @@ import { UiLoading } from "../../shared/ui/molecules/loading";
     templateUrl: './search.html'
 })
 export class Search {
-    private zerei = inject(ZereiService)
+    private searchController = inject(GameSearchController)
     private route = inject(ActivatedRoute)
 
     query = signal<string>('')
-    searchGame = signal<ReturnType<ZereiService['createGameSearch']> | null>(null);
+    searchGame = signal<ReturnType<GameSearchController['create']> | null>(null);
 
     constructor() {
         effect(() => {
@@ -26,7 +26,7 @@ export class Search {
                 return;
             }
 
-            const controller = this.zerei.createGameSearch(q);
+            const controller = this.searchController.create(q);
             this.searchGame.set(controller);
         });
     }

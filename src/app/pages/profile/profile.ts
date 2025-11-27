@@ -5,7 +5,7 @@ import { UiInput } from "../../shared/ui/atoms/input/input";
 import { AuthService } from "../../core/auth/auth.service";
 import { Router } from "@angular/router";
 import { changedValidator, gamertagAsyncValidator, gamertagFormatValidator, nameValidator } from "../../core/modules/validators";
-import { UserProfileService } from "../../core/zerei/userProfile.service";
+import { UserProfileService } from "../../core/services/userProfile.service";
 
 @Component({
     selector: 'app-profile-page',

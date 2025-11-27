@@ -1,16 +1,16 @@
 import { inject, Injectable, signal } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { distinctUntilChanged, map } from "rxjs";
+import { DashboardController } from "../controllers/dashboard.controller";
 import { ZEntryRow } from "../types";
-import { ZereiService } from "./zerei.service";
 
 @Injectable({ providedIn: 'root' })
 export class DashboardStore {
     private route = inject(ActivatedRoute)
-    private zerei = inject(ZereiService)
+    private dashboardController = inject(DashboardController)
     private initialTab = (this.route.snapshot.queryParams['t'] as Exclude<ZEntryRow['status'], null | undefined>) ?? 'completed'
 
-    private controller = this.zerei.createDashboardController(24)
+    private controller = this.dashboardController.create(24)
 
     currentTab = signal<Exclude<ZEntryRow['status'], null | undefined>>(this.initialTab)
     loading = this.controller.loading
