@@ -17,7 +17,7 @@ export class UserStore {
   readonly profile = computed(() => this.profileSignal());
   readonly loading = computed(() => this.loadingSignal());
   readonly isAuthenticated = computed(() => this.user() !== null);
-  readonly avatarUrl = computed(() => appwrite.avatars.getInitials({ name: this.user()?.name, width: 64, height: 64, background: '3e63dd' }))
+  readonly avatarUrl = computed(() => appwrite.avatars.getInitials({ name: this.profile()?.gamertag, width: 64, height: 64, background: '3e63dd' }))
 
   constructor(private authService: AuthService) { }
 
