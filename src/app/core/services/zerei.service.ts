@@ -1,11 +1,11 @@
 import { Injectable, Signal } from "@angular/core";
+import { Analytics, logEvent } from "@angular/fire/analytics";
 import { UserStore } from "../auth/user.store";
 import { GameRow, ZEntryRow } from "../types";
+import { CommentService } from "./comments.service";
 import { UserProfileService } from "./userProfile.service";
 import { ZEntryService } from "./zEntries.service";
 import { ZStatsService } from "./zStats.service";
-import { GameStore } from "../stores/game.store";
-import { CommentService } from "./comments.service";
 
 export interface GameSearchController {
     results: Signal<GameRow[]>,
@@ -28,7 +28,7 @@ export class ZereiService {
         private userProfileService: UserProfileService,
         private commentService: CommentService,
         private userStore: UserStore,
-        private gameStore: GameStore
+        private analytics: Analytics
     ) { }
 
     /**
@@ -45,7 +45,9 @@ export class ZereiService {
         const { zEntryId, gameId, status, prev } = payload
 
         try {
-            return await this.zEntryService.createEntry({ zEntryId, gameId, status, prev })
+            const newZEntry = await this.zEntryService.createEntry({ zEntryId, gameId, status, prev })
+            logEvent(this.analytics, 'user_game_entry_interaction', { action: status, game_id: gameId })
+            return newZEntry
         } catch (e) {
             console.error(e)
             return null
