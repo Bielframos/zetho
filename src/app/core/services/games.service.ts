@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { appwrite, Query } from "../appwrite/appwrite.client";
-import { GameRow } from "../types";
+import { GameList, GameRow } from "../types";
 import { GameStore } from "../stores/game.store";
 
 
@@ -51,52 +51,38 @@ export class GameService {
         const offset = opts.offset ?? 0;
 
         const keywords = extractKeywords(query);
+        let exactMatch: GameList = { rows: [], total: 0 }
+
+        if (!offset) {
+            exactMatch = await appwrite.databases.listRows<GameRow>({
+                databaseId: 'app',
+                tableId: GAMES_TABLE_ID,
+                queries: [
+                    Query.equal('slug', normalize(query)),
+                    Query.select(['$id', 'name', 'slug', 'coverUrl', 'releaseYear']),
+                    Query.limit(1),
+                    Query.offset(offset)
+                ]
+            })
+        }
 
         const andQueries = keywords.map(k => Query.contains('name', k));
+
         const strongMatches = await appwrite.databases.listRows<GameRow>({
             databaseId: 'app',
             tableId: GAMES_TABLE_ID,
             queries: [
-                ...andQueries,
+                Query.and([...andQueries, Query.notEqual('slug', normalize(query))]),
                 Query.select(['$id', 'name', 'slug', 'coverUrl', 'releaseYear']),
-                Query.limit(pageSize),
+                Query.limit(pageSize - exactMatch.rows.length),
                 Query.offset(offset)
             ]
         });
 
         let results: GameRow[] = [];
 
-        if (strongMatches.total > 0) {
-            results = strongMatches.rows;
-        } else {
-            const orMatches = await appwrite.databases.listRows<GameRow>({
-                databaseId: 'app',
-                tableId: GAMES_TABLE_ID,
-                queries: [
-                    Query.or(keywords.map(k => Query.contains('name', k))),
-                    Query.select(['$id', 'name', 'slug', 'coverUrl', 'releaseYear']),
-                    Query.limit(pageSize),
-                    Query.offset(offset)
-                ]
-            });
-
-            if (orMatches.total > 0) {
-                results = orMatches.rows;
-            } else {
-                const fallback = await appwrite.databases.listRows<GameRow>({
-                    databaseId: 'app',
-                    tableId: GAMES_TABLE_ID,
-                    queries: [
-                        Query.search('name', query),
-                        Query.select(['$id', 'name', 'slug', 'coverUrl', 'releaseYear']),
-                        Query.limit(pageSize),
-                        Query.offset(offset)
-                    ]
-                });
-
-                results = fallback.rows;
-            }
-        }
+        if (exactMatch.total > 0) results.push(...exactMatch.rows)
+        if (strongMatches.total > 0) results.push(...strongMatches.rows)
 
         const ranked = results
             .map(game => ({
@@ -106,7 +92,7 @@ export class GameService {
             .sort((a, b) => b._score - a._score);
 
         return {
-            total: ranked.length,
+            total: strongMatches.total || ranked.length,
             rows: ranked
         };
     }
