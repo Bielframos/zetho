@@ -6,7 +6,7 @@ import { GameRow } from '../../../core/types';
   standalone: true,
   template: `
     <header>
-      <h1 class="text-4xl text-center md:text-start">{{ game()?.name }}</h1>
+      <h1 class="text-4xl text-blue-12 text-center md:text-start">{{ game()?.name }}</h1>
       <div class="flex gap-4 mt-6">
         <!-- Nome dos desenvolvedores -->
         <div class="border-r pr-4 border-blue-6">
@@ -34,8 +34,6 @@ import { GameRow } from '../../../core/types';
         <span>{{ genre.name }} @if ($index < game()?.genres.length - 1) {<span>, </span>} </span>
         }
       </div>
-
-      <hr class="border-blue-6 w-full my-10" />
     </header>
   `,
   imports: [],

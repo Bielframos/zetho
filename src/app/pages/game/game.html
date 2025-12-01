@@ -20,9 +20,13 @@
         <ui-game-header [game]="pageState.game()"></ui-game-header>
         <ui-game-stats [stats]="pageState.game()?.zStats"></ui-game-stats>
 
+        <hr class="border-blue-6 w-full mb-10">
+
+        <ui-game-lobby></ui-game-lobby>
+
         @if (pageState.similarGames(); as similarGames) {
         <hr class="border-blue-6 w-full my-10">
-        <h3 class="text-2xl mb-6">Talvez você goste</h3>
+        <h3 class="text-2xl mb-6 text-blue-12">Talvez você goste</h3>
         <ul class="grid grid-cols-4 gap-2">
             @for (game of similarGames; track $index) {
             <li><ui-game-card [game]="game"></ui-game-card></li>

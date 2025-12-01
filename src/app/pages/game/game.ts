@@ -9,11 +9,12 @@ import { UiGameCard } from '../../shared/ui/atoms/game-card/game-card';
 import { UiGameHeader } from "./modules/game-header";
 import { UiGameStats } from "./modules/game-stats";
 import { UiGameUserActions } from './modules/game-user-actions';
+import { UiGameLobby } from "./modules/game-lobby";
 
 @Component({
     selector: 'app-game',
     standalone: true,
-    imports: [UiGameCard, UiGameUserActions, RouterLink, UiGameHeader, UiGameStats],
+    imports: [UiGameCard, UiGameUserActions, RouterLink, UiGameHeader, UiGameStats, UiGameLobby],
     templateUrl: './game.html'
 })
 export class Game {

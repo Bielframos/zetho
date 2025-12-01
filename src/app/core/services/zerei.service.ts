@@ -1,4 +1,5 @@
 import { Injectable, Signal } from "@angular/core";
+import { Analytics, logEvent } from "@angular/fire/analytics";
 import { UserStore } from "../auth/user.store";
 import { GameRow, ZEntryRow } from "../types";
 import { UserProfileService } from "./userProfile.service";
@@ -24,7 +25,8 @@ export class ZereiService {
         private zEntryService: ZEntryService,
         private zStatsService: ZStatsService,
         private userProfileService: UserProfileService,
-        private userStore: UserStore
+        private userStore: UserStore,
+        private analytics: Analytics
     ) { }
 
     /**
@@ -41,7 +43,9 @@ export class ZereiService {
         const { zEntryId, gameId, status, prev } = payload
 
         try {
-            return await this.zEntryService.createEntry({ zEntryId, gameId, status, prev })
+            const newZEntry = await this.zEntryService.createEntry({ zEntryId, gameId, status, prev })
+            logEvent(this.analytics, 'user_game_entry_interaction', { action: status, game_id: gameId })
+            return newZEntry
         } catch (e) {
             console.error(e)
             return null
