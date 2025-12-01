@@ -59,7 +59,7 @@ export class Profile {
     }
 
     constructor() {
-        this.meta.addTags([{ name: 'og:title', content: `Veja o perfil de ${this.profile?.gamertag} no Zetho` }]);
+        this.meta.addTags([{ name: 'og:title', content: `Veja o perfil de ${this.gamertag()} no Zetho` }]);
 
         effect(() => {
             const gamertag = this.gamertag();
