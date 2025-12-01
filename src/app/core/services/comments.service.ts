@@ -2,9 +2,7 @@ import { Injectable } from "@angular/core";
 import { appwrite, Query } from "../appwrite/appwrite.client";
 import { CommentRow } from "../types";
 
-export type VoteAction =
-    | { op: 'add', type: 'up' | 'down', userId: string, prevVoteId?: string }
-    | { op: 'remove', type: 'up' | 'down', userId: string, prevVoteId: string }
+export type VoteAction = { op: 'add' | 'remove', type: 'up' | 'down', userId: string, prevVoteId: string }
 
 const TABLE_ID = 'game_comments'
 
@@ -63,7 +61,7 @@ export class CommentService {
     }) {
         let queries = [
             Query.equal('gameId', gameId),
-            Query.select(['$id', '$createdAt', 'userProfile.gamertag', 'content', 'voteCount', 'votes.$id', 'votes.type', 'replyCount', 'depth']),
+            Query.select(['$id', '$createdAt', 'userProfile.gamertag', 'content', 'voteCount', 'votes.$id', 'votes.type', 'votes.userId', 'replyCount', 'depth']),
             Query.limit(opts?.pageSize || 6),
             Query.offset(opts?.offset || 0),
             Query.orderDesc('$createdAt')
@@ -109,7 +107,7 @@ export class CommentService {
             return await appwrite.databases.upsertRow({
                 databaseId: 'app',
                 tableId: 'game_comment_votes',
-                rowId: action.prevVoteId || 'unique()',
+                rowId: action.prevVoteId,
                 data: {
                     type: action.type,
                     comment: commentId as any,

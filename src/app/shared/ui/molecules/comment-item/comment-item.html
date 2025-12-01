@@ -24,10 +24,11 @@
     'hover:text-green-300': controller.getUserVoteFor(comment()) !== 'up'
   }"
         (click)="controller.vote({
-    operation: 'up',
-    commentId: comment().$id,
-    parentId: comment().parentId
+          operation: 'up',
+          commentId: comment().$id,
+          parentId: comment().parentId
   })"
+        aria-label="Upvote"
       >
         <i class="ph ph-arrow-up text-[16px]"></i>
       </button>
@@ -42,10 +43,11 @@
     'hover:text-red-300': controller.getUserVoteFor(comment()) !== 'down'
   }"
         (click)="controller.vote({
-    operation: 'down',
-    commentId: comment().$id,
-    parentId: comment().parentId
+          operation: 'down',
+          commentId: comment().$id,
+          parentId: comment().parentId
   })"
+        aria-label="Downvote"
       >
         <i class="ph ph-arrow-down text-[16px]"></i>
       </button>

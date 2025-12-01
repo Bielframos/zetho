@@ -3,6 +3,7 @@ import { UserStore } from '../auth/user.store';
 import { CommentService, type VoteAction } from '../services/comments.service';
 import { GameStore } from '../stores/game.store';
 import { CommentRow } from '../types';
+import { ID } from 'appwrite';
 
 @Injectable({ providedIn: 'root' })
 export class CommentsController {
@@ -54,8 +55,6 @@ export class CommentsController {
                     offset: this.offset(),
                 },
             );
-
-            console.log(result)
 
             this.rootComments.update((state) => [...state, ...result.rows]);
             this.total.set(result.total);
@@ -154,7 +153,6 @@ export class CommentsController {
         try {
             const userId = this.userStore.user()!.$id;
 
-
             let targetComment: CommentRow | undefined;
             if (parentId) {
                 const ref = this.childComments()[parentId];
@@ -168,23 +166,21 @@ export class CommentsController {
                 return;
             }
 
-
             const prevVote = (targetComment.votes ?? [])
                 .find(v => v.userId === userId) as NonNullable<CommentRow['votes']>[number] | undefined;
 
             let action: VoteAction;
             let delta = 0;
 
-
             if (!prevVote) {
                 action = {
                     op: 'add',
                     type: operation,
+                    prevVoteId: ID.unique(),
                     userId
                 };
                 delta = operation === 'up' ? 1 : -1;
             } else {
-
                 if (prevVote.type === operation) {
                     action = {
                         op: 'remove',
@@ -194,7 +190,6 @@ export class CommentsController {
                     };
                     delta = operation === 'up' ? -1 : 1;
                 } else {
-
                     action = {
                         op: 'add',
                         type: operation,
@@ -205,7 +200,6 @@ export class CommentsController {
                 }
             }
 
-
             const applyLocalUpdate = (comment: CommentRow) => {
                 const updated: CommentRow = {
                     ...comment,
@@ -213,12 +207,10 @@ export class CommentsController {
                     votes: (() => {
                         let list = [...(comment.votes ?? [])];
 
-
                         if (prevVote) {
                             list = list.filter(v => v.$id !== prevVote.$id);
                         }
 
-                        // adicionar novo voto apenas se op === 'add'
                         if (action.op === 'add') {
                             list.unshift({
                                 $id: action.prevVoteId || 'temp-local-id',
@@ -269,7 +261,6 @@ export class CommentsController {
     getUserVoteFor(comment: CommentRow) {
         const userId = this.userStore.user()?.$id;
         if (!userId) return undefined;
-
         return (comment.votes ?? []).find(v => v.userId === userId)?.type;
     }
 
