@@ -19,7 +19,10 @@
           />
         </div>
         } @if (userStore.user()) {
-        <a routerLink="/perfil" class="rounded-full overflow-hidden bg-blue-12">
+        <a
+          [routerLink]="['/app', userStore.profile()?.gamertag]"
+          class="rounded-full overflow-hidden bg-blue-12"
+        >
           <img
             [src]="userStore.avatarUrl()"
             alt="{{`Avatar do ${userStore.user()?.name}`}}"
@@ -48,7 +51,7 @@
   </nav>
 
   <!-- Roteamento dinâmico -->
-  <div class="flex flex-col h-full min-h-fit">
+  <div class="flex flex-col flex-1 min-h-fit">
     <router-outlet />
   </div>
 

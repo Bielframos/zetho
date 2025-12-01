@@ -1,25 +1,21 @@
 import { Injectable } from '@angular/core'
 import { appwrite, ID, Query } from '../appwrite/appwrite.client'
-import { UserStore } from '../auth/user.store'
 import { ZEntry, ZEntryRow } from '../types'
 
 const Z_ENTRIES_TABLE_ID = 'z_entries'
 
 @Injectable({ providedIn: 'root' })
 export class ZEntryService {
-    constructor(private userStore: UserStore) { }
+    constructor() { }
 
-    async getUserStats() {
-        const profile = this.userStore.profile()
-        if (!profile) return {}
-
+    async getUserStats(userFingerprint: string) {
         const statusToGet: ZEntryRow['status'][] = ['completed', 'backlog', 'playing', 'dropped', 'wishlist']
 
         function createRequest(status: ZEntryRow['status']) {
             return appwrite.databases.listRows({
                 databaseId: 'app',
                 tableId: 'z_entries',
-                queries: [Query.select(['$id']), Query.equal('ownerFingerprint', profile!.fingerprint), Query.equal('status', status!), Query.limit(1)]
+                queries: [Query.select(['$id']), Query.equal('ownerFingerprint', userFingerprint), Query.equal('status', status!), Query.limit(1)]
             })
         }
 
@@ -34,16 +30,13 @@ export class ZEntryService {
         }
     }
 
-    async getUserEntries(status: Exclude<ZEntryRow['status'], null | undefined>, opts?: { pageSize?: number, offset?: number }) {
-        const profile = this.userStore.profile()
-        if (!profile) return { total: 0, rows: [] }
-
+    async getUserEntries(userFingerprint: string, status: Exclude<ZEntryRow['status'], null | undefined>, opts?: { pageSize?: number, offset?: number }) {
         return await appwrite.databases.listRows<ZEntryRow>({
             databaseId: 'app',
             tableId: Z_ENTRIES_TABLE_ID,
             queries: [
                 Query.select(['$id', 'status', 'gameId']),
-                Query.equal('ownerFingerprint', profile!.fingerprint),
+                Query.equal('ownerFingerprint', userFingerprint),
                 Query.equal('status', status),
                 Query.orderDesc('$updatedAt'),
                 Query.limit(opts?.pageSize || 12),
@@ -52,24 +45,18 @@ export class ZEntryService {
         })
     }
 
-    async getEntry(gameId: string) {
-        const profile = this.userStore.profile()
-        if (!profile) return null
-
+    async getEntry(userFingerprint: string, gameId: string) {
         const zEntries = await appwrite.databases.listRows<ZEntryRow>({
             databaseId: 'app',
             tableId: Z_ENTRIES_TABLE_ID,
-            queries: [Query.equal('ownerFingerprint', profile.fingerprint), Query.equal('gameId', gameId)]
+            queries: [Query.equal('ownerFingerprint', userFingerprint), Query.equal('gameId', gameId)]
         })
 
         if (zEntries.total > 0) return zEntries.rows[0]
         else return null
     }
 
-    async createEntry(payload: { zEntryId?: string, gameId: string, status: ZEntry['status'] | null, prev: ZEntryRow | null }) {
-        const profile = this.userStore.profile()
-        if (!profile) return null
-
+    async createEntry(userFingerprint: string, payload: { zEntryId?: string, gameId: string, status: ZEntry['status'] | null, prev: ZEntryRow | null }) {
         const { zEntryId, gameId, status, prev } = payload
 
         const prevState = JSON.stringify({
@@ -85,15 +72,12 @@ export class ZEntryService {
                 gameId,
                 status,
                 prevState,
-                ownerFingerprint: profile!.fingerprint
+                ownerFingerprint: userFingerprint
             }
         });
     }
 
-    async likeAGame(payload: { zEntryId?: string, gameId: string, prev: ZEntryRow | null }) {
-        const profile = this.userStore.profile()
-        if (!profile) return
-
+    async likeAGame(userFingerprint: string, payload: { zEntryId?: string, gameId: string, prev: ZEntryRow | null }) {
         const { zEntryId, gameId, prev } = payload
 
         const prevState = JSON.stringify({
@@ -111,7 +95,7 @@ export class ZEntryService {
                 gameId,
                 liked,
                 prevState,
-                ownerFingerprint: profile!.fingerprint
+                ownerFingerprint: userFingerprint
             }
         });
     }

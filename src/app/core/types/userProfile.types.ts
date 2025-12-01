@@ -9,6 +9,7 @@ type UserProfile = {
     totalsBacklog: number,
     totalsDropped: number,
     totalsPlaying: number,
+    totalsWishlist: number,
     fingerprint: string
 }
 

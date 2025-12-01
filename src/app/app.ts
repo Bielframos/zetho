@@ -9,21 +9,21 @@ import { UiSerchInput } from './shared/ui/molecules/search-input/search-input';
   templateUrl: './app.html',
 })
 export class App {
-  userStore = inject(UserStore)
-  private route = inject(Router)
+  userStore = inject(UserStore);
+  private route = inject(Router);
 
   onSearch(query: string) {
-    this.route.navigate(['/buscar'], { queryParams: { q: query } })
+    this.route.navigate(['/app/buscar'], { queryParams: { q: query } });
   }
 
   isAuthRoute() {
-    const path = this.route.url
-    const authRoutes = ['/entrar', '/registrar']
-    return authRoutes.some(route => path.startsWith(route))
+    const path = this.route.url;
+    const authRoutes = ['/entrar', '/registrar'];
+    return authRoutes.some((route) => path.startsWith(route));
   }
 
   isGameRoute() {
-    const path = this.route.url
-    return path.startsWith('/jogo')
+    const path = this.route.url;
+    return path.startsWith('/jogo');
   }
 }

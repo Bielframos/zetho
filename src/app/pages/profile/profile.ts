@@ -1,85 +1,69 @@
-import { Component, effect, inject, signal } from "@angular/core";
-import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
-import { UserStore } from "../../core/auth/user.store";
-import { UiInput } from "../../shared/ui/atoms/input/input";
-import { AuthService } from "../../core/auth/auth.service";
-import { Router } from "@angular/router";
-import { changedValidator, gamertagAsyncValidator, gamertagFormatValidator, nameValidator } from "../../core/modules/validators";
-import { UserProfileService } from "../../core/services/userProfile.service";
+import { Component, computed, effect, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { map } from 'rxjs';
+import { ProfileStore } from '../../core/stores/profile.store';
+import { UiUserLibGrid } from './modules/profile-entries';
+import { ZEntriesController } from '../../core/controllers/zEntries.controller';
+import { Meta } from '@angular/platform-browser';
 
 @Component({
-    selector: 'app-profile-page',
+    selector: 'app-layout',
     standalone: true,
-    imports: [UiInput, ReactiveFormsModule],
-    templateUrl: './profile.html'
+    imports: [RouterLink, UiUserLibGrid],
+    templateUrl: './profile.html',
 })
 export class Profile {
-    private router = inject(Router)
-    private authService = inject(AuthService)
-    private userProfileService = inject(UserProfileService)
-    userStore = inject(UserStore)
+    private route = inject(ActivatedRoute);
+    private meta = inject(Meta);
+    controller = inject(ZEntriesController);
+    profileStore = inject(ProfileStore);
 
-    private getNameValidators() {
-        return [Validators.required, nameValidator, changedValidator(this.userStore.user()?.name)]
-    }
-    private getGamertagValidators() {
-        return [
-            Validators.required,
-            Validators.minLength(3),
-            changedValidator(this.userStore.profile()?.gamertag),
-            gamertagFormatValidator,
-        ]
-    }
+    gamertag = toSignal(
+        this.route.paramMap.pipe(map((params) => params.get('gamertag'))),
+        { initialValue: null },
+    );
 
-    name = new FormControl(this.userStore.user()?.name ?? '', { nonNullable: true, validators: this.getNameValidators() })
-    gamertag = new FormControl(this.userStore.profile()?.gamertag ?? '', {
-        nonNullable: true,
-        validators: this.getGamertagValidators(),
-        asyncValidators: [gamertagAsyncValidator(this.userProfileService)],
-        updateOn: 'blur'
-    })
-    email = new FormControl(this.userStore.user()?.email ?? '', { nonNullable: true, validators: [Validators.required, changedValidator(this.userStore.user()?.email)] })
+    currentTab = this.controller.status;
 
-    // Estado reativo da página
-    mailVerification = signal<{ sended?: boolean, error?: boolean }>({})
+    tabs = computed(() => [
+        {
+            key: 'completed',
+            label: 'Zerados',
+            count: this.profileStore.current()?.totalsCompleted ?? 0,
+        },
+        {
+            key: 'backlog',
+            label: 'Backlog',
+            count: this.profileStore.current()?.totalsBacklog ?? 0,
+        },
+        {
+            key: 'playing',
+            label: 'Jogando',
+            count: this.profileStore.current()?.totalsPlaying ?? 0,
+        },
+        {
+            key: 'dropped',
+            label: 'Dropados',
+            count: this.profileStore.current()?.totalsDropped ?? 0,
+        },
+        {
+            key: 'wishlist',
+            label: 'Lista de desejos',
+            count: this.profileStore.current()?.totalsWishlist ?? 0,
+        },
+    ]);
 
-    async requestMailVerification() {
-        try {
-            await this.authService.createEmailVerification()
-            this.mailVerification.set({ sended: true })
-        } catch (e) {
-            console.error(e)
-            this.mailVerification.set({ error: true })
-        }
-    }
-
-    async updateName() {
-        try {
-            await this.userStore.updateName(this.name.value)
-            this.name.setValidators(this.getNameValidators())
-            this.name.updateValueAndValidity()
-        } catch (e) {
-            console.error(e)
-            alert('Ocorreu um erro ao atualizar o seu nome.')
-        }
-    }
-
-    async updateGamertag() {
-        try {
-            await this.userStore.updateGamertag(this.gamertag.value)
-            this.gamertag.setValidators(this.getGamertagValidators())
-            this.gamertag.updateValueAndValidity()
-        } catch (e) {
-            console.error(e)
-            alert('Ocorreu um erro ao atualizar a sua gamertag.')
-        }
+    get profile() {
+        return this.profileStore.current();
     }
 
     constructor() {
+        this.meta.addTags([{ name: 'og:title', content: `Veja o perfil de ${this.profile?.gamertag} no Zetho` }]);
+
         effect(() => {
-            if (!this.userStore.isAuthenticated()) {
-                this.router.navigate(['/']);
-            }
-        })
+            const gamertag = this.gamertag();
+            if (gamertag) this.profileStore.update(gamertag);
+        });
     }
 }

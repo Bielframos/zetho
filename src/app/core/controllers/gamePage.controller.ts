@@ -16,6 +16,7 @@ export class GamePageController {
 
     create() {
         const user = this.userStore.user();
+        const profile = this.userStore.profile();
 
         const _game = signal<GameRow | null>(this.gameStore.currentGame());
         const _similarGames = signal<GameRow[] | null>(null);
@@ -41,7 +42,7 @@ export class GamePageController {
 
             if (user) {
                 try {
-                    const zEntry = await this.zEntryService.getEntry(game.$id);
+                    const zEntry = await this.zEntryService.getEntry(profile!.fingerprint, game.$id);
                     _zEntry.set(zEntry);
                 } catch (e) {
                     _errors.update(s => ({ ...s, zEntry: e }));

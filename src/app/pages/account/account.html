@@ -1,0 +1,116 @@
+<main class="md:grid grid-cols-[384px_1fr] gap-10 mx-auto w-full max-w-4xl px-6 py-10 lg:pt-24">
+    <div>
+        <header>
+            <h1 class="text-3xl">Olá, {{userStore.user()?.name}}</h1>
+            <p class="text-gray-11 font-light mt-2">
+                Gerencie seu perfil e as informações da sua conta no Zetho.
+            </p>
+        </header>
+
+        @if (!userStore.user()?.emailVerification) {
+        <div class="bg-blue-2 overflow-hidden border border-gray-6 rounded-lg mt-6">
+            <div class="w-full h-1 bg-amber-400"></div>
+
+            <div class="p-4">
+                <h4 class="font-medium text-lg mb-2 w-full">E-mail não verificado</h4>
+                <span class="text-gray-11">Para manter sua conta ativa, verifique seu e-mail.</span>
+                <div class="flex items-end justify-between gap-4">
+                    @if (mailVerification().sended) {
+                    <small class="text-red text-green-300">Confira sua caixa de e-mail.</small>
+                    } @else if (mailVerification().error) {
+                    <small class="text-red text-red-300">Erro ao enviar e-mail de verificação.</small>
+                    }
+
+                    <button class="ui-primary-btn whitespace-nowrap max-md:w-full mt-4"
+                        (click)="requestMailVerification()">
+                        Verificar e-mail
+                    </button>
+                </div>
+            </div>
+        </div>
+        }
+
+        <button (click)="userStore.logout()" class="ui-secondary-btn w-full mt-4">
+            <i class="ph ph-sign-out"></i> Sair
+        </button>
+    </div>
+
+    <hr class="w-full border-gray-6 my-10 md:hidden">
+
+    <div>
+        <div class="flex flex-col gap-2.5 w-full">
+            <ui-input type="text" label="Nome" placeholder="Gabriel França" name="name" [formControl]="name" required />
+            @if (name.errors?.['invalidName']) {
+            <small class="text-red px-4 text-red-300 -mt-2">O nome é inválido</small>
+            }
+            <button type="submit" class="ui-primary-btn w-fit ml-auto" [disabled]="name.errors?.['notChanged']"
+                (click)="updateName()">Editar
+                nome
+            </button>
+        </div>
+
+        <hr class="w-full border-blue-6 my-10">
+
+        <div class="flex flex-col gap-2.5 w-full">
+            <div class="relative">
+                <ui-input label="Gamertag" type="text" placeholder="Bielframos" name="gamertag" [formControl]="gamertag"
+                    required />
+
+                <div class="absolute right-2 bottom-1">
+                    @if(gamertag.pending) {
+                    <i class="ph ph-spinner animate-spin text-md text-gray-6"></i>
+                    } @else if(gamertag.errors?.['gamertagTaken'] && gamertag.dirty) {
+                    <i class="ph ph-x-circle text-md text-red-600"></i>
+                    } @else if(gamertag.valid && gamertag.dirty) {
+                    <i class="ph ph-check-circle text-md text-green-600"></i>
+                    }
+                </div>
+
+                @if (gamertag.errors?.['invalidGamertagFormat']) {
+                <small class="text-red px-4 text-red-300">Use apenas letras, números e _</small>
+                }
+            </div>
+            <div class="flex gap-2 justify-end flex-wrap">
+                <button class="ui-secondary-btn">Validar gamertag</button>
+                <button type="submit" class="ui-primary-btn w-fit" [disabled]="gamertag.errors?.['notChanged']"
+                    (click)="updateGamertag()">Editar
+                    gamertag
+                </button>
+            </div>
+        </div>
+
+        <hr class="w-full border-blue-6 my-10">
+
+        <div class="flex flex-col gap-2.5 w-full">
+            <ui-input type="email" label="E-nail" placeholder="bielframos@zetho.com" name="email" [formControl]="email"
+                required [disabled]="true" />
+            <button type="submit" class="ui-primary-btn w-fit ml-auto" [disabled]="email.errors?.['notChanged']">Alterar
+                e-mail
+            </button>
+        </div>
+    </div>
+
+
+    <hr class="w-full border-gray-6 my-10 col-span-2">
+
+
+    <header class="mb-10">
+        <h1 class="text-3xl">Zona de risco</h1>
+        <p class="text-gray-11 font-light mt-2">
+            Ações tomadas aqui podem não ser reversíveis.
+        </p>
+    </header>
+
+
+    <div>
+        <div class="flex flex-col gap-4">
+            <div>
+                <h4 class="text-lg font-medium">Excluir minha conta</h4>
+                <span class="text-gray-11">Ao excluir sua conta todos os seus dados e registros serão perdidos.</span>
+            </div>
+            <button type="submit"
+                class="ui-destructive-btn border border-transparent disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-10 disabled:pointer-events-none"
+                disabled>Excluir minha conta</button>
+        </div>
+    </div>
+</main>

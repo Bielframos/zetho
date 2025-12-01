@@ -85,7 +85,7 @@ export class AuthService {
    * Método para gerar uma verificação de e-mail
    */
   async createEmailVerification() {
-    await appwrite.account.createEmailVerification({ url: new URL('/verificacao', environment.appUrl).toString() })
+    await appwrite.account.createEmailVerification({ url: new URL('/app/verificacao', environment.appUrl).toString() })
   }
 
   /**
