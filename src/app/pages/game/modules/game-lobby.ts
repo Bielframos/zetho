@@ -1,15 +1,18 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ZereiService } from '../../../core/services/zerei.service';
+import { CommentsController } from '../../../core/controllers/comments.controller';
+import { UiCommentItem } from '../../../shared/ui/molecules/comment-item/comment-item';
 
 @Component({
   selector: 'ui-game-lobby',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [UiCommentItem, ReactiveFormsModule],
   template: `
     <article class="flex flex-col gap-4">
       <header class="flex gap-4 items-center">
-        <div class="h-10 w-10 flex items-center justify-center rounded-full bg-blue-3">
+        <div
+          class="h-10 w-10 flex items-center justify-center rounded-full bg-blue-3"
+        >
           <i class="ph ph-users-three text-blue-9 text-[24px]"></i>
         </div>
         <div>
@@ -45,16 +48,38 @@ import { ZereiService } from '../../../core/services/zerei.service';
             [disabled]="comment.invalid || isLoading()"
           >
             @if (isLoading()) {
-            <i class="ph ph-spinner animate-spin"></i>
-            } Comentar
+              <i class="ph ph-spinner animate-spin"></i>
+            }
+            Comentar
           </button>
         </div>
       </div>
+
+      @for (comment of controller.rootComments(); track comment.$id) {
+        <ui-comment-item
+          [comment]="comment"
+          [replies]="controller.childComments()[comment.$id]?.comments || []"
+          [isLoadingReplies]="controller.loadingReplies()[comment.$id]"
+          (loadReplies)="controller.loadReplies(comment.$id)"
+          (reply)="controller.addComment($event, comment.$id, 1)"
+        />
+      }
+
+      @if (controller.hasMore()) {
+        <footer class="w-full flex justify-center">
+          <button
+            class="ui-primary-btn"
+            (click)="controller.loadRootComments({loadMore: true})"
+          >
+            Carregar mais
+          </button>
+        </footer>
+      }
     </article>
   `,
 })
 export class UiGameLobby {
-  private zerei = inject(ZereiService);
+  controller = inject(CommentsController);
 
   isLoading = signal(false);
   comment = new FormControl('', {
@@ -65,19 +90,24 @@ export class UiGameLobby {
   result = signal<{ error?: boolean; message?: string }>({});
 
   constructor() {
-    this.comment.valueChanges.subscribe((value) => this.charsCount.set(value.length));
+    this.comment.valueChanges.subscribe((value) =>
+      this.charsCount.set(value.length),
+    );
   }
 
   async createComment() {
     try {
-      this.isLoading.set(true)
-      await this.zerei.addAComment(this.comment.value);
+      this.isLoading.set(true);
+      await this.controller.addComment(this.comment.value);
       this.comment.reset();
     } catch (e) {
       console.error(e);
-      this.result.set({ error: true, message: 'Ocorreu um erro ao salvar seu comentário.' });
+      this.result.set({
+        error: true,
+        message: 'Ocorreu um erro ao salvar seu comentário.',
+      });
     } finally {
-      this.isLoading.set(false)
+      this.isLoading.set(false);
     }
   }
 }

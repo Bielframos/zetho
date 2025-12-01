@@ -2,7 +2,6 @@ import { Injectable, Signal } from "@angular/core";
 import { Analytics, logEvent } from "@angular/fire/analytics";
 import { UserStore } from "../auth/user.store";
 import { GameRow, ZEntryRow } from "../types";
-import { CommentService } from "./comments.service";
 import { UserProfileService } from "./userProfile.service";
 import { ZEntryService } from "./zEntries.service";
 import { ZStatsService } from "./zStats.service";
@@ -26,7 +25,6 @@ export class ZereiService {
         private zEntryService: ZEntryService,
         private zStatsService: ZStatsService,
         private userProfileService: UserProfileService,
-        private commentService: CommentService,
         private userStore: UserStore,
         private analytics: Analytics
     ) { }
@@ -72,10 +70,6 @@ export class ZereiService {
             console.error(e)
             return null
         }
-    }
-
-    async addAComment(comment: string) {
-        await this.commentService.createComment(comment)
     }
 
     /**

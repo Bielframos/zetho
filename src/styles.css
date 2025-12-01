@@ -87,6 +87,10 @@
     @apply cursor-pointer inline-flex gap-2 items-center justify-center bg-blue-2 px-4 py-2 h-fit rounded-lg text-red-300 hover:bg-red-600 hover:border-red-400 hover:text-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 ease-in-out;
   }
 
+  .ui-action-btn {
+    @apply h-[26px] px-2 py-0.5 rounded-full text-gray-11 gap-1 bg-blue-2 border border-gray-6 text-sm hover:bg-blue-3 flex items-center cursor-pointer transition-colors;
+  }
+
   /* Variação de tamanho para botões e links */
   [data-size='icon'] {
     @apply w-[42px] h-[42px] rounded-full p-0 flex items-center justify-center;

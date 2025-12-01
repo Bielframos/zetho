@@ -3,11 +3,13 @@ import { UserProfileRow } from "./userProfile.types"
 
 type Comment = {
     gameId: string,
-    userProfile: UserProfileRow | string,
+    userProfile: UserProfileRow,
     content: string,
     parentId?: string,
-    upvotes?: number,
-    downvotes?: number
+    votes?: { $id: string, type: 'up' | 'down', comment: CommentRow, userId: string }[]
+    voteCount?: number,
+    replyCount?: number,
+    depth?: number
 }
 
 type CommentRow = StoredRow<Comment>

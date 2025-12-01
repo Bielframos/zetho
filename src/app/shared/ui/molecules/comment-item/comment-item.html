@@ -1,0 +1,138 @@
+<div class="comment">
+  <div class="flex gap-2 items-center">
+    <img
+      [src]="getAvatar(comment().userProfile.gamertag)"
+      alt="{{`Avatar do ${comment().userProfile.gamertag}`}}"
+      class="h-8 w-8 rounded-full"
+    />
+    <span class="text-lg">{{ comment().userProfile.gamertag }}</span>
+  </div>
+
+  <!-- Conteúdo -->
+  <p class="pl-10 font-light -mt-1">{{ comment().content }}</p>
+
+  <!-- Ações -->
+  <div class="pl-10 mt-2 flex gap-2">
+    @if (depth < 2) {
+    <div
+      class="flex items-center gap-0.5 bg-blue-2 rounded-full border border-gray-6 text-gray-11"
+    >
+      <button
+        class="cursor-pointer px-1.5 transition-colors"
+        [ngClass]="{
+    'text-green-400': controller.getUserVoteFor(comment()) === 'up',
+    'hover:text-green-300': controller.getUserVoteFor(comment()) !== 'up'
+  }"
+        (click)="controller.vote({
+    operation: 'up',
+    commentId: comment().$id,
+    parentId: comment().parentId
+  })"
+      >
+        <i class="ph ph-arrow-up text-[16px]"></i>
+      </button>
+
+      {{ comment().voteCount || 0 }}
+
+      <!-- DOWNVOTE -->
+      <button
+        class="cursor-pointer px-1.5 transition-colors"
+        [ngClass]="{
+    'text-red-400': controller.getUserVoteFor(comment()) === 'down',
+    'hover:text-red-300': controller.getUserVoteFor(comment()) !== 'down'
+  }"
+        (click)="controller.vote({
+    operation: 'down',
+    commentId: comment().$id,
+    parentId: comment().parentId
+  })"
+      >
+        <i class="ph ph-arrow-down text-[16px]"></i>
+      </button>
+    </div>
+    }
+
+    <!-- botão para expandir respostas -->
+    @if (comment().replyCount && comment().replyCount! > 0) {
+    <button
+      class="px-2 py-0.5 bg-blue-2 flex items-center gap-1 border text-gray-11 hover:text-gray-12 cursor-pointer border-gray-6 text-sm hover:bg-blue-3 rounded-full"
+      (click)="loadReplies.emit()"
+    >
+      <i class="ph ph-chats text-[16px]"></i>
+      {{ comment().replyCount }}
+    </button>
+    }
+
+    <!-- botão para responder -->
+    @if (depth < 2) {
+    <button class="ui-action-btn" (click)="toggleReplyBox()">Responder</button>
+    }
+  </div>
+
+  <!-- Caixa de resposta -->
+  @if (showReplyBox) {
+  <div class="w-full flex flex-col items-end mt-4">
+    <textarea
+      class="rounded-lg px-4 w-full py-2 font-light border-gray-6 bg-blue-2 placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11 min-h-[64px] max-h-[160px]"
+      placeholder="Diga alguma coisa..."
+      [(ngModel)]="replyContent"
+    ></textarea>
+
+    <div class="flex gap-2">
+      <button
+        class="ui-secondary-btn px-2 py-1 mt-2"
+        (click)="toggleReplyBox()"
+      >
+        Cancelar
+      </button>
+
+      <button class="ui-primary-btn px-2 py-1 mt-2" (click)="onSendReply()">
+        Responder
+      </button>
+    </div>
+  </div>
+  }
+
+  <!-- Loader enquanto carrega respostas -->
+  @if (isLoadingReplies()) {
+  <div class="flex text-sm text-gray-11 gap-2 items-center mt-2">
+    <i class="ph ph-spinner animate-spin"></i>
+    Carregando respostas...
+  </div>
+  }
+
+  <!-- Lista de respostas (nível 1 ou 2) -->
+  @if (!controller.childComments()[comment().$id]?.hidden) {
+  <div class="pl-10 mt-4">
+    @for (reply of replies(); track reply.$id) {
+    <ui-comment-item
+      [comment]="reply"
+      [replies]="controller.childComments()[reply.$id]?.comments || []"
+      [isLoadingReplies]="controller.loadingReplies()[reply.$id]"
+      (loadReplies)="controller.loadReplies(reply.$id)"
+      (reply)="controller.addComment($event, reply.$id, 2)"
+    />
+    } @if (controller.childComments()[comment().$id] && !isLoadingReplies()) {
+    <div class="flex gap-2 items-center mt-2">
+      @if (controller.childComments()[comment().$id]?.pagination?.hasMore) {
+      <button
+        class="text-blue-9 hover:text-blue-11 hover:underline cursor-pointer"
+        (click)="controller.loadReplies(comment().$id)"
+      >
+        Carregar mais
+      </button>
+
+      <span class="text-blue-6">•</span>
+      }
+
+      <button
+        class="text-blue-9 hover:text-blue-11 hover:underline cursor-pointer"
+        (click)="controller.toggleHiddenReplies(comment().$id)"
+      >
+        Minimizar
+      </button>
+    </div>
+    }
+  </div>
+  }
+</div>

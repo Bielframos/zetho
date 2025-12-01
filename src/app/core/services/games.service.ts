@@ -99,6 +99,7 @@ export class GameService {
 
     async getGame(slug: string) {
         const cachedGame = this.gameStore.currentGame()
+
         let fields = ['genres.name', 'genres.slug', 'involvedCompanies.name', 'involvedCompanies.slug', 'zStats.*']
 
         if (!cachedGame) fields.push('*')
@@ -118,7 +119,7 @@ export class GameService {
 
         let game = games.rows[0]
         if (cachedGame) game = { ...cachedGame, ...game }
-        this.gameStore.setGame(game)
+        else this.gameStore.setGame(game)
         return game
     }
 
