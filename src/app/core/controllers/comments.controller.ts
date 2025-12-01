@@ -137,7 +137,7 @@ export class CommentsController {
 
             this.childComments.update((map) => ({
                 ...map,
-                [parentId]: { comments: [newComment, ...(map[parentId].comments ?? [])] },
+                [parentId]: { comments: [newComment, ...(map[parentId]?.comments ?? [])] },
             }));
         } catch (e) {
             console.error(e);

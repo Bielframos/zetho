@@ -12,7 +12,7 @@ export default async ({ req, res, log, error }) => {
 
   const secret = req.headers['x-secret'];
   if (secret !== process.env.WEBHOOK_SECRET) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    return res.json({ message: 'Unauthorized' }, 401);
   }
 
   try {
@@ -89,7 +89,7 @@ export default async ({ req, res, log, error }) => {
     //
     if (req.path === '/genres/delete') {
       if (!payload.id) {
-        return res.status(400).json({ message: 'Missing ID for deletion' });
+        return res.json({ message: 'Missing ID for deletion' }, 400);
       }
 
       log(`🏷 Genre deleted → ID: ${payload.id}`);
@@ -106,6 +106,6 @@ export default async ({ req, res, log, error }) => {
     return res.json({ message: 'No handler for this path' });
   } catch (e) {
     error(e);
-    return res.status(500).json({ message: 'Internal Server Error', error: e });
+    return res.json({ message: 'Internal Server Error', error: e }, 500);
   }
 };
