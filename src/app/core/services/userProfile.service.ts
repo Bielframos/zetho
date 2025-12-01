@@ -6,20 +6,28 @@ const TABLE_ID = 'user_profiles'
 
 @Injectable({ providedIn: 'root' })
 export class UserProfileService {
-    /**
-     * Obtem o perfil de um usuário
-     * @param userId 
-     * @returns 
-     */
-    async getProfile(userId: string) {
-        const response = await appwrite.databases.listRows<UserProfileRow>({
-            databaseId: 'app',
-            tableId: TABLE_ID,
-            queries: [Query.equal('userId', userId), Query.limit(1)],
-        })
 
-        if (response.total === 0) return null
-        return response.rows[0]
+    getProfile() {
+        const fetch = (column: 'userId' | 'gamertag', value: string) => {
+            return appwrite.databases.listRows<UserProfileRow>({
+                databaseId: 'app',
+                tableId: TABLE_ID,
+                queries: [Query.equal(column, value), Query.limit(1)],
+            })
+        }
+
+        return {
+            byUserId: async (userId: string) => {
+                const response = await fetch('userId', userId)
+                if (response.total === 0) return null
+                return response.rows[0]
+            },
+            byGamertag: async (gamertag: string) => {
+                const response = await fetch('gamertag', gamertag)
+                if (response.total === 0) return null
+                return response.rows[0]
+            }
+        }
     }
 
     /**

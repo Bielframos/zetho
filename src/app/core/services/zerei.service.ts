@@ -38,12 +38,13 @@ export class ZereiService {
      */
     async createZEntry(payload: { zEntryId?: string, gameId: string, status: ZEntryRow['status'] | null, prev: ZEntryRow | null }) {
         const user = this.userStore.user()
+        const profile = this.userStore.profile()
         if (!user) alert('Só usuários logados podem criar ou atualizar seus registros.')
 
         const { zEntryId, gameId, status, prev } = payload
 
         try {
-            const newZEntry = await this.zEntryService.createEntry({ zEntryId, gameId, status, prev })
+            const newZEntry = await this.zEntryService.createEntry(profile!.fingerprint, { zEntryId, gameId, status, prev })
             logEvent(this.analytics, 'user_game_entry_interaction', { action: status, game_id: gameId })
             return newZEntry
         } catch (e) {
@@ -60,12 +61,13 @@ export class ZereiService {
      */
     async likeAGame(payload: { zEntryId?: string, gameId: string, prev: ZEntryRow | null }) {
         const user = this.userStore.user()
+        const profile = this.userStore.profile()
         if (!user) alert('Só usuários logados podem curtir um jogo.')
 
         const { zEntryId, gameId, prev } = payload
 
         try {
-            return await this.zEntryService.likeAGame({ zEntryId, gameId, prev })
+            return await this.zEntryService.likeAGame(profile!.fingerprint, { zEntryId, gameId, prev })
         } catch (e) {
             console.error(e)
             return null
@@ -99,23 +101,5 @@ export class ZereiService {
             console.error(e)
             return []
         }
-    }
-
-    /**
-   * Função para obter as estatísticas do jogador logado
-   * @returns 
-   */
-    async getMyStats() {
-        const user = this.userStore.user();
-
-        if (!user) return null
-
-        try {
-            return await this.zEntryService.getUserStats()
-        } catch (e) {
-            console.error(e)
-            return null
-        }
-
     }
 }
