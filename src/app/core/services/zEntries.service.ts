@@ -7,29 +7,6 @@ const Z_ENTRIES_TABLE_ID = 'z_entries'
 @Injectable({ providedIn: 'root' })
 export class ZEntryService {
     constructor() { }
-
-    async getUserStats(userFingerprint: string) {
-        const statusToGet: ZEntryRow['status'][] = ['completed', 'backlog', 'playing', 'dropped', 'wishlist']
-
-        function createRequest(status: ZEntryRow['status']) {
-            return appwrite.databases.listRows({
-                databaseId: 'app',
-                tableId: 'z_entries',
-                queries: [Query.select(['$id']), Query.equal('ownerFingerprint', userFingerprint), Query.equal('status', status!), Query.limit(1)]
-            })
-        }
-
-        const [completed, backlog, playing, dropped, wishlist] = await Promise.all(statusToGet.map(status => createRequest(status)))
-
-        return {
-            completedCount: completed.total,
-            backlogCount: backlog.total,
-            playingCount: playing.total,
-            droppedCount: dropped.total,
-            wishlistCount: wishlist.total
-        }
-    }
-
     async getUserEntries(userFingerprint: string, status: Exclude<ZEntryRow['status'], null | undefined>, opts?: { pageSize?: number, offset?: number }) {
         return await appwrite.databases.listRows<ZEntryRow>({
             databaseId: 'app',

@@ -1,10 +1,11 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { GameRow } from '../types';
 import { GameService } from '../services/games.service';
+import { ZEntryService } from '../services/zEntries.service';
 
 @Injectable({ providedIn: 'root' })
 export class GameSearchController {
-    constructor(private gameService: GameService) { }
+    constructor(private gameService: GameService, private ZEntryService: ZEntryService) { }
 
     create(query: string, pageSize: number = 12) {
         const _results = signal<GameRow[]>([]);
@@ -19,6 +20,9 @@ export class GameSearchController {
             try {
                 const offset = (pageNumber - 1) * pageSize;
                 const games = await this.gameService.searchGame(query, { pageSize, offset });
+
+                const gameIds = games.rows.map(g => g.$id)
+                const entries = await this.ZEntryService
 
                 _results.set(games.rows);
                 _total.set(games.total);

@@ -1,8 +1,8 @@
-@import 'tailwindcss';
-@import '@phosphor-icons/web/fill';
-@import '@phosphor-icons/web/regular';
-@import '@fontsource-variable/readex-pro';
-@import '@fontsource/jersey-10';
+@import "tailwindcss";
+@import "@phosphor-icons/web/fill";
+@import "@phosphor-icons/web/regular";
+@import "@fontsource-variable/readex-pro";
+@import "@fontsource/jersey-10";
 
 @plugin "@tailwindcss/container-queries";
 
@@ -35,7 +35,7 @@
   --color-gray-11: #b0b4ba;
   --color-gray-12: #edeef0;
 
-  --font-display: 'Jersey 10', system-ui;
+  --font-display: "Jersey 10", system-ui;
 
   --animate-fade-in-slide: fade-in-slide 0.4s ease-out backwards;
 
@@ -61,9 +61,10 @@
   body {
     height: 100%;
     min-height: 100dvh;
+    font-size: 14px;
     background: var(--color-blue-1);
     color: var(--color-gray-12);
-    font-family: 'Readex Pro Variable', sans-serif;
+    font-family: "Readex Pro Variable", sans-serif;
   }
 }
 
@@ -92,7 +93,7 @@
   }
 
   /* Variação de tamanho para botões e links */
-  [data-size='icon'] {
+  [data-size="icon"] {
     @apply w-[42px] h-[42px] rounded-full p-0 flex items-center justify-center;
   }
 }

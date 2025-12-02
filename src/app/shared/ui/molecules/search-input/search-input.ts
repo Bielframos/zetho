@@ -1,6 +1,6 @@
 import { Component, input, output } from "@angular/core";
 import { ReactiveFormsModule, FormControl } from "@angular/forms";
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { UiInput } from "../../atoms/input/input";
 
 @Component({
@@ -16,7 +16,7 @@ export class UiSerchInput {
 
     constructor() {
         this.searchControl.valueChanges
-            .pipe(debounceTime(600), distinctUntilChanged())
+            .pipe(debounceTime(600), filter((value) => value !== ''), distinctUntilChanged())
             .subscribe((value) => this.search.emit(value ?? ''))
     }
 }   
