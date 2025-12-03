@@ -4,7 +4,7 @@
     class="w-full bg-linear-to-br from-blue-2 to-blue-3 px-4 md:px-10 py-4 border-b border-gray-6 relative z-10"
   >
     <div class="flex gap-4 justify-between items-center">
-      <a [routerLink]="userStore.isAuthenticated() ? '/app' : '/'">
+      <a [routerLink]="userStore.isAuthenticated() ? '/dashboard' : '/'">
         <h3 class="font-display text-[40px] leading-0">zetho</h3>
       </a>
 
@@ -26,7 +26,7 @@
           <img
             [src]="userStore.avatarUrl()"
             alt="{{`Avatar do ${userStore.user()?.name}`}}"
-            class="h-10 w-10"
+            class="h-[34px] w-[34px]"
           />
         </a>
         } @else {

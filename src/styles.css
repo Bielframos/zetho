@@ -91,6 +91,10 @@
     @apply px-2 py-0.5 rounded-full text-gray-11 gap-1 bg-blue-2 border border-gray-6 text-sm hover:bg-blue-3 flex items-center cursor-pointer transition-colors;
   }
 
+  .ui-action-btn[data-size="icon"] {
+    @apply w-[26px] h-[26px] p-0 justify-center;
+  }
+
   /* Variação de tamanho para botões e links */
   [data-size="icon"] {
     @apply w-[34px] h-[34px] rounded-full p-0 flex items-center justify-center;
