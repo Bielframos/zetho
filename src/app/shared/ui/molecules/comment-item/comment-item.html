@@ -18,7 +18,7 @@
       class="flex items-center gap-0.5 bg-blue-2 rounded-full border border-gray-6 text-gray-11"
     >
       <button
-        class="cursor-pointer px-1.5 transition-colors"
+        class="cursor-pointer px-1.5 transition-colors flex items-center"
         [ngClass]="{
     'text-green-400': controller.getUserVoteFor(comment()) === 'up',
     'hover:text-green-300': controller.getUserVoteFor(comment()) !== 'up'
@@ -37,7 +37,7 @@
 
       <!-- DOWNVOTE -->
       <button
-        class="cursor-pointer px-1.5 transition-colors"
+        class="cursor-pointer px-1.5 transition-colors flex items-center"
         [ngClass]="{
     'text-red-400': controller.getUserVoteFor(comment()) === 'down',
     'hover:text-red-300': controller.getUserVoteFor(comment()) !== 'down'

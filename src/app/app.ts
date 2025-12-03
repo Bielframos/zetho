@@ -13,7 +13,7 @@ export class App {
   private route = inject(Router);
 
   onSearch(query: string) {
-    this.route.navigate(['/app/buscar'], { queryParams: { q: query } });
+    this.route.navigate(['/buscar'], { queryParams: { q: query } });
   }
 
   isAuthRoute() {

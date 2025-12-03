@@ -54,14 +54,13 @@
 @layer base {
   .ph,
   .ph-fill {
-    font-size: 24px;
+    font-size: 20px;
   }
 
   html,
   body {
     height: 100%;
     min-height: 100dvh;
-    font-size: 14px;
     background: var(--color-blue-1);
     color: var(--color-gray-12);
     font-family: "Readex Pro Variable", sans-serif;
@@ -72,28 +71,28 @@
 @layer components {
   /* Link */
   .ui-link {
-    @apply bg-blue-2 inline-flex gap-2 items-center justify-center px-4 py-2 h-fit rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
+    @apply px-4 py-1 border border-transparent leading-[24px] bg-blue-2 inline-flex gap-2 items-center justify-center rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
   }
 
   /* Botões */
   .ui-primary-btn {
-    @apply cursor-pointer border border-transparent inline-flex gap-2 items-center justify-center px-4 py-2 h-fit rounded-lg text-gray-12 bg-blue-9 hover:bg-blue-10 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:border-gray-3 disabled:text-gray-10;
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center rounded-lg text-gray-12 bg-blue-9 hover:bg-blue-10 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:border-gray-3 disabled:text-gray-10;
   }
 
   .ui-secondary-btn {
-    @apply cursor-pointer border border-transparent inline-flex gap-2 items-center justify-center bg-blue-2 px-4 py-2 h-fit rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-blue-2 rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
   }
 
   .ui-destructive-btn {
-    @apply cursor-pointer inline-flex gap-2 items-center justify-center bg-blue-2 px-4 py-2 h-fit rounded-lg text-red-300 hover:bg-red-600 hover:border-red-400 hover:text-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 ease-in-out;
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-blue-2 rounded-lg text-red-300 hover:bg-red-600 hover:border-red-400 hover:text-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 ease-in-out;
   }
 
   .ui-action-btn {
-    @apply h-[26px] px-2 py-0.5 rounded-full text-gray-11 gap-1 bg-blue-2 border border-gray-6 text-sm hover:bg-blue-3 flex items-center cursor-pointer transition-colors;
+    @apply px-2 py-0.5 rounded-full text-gray-11 gap-1 bg-blue-2 border border-gray-6 text-sm hover:bg-blue-3 flex items-center cursor-pointer transition-colors;
   }
 
   /* Variação de tamanho para botões e links */
   [data-size="icon"] {
-    @apply w-[42px] h-[42px] rounded-full p-0 flex items-center justify-center;
+    @apply w-[34px] h-[34px] rounded-full p-0 flex items-center justify-center;
   }
 }

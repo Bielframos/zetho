@@ -23,7 +23,7 @@
         [class.pointer-events-none]="tab.count === 0"
       >
         <a
-          [routerLink]="['/app', profileStore.current()?.gamertag]"
+          [routerLink]="['/player', profileStore.current()?.gamertag]"
           [queryParams]="{ t: tab.key }"
           class="flex gap-2 justify-between w-fit md:w-full whitespace-nowrap pl-4 pr-2 py-2 rounded-lg hover:bg-blue-4 hover:text-white group-data-[active=true]:bg-blue-3 group-data-[active=true]:hover:bg-blue-4 transition-colors"
         >

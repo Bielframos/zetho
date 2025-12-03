@@ -19,7 +19,7 @@ export class Home {
 
     constructor(private router: Router, private userStore: UserStore, private zerei: ZereiService) {
         if (this.userStore.isAuthenticated()) {
-            this.router.navigateByUrl('/app');
+            this.router.navigateByUrl('/dashboard');
         }
 
         this.zerei.getPlatformStats().then(v => this.platformStats.set(v))

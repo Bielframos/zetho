@@ -1,4 +1,4 @@
-<div class="flex flex-col min-h-dvh">
+<div class="flex flex-col min-h-dvh text-sm">
   <!-- Navbar -->
   <nav
     class="w-full bg-linear-to-br from-blue-2 to-blue-3 px-4 md:px-10 py-4 border-b border-gray-6 relative z-10"
@@ -8,7 +8,7 @@
         <h3 class="font-display text-[40px] leading-0">zetho</h3>
       </a>
 
-      <div class="flex gap-4 items-center">
+      <div class="flex items-center gap-2">
         <!-- Barra de busca desktop — Só exibe se não for página de autenticação -->
         @if (!isAuthRoute()) {
         <div class="hidden md:block">
@@ -20,7 +20,7 @@
         </div>
         } @if (userStore.user()) {
         <a
-          [routerLink]="['/app', userStore.profile()?.gamertag]"
+          [routerLink]="['/player', userStore.profile()?.gamertag]"
           class="rounded-full overflow-hidden bg-blue-12"
         >
           <img
@@ -32,7 +32,7 @@
         } @else {
         <a routerLink="/registrar" class="ui-link">Criar conta</a>
         <a routerLink="/entrar" class="ui-link" data-size="icon"
-          ><i class="ph ph-sign-in"></i
+          ><i class="ph ph-sign-in"> </i
         ></a>
         }
       </div>
