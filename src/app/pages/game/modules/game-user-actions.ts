@@ -9,7 +9,7 @@ import { ZereiService } from '../../../core/services/zerei.service';
   imports: [NgClass],
   template: `
     <div
-      class="mt-4 grid grid-cols-4 md:grid-cols-2 border-t md:border bg-blue-2 border-gray-6 rounded-lg overflow-hidden fixed md:relative bottom-0 left-0 w-full z-999 animate-fade-in-slide"
+      class="mt-4 grid grid-cols-4 md:grid-cols-2 border-t md:border bg-blue-2 border-gray-6 rounded-lg overflow-hidden fixed md:relative bottom-0 left-0 z-999 animate-fade-in-slide"
     >
       @for (action of actions; track action.key) {
       <button
