@@ -8,18 +8,20 @@ const Z_ENTRIES_TABLE_ID = 'z_entries'
 export class ZEntryService {
     constructor() { }
     async getUserEntries(userFingerprint: string, status: Exclude<ZEntryRow['status'], null | undefined>, opts?: { pageSize?: number, offset?: number }) {
-        return await appwrite.databases.listRows<ZEntryRow>({
+        const entries = await appwrite.databases.listRows<ZEntryRow>({
             databaseId: 'app',
             tableId: Z_ENTRIES_TABLE_ID,
             queries: [
                 Query.select(['$id', 'status', 'gameId']),
                 Query.equal('ownerFingerprint', userFingerprint),
                 Query.equal('status', status),
-                Query.orderDesc('$updatedAt'),
                 Query.limit(opts?.pageSize || 12),
-                Query.offset(opts?.offset || 0)
+                Query.offset(opts?.offset || 0),
+                Query.orderDesc('$updatedAt')
             ]
         })
+
+        return entries
     }
 
     async getEntry(userFingerprint: string, gameId: string) {

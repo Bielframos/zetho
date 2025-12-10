@@ -1,12 +1,12 @@
 @if (controller.initialLoading()) {
 <ui-loading></ui-loading>
-} @else if (controller.games(); as games) {
+} @else if (controller.entries(); as entries) {
 <ul
   class="grid grid-cols-3 md:grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-2 md:gap-4 max-md:p-4"
 >
-  @for (game of controller.games(); track game.$id) {
+  @for (entry of entries; track entry.$id) {
   <li class="flex flex-col">
-    <ui-game-card [game]="game"></ui-game-card>
+    <ui-game-card [game]="controller.games.get(entry.gameId)!"></ui-game-card>
   </li>
   }
 </ul>
