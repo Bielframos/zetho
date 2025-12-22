@@ -2,7 +2,9 @@ import { Component, effect, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { UserStore } from "../../core/auth/user.store";
 import { GameRow } from "../../core/types";
-import { ZereiService } from "../../core/services/zerei.service";
+import { ZEntryService } from "../../core/services/zEntries.service";
+import { UserProfileService } from "../../core/services/userProfile.service";
+import { ZStatsService } from "../../core/services/zStats.service";
 import { UiGameCard } from "../../shared/ui/atoms/game-card/game-card";
 import { UiLoading } from "../../shared/ui/molecules/loading";
 
@@ -13,16 +15,39 @@ import { UiLoading } from "../../shared/ui/molecules/loading";
     templateUrl: './home.html'
 })
 export class Home {
-    platformStats = signal<Awaited<ReturnType<ZereiService['getPlatformStats']>>>(null)
+    platformStats = signal<{ zEntryCount: number, profileCount: number } | null>(null)
     trendingGames = signal<GameRow[]>([])
 
 
-    constructor(private router: Router, private userStore: UserStore, private zerei: ZereiService) {
+    constructor(
+        private router: Router,
+        private userStore: UserStore,
+        private zEntryService: ZEntryService,
+        private userProfileService: UserProfileService,
+        private zStatsService: ZStatsService,
+    ) {
         if (this.userStore.isAuthenticated()) {
             this.router.navigateByUrl('/dashboard');
         }
 
-        this.zerei.getPlatformStats().then(v => this.platformStats.set(v))
-        this.zerei.getTrendingGames().then(v => this.trendingGames.set(v))
+        ; (async () => {
+            try {
+                const [zEntryCount, profileCount] = await Promise.all([
+                    this.zEntryService.getZEntryCount(),
+                    this.userProfileService.getProfileCount()
+                ])
+
+                this.platformStats.set({ zEntryCount, profileCount })
+            } catch (e) {
+                console.error(e)
+            }
+
+            try {
+                const trending = await this.zStatsService.getTrendingGames()
+                this.trendingGames.set(trending)
+            } catch (e) {
+                console.error(e)
+            }
+        })()
     }
 }

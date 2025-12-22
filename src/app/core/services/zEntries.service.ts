@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core'
+import { Analytics, logEvent } from '@angular/fire/analytics'
 import { appwrite, ID, Query } from '../appwrite/appwrite.client'
 import { ZEntry, ZEntryRow } from '../types'
 
@@ -6,7 +7,7 @@ const Z_ENTRIES_TABLE_ID = 'z_entries'
 
 @Injectable({ providedIn: 'root' })
 export class ZEntryService {
-    constructor() { }
+    constructor(private analytics: Analytics) { }
     async getUserEntries(userFingerprint: string, status: Exclude<ZEntryRow['status'], null | undefined>, opts?: { pageSize?: number, offset?: number }) {
         return await appwrite.databases.listRows<ZEntryRow>({
             databaseId: 'app',
@@ -41,7 +42,7 @@ export class ZEntryService {
             liked: prev?.liked ?? null
         });
 
-        return await appwrite.databases.upsertRow<ZEntryRow>({
+        const result = await appwrite.databases.upsertRow<ZEntryRow>({
             databaseId: 'app',
             tableId: Z_ENTRIES_TABLE_ID,
             rowId: zEntryId || ID.unique(),
@@ -52,6 +53,15 @@ export class ZEntryService {
                 ownerFingerprint: userFingerprint
             }
         });
+
+        try {
+            logEvent(this.analytics, 'user_game_entry_interaction', { action: status, game_id: gameId })
+        } catch (e) {
+            // não falha a operação principal por conta do analytics
+            console.warn('analytics log failed', e)
+        }
+
+        return result
     }
 
     async likeAGame(userFingerprint: string, payload: { zEntryId?: string, gameId: string, prev: ZEntryRow | null }) {
@@ -64,7 +74,7 @@ export class ZEntryService {
 
         const liked = prev ? !prev.liked : true;
 
-        return await appwrite.databases.upsertRow<ZEntryRow>({
+        const result = await appwrite.databases.upsertRow<ZEntryRow>({
             databaseId: 'app',
             tableId: Z_ENTRIES_TABLE_ID,
             rowId: zEntryId || ID.unique(),
@@ -75,6 +85,14 @@ export class ZEntryService {
                 ownerFingerprint: userFingerprint
             }
         });
+
+        try {
+            logEvent(this.analytics, 'user_game_entry_interaction', { action: liked ? 'like' : 'unlike', game_id: gameId })
+        } catch (e) {
+            console.warn('analytics log failed', e)
+        }
+
+        return result
     }
 
     async getZEntryCount() {

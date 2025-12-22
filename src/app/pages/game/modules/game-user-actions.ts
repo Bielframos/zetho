@@ -1,7 +1,8 @@
 import { NgClass } from '@angular/common';
 import { Component, inject, input, output, signal } from '@angular/core';
 import { ZEntry, ZEntryRow } from '../../../core/types';
-import { ZereiService } from '../../../core/services/zerei.service';
+import { ZEntryService } from '../../../core/services/zEntries.service';
+import { UserStore } from '../../../core/auth/user.store';
 
 @Component({
   selector: 'ui-game-user-actions',
@@ -74,7 +75,8 @@ import { ZereiService } from '../../../core/services/zerei.service';
   `,
 })
 export class UiGameUserActions {
-  private zerei = inject(ZereiService);
+  private zEntryService = inject(ZEntryService);
+  private userStore = inject(UserStore);
   private isLiking = signal(false);
   gameId = input.required<string>();
   zEntry = input<ZEntryRow | null>(null);
@@ -110,9 +112,15 @@ export class UiGameUserActions {
 
     if (!this.gameId()) return;
 
+    if (!this.userStore.isAuthenticated()) {
+      alert('Só usuários logados podem criar ou atualizar seus registros.')
+      return
+    }
+
+    const profile = this.userStore.profile()
     const newStatus = status === existing?.status ? null : status;
 
-    const updated = await this.zerei.createZEntry({
+    const updated = await this.zEntryService.createEntry(profile!.fingerprint, {
       zEntryId: existing?.$id,
       gameId: this.gameId(),
       status: newStatus,
@@ -128,10 +136,17 @@ export class UiGameUserActions {
 
     if (!gameId || this.isLiking()) return;
 
+    if (!this.userStore.isAuthenticated()) {
+      alert('Só usuários logados podem curtir um jogo.')
+      return
+    }
+
     this.isLiking.set(true);
 
     try {
-      const updated = await this.zerei.likeAGame({
+      const profile = this.userStore.profile()
+
+      const updated = await this.zEntryService.likeAGame(profile!.fingerprint, {
         zEntryId: existing?.$id,
         gameId: gameId,
         prev: existing,

@@ -144,8 +144,4 @@ export class GameService {
 
         return games.rows
     }
-
-    // TODO: Implementar solução para obter contagem real do total de jogos na plataforma
-    async getGamesCount() {
-    }
 }
