@@ -1,10 +1,24 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
+import { RouterLink } from "@angular/router";
+import { UserStore } from "../../core/auth/user.store";
+import { ListsController } from "../../core/controllers/lists.controller";
+import { DASHBOARD_ENTRIES } from "./utils";
+import { ShortNumberPipe } from "../../core/modules/pipes";
 
 @Component({
     selector: 'app-dashboard',
     standalone: true,
-    imports: [],
+    imports: [RouterLink, ShortNumberPipe],
     templateUrl: './dashboard.html',
 })
 export class Dashboard {
+    userStore = inject(UserStore)
+    controller = inject(ListsController)
+
+    get profile() { return this.userStore.profile() }
+    entries = DASHBOARD_ENTRIES
+
+    constructor() {
+        void this.controller.loadLists({ userFingerprint: this.profile?.fingerprint! })
+    }
 }
