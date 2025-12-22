@@ -4,11 +4,12 @@ import { UserStore } from "../../core/auth/user.store";
 import { ListsController } from "../../core/controllers/lists.controller";
 import { DASHBOARD_ENTRIES } from "./utils";
 import { ShortNumberPipe } from "../../core/modules/pipes";
+import { AppUserLists } from "../../shared/app/user-lists/user-lists";
 
 @Component({
     selector: 'app-dashboard',
     standalone: true,
-    imports: [RouterLink, ShortNumberPipe],
+    imports: [RouterLink, ShortNumberPipe, AppUserLists],
     templateUrl: './dashboard.html',
 })
 export class Dashboard {
