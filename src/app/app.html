@@ -12,7 +12,7 @@
         <!-- Barra de busca desktop — Só exibe se não for página de autenticação -->
         @if (!isAuthRoute()) {
         <div class="hidden md:block">
-          <ui-search-input
+          <app-search-input
             name="desktopSearchInput"
             placeholder="Busque um jogo"
             (search)="onSearch($event)"
@@ -41,7 +41,7 @@
     <!-- Barra de busca mobile — Só exibe se não for página de autenticação -->
     @if (!isAuthRoute()) {
     <div class="md:hidden mt-4">
-      <ui-search-input
+      <app-search-input
         name="mobileSearchInput"
         placeholder="Busque um jogo"
         (search)="onSearch($event)"

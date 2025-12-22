@@ -6,11 +6,11 @@ import { CommentsController } from '../../../../core/controllers/comments.contro
 import { CommentRow } from '../../../../core/types';
 
 @Component({
-    selector: 'ui-comment-item',
+    selector: 'app-comment-item',
     templateUrl: './comment-item.html',
     imports: [FormsModule, NgClass]
 })
-export class UiCommentItem {
+export class AppCommentItem {
     controller = inject(CommentsController)
     comment = input.required<CommentRow>()
     replies = input<CommentRow[]>([])

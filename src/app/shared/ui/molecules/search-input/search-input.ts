@@ -4,12 +4,12 @@ import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { UiInput } from "../../atoms/input/input";
 
 @Component({
-    selector: 'ui-search-input',
+    selector: 'app-search-input',
     standalone: true,
     templateUrl: './search-input.html',
     imports: [UiInput, ReactiveFormsModule]
 })
-export class UiSerchInput {
+export class AppSearchInput {
     placeholder = input<string>('')
     readonly search = output<string>()
     searchControl = new FormControl('')
