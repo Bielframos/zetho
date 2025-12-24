@@ -3,6 +3,7 @@ import { StoredList, StoredRow } from "../appwrite/appwrite.types"
 type ZereiList = {
     ownerFingerprint: string,
     title: string,
+    slug: string,
     description?: string,
     isPublic?: boolean
 }
