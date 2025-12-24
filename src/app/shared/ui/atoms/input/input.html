@@ -1,6 +1,8 @@
 <div class="flex flex-col gap-1.5">
   @if (label) {
-  <label [for]="id || name" class="text-sm text-gray-12 px-4">{{label}}</label>
+  <label [for]="id || name" class="text-sm text-gray-12 px-4 text-start"
+    >{{label}}</label
+  >
   }
 
   <div class="relative flex w-full flex-1 items-center">
@@ -8,9 +10,19 @@
     <i [class]="`absolute ph ph-${icon} ml-4 text-gray-11`"></i>
     }
 
-    <input [type]="type" [id]="id || name" [name]="name" [placeholder]="placeholder" [required]="required"
-      [disabled]="disabled" [value]="value" (input)="handleChange($event)" (blur)="handleBlur()"
+    <input
+      [type]="type"
+      [id]="id || name"
+      [name]="name"
+      [placeholder]="placeholder"
+      [required]="required"
+      [disabled]="disabled"
+      [value]="value"
+      (input)="handleChange($event)"
+      (blur)="handleBlur()"
       class="rounded-lg leading-[24px] h-[34px] px-4 w-full flex-1 py-1 font-light border-gray-6 bg-blue-2 placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11"
-      [class.pl-12]="icon" [class.border]="searchinput || disabled" />
+      [class.pl-12]="icon"
+      [class.border]="searchinput || disabled"
+    />
   </div>
 </div>
