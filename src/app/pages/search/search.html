@@ -1,31 +1,58 @@
-<main class="w-full max-w-5xl mx-auto px-6 max-md:mt-6 mt-10 md:px-10">
-    <header class="text-gray-11 font-light mb-6">
-        <h2>Buscando por <span class="font-normal text-gray-12">"{{ query() }}"</span></h2>
-    </header>
-
-    @if (searchGame(); as search) {
-    @if (search.loading()) {
-    <ui-loading></ui-loading>
-    } @else {
-    @if (search.total() === 0) {
-    <p>Nenhum jogo localizado.</p>
-    } @else {
-    <ul class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-2 md:gap-4">
-        @for (game of search.results(); track game.$id) {
-        <li class="flex flex-col">
-            <ui-game-card [game]="game"></ui-game-card>
-        </li>
-        }
-    </ul>
-
-    <nav class="flex my-10 w-full justify-center gap-4 items-center">
-        <button (click)="search.prevPage()" [disabled]="search.page() <= 1" class="ui-secondary-btn" data-size="icon"><i
-                class="ph ph-caret-left"></i></button>
-        <span>Página {{ search.page() }} de {{ search.pageCount() }}</span>
-        <button (click)="search.nextPage()" [disabled]="search.page() >= search.pageCount()" class="ui-secondary-btn"
-            data-size="icon"><i class="ph ph-caret-right"></i></button>
-    </nav>
-    }
-    }
-    }
+@if (!query()) {
+<main
+  class="my-auto flex flex-col items-center justify-center text-center text-gray-11 px-4"
+>
+  <i class="ph ph-magnifying-glass text-[56px] text-blue-9 mb-4"></i>
+  <h1 class="text-center text-4xl text-blue-9 max-w-xl font-bold">
+    Buscando um jogo?
+  </h1>
+  <p class="text-center max-w-md mt-4 mb-6">
+    Comece digitando o nome do jogo que você deseja encontrar na barra de busca
+    acima.
+  </p>
 </main>
+} @else {
+<main class="w-full mb-10 max-w-5xl mx-auto px-6 max-md:mt-6 mt-10 md:px-10">
+  @if (searchGame(); as search) { @if (search.loading()) {
+  <ui-loading></ui-loading>
+  } @else { @if (search.total() === 0) {
+  <p>Nenhum jogo localizado.</p>
+  } @else {
+  <header class="text-gray-11 font-light mb-6">
+    <h2>
+      Buscando por <span class="font-normal text-gray-12">"{{ query() }}"</span>
+    </h2>
+  </header>
+
+  <ul
+    class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-2 md:gap-4"
+  >
+    @for (game of search.results(); track game.$id) {
+    <li class="flex flex-col">
+      <ui-game-card [game]="game"></ui-game-card>
+    </li>
+    }
+  </ul>
+
+  <nav class="flex my-10 w-full justify-center gap-4 items-center">
+    <button
+      (click)="search.prevPage()"
+      [disabled]="search.page() <= 1"
+      class="ui-secondary-btn"
+      data-size="icon"
+    >
+      <i class="ph ph-caret-left"></i>
+    </button>
+    <span>Página {{ search.page() }} de {{ search.pageCount() }}</span>
+    <button
+      (click)="search.nextPage()"
+      [disabled]="search.page() >= search.pageCount()"
+      class="ui-secondary-btn"
+      data-size="icon"
+    >
+      <i class="ph ph-caret-right"></i>
+    </button>
+  </nav>
+  } } }
+</main>
+}

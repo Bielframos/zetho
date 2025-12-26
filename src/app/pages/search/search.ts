@@ -8,7 +8,10 @@ import { UiLoading } from "../../shared/ui/molecules/loading";
     selector: 'app-search-page',
     standalone: true,
     imports: [UiGameCard, UiLoading],
-    templateUrl: './search.html'
+    templateUrl: './search.html',
+    host: {
+        class: 'flex flex-col h-full flex-1'
+    }
 })
 export class Search {
     private searchController = inject(GameSearchController)
