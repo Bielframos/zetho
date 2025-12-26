@@ -7,14 +7,14 @@ const Z_STATS_TABLE_ID = 'z_entry_count'
 @Injectable({ providedIn: 'root' })
 export class ZStatsService {
 
-    async getTrendingGames() {
+    async getTrendingGames(params: { total: number } = { total: 5 }) {
         const response = await appwrite.databases.listRows<ZStatsRow>({
             databaseId: 'app',
             tableId: Z_STATS_TABLE_ID,
             queries: [
                 Query.select(['game.$id', 'game.name', 'game.coverUrl', 'game.slug', 'game.releaseYear']),
                 Query.orderDesc('likes'),
-                Query.orderDesc('$createdAt'), Query.limit(5)
+                Query.orderDesc('$createdAt'), Query.limit(params.total)
             ]
         })
 
