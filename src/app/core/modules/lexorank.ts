@@ -1,6 +1,6 @@
 import { LexoRank } from "lexorank";
 
-export function between(prev?: string, next?: string) {
+export function between({ prev, next }: { prev?: string, next?: string } = {}) {
     if (!prev && !next) {
         return LexoRank.middle().toString();
     }

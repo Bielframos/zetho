@@ -5,4 +5,4 @@ export type { UserProfile, UserProfileRow, UserProfileList } from './userProfile
 export type { ZEntry, ZEntryRow, ZEntryList } from './zEntries.types'
 export type { ZStats, ZStatsRow, ZStatsList } from './zStats.types'
 export type { Comment, CommentRow, CommentList } from './comment.types'
-export type { ZereiList, ZereiListRow, ZereiLists, ZereiItemList, ZereiItemListRow, ZereiItemLists } from './lists.type'
+export type { ZereiList, ZereiListRow, ZereiLists, ZereiListItem, ZereiListItemRow, ZereiListItems } from './lists.type'

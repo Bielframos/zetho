@@ -37,7 +37,7 @@
     class="mt-10 md:mt-40 animate-fade-in-slide"
     style="animation-delay: 400ms"
   >
-    <ui-game-actions></ui-game-actions>
+    <ui-game-actions [game]="pageState.game()"></ui-game-actions>
     <ui-game-header [game]="pageState.game()"></ui-game-header>
     <ui-game-stats [stats]="pageState.game()?.zStats"></ui-game-stats>
 

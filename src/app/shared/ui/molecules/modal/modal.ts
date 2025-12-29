@@ -58,7 +58,7 @@ export class UiModal {
   trigglerLabel = input<string>();
   title = input.required<string>();
   description = input('');
-  submit = output<void>();
+  submit = output<{ close: () => void }>();
   loading = input(false);
 
   private modal = viewChild<ElementRef<HTMLDialogElement>>('modal');
@@ -78,7 +78,7 @@ export class UiModal {
   }
 
   handleSubmit() {
-    this.submit.emit();
+    this.submit.emit({ close: this.closeModal.bind(this) });
   }
 
   ngAfterContentInit() {

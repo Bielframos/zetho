@@ -12,12 +12,12 @@ type ZereiList = {
 type ZereiListRow = StoredRow<ZereiList>
 type ZereiLists = StoredList<ZereiListRow>
 
-type ZereiItemList = {
+type ZereiListItem = {
     list: string,
     game: string,
-    postion: number
+    orderKey: string
 }
-type ZereiItemListRow = StoredRow<ZereiItemList>
-type ZereiItemLists = StoredList<ZereiItemListRow>
+type ZereiListItemRow = StoredRow<ZereiListItem>
+type ZereiListItems = StoredList<ZereiListItemRow>
 
-export type { ZereiList, ZereiListRow, ZereiLists, ZereiItemList, ZereiItemListRow, ZereiItemLists }
+export type { ZereiList, ZereiListRow, ZereiLists, ZereiListItem, ZereiListItemRow, ZereiListItems }
