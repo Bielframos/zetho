@@ -2,9 +2,9 @@ import { Component, inject } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { UserStore } from "../../core/auth/user.store";
 import { ListsController } from "../../core/controllers/lists.controller";
-import { DASHBOARD_ENTRIES } from "./utils";
 import { ShortNumberPipe } from "../../core/modules/pipes";
 import { AppUserLists } from "../../shared/app/user-lists/user-lists";
+import { DASHBOARD_ENTRIES } from "./utils";
 
 @Component({
     selector: 'app-dashboard',
@@ -20,6 +20,6 @@ export class Dashboard {
     entries = DASHBOARD_ENTRIES
 
     constructor() {
-        void this.controller.loadLists({ userFingerprint: this.profile?.fingerprint! })
+        void this.controller.loadLists({ ownerFingerprint: this.profile?.fingerprint! })
     }
 }

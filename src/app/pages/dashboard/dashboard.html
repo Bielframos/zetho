@@ -1,8 +1,6 @@
 <div class="px-4 py-10 w-full max-w-5xl mx-auto">
   <header>
-    <h1
-      class="text-3xl md:text-5xl text-transparent bg-clip-text bg-linear-to-r to-blue-12 from-blue-11 max-w-xl font-bold pb-6"
-    >
+    <h1 class="text-3xl text-blue-9 max-w-xl font-bold pb-6">
       Olá, {{ profile?.gamertag }}!
     </h1>
 
@@ -75,4 +73,6 @@
     <h2 class="text-2xl mb-2 text-blue-12">Minhas listas</h2>
     <a class="ui-link" routerLink="/listas">Todas as listas</a>
   </header>
+
+  <app-user-lists [lists]="controller.lists()"> </app-user-lists>
 </div>
