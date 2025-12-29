@@ -1,7 +1,6 @@
-import { AbstractControl, ValidatorFn } from "@angular/forms";
+import { AbstractControl } from "@angular/forms";
 import { catchError, distinctUntilChanged, map, of, switchMap } from "rxjs";
 import { UserProfileService } from "../services/userProfile.service";
-import { inject } from "@angular/core";
 
 export function nameValidator(control: AbstractControl) {
     const value = control.value as string;
