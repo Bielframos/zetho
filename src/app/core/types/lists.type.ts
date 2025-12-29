@@ -5,7 +5,9 @@ type ZereiList = {
     title: string,
     slug: string,
     description?: string,
-    isPublic?: boolean
+    isPublic?: boolean,
+    itemCount?: number,
+    latestAdditions?: string[]
 }
 type ZereiListRow = StoredRow<ZereiList>
 type ZereiLists = StoredList<ZereiListRow>
