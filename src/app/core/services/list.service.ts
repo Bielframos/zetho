@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { appwrite, Query } from '../appwrite/appwrite.client';
-import { GameRow, ZereiListRow, ZereiListItemRow } from '../types';
 import slugify from 'slugify';
+import { appwrite, Query } from '../appwrite/appwrite.client';
 import { between } from '../modules/lexorank';
-import { JsonPipe } from '@angular/common';
+import { GameRow, ZereiListItemRow, ZereiListRow } from '../types';
 
 const LIST_TABLE_ID = 'lists';
 const LIST_ITEM_TABLE_ID = 'list_items';
@@ -21,7 +20,7 @@ export type CreateListInput = {
     isPublic?: boolean;
 };
 
-type LastAdditionItem = {
+export type LastAdditionItem = {
     orderKey: string;
     gameId: string;
     gameName: string;
@@ -81,7 +80,7 @@ export class ListService {
             gameName: game.name,
             gameCoverUrl: game.coverUrl,
         });
-        const updatedLatestAdditions = latestAdditions.slice(0, 2);
+        const updatedLatestAdditions = latestAdditions.slice(0, 3);
 
         // Persiste no banco o estado das últimas adições e incremeta a contagem de itens
         const [updatedList, _] = await Promise.all([
