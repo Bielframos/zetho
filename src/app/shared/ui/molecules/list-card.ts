@@ -7,8 +7,8 @@ import { ShortNumberPipe } from '../../../core/modules/pipes';
   selector: 'ui-list-card',
   standalone: true,
   template: `
-    <li class="flex items-center gap-6 p-4">
-      <div class="flex -space-x-14">
+    <li class="flex flex-col md:flex-row items-center gap-6 p-4">
+      <div class="flex md:-space-x-14 max-md:mx-auto max-md:gap-2">
         @for (lastAddition of list().parsedLatestAdditions; track $index) {
           <img
             [src]="lastAddition.gameCoverUrl"
@@ -25,7 +25,8 @@ import { ShortNumberPipe } from '../../../core/modules/pipes';
         }
       </div>
 
-      <div class="flex-1">
+      <div class="flex flex-1 max-md:w-full gap-4 items-center">
+        <div class="flex-1">
         <span>{{ list().title }}</span>
         <br />
         @if (list().itemCount === 0) {
@@ -42,6 +43,7 @@ import { ShortNumberPipe } from '../../../core/modules/pipes';
       >
         <i class="ph ph-arrow-right"></i>
       </a>
+      </div>
     </li>
   `,
   imports: [RouterLink, ShortNumberPipe],
