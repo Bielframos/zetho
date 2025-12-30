@@ -71,7 +71,9 @@
 
   <header class="flex justify-between items-center">
     <h2 class="text-2xl mb-2 text-blue-12">Minhas listas</h2>
-    <a class="ui-link" routerLink="/listas">Todas as listas</a>
+    <a class="ui-link" [routerLink]="['/player', profile?.gamertag, 'listas']"
+      >Todas as listas</a
+    >
   </header>
 
   <app-user-lists [lists]="controller.lists()"> </app-user-lists>
