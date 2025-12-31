@@ -53,9 +53,11 @@ export class ListsController {
     async loadLists({
         ownerFingerprint,
         loadMore,
+        onlyPublicOnes
     }: {
         ownerFingerprint: string;
         loadMore?: boolean;
+        onlyPublicOnes?: boolean
     }) {
         try {
             if (this.loading()) return;
@@ -68,6 +70,7 @@ export class ListsController {
             const lists = await this.listService.getLists({
                 userFingerprint: ownerFingerprint,
                 offset: this.offset(),
+                onlyPublicOnes
             });
 
             const parsedRows: ParsedZereiListRow[] = lists.rows.map(this.parseList);

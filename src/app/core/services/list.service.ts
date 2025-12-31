@@ -9,6 +9,7 @@ const LIST_ITEM_TABLE_ID = 'list_items';
 
 export type GetListsInput = {
     userFingerprint: string;
+    onlyPublicOnes?: boolean;
     limit?: number;
     offset?: number;
 };
@@ -30,14 +31,18 @@ export type LastAdditionItem = {
 @Injectable({ providedIn: 'root' })
 export class ListService {
     async getLists({ userFingerprint, ...props }: GetListsInput) {
+        let queries = [
+            Query.equal('ownerFingerprint', userFingerprint),
+            Query.limit(props.limit || 12),
+            Query.offset(props.offset || 0),
+        ]
+
+        if (props.onlyPublicOnes) queries.push(Query.equal('isPublic', true))
+
         const lists = await appwrite.databases.listRows<ZereiListRow>({
             databaseId: 'app',
             tableId: LIST_TABLE_ID,
-            queries: [
-                Query.equal('ownerFingerprint', userFingerprint),
-                Query.limit(props.limit || 12),
-                Query.offset(props.offset || 0),
-            ],
+            queries,
         });
 
         return lists;
