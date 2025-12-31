@@ -20,6 +20,6 @@ export class Dashboard {
     entries = DASHBOARD_ENTRIES
 
     constructor() {
-        void this.controller.loadLists({ ownerFingerprint: this.profile?.fingerprint! })
+        void this.controller.loadLists({ ownerFingerprint: this.profile!.fingerprint })
     }
 }
