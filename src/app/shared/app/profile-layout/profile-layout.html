@@ -24,12 +24,12 @@
     <ul class="flex md:flex-col p-2 space-y-1 overflow-x-auto">
       @for (tab of tabs(); track tab.key) {
       <li
-        class="group"
+        class="group flex-1"
         [attr.data-active]="layoutStore.currentTab() === tab.key"
       >
         <a
           [routerLink]="tab.key === 'games' ? ['/player', profileStore.current()?.gamertag] : tab.key"
-          class="flex gap-2 w-fit md:w-full whitespace-nowrap pl-2 pr-4 py-2 rounded-lg hover:bg-blue-4 hover:text-white group-data-[active=true]:bg-blue-3 group-data-[active=true]:hover:bg-blue-4 transition-colors"
+          class="flex gap-2 w-full whitespace-nowrap max-md:justify-center pl-2 pr-4 py-2 rounded-lg hover:bg-blue-4 hover:text-white group-data-[active=true]:bg-blue-3 group-data-[active=true]:hover:bg-blue-4 transition-colors"
         >
           <i class="ph {{ tab.icon }}"></i>
           {{ tab.label }}
