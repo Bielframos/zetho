@@ -1,9 +1,10 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { ListsController } from '../../../core/controllers/lists.controller';
 import { ZereiListRow } from '../../../core/types';
-import { AppNewListDialog } from "../new-list-dialog/new-list-dialog";
-import { UiListCard } from "../../ui/molecules/list-card";
+import { AppNewListDialog } from '../new-list-dialog/new-list-dialog';
+import { UiListCard } from '../../ui/molecules/list-card';
 import { UserStore } from '../../../core/auth/user.store';
+import { ProfileStore } from '../../../core/stores/profile.store';
 
 @Component({
     selector: 'app-user-lists',
@@ -13,10 +14,13 @@ import { UserStore } from '../../../core/auth/user.store';
 })
 export class AppUserLists {
     userStore = inject(UserStore);
+    profileStore = inject(ProfileStore);
     controller = inject(ListsController);
     lists = input<ZereiListRow[]>([]);
 
-    get profile() {
-        return this.userStore.profile()
-    }
+    fromMe = input(false);
+    ownerGamertag = computed(() => {
+        if (this.fromMe()) return this.userStore.profile()?.gamertag || '';
+        else return this.profileStore.current()?.gamertag || '';
+    });
 }

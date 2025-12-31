@@ -1,24 +1,25 @@
 <ol
-  class="mt-4 w-full rounded-lg border border-gray-6 divide-y divide-gray-6 bg-blue-2"
+  class="w-full rounded-lg border-x border-t border-gray-6 bg-blue-2 overflow-hidden"
 >
   @for (list of lists(); track $index) {
-  <ui-list-card
-    [ownerGamertag]="profile?.gamertag!"
-    [list]="list"
-  ></ui-list-card>
-  } @empty {
+  <ui-list-card [ownerGamertag]="ownerGamertag()" [list]="list"></ui-list-card>
+  } @empty { @if (fromMe()) {
   <li
-    class="p-10 mt-4 background-pattern flex flex-col items-center text-center text-gray-11"
+    class="p-10 mt-4 background-pattern flex flex-col items-center text-center text-gray-11 border-b border-gray-6"
   >
     <i class="ph ph-shield-check text-[56px] text-blue-9 mb-4"></i>
     <h1 class="text-center text-4xl text-blue-9 max-w-xl font-bold">
       Crie a sua primeira lista
     </h1>
-    <p class="text-center max-w-md mt-4 mb-6">
+    <p class="text-center max-w-md mt-2 mb-6">
       Que tal organizar seus jogos favoritos em listas personalizadas?
     </p>
 
     <app-new-list-dialog></app-new-list-dialog>
   </li>
-  }
+  } @else {
+  <li class="p-6 text-center text-gray-11 border-b border-gray-6">
+    Nenhuma lista pública encontrada.
+  </li>
+  } }
 </ol>
