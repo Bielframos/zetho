@@ -9,6 +9,7 @@ const LIST_ITEM_TABLE_ID = 'list_items';
 
 export type GetListsInput = {
     userFingerprint: string;
+    bySlug?: string;
     onlyPublicOnes?: boolean;
     limit?: number;
     offset?: number;
@@ -19,6 +20,12 @@ export type CreateListInput = {
     title: string;
     description?: string;
     isPublic?: boolean;
+};
+
+export type GetListItemInput = {
+    listId: string;
+    limit?: number;
+    offset?: number;
 };
 
 export type LastAdditionItem = {
@@ -33,11 +40,12 @@ export class ListService {
     async getLists({ userFingerprint, ...props }: GetListsInput) {
         let queries = [
             Query.equal('ownerFingerprint', userFingerprint),
-            Query.limit(props.limit || 12),
+            Query.limit(props.bySlug ? 1 : props.limit || 12),
             Query.offset(props.offset || 0),
-        ]
+        ];
 
-        if (props.onlyPublicOnes) queries.push(Query.equal('isPublic', true))
+        if (props.bySlug) queries.push(Query.equal('slug', props.bySlug));
+        if (props.onlyPublicOnes) queries.push(Query.equal('isPublic', true));
 
         const lists = await appwrite.databases.listRows<ZereiListRow>({
             databaseId: 'app',
@@ -64,7 +72,9 @@ export class ListService {
         const latestAdditions: LastAdditionItem[] = JSON.parse(
             JSON.stringify(list.latestAdditions) || '[]',
         ).map((item: string) => JSON.parse(item));
-        const lastAdditions = latestAdditions[0];
+
+        const lastOrderKey = list.lastOrderKey;
+        const newOrderKey = between({ prev: lastOrderKey });
 
         // Registra o item no banco
         const newItem = await appwrite.databases.createRow<ZereiListItemRow>({
@@ -74,7 +84,7 @@ export class ListService {
             data: {
                 list: list.$id,
                 game: game.$id,
-                orderKey: between({ prev: lastAdditions?.orderKey }),
+                orderKey: newOrderKey,
             },
         });
 
@@ -97,6 +107,7 @@ export class ListService {
                     latestAdditions: updatedLatestAdditions.map((item) =>
                         JSON.stringify(item),
                     ),
+                    lastOrderKey: newOrderKey,
                 },
             }),
             appwrite.databases.incrementRowColumn({
@@ -110,4 +121,65 @@ export class ListService {
 
         return { updatedList, newItem };
     }
+
+    async getItems({ listId, limit, offset }: GetListItemInput) {
+        const items = await appwrite.databases.listRows<ZereiListItemRow>({
+            databaseId: 'app',
+            tableId: LIST_ITEM_TABLE_ID,
+            queries: [
+                Query.equal('list', listId),
+                Query.orderAsc('orderKey'),
+                Query.select(['*', 'game.*']),
+                Query.limit(limit || 50),
+                Query.offset(offset || 0),
+            ],
+        });
+
+        return items;
+    }
+
+    async reorderItems(
+        reorderOps: {
+            item: ZereiListItemRow;
+            prevOrderKey?: string;
+            nextOrderKey?: string;
+        }[],
+    ) {
+        let lastOrderKey: string | null = null;
+        let listId: string | null = null;
+
+        const reorderedRows = await Promise.all(
+            reorderOps.map((op) => {
+                const newOrderKey = between({
+                    prev: op.prevOrderKey,
+                    next: op.nextOrderKey,
+                });
+
+                if (!op.nextOrderKey) {
+                    lastOrderKey = newOrderKey;
+                    listId = op.item.list;
+                }
+
+                return appwrite.databases.updateRow<ZereiListItemRow>({
+                    databaseId: 'app',
+                    tableId: LIST_ITEM_TABLE_ID,
+                    rowId: op.item.$id,
+                    data: { orderKey: newOrderKey },
+                });
+            }),
+        );
+
+        const updatedList =
+            listId && lastOrderKey
+                ? await appwrite.databases.updateRow<ZereiListRow>({
+                    databaseId: 'app',
+                    tableId: LIST_TABLE_ID,
+                    rowId: listId,
+                    data: { lastOrderKey },
+                })
+                : undefined;
+
+        return { reorderedRows, updatedList };
+    }
+
 }

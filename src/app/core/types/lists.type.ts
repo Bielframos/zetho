@@ -8,6 +8,7 @@ type ZereiList = {
     isPublic?: boolean,
     itemCount?: number,
     latestAdditions?: string[]
+    lastOrderKey?: string
 }
 type ZereiListRow = StoredRow<ZereiList>
 type ZereiLists = StoredList<ZereiListRow>

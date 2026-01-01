@@ -15,6 +15,7 @@ import { Profile } from './pages/profile/profile';
 import { Account } from './pages/account/profile-settings';
 import { Lists } from './pages/lists/lists';
 import { AppProfileLayout } from './shared/app/profile-layout/profile-layout';
+import { List } from './pages/list/list';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -75,6 +76,7 @@ export const routes: Routes = [
     children: [
       { path: '', component: Profile },
       { path: 'listas', component: Lists },
+      { path: 'listas/:slug', component: List },
     ],
   },
 ];
