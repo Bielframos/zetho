@@ -13,6 +13,8 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/aria": "^21.0.5",
+    "@angular/cdk": "^21.0.5",
     "@angular/common": "^20.3.0",
     "@angular/compiler": "^20.3.0",
     "@angular/core": "^20.3.0",
