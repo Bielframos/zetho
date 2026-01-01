@@ -22,7 +22,7 @@ import { ModalTriggerDirective } from '../../../shared/ui/molecules/modal/modal-
         </button>
 
         <div
-          class="flex my-4 overflow-y-auto rounded-lg border border-gray-6 divide-y divide-gray-6 transition-colors"
+          class="flex flex-col my-4 overflow-y-auto rounded-lg border border-gray-6 divide-y divide-gray-6 transition-colors"
         >
           @for (list of listController.lists(); track $index) {
             <label
