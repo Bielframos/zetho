@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { UserStore } from './core/auth/user.store';
-import { UiSerchInput } from './shared/ui/molecules/search-input/search-input';
+import { AppSearchInput } from './shared/app/search-input/search-input';
 
 @Component({
   selector: 'app-root',
-  imports: [UiSerchInput, RouterLink, RouterOutlet],
+  imports: [AppSearchInput, RouterLink, RouterOutlet],
   templateUrl: './app.html',
 })
 export class App {

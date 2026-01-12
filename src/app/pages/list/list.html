@@ -1,0 +1,17 @@
+<section class="max-md:px-4">
+  <header class="w-full max-md:mt-6 mb-4 flex justify-between">
+    <div>
+      <h1 class="text-2xl mb-2 text-blue-12">{{controller.list()?.title}}</h1>
+      @if (controller.list()?.description) {
+      <p class="text-gray-11 -mt-2">{{controller.list()?.description}}</p>
+      }
+    </div>
+
+    <app-list-menu></app-list-menu>
+  </header>
+  @if (controller.loading()) {
+  <ui-loading></ui-loading>
+  } @else {
+  <ui-draggable-list></ui-draggable-list>
+  }
+</section>

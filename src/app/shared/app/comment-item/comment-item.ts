@@ -1,16 +1,16 @@
 import { NgClass } from '@angular/common';
 import { Component, inject, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { appwrite } from '../../../../core/appwrite/appwrite.client';
-import { CommentsController } from '../../../../core/controllers/comments.controller';
-import { CommentRow } from '../../../../core/types';
+import { appwrite } from '../../../core/appwrite/appwrite.client';
+import { CommentsController } from '../../../core/controllers/comments.controller';
+import { CommentRow } from '../../../core/types';
 
 @Component({
-    selector: 'ui-comment-item',
+    selector: 'app-comment-item',
     templateUrl: './comment-item.html',
     imports: [FormsModule, NgClass]
 })
-export class UiCommentItem {
+export class AppCommentItem {
     controller = inject(CommentsController)
     comment = input.required<CommentRow>()
     replies = input<CommentRow[]>([])

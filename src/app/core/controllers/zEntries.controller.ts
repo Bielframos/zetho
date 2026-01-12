@@ -12,7 +12,7 @@ export class ZEntriesController {
     pageSize = 24
 
     status = signal<Exclude<ZEntryRow['status'], null | undefined>>('completed');
-    games = new Map<string, GameRow>();
+    games = signal<GameRow[]>([]);
     entries = signal<ZEntryRow[]>([]);
     offset = signal(0);
     total = signal(0);
@@ -71,9 +71,7 @@ export class ZEntriesController {
                 const games = await this.gameService.getGames(ids, { pageSize: this.pageSize, summarized: true });
 
                 if (games) {
-                    for (const game of games) {
-                        this.games.set(game.$id, game)
-                    }
+                    this.games.update(prev => [...prev, ...games]);
                 }
             }
 
@@ -89,7 +87,7 @@ export class ZEntriesController {
     };
 
     resetState = () => {
-        this.games = new Map<string, GameRow>();
+        this.games.set([]);
         this.entries.set([]);
         this.offset.set(0);
         this.total.set(0);

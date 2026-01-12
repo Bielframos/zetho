@@ -1,46 +1,27 @@
 import { Component, inject } from "@angular/core";
-import { UserStore } from "../../core/auth/user.store";
-import { ShortNumberPipe } from "../../core/modules/pipes";
 import { RouterLink } from "@angular/router";
+import { UserStore } from "../../core/auth/user.store";
+import { ListsController } from "../../core/controllers/lists.controller";
+import { ShortNumberPipe } from "../../core/modules/pipes";
+import { AppUserLists } from "../../shared/app/user-lists/user-lists";
+import { DASHBOARD_ENTRIES } from "./utils";
+import { ProfileStore } from "../../core/stores/profile.store";
 
 @Component({
     selector: 'app-dashboard',
     standalone: true,
-    imports: [RouterLink, ShortNumberPipe],
+    imports: [RouterLink, ShortNumberPipe, AppUserLists],
     templateUrl: './dashboard.html',
 })
 export class Dashboard {
     userStore = inject(UserStore)
-    get profile() { return this.userStore.profile() }
+    profileStore = inject(ProfileStore)
+    controller = inject(ListsController)
 
-    entries = [
-        {
-            key: 'totalsBacklog',
-            label: 'Backlog',
-            icon: 'ph-fill ph-books',
-            classes: '@md:border-b @md:border-r border-gray-6',
-            tab: 'backlog'
-        },
-        {
-            key: 'totalsPlaying',
-            label: 'Jogando',
-            icon: 'ph-fill ph-game-controller',
-            classes: '@md:border-b border-gray-6',
-            tab: 'playing'
-        },
-        {
-            key: 'totalsDropped',
-            label: 'Dropados',
-            icon: 'ph-fill ph-x-circle',
-            classes: '@md:border-r border-gray-6',
-            tab: 'dropped'
-        },
-        {
-            key: 'totalsWishlist',
-            label: 'Lista de Desejos',
-            icon: 'ph-fill ph-list-star',
-            classes: '',
-            tab: 'wishlist'
-        },
-    ] as const;
+    get profile() { return this.userStore.profile() }
+    entries = DASHBOARD_ENTRIES
+
+    constructor() {
+        void this.controller.loadLists({ ownerFingerprint: this.profile!.fingerprint })
+    }
 }

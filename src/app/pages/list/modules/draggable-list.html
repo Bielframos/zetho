@@ -1,0 +1,36 @@
+<div
+  cdkDropList
+  (cdkDropListDropped)="drop($event)"
+  class="bg-blue-2 border border-gray-6 rounded-lg divide-y divide-gray-6"
+>
+  @for (item of controller.items(); let idx = $index; track item.$id) {
+  <div
+    cdkDrag
+    class="flex gap-4 pl-2 pr-4 py-4 md:py-2 items-center font-light cursor-grab relative"
+  >
+    <i class="ph ph-dots-six-vertical text-gray-11"></i>
+
+    <ui-game-card [width]="64" [game]="item.game" readonlyMode></ui-game-card>
+
+    <span
+      class="font-normal font-mono text-gray-11 px-3 rounded-full bg-blue-1 w-fit border border-gray-6"
+    >
+      {{idx + 1}}
+    </span>
+
+    {{ item.game.name }} @if (itsMe) {
+    <app-list-card-menu [item]="item"></app-list-card-menu>
+    }
+  </div>
+  } @empty {
+  <div class="p-6 text-center text-gray-11">Essa lista está vazia.</div>
+  }
+</div>
+
+@if (controller.hasMore()) {
+<footer class="w-full flex justify-center mt-6">
+  <button class="ui-primary-btn" (click)="controller.load({loadMore: true})">
+    Carregar mais
+  </button>
+</footer>
+}

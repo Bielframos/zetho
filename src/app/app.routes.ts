@@ -13,18 +13,70 @@ import { Search } from './pages/search/search';
 import { Verification } from './pages/verification/verification';
 import { Profile } from './pages/profile/profile';
 import { Account } from './pages/account/profile-settings';
+import { Lists } from './pages/lists/lists';
+import { AppProfileLayout } from './shared/app/profile-layout/profile-layout';
+import { List } from './pages/list/list';
 
 export const routes: Routes = [
   { path: '', component: Home },
-  { path: 'dashboard', component: Dashboard, canMatch: [userGuard], title: 'Zetho' },
-  { path: 'registrar', component: Register, canMatch: [guestGuard], title: 'Zetho | Registro' },
-  { path: 'entrar', component: Login, canMatch: [guestGuard], title: 'Zetho | Login' },
-  { path: 'recuperar-senha', component: Recovery, canMatch: [guestGuard], title: 'Zetho | Recuperar senha' },
-  { path: 'redefinir-senha', component: ResetPass, canMatch: [guestGuard], title: 'Zetho | Recuperar senha' },
-  { path: 'admin', component: Admin, canMatch: [adminGuard], title: 'Zerie | Admin' },
+  {
+    path: 'dashboard',
+    component: Dashboard,
+    canMatch: [userGuard],
+    title: 'Zetho',
+  },
+  {
+    path: 'registrar',
+    component: Register,
+    canMatch: [guestGuard],
+    title: 'Zetho | Registro',
+  },
+  {
+    path: 'entrar',
+    component: Login,
+    canMatch: [guestGuard],
+    title: 'Zetho | Login',
+  },
+  {
+    path: 'recuperar-senha',
+    component: Recovery,
+    canMatch: [guestGuard],
+    title: 'Zetho | Recuperar senha',
+  },
+  {
+    path: 'redefinir-senha',
+    component: ResetPass,
+    canMatch: [guestGuard],
+    title: 'Zetho | Recuperar senha',
+  },
+  {
+    path: 'admin',
+    component: Admin,
+    canMatch: [adminGuard],
+    title: 'Zerie | Admin',
+  },
   { path: 'buscar', component: Search, title: 'Zetho | Busque um jogo' },
   { path: 'jogo/:slug', component: Game },
-  { path: 'minha-conta', component: Account, canMatch: [userGuard], title: 'Zetho | Minha conta' },
-  { path: 'verificacao', component: Verification, canMatch: [userGuard], title: 'Zetho | Verificação de e-mail' },
-  { path: 'player/:gamertag', component: Profile, canMatch: [userGuard] }
+  {
+    path: 'minha-conta',
+    component: Account,
+    canMatch: [userGuard],
+    title: 'Zetho | Minha conta',
+  },
+  {
+    path: 'verificacao',
+    component: Verification,
+    canMatch: [userGuard],
+    title: 'Zetho | Verificação de e-mail',
+  },
+  {
+    path: 'player/:gamertag',
+    component: AppProfileLayout,
+    canMatch: [userGuard],
+    children: [
+      { path: '', component: Profile },
+      { path: 'listas', component: Lists },
+      { path: 'listas/:slug', component: List },
+    ],
+  },
 ];

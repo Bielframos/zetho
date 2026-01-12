@@ -1,14 +1,12 @@
 <div class="px-4 py-10 w-full max-w-5xl mx-auto">
   <header>
-    <h1
-      class="text-3xl md:text-5xl text-transparent bg-clip-text bg-linear-to-r to-blue-12 from-blue-11 max-w-xl font-bold pb-6"
-    >
+    <h1 class="text-3xl text-blue-12 max-w-xl font-bold pb-6">
       Olá, {{ profile?.gamertag }}!
     </h1>
 
     <div class="@container">
       <div
-        class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden border rounded-lg border-gray-6 bg-blue-2"
+        class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden border rounded-lg border-gray-6 bg-linear-to-br from-blue-2 to-blue-3"
       >
         <!-- Zerado -->
         <div
@@ -71,9 +69,13 @@
 
   <hr class="border-blue-6 w-full my-10" />
 
-  <h2 class="text-2xl mb-2 text-blue-12">Minhas listas</h2>
-  <span class="text-gray-11">
-    Estamos trabalhando em um novo recurso para você organizar seus jogos
-    favoritos.
-  </span>
+  <header class="flex justify-between items-center mb-4">
+    <h2 class="text-2xl mb-2 text-blue-12">Minhas listas</h2>
+    <a class="ui-link" [routerLink]="['/player', profile?.gamertag, 'listas']"
+      >Todas as listas</a
+    >
+  </header>
+
+  <app-user-lists [lists]="controller.lists()" [fromMe]="true">
+  </app-user-lists>
 </div>

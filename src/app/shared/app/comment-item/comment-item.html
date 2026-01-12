@@ -107,7 +107,7 @@
   @if (!controller.childComments()[comment().$id]?.hidden) {
   <div class="pl-10 mt-4">
     @for (reply of replies(); track reply.$id) {
-    <ui-comment-item
+    <app-comment-item
       [comment]="reply"
       [replies]="controller.childComments()[reply.$id]?.comments || []"
       [isLoadingReplies]="controller.loadingReplies()[reply.$id]"

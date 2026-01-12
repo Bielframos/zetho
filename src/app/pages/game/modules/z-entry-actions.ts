@@ -1,23 +1,23 @@
 import { NgClass } from '@angular/common';
-import { Component, inject, input, output, signal } from '@angular/core';
-import { ZEntry, ZEntryRow } from '../../../core/types';
-import { ZereiService } from '../../../core/services/zerei.service';
+import { Component, inject } from '@angular/core';
+import { GamePageController } from '../../../core/controllers/gamePage.controller';
+import { ZEntry } from '../../../core/types';
 
 @Component({
-  selector: 'ui-game-user-actions',
+  selector: 'ui-z-entry-actions',
   standalone: true,
   imports: [NgClass],
   template: `
     <div
-      class="mt-4 grid grid-cols-4 md:grid-cols-2 border-t md:border bg-blue-2 border-gray-6 rounded-lg overflow-hidden fixed md:relative bottom-0 left-0 z-999 animate-fade-in-slide"
+      class="mt-4 grid grid-cols-4 md:grid-cols-2 border-t md:border bg-blue-2 border-gray-6 rounded-lg overflow-hidden fixed md:relative bottom-0 left-0 w-full z-999 animate-fade-in-slide"
     >
       @for (action of actions; track action.key) {
       <button
-        (click)="handleZEntry(action.key)"
+        (click)="controller.updateStatus(action.key)"
         class="flex flex-col gap-2 items-center justify-center px-4 py-4 w-full cursor-pointer transition-colors text-sm md:text-md md:border-b border-gray-6"
         [ngClass]="[
           action.key === 'completed' || action.key === 'playing' ? 'md:border-r' : '',
-          action.key === zEntry()?.status ? activeClasses[action.key] : inactiveClasses[action.key]
+          action.key === controller.zEntry()?.status ? activeClasses[action.key] : inactiveClasses[action.key]
         ]"
       >
         @switch (action.key) { @case ('completed') {
@@ -46,39 +46,13 @@ import { ZereiService } from '../../../core/services/zerei.service';
       </button>
       }
     </div>
-
-    <!-- Curtida e lista de desejos -->
-    <div
-      class="mt-4 border border-gray-6 divide-y divide-gray-6 rounded-lg overflow-hidden animate-fade-in-slide"
-      style="animation-delay: 300ms"
-    >
-      <button (click)="handleLike()" class="ui-secondary-btn w-full rounded-b-none">
-        @if (zEntry()?.liked) {
-        <i class="ph-fill ph-heart text-red-400"></i>
-        } @else {
-        <i class="ph ph-heart"></i>
-        }
-        {{ zEntry()?.liked ? 'Descurtir' : 'Curtir' }}
-      </button>
-      <button
-        (click)="handleZEntry('wishlist')"
-        [ngClass]="[
-          'ui-secondary-btn w-full rounded-t-none',
-          zEntry()?.status === 'wishlist' ? 'text-blue-12' : ''
-        ]"
-      >
-        <i class="ph ph-list-star"></i>
-        {{ zEntry()?.status === 'wishlist' ? 'Na lista de desejos' : 'Quero comprar' }}
-      </button>
-    </div>
   `,
+  host: {
+    class: 'w-full max-w-[318px]'
+  }
 })
-export class UiGameUserActions {
-  private zerei = inject(ZereiService);
-  private isLiking = signal(false);
-  gameId = input.required<string>();
-  zEntry = input<ZEntryRow | null>(null);
-  onZEntryUpdate = output<ZEntryRow>();
+export class UiZEntryActions {
+  controller = inject(GamePageController)
 
   actions: {
     key: Exclude<ZEntry['status'], 'wishlist' | null | undefined>;
@@ -104,42 +78,4 @@ export class UiGameUserActions {
     playing: 'text-gray-11 hover:text-purple-300',
     dropped: 'text-gray-11 hover:text-red-300',
   };
-
-  async handleZEntry(status: ZEntry['status']) {
-    const existing = this.zEntry();
-
-    if (!this.gameId()) return;
-
-    const newStatus = status === existing?.status ? null : status;
-
-    const updated = await this.zerei.createZEntry({
-      zEntryId: existing?.$id,
-      gameId: this.gameId(),
-      status: newStatus,
-      prev: existing,
-    });
-
-    if (updated) this.onZEntryUpdate.emit(updated);
-  }
-
-  async handleLike() {
-    const gameId = this.gameId();
-    const existing = this.zEntry();
-
-    if (!gameId || this.isLiking()) return;
-
-    this.isLiking.set(true);
-
-    try {
-      const updated = await this.zerei.likeAGame({
-        zEntryId: existing?.$id,
-        gameId: gameId,
-        prev: existing,
-      });
-
-      if (updated) this.onZEntryUpdate.emit(updated);
-    } finally {
-      this.isLiking.set(false);
-    }
-  }
 }

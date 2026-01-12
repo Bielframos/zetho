@@ -1,0 +1,49 @@
+<main
+  class="relative w-full max-w-5xl md:grid grid-cols-[320px_1fr] gap-10 mx-auto md:px-10 md:pt-10 pb-10"
+>
+  <aside
+    class="w-full rounded-lg border-b md:border border-gray-6 bg-blue-2 h-fit"
+  >
+    <header
+      class="flex flex-col items-center w-full gap-2 px-2 pb-6 border-b border-gray-6"
+    >
+      <div class="flex justify-end w-full pt-2">
+        <a routerLink="/minha-conta" class="ui-action-btn" data-size="icon">
+          <i class="ph ph-gear text-[16px]"></i>
+        </a>
+      </div>
+
+      <img
+        [src]="profileStore.avatarUrl()"
+        alt="{{`Avatar do ${profileStore.current()?.gamertag}`}}"
+        class="rounded-full"
+      />
+      <h3 class="text-xl text-center">{{profile?.gamertag}}</h3>
+    </header>
+
+    <ul class="flex md:flex-col p-2 space-y-1 overflow-x-auto">
+      @for (tab of tabs(); track tab.key) {
+      <li
+        class="group flex-1"
+        [attr.data-active]="layoutStore.currentTab() === tab.key"
+      >
+        <a
+          [routerLink]="tab.key === 'games' ? ['/player', profileStore.current()?.gamertag] : tab.key"
+          class="flex gap-2 w-full whitespace-nowrap max-md:justify-center pl-2 pr-4 py-2 rounded-lg hover:bg-blue-4 hover:text-white group-data-[active=true]:bg-blue-3 group-data-[active=true]:hover:bg-blue-4 transition-colors"
+        >
+          <i class="ph {{ tab.icon }}"></i>
+          {{ tab.label }}
+        </a>
+      </li>
+      }
+    </ul>
+
+    <ng-container
+      *ngComponentOutlet="layoutStore.sidebarComponent()"
+    ></ng-container>
+  </aside>
+
+  <section>
+    <router-outlet></router-outlet>
+  </section>
+</main>

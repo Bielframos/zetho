@@ -1,12 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommentsController } from '../../../core/controllers/comments.controller';
-import { UiCommentItem } from '../../../shared/ui/molecules/comment-item/comment-item';
+import { AppCommentItem } from '../../../shared/app/comment-item/comment-item';
 
 @Component({
   selector: 'ui-game-lobby',
   standalone: true,
-  imports: [UiCommentItem, ReactiveFormsModule],
+  imports: [AppCommentItem, ReactiveFormsModule],
   template: `
     <article class="flex flex-col gap-4">
       <header class="flex gap-4 items-center">
@@ -56,7 +56,7 @@ import { UiCommentItem } from '../../../shared/ui/molecules/comment-item/comment
       </div>
 
       @for (comment of controller.rootComments(); track comment.$id) {
-        <ui-comment-item
+        <app-comment-item
           [comment]="comment"
           [replies]="controller.childComments()[comment.$id]?.comments || []"
           [isLoadingReplies]="controller.loadingReplies()[comment.$id]"

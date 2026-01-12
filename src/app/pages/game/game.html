@@ -1,21 +1,14 @@
 <main
   class="relative min-h-dvh w-full max-w-5xl md:grid grid-cols-[320px_1fr] gap-10 mx-auto px-6 md:px-10 py-6 md:py-10"
 >
-  <aside class="w-full mx-auto items-center">
-    <div class="w-full flex justify-center">
-      <ui-game-card
-        [game]="pageState.game()"
-        [width]="320"
-        readonlyMode
-      ></ui-game-card>
-    </div>
-
-    @if (pageState.game() && userStore.isAuthenticated()) {
-    <ui-game-user-actions
-      [gameId]="pageState.game()!.$id"
-      [zEntry]="pageState.zEntry()"
-      (onZEntryUpdate)="pageState.updateZEntry($event)"
-    ></ui-game-user-actions>
+  <aside class="w-full mx-auto flex flex-col items-center">
+    <ui-game-card
+      [game]="controller.game()"
+      [width]="320"
+      readonlyMode
+    ></ui-game-card>
+    @if (controller.game() && userStore.isAuthenticated()) {
+    <ui-z-entry-actions></ui-z-entry-actions>
     } @else {
     <div
       class="mt-6 flex w-full flex-col items-center rounded-lg border border-gray-6 bg-blue-2 p-6 text-center animate-fade-in-slide"
@@ -40,14 +33,15 @@
     class="mt-10 md:mt-40 animate-fade-in-slide"
     style="animation-delay: 400ms"
   >
-    <ui-game-header [game]="pageState.game()"></ui-game-header>
-    <ui-game-stats [stats]="pageState.game()?.zStats"></ui-game-stats>
+    <ui-game-actions [game]="controller.game()"></ui-game-actions>
+    <ui-game-header [game]="controller.game()"></ui-game-header>
+    <ui-game-stats [stats]="controller.game()?.zStats"></ui-game-stats>
 
     <hr class="border-blue-6 w-full mb-10" />
 
     <ui-game-lobby></ui-game-lobby>
 
-    @if (pageState.similarGames(); as similarGames) {
+    @if (controller.similarGames(); as similarGames) {
     <hr class="border-blue-6 w-full my-10" />
     <h3 class="text-2xl mb-6 text-blue-12">Talvez você goste</h3>
     <ul class="grid grid-cols-4 gap-2">

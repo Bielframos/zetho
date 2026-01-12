@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from "@angular/core";
+import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { UserProfileRow } from "../types";
 import { appwrite } from "../appwrite/appwrite.client";
 import { UserStore } from "../auth/user.store";
@@ -15,6 +15,7 @@ export class ProfileStore {
     readonly isLoading = computed(() => this._loading())
     readonly current = computed(() => this._current())
     readonly avatarUrl = computed(() => appwrite.avatars.getInitials({ name: this.current()?.gamertag, width: 64, height: 64, background: '3e63dd' }))
+    readonly itsMe = computed(() => this.userStore.profile()?.$id === this._current()?.$id)
 
     async update(gamertag: string) {
         const myProfile = this.userStore.profile()
