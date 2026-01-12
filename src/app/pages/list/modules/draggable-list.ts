@@ -5,7 +5,7 @@ import {
     CdkDropList,
     moveItemInArray,
 } from '@angular/cdk/drag-drop';
-import { ListItemsController } from '../../../core/controllers/listItems.controller';
+import { ListController } from '../../../core/controllers/list.controller';
 import { UiGameCard } from '../../../shared/ui/atoms/game-card/game-card';
 import { ZereiListItemRow } from '../../../core/types';
 import { AppListCardMenu } from './list-card-menu';
@@ -21,7 +21,7 @@ import { ProfileStore } from '../../../core/stores/profile.store';
 export class UiDraggableList {
     private userStore = inject(UserStore);
     private profileStore = inject(ProfileStore);
-    controller = inject(ListItemsController);
+    controller = inject(ListController);
 
     get itsMe() {
         return this.userStore.profile()?.$id === this.profileStore.current()?.$id

@@ -9,7 +9,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ListItemsController } from '../../../core/controllers/listItems.controller';
+import { ListController } from '../../../core/controllers/list.controller';
 import { UiCheckbox } from '../../../shared/ui/atoms/checkbox';
 import { UiInput } from '../../../shared/ui/atoms/input/input';
 import { UiModal } from '../../../shared/ui/molecules/modal/modal';
@@ -120,7 +120,7 @@ import { ProfileStore } from '../../../core/stores/profile.store';
 export class AppListMenu {
   private router = inject(Router)
   private profileStore = inject(ProfileStore)
-  controller = inject(ListItemsController);
+  controller = inject(ListController);
   formatMenu = viewChild<Menu<string>>('formatMenu');
 
   modalIsOpen = signal(false);

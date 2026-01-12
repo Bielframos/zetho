@@ -167,12 +167,23 @@ export class ListService {
         return items;
     }
 
-    async removeItem(id: string) {
-        return await appwrite.databases.deleteRow({
-            databaseId: 'app',
-            tableId: LIST_ITEM_TABLE_ID,
-            rowId: id,
-        });
+    async removeItem(listId: string, id: string) {
+        const [_, updatedList] = await Promise.all([
+            appwrite.databases.deleteRow({
+                databaseId: 'app',
+                tableId: LIST_ITEM_TABLE_ID,
+                rowId: id,
+            }),
+            appwrite.databases.decrementRowColumn<ZereiListRow>({
+                databaseId: 'app',
+                tableId: LIST_TABLE_ID,
+                rowId: listId,
+                column: 'itemCount',
+                value: 1,
+            }),
+        ])
+
+        return updatedList
     }
 
     async reorderItems(

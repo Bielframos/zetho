@@ -1,7 +1,7 @@
 import { Menu, MenuContent, MenuItem, MenuTrigger } from '@angular/aria/menu';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { Component, inject, input, viewChild } from '@angular/core';
-import { ListItemsController, ZereiListItemRowExpanded } from '../../../core/controllers/listItems.controller';
+import { ListController, ZereiListItemRowExpanded } from '../../../core/controllers/list.controller';
 
 @Component({
   selector: 'app-list-card-menu',
@@ -44,7 +44,7 @@ import { ListItemsController, ZereiListItemRowExpanded } from '../../../core/con
   imports: [Menu, MenuContent, MenuItem, MenuTrigger, OverlayModule],
 })
 export class AppListCardMenu {
-  controller = inject(ListItemsController)
+  controller = inject(ListController)
   item = input.required<ZereiListItemRowExpanded>()
   formatMenu = viewChild<Menu<string>>('formatMenu');
 }

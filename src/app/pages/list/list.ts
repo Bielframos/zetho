@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
-import { ListItemsController } from '../../core/controllers/listItems.controller';
+import { ListController } from '../../core/controllers/list.controller';
 import { UiLoading } from '../../shared/ui/molecules/loading';
 import { UiDraggableList } from './modules/draggable-list';
 import { AppListMenu } from './modules/list-menu';
@@ -16,7 +16,7 @@ import { AppListMenu } from './modules/list-menu';
 })
 export class List {
     private route = inject(ActivatedRoute);
-    controller = inject(ListItemsController);
+    controller = inject(ListController);
 
     slug = toSignal(
         this.route.paramMap.pipe(map((params) => params.get('slug'))),

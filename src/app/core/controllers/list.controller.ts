@@ -16,7 +16,7 @@ type ReorderOp = {
 };
 
 @Injectable({ providedIn: 'root' })
-export class ListItemsController {
+export class ListController {
     list = signal<ZereiListRow | null>(null);
     items = signal<ZereiListItemRowExpanded[]>([]);
     totalItems = signal(0);
@@ -140,8 +140,9 @@ export class ListItemsController {
 
             if (!authorized) return;
 
-            await this.listService.removeItem(item.$id);
-            this.items.update((prev) => prev.filter((item) => item.$id !== game.$id));
+            const updatedList = await this.listService.removeItem(this.list()!.$id, item.$id);
+            this.items.update((prev) => prev.filter((i) => item.$id !== item.$id));
+            this.list.set(updatedList)
         } catch (e) {
             const error = e as AppwriteException;
             console.error(e);
