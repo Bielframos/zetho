@@ -124,7 +124,7 @@ export class ListService {
             gameName: game.name,
             gameCoverUrl: game.coverUrl,
         });
-        const updatedLatestAdditions = latestAdditions.slice(0, 3);
+        const updatedLatestAdditions = latestAdditions.slice(0, 3).reverse();
 
         // Persiste no banco o estado das últimas adições e incremeta a contagem de itens
         const [updatedList, _] = await Promise.all([
