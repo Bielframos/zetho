@@ -162,8 +162,25 @@ export class ListItemsController {
             const updatedList = await this.listService.updateList({ listId: list.$id, ...params })
             this.list.set(updatedList)
         } catch (e) {
-            alert('Ocorreu um erro ao atualizar a sua lista.')
             console.error(e)
+            alert('Ocorreu um erro ao atualizar a sua lista.')
+        }
+    }
+
+    async deleteList() {
+        try {
+            const list = this.list()
+            if (!list) return
+
+            const authorized = confirm(`A lista: ${list.title}, será excluida permanentemente.`)
+            if (!authorized) return
+
+            await this.listService.deleteList(list.$id)
+            this.list.set(null)
+            this.reset()
+        } catch (e) {
+            console.error(e)
+            alert('Ocorreu um erro ao excluir sua lista.')
         }
     }
 

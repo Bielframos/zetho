@@ -2,7 +2,7 @@
   trigglerLabel="Nova lista"
   title="Nova lista"
   actionLabel="Criar lista"
-  (submit)="handleSubmit()"
+  (submit)="handleSubmit($event)"
   [loading]="controller.awaitingCreation()"
 >
   <form

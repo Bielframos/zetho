@@ -25,12 +25,14 @@ export class AppNewListDialog {
         isPublic: new FormControl(false)
     });
 
-    async handleSubmit() {
+    async handleSubmit({ close }: { close: () => void }) {
         await this.controller.createList({
             ownerFingerprint: this.userStore.profile()?.fingerprint!,
             title: this.form.controls.listName.value,
             description: this.form.controls.listDescription.value,
             isPublic: this.form.controls.isPublic.value || undefined
         });
+
+        close();
     }
 }

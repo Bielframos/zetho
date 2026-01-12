@@ -1,8 +1,10 @@
 import {
   Component,
   contentChild,
+  effect,
   ElementRef,
   input,
+  model,
   output,
   viewChild,
 } from '@angular/core';
@@ -54,6 +56,7 @@ import { ModalTriggerDirective } from './modal-trigger.directive';
   imports: [],
 })
 export class UiModal {
+  isOpen = model<boolean | null>(null);
   actionLabel = input.required<string>();
   trigglerLabel = input<string>();
   title = input.required<string>();
@@ -62,11 +65,12 @@ export class UiModal {
   loading = input(false);
 
   private modal = viewChild<ElementRef<HTMLDialogElement>>('modal');
-  private trigger =
-    contentChild(ModalTriggerDirective);
+  private trigger = contentChild(ModalTriggerDirective);
 
   hasCustomTrigger() {
-    return !!this.trigger();
+    return (
+      !!this.trigger() || (this.isOpen() !== null && !this.trigglerLabel())
+    );
   }
 
   showModal() {
@@ -75,6 +79,7 @@ export class UiModal {
 
   closeModal() {
     this.modal()?.nativeElement.close();
+    this.isOpen.set(false)
   }
 
   handleSubmit() {
@@ -85,5 +90,12 @@ export class UiModal {
     if (this.trigger()) {
       this.trigger()!.onTrigger = () => this.showModal();
     }
+  }
+
+  constructor() {
+    effect(() => {
+      if (this.isOpen()) this.showModal()
+      else this.closeModal()
+    })
   }
 }

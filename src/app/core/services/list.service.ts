@@ -88,6 +88,14 @@ export class ListService {
         return updatedList
     }
 
+    async deleteList(listId: string) {
+        await appwrite.databases.deleteRow({
+            databaseId: 'app',
+            tableId: LIST_TABLE_ID,
+            rowId: listId,
+        })
+    }
+
     async addToList({ list, game }: { list: ZereiListRow; game: GameRow }) {
         // Faz o parse dos últimos itens adicionados a lista alvo
         const latestAdditions: LastAdditionItem[] = JSON.parse(

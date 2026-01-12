@@ -68,7 +68,7 @@
 
   /* NG Menu */
   [ngMenu] {
-    @apply w-60 bg-blue-2 border border-gray-6 p-1 rounded-lg;
+    @apply w-60 bg-blue-2 border border-gray-6 p-1 rounded-lg drop-shadow-2xl;
   }
 
   [ngMenu][data-visible="false"] {
@@ -76,7 +76,7 @@
   }
 
   [ngMenuItem] {
-    @apply flex gap-2 px-2 py-1 hover:bg-blue-2 cursor-pointer transition-colors outline-none focus:bg-blue-3 rounded-md;
+    @apply flex gap-2 px-2 py-1 hover:bg-blue-2 cursor-pointer transition-colors outline-none focus:bg-blue-3 rounded-md text-gray-11;
   }
 }
 
