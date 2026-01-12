@@ -87,7 +87,7 @@ export class GamePageController {
             prev: zEntry,
         });
 
-        return updated
+        this.zEntry.set(updated)
     }
 
     async like() {
