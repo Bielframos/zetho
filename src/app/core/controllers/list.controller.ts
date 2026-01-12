@@ -141,7 +141,7 @@ export class ListController {
             if (!authorized) return;
 
             const updatedList = await this.listService.removeItem(this.list()!.$id, item.$id);
-            this.items.update((prev) => prev.filter((i) => item.$id !== item.$id));
+            this.items.update((prev) => prev.filter((i) => i.$id !== item.$id));
             this.list.set(updatedList)
         } catch (e) {
             const error = e as AppwriteException;
