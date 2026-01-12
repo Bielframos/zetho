@@ -8,14 +8,14 @@ import { GamePageController } from '../../core/controllers/gamePage.controller';
 import { UiGameCard } from '../../shared/ui/atoms/game-card/game-card';
 import { UiGameHeader } from "./modules/game-header";
 import { UiGameStats } from "./modules/game-stats";
-import { UiGameUserActions } from './modules/game-user-actions';
+import { UiZEntryActions } from './modules/z-entry-actions';
 import { UiGameLobby } from "./modules/game-lobby";
 import { UiGameActions } from "./modules/game-actions";
 
 @Component({
     selector: 'app-game',
     standalone: true,
-    imports: [UiGameCard, UiGameUserActions, RouterLink, UiGameHeader, UiGameStats, UiGameLobby, UiGameActions],
+    imports: [UiGameCard, UiZEntryActions, RouterLink, UiGameHeader, UiGameStats, UiGameLobby, UiGameActions],
     templateUrl: './game.html'
 })
 export class Game {
@@ -23,14 +23,9 @@ export class Game {
      * INJEÇÕES DE DEPENDÊNCIA
      * --------------------------------------------------------- */
     private title = inject(Title);
-    private gameController = inject(GamePageController)
     private route = inject(ActivatedRoute);
+    controller = inject(GamePageController)
     userStore = inject(UserStore);
-
-    /* ---------------------------------------------------------
-     * ESTADO
-     * --------------------------------------------------------- */
-    pageState = this.gameController.create();
 
     // Slug vindo da rota
     slug = toSignal(
@@ -45,12 +40,12 @@ export class Game {
         // Atualiza o estado quando o slug mudar
         effect(() => {
             const slug = this.slug();
-            if (slug) this.pageState.fetch(slug);
+            if (slug) this.controller.init(slug);
         });
 
         // Atualiza o título da página quando o jogo carregar
         effect(() => {
-            const game = this.pageState.game();
+            const game = this.controller.game();
             if (game) this.title.setTitle(`${game.name} — Zerei`);
         });
     }
