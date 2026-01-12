@@ -16,7 +16,7 @@ import { ShortNumberPipe } from '../../../core/modules/pipes';
             class="w-24 h-auto rounded-xl drop-shadow-lg drop-shadow-blue-2"
           />
         } @empty {
-          <div>
+          <div class="flex">
             <div
             class="background-pattern w-24 aspect-3/4 rounded-lg border border-dashed border-gray-6 flex items-center justify-center md:hidden scale-75 -rotate-6"
           >
