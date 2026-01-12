@@ -19,6 +19,7 @@ export class AppUserLists {
     lists = input<ZereiListRow[]>([]);
 
     fromMe = input(false);
+
     ownerGamertag = computed(() => {
         if (this.fromMe()) return this.userStore.profile()?.gamertag || '';
         else return this.profileStore.current()?.gamertag || '';

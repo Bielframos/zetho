@@ -5,7 +5,7 @@ import { ProfileStore } from '../stores/profile.store';
 import { AppwriteException } from 'appwrite';
 import { debounceTime, Subject } from 'rxjs';
 
-type ZereiListItemRowExpanded = Omit<ZereiListItemRow, 'game'> & {
+export type ZereiListItemRowExpanded = Omit<ZereiListItemRow, 'game'> & {
     game: GameRow;
 };
 
@@ -108,8 +108,8 @@ export class ListItemsController {
 
     private async persitOrder() {
         try {
-            const { reorderedRows, updatedList } = await this.listService.reorderItems(this.reorderOps());
-
+            const { reorderedRows, updatedList } =
+                await this.listService.reorderItems(this.reorderOps());
 
             const map = new Map(
                 reorderedRows
@@ -124,12 +124,46 @@ export class ListItemsController {
             );
 
             if (updatedList) {
-                this.list.set(updatedList)
+                this.list.set(updatedList);
             }
 
             this.reorderOps.set([]);
         } catch (e) {
             console.error(e);
+        }
+    }
+
+    async removeItem(item: ZereiListItemRowExpanded) {
+        try {
+            const game = item.game as unknown as GameRow;
+            const authorized = confirm(`${game.name} será removido permanentemente dessa lista.`);
+
+            if (!authorized) return;
+
+            await this.listService.removeItem(item.$id);
+            this.items.update((prev) => prev.filter((item) => item.$id !== game.$id));
+        } catch (e) {
+            const error = e as AppwriteException;
+            console.error(e);
+
+            this.error.set({
+                message: error.message,
+                code: error.code,
+                type: error.type,
+            });
+        }
+    }
+
+    async updateList(params: { title?: string, description?: string, isPublic?: boolean }) {
+        try {
+            const list = this.list()
+            if (!list) return
+
+            const updatedList = await this.listService.updateList({ listId: list.$id, ...params })
+            this.list.set(updatedList)
+        } catch (e) {
+            alert('Ocorreu um erro ao atualizar a sua lista.')
+            console.error(e)
         }
     }
 

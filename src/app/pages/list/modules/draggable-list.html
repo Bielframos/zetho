@@ -6,7 +6,7 @@
   @for (item of controller.items(); let idx = $index; track item.$id) {
   <div
     cdkDrag
-    class="flex gap-4 pl-2 pr-4 py-4 md:py-2 items-center font-light cursor-grab"
+    class="flex gap-4 pl-2 pr-4 py-4 md:py-2 items-center font-light cursor-grab relative"
   >
     <i class="ph ph-dots-six-vertical text-gray-11"></i>
 
@@ -18,7 +18,9 @@
       {{idx + 1}}
     </span>
 
-    {{ item.game.name }}
+    {{ item.game.name }} @if (itsMe) {
+    <app-list-card-menu [item]="item"></app-list-card-menu>
+    }
   </div>
   } @empty {
   <div class="p-6 text-center text-gray-11">Essa lista está vazia.</div>

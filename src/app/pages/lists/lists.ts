@@ -4,6 +4,7 @@ import { ListsController } from '../../core/controllers/lists.controller';
 import { AppUserLists } from '../../shared/app/user-lists/user-lists';
 import { AppNewListDialog } from '../../shared/app/new-list-dialog/new-list-dialog';
 import { ProfileStore } from '../../core/stores/profile.store';
+import { UserStore } from '../../core/auth/user.store';
 
 @Component({
     selector: 'app-lists',
@@ -12,11 +13,17 @@ import { ProfileStore } from '../../core/stores/profile.store';
     templateUrl: './lists.html',
 })
 export class Lists {
-    profileStore = inject(ProfileStore);
+    private userStore = inject(UserStore);
+    private profileStore = inject(ProfileStore);
     controller = inject(ListsController);
+
+    get itsMe() {
+        return this.userStore.profile()?.$id === this.profileStore.current()?.$id
+    }
 
     constructor(private layoutStore: ProfileLayoutStore) {
         this.layoutStore.sidebarComponent.set(null);
+
         effect(() => {
             const profile = this.profileStore.current();
             const userFingerprint = profile?.fingerprint;

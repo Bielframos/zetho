@@ -65,6 +65,19 @@
     color: var(--color-gray-12);
     font-family: "Readex Pro Variable", sans-serif;
   }
+
+  /* NG Menu */
+  [ngMenu] {
+    @apply w-60 bg-blue-2 border border-gray-6 p-1 rounded-lg;
+  }
+
+  [ngMenu][data-visible="false"] {
+    display: none;
+  }
+
+  [ngMenuItem] {
+    @apply flex gap-2 px-2 py-1 hover:bg-blue-2 cursor-pointer transition-colors outline-none focus:bg-blue-3 rounded-md;
+  }
 }
 
 /* Componentes */

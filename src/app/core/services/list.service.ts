@@ -67,6 +67,27 @@ export class ListService {
         return newList;
     }
 
+    async updateList({
+        listId,
+        title,
+        description,
+        isPublic,
+    }: {
+        listId: string;
+        title?: string;
+        description?: string;
+        isPublic?: boolean;
+    }) {
+        const updatedList = await appwrite.databases.updateRow<ZereiListRow>({
+            databaseId: 'app',
+            tableId: LIST_TABLE_ID,
+            rowId: listId,
+            data: { title, description, isPublic }
+        });
+
+        return updatedList
+    }
+
     async addToList({ list, game }: { list: ZereiListRow; game: GameRow }) {
         // Faz o parse dos últimos itens adicionados a lista alvo
         const latestAdditions: LastAdditionItem[] = JSON.parse(
@@ -138,6 +159,14 @@ export class ListService {
         return items;
     }
 
+    async removeItem(id: string) {
+        return await appwrite.databases.deleteRow({
+            databaseId: 'app',
+            tableId: LIST_ITEM_TABLE_ID,
+            rowId: id,
+        });
+    }
+
     async reorderItems(
         reorderOps: {
             item: ZereiListItemRow;
@@ -181,5 +210,4 @@ export class ListService {
 
         return { reorderedRows, updatedList };
     }
-
 }

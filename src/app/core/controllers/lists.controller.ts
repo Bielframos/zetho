@@ -53,11 +53,11 @@ export class ListsController {
     async loadLists({
         ownerFingerprint,
         loadMore,
-        onlyPublicOnes
+        onlyPublicOnes,
     }: {
         ownerFingerprint: string;
         loadMore?: boolean;
-        onlyPublicOnes?: boolean
+        onlyPublicOnes?: boolean;
     }) {
         try {
             if (this.loading()) return;
@@ -70,7 +70,7 @@ export class ListsController {
             const lists = await this.listService.getLists({
                 userFingerprint: ownerFingerprint,
                 offset: this.offset(),
-                onlyPublicOnes
+                onlyPublicOnes,
             });
 
             const parsedRows: ParsedZereiListRow[] = lists.rows.map(this.parseList);
@@ -141,7 +141,7 @@ export class ListsController {
             });
 
             alert('Lista ou jogo não informados.');
-            return
+            return;
         }
 
         try {

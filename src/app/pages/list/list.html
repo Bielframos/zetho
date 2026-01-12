@@ -1,7 +1,58 @@
 <section class="max-md:px-4">
-  <header class="w-full max-md:mt-6 mb-4">
-    <h1 class="text-2xl mb-2 text-blue-12">{{controller.list()?.title}}</h1>
-    <p>{{controller.list()?.description}}</p>
+  <header class="w-full max-md:mt-6 mb-4 flex justify-between items-center">
+    <div>
+      <h1 class="text-2xl mb-2 text-blue-12">{{controller.list()?.title}}</h1>
+      @if (controller.list()?.description) {
+      <p class="text-gray-11 -mt-2">{{controller.list()?.description}}</p>
+      }
+    </div>
+
+    <ui-modal
+      title="Editar lista"
+      actionLabel="Salvar"
+      (submit)="handleUpdateList($event)"
+    >
+      <button modalTrigger class="ui-secondary-btn" data-size="icon">
+        <i class="ph ph-pencil-line"></i>
+      </button>
+
+      @if (controller.list()) {
+      <form
+        [formGroup]="form"
+        method="dialog"
+        class="flex flex-col gap-4 mt-4 mb-6"
+      >
+        <ui-input
+          label="Nome da lista"
+          name="listName"
+          placeholder="Top 100 de todos os tempos"
+          formControlName="listName"
+        ></ui-input>
+
+        <fieldset class="flex flex-col gap-1">
+          <label
+            for="listDescription"
+            class="text-sm text-gray-12 text-start px-4"
+          >
+            Descrição
+          </label>
+
+          <textarea
+            name="listDescription"
+            placeholder="Uma lista com os 100 melhores jogos de todos os tempos, selecionados com muito carinho."
+            class="rounded-lg px-4 w-full py-2 font-light border-gray-6 bg-blue-2 placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11 min-h-[80px] max-h-[160px] mb-4"
+            formControlName="listDescription"
+          ></textarea>
+
+          <ui-checkbox
+            name="isPublic"
+            label="Tornar pública"
+            formControlName="isPublic"
+          ></ui-checkbox>
+        </fieldset>
+      </form>
+      }
+    </ui-modal>
   </header>
   @if (controller.loading()) {
   <ui-loading></ui-loading>
