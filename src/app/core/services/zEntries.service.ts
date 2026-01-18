@@ -27,29 +27,28 @@ export class ZEntryService {
         const zEntries = await appwrite.databases.listRows<ZEntryRow>({
             databaseId: 'app',
             tableId: Z_ENTRIES_TABLE_ID,
-            queries: [Query.equal('ownerFingerprint', userFingerprint), Query.equal('gameId', gameId)]
+            queries: [
+                Query.equal('ownerFingerprint', userFingerprint),
+                Query.equal('gameId', gameId),
+                Query.orderDesc('$createdAt'),
+                Query.limit(1),
+            ]
         })
 
-        if (zEntries.total > 0) return zEntries.rows[0]
-        else return null
+        return zEntries.rows[0] ?? null
     }
 
-    async createEntry(userFingerprint: string, payload: { zEntryId?: string, gameId: string, status: ZEntry['status'] | null, prev: ZEntryRow | null }) {
-        const { zEntryId, gameId, status, prev } = payload
 
-        const prevState = JSON.stringify({
-            status: prev?.status ?? null,
-            liked: prev?.liked ?? null
-        });
+    async createEntry(userFingerprint: string, payload: { zEntryId?: string, gameId: string, status: ZEntry['status'] | null }) {
+        const { zEntryId, gameId, status } = payload
 
-        const result = await appwrite.databases.upsertRow<ZEntryRow>({
+        const result = await appwrite.databases.createRow<ZEntryRow>({
             databaseId: 'app',
             tableId: Z_ENTRIES_TABLE_ID,
             rowId: zEntryId || ID.unique(),
             data: {
                 gameId,
                 status,
-                prevState,
                 ownerFingerprint: userFingerprint
             }
         });

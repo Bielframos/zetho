@@ -12,6 +12,7 @@ export class GamePageController {
     zEntry = signal<ZEntryRow | null>(null);
     errors = signal<Record<string, any>>({});
     loading = signal(false);
+    updating = signal(false);
 
     constructor(
         private gameService: GameService,
@@ -70,24 +71,29 @@ export class GamePageController {
         const zEntry = this.zEntry()
 
         if (!game) return;
-
+        if (!this.updating()) return;
 
         if (!this.userStore.isAuthenticated()) {
             alert('Só usuários logados podem criar ou atualizar seus registros.')
             return
         }
 
-        const profile = this.userStore.profile()
-        const newStatus = status === zEntry?.status ? null : status;
+        try {
+            this.updating.set(true)
 
-        const updated = await this.zEntryService.createEntry(profile!.fingerprint, {
-            zEntryId: zEntry?.$id,
-            gameId: game.$id,
-            status: newStatus,
-            prev: zEntry,
-        });
+            const profile = this.userStore.profile()
+            const newStatus = status === zEntry?.status ? null : status;
 
-        this.zEntry.set(updated)
+            const updated = await this.zEntryService.createEntry(profile!.fingerprint, {
+                zEntryId: zEntry?.$id,
+                gameId: game.$id,
+                status: newStatus,
+            });
+
+            this.zEntry.set(updated)
+        } catch { } finally {
+            this.updating.set(false)
+        }
     }
 
     async like() {
