@@ -1,31 +1,19 @@
-import { Component, inject } from '@angular/core';
-import {
-    CdkDrag,
-    type CdkDragDrop,
-    CdkDropList,
-    moveItemInArray,
-} from '@angular/cdk/drag-drop';
+import { CdkDrag, type CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Component, inject, input } from '@angular/core';
 import { ListController } from '../../../core/controllers/list.controller';
-import { UiGameCard } from '../../../shared/ui/atoms/game-card/game-card';
 import { ZereiListItemRow } from '../../../core/types';
+import { UiGameCard } from '../../../shared/ui/atoms/game-card/game-card';
 import { AppListCardMenu } from './list-card-menu';
-import { UserStore } from '../../../core/auth/user.store';
-import { ProfileStore } from '../../../core/stores/profile.store';
 
 @Component({
     selector: 'ui-draggable-list',
     templateUrl: './draggable-list.html',
     styleUrl: './draggable-list.css',
-    imports: [CdkDropList, CdkDrag, UiGameCard, AppListCardMenu],
+    imports: [CdkDropList, CdkDrag, UiGameCard, AppListCardMenu, CdkDragHandle],
 })
 export class UiDraggableList {
-    private userStore = inject(UserStore);
-    private profileStore = inject(ProfileStore);
     controller = inject(ListController);
-
-    get itsMe() {
-        return this.userStore.profile()?.$id === this.profileStore.current()?.$id
-    }
+    itsMe = input<boolean>()
 
     drop(event: CdkDragDrop<string[]>) {
         const { previousIndex, currentIndex } = event;

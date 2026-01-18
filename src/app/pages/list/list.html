@@ -7,11 +7,13 @@
       }
     </div>
 
+    @if (itsMe()) {
     <app-list-menu></app-list-menu>
+    }
   </header>
   @if (controller.loading()) {
   <ui-loading></ui-loading>
   } @else {
-  <ui-draggable-list></ui-draggable-list>
+  <ui-draggable-list [itsMe]="itsMe()"></ui-draggable-list>
   }
 </section>

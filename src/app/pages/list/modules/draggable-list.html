@@ -6,9 +6,14 @@
   @for (item of controller.items(); let idx = $index; track item.$id) {
   <div
     cdkDrag
-    class="flex gap-4 pl-2 pr-4 py-4 md:py-2 items-center font-light cursor-grab relative"
+    [cdkDragDisabled]="!itsMe()"
+    class="flex gap-4 pl-2 pr-4 py-4 md:py-2 items-center font-light relative"
   >
-    <i class="ph ph-dots-six-vertical text-gray-11"></i>
+    @if (itsMe()) {
+    <div class="cursor-grab" cdkDragHandle>
+      <i class="ph ph-dots-six-vertical text-gray-11"></i>
+    </div>
+    }
 
     <ui-game-card [width]="64" [game]="item.game" readonlyMode></ui-game-card>
 
@@ -18,7 +23,7 @@
       {{idx + 1}}
     </span>
 
-    {{ item.game.name }} @if (itsMe) {
+    {{ item.game.name }} @if (itsMe()) {
     <app-list-card-menu [item]="item"></app-list-card-menu>
     }
   </div>
