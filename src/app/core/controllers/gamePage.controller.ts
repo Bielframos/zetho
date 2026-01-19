@@ -71,7 +71,7 @@ export class GamePageController {
         const zEntry = this.zEntry()
 
         if (!game) return;
-        if (!this.updating()) return;
+        if (this.updating()) return;
 
         if (!this.userStore.isAuthenticated()) {
             alert('Só usuários logados podem criar ou atualizar seus registros.')
@@ -85,13 +85,15 @@ export class GamePageController {
             const newStatus = status === zEntry?.status ? null : status;
 
             const updated = await this.zEntryService.createEntry(profile!.fingerprint, {
-                zEntryId: zEntry?.$id,
                 gameId: game.$id,
-                status: newStatus,
+                current: zEntry,
+                status: newStatus
             });
 
             this.zEntry.set(updated)
-        } catch { } finally {
+        } catch (err) {
+            console.error('Erro ao atualizar status:', err)
+        } finally {
             this.updating.set(false)
         }
     }
@@ -101,21 +103,28 @@ export class GamePageController {
         const existing = this.zEntry();
 
         if (!game) return;
+        if (this.updating()) return;
 
         if (!this.userStore.isAuthenticated()) {
             alert('Só usuários logados podem curtir um jogo.')
             return
         }
 
-        const profile = this.userStore.profile()
+        try {
+            this.updating.set(true)
+            const profile = this.userStore.profile()
 
-        const updated = await this.zEntryService.likeAGame(profile!.fingerprint, {
-            zEntryId: existing?.$id,
-            gameId: game.$id,
-            prev: existing,
-        });
+            const updated = await this.zEntryService.likeAGame(profile!.fingerprint, {
+                gameId: game.$id,
+                current: existing,
+            });
 
-        if (updated) this.zEntry.set(updated);
+            if (updated) this.zEntry.set(updated);
+        } catch (err) {
+            console.error('Erro ao curtir jogo:', err)
+        } finally {
+            this.updating.set(false)
+        }
     }
 }
 
