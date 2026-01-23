@@ -326,6 +326,7 @@ export default async ({ req, res, log }) => {
     $createdAt,
     $updatedAt,
     $permissions,
+    processedAt,
     ...cleanEntry
   } = entry;
 
