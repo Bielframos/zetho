@@ -71,7 +71,7 @@ export default async ({ req, res, log }) => {
           );
 
           try {
-            await databases.createRow({
+            await databases.upsertRow({
               databaseId: 'app',
               tableId: 'z_entries_read',
               rowId: readId,
