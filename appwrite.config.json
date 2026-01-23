@@ -137,7 +137,7 @@
                 "documents.write"
             ],
             "events": [
-                "databases.app.tables.z_entries.rows.create"
+                "databases.app.tables.z_entries.rows.*"
             ],
             "schedule": "",
             "timeout": 15,
