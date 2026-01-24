@@ -1,7 +1,7 @@
 @reference "#app.css";
 
 .base-card {
-  @apply flex border border-gray-6 rounded-xl overflow-hidden;
+  @apply flex rounded-xl overflow-hidden;
 }
 
 .fallback-cover {
