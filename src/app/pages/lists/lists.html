@@ -5,5 +5,8 @@
   </header>
   }
 
-  <app-user-lists [lists]="controller.lists()"></app-user-lists>
+  <app-user-lists
+    [lists]="controller.lists()"
+    [disableGrid]="true"
+  ></app-user-lists>
 </section>

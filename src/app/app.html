@@ -1,14 +1,12 @@
 <div class="flex flex-col min-h-dvh text-sm">
   <!-- Navbar -->
-  <nav
-    class="w-full bg-linear-to-br from-blue-2 to-blue-3 px-4 md:px-10 py-4 border-b border-gray-6 relative z-10"
-  >
+  <nav class="w-full px-4 md:px-10 py-4 relative z-10">
     <div class="flex gap-4 justify-between items-center">
       <a [routerLink]="userStore.isAuthenticated() ? '/dashboard' : '/'">
-        <h3 class="font-display text-[40px] leading-0 text-blue-12">zetho</h3>
+        <h3 class="font-display text-[40px] leading-0">zetho</h3>
       </a>
 
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-4">
         <!-- Barra de busca desktop — Só exibe se não for página de autenticação -->
         @if (!isAuthRoute()) {
         <div class="hidden md:block">
@@ -57,10 +55,10 @@
 
   <!-- Footer do app -->
   <footer
-    class="w-full flex flex-col items-center border-t border-gray-6 px-6 md:px-10 py-4 bg-blue-1 z-20"
+    class="w-full flex flex-col items-center border-t border-blue-2 px-6 md:px-10 py-4 bg-blue-1 z-20"
     [class.max-md:mb-[84px]]="isGameRoute()"
   >
-    <h6 class="text-4xl font-display text-blue-9">Zetho</h6>
+    <h6 class="text-4xl font-display">Zetho</h6>
     <small class="text-gray-11"
       >Powered by
       <a href="https://www.igdb.com/" class="font-semibold" class="text-blue-12"

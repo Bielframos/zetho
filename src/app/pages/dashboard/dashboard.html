@@ -1,79 +1,74 @@
 <div class="px-4 py-10 w-full max-w-5xl mx-auto">
-  <header>
-    <h1 class="text-3xl text-blue-12 max-w-xl font-bold pb-6">
-      Olá, {{ profile?.gamertag }}!
-    </h1>
+  <header class="mb-14">
+    <div class="mb-6 flex gap-4 items-baseline flex-wrap">
+      <h1 class="text-3xl max-w-xl">Olá, {{ profile?.gamertag }}!</h1>
+      <a
+        [routerLink]="['/player', profile?.gamertag]"
+        class="text-blue-11 hover:underline hover:text-blue-9"
+        >Ir para o meu perfil
+      </a>
+    </div>
 
     <div class="@container">
-      <div
-        class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden border rounded-lg border-gray-6 bg-linear-to-br from-blue-2 to-blue-3"
-      >
+      <div class="grid grid-cols-2 md:flex bg-blue-2 rounded-2xl p-2 md:p-1">
         <!-- Zerado -->
-        <div
-          class="col-span-2 @md:border-b border-gray-6 pl-4 pr-3 py-4 text-gray-11 flex justify-between"
+        <a
+          [routerLink]="['/player', profile?.gamertag]"
+          [queryParams]="{t: 'completed'}"
+          class="py-4 flex flex-1 items-center gap-4 hover:bg-blue-3 px-6 transition-colors md:rounded-xl col-span-2 max-md:justify-center max-md:border-b border-gray-6"
         >
-          <div class="flex gap-2 items-center">
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M14.7695 1.84668H18.4619V3.69238H20.3076V5.53809H22.1543V9.23047H24V14.7695H22.1543V18.4619H20.3076V20.3076H18.4619V22.1543H14.7695V24H9.23047V22.1543H5.53809V20.3076H3.69238V18.4619H1.8457V14.7695H0V9.23047H1.8457V5.53809H3.69238V3.69238H5.53809V1.84668H9.23047V0H14.7695V1.84668ZM5.53809 4.61523V8.30762H12.9229V10.1543H11.0771V12H9.23047V13.8457H7.38477V15.6924H5.53809V19.3848H18.4619V15.6924H12.9229V13.8457H14.7695V12H16.6152V10.1543H18.4619V4.61523H5.53809Z"
-                fill="var(--color-gray-11)"
-              />
-            </svg>
-            <span>Zerados</span>
-          </div>
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M14.7695 1.84668H18.4619V3.69238H20.3076V5.53809H22.1543V9.23047H24V14.7695H22.1543V18.4619H20.3076V20.3076H18.4619V22.1543H14.7695V24H9.23047V22.1543H5.53809V20.3076H3.69238V18.4619H1.8457V14.7695H0V9.23047H1.8457V5.53809H3.69238V3.69238H5.53809V1.84668H9.23047V0H14.7695V1.84668ZM5.53809 4.61523V8.30762H12.9229V10.1543H11.0771V12H9.23047V13.8457H7.38477V15.6924H5.53809V19.3848H18.4619V15.6924H12.9229V13.8457H14.7695V12H16.6152V10.1543H18.4619V4.61523H5.53809Z"
+              fill="var(--color-gray-12)"
+            />
+          </svg>
 
-          <div class="flex gap-4 items-center">
-            <span>{{ profile?.totalsCompleted| shortNumber }}</span>
-
-            <a
-              [routerLink]="['/player', profile?.gamertag]"
-              [queryParams]="{t: 'completed'}"
-              class="p-1 rounded-full hover:bg-blue-3 flex"
+          <div>
+            <span class="text-2xl mt-2"
+              >{{ profile?.totalsCompleted| shortNumber }}</span
             >
-              <i class="ph ph-arrow-right"></i>
-            </a>
+            <br class="max-md:hidden" />
+            <span class="max-md:ml-4">Zerados</span>
           </div>
-        </div>
+        </a>
 
         <!-- Demais categorias -->
         @for (item of entries; track $index) {
-        <div
-          class="{{ item.classes }} pl-4 pr-3 py-4 text-gray-11 flex justify-between"
+        <a
+          [routerLink]="['/player', profile?.gamertag]"
+          [queryParams]="{t: item.tab}"
+          class="{{ item.classes }} py-4 flex items-center gap-4 hover:bg-blue-3 px-6 transition-colors md:rounded-xl flex-1 border-gray-6"
         >
-          <div class="flex gap-2 items-center">
-            <i class="{{ item.icon }} text-gray-11"></i>
+          <i class="{{ item.icon }}"></i>
+          <div>
+            <span class="text-2xl"
+              >{{ profile?.[item.key] | shortNumber }}</span
+            >
+            <br />
             <span>{{ item.label }}</span>
           </div>
-          <div class="flex gap-4 items-center">
-            <span>{{ profile?.[item.key] | shortNumber }}</span>
+        </a>
 
-            <a
-              [routerLink]="['/player', profile?.gamertag]"
-              [queryParams]="{t: item.tab}"
-              class="p-1 rounded-full hover:bg-blue-3 flex"
-            >
-              <i class="ph ph-arrow-right"></i>
-            </a>
-          </div>
-        </div>
         }
       </div>
     </div>
   </header>
 
-  <hr class="border-blue-6 w-full my-10" />
+  <header class="mb-6 flex gap-4 items-baseline flex-wrap">
+    <h2 class="text-2xl">Minhas listas</h2>
 
-  <header class="flex justify-between items-center mb-4">
-    <h2 class="text-2xl mb-2 text-blue-12">Minhas listas</h2>
-    <a class="ui-link" [routerLink]="['/player', profile?.gamertag, 'listas']"
-      >Todas as listas</a
-    >
+    <a
+      [routerLink]="['/player', profile?.gamertag, 'listas']"
+      class="text-blue-11 hover:underline hover:text-blue-9"
+      >Ir para minhas listas
+    </a>
   </header>
 
   <app-user-lists [lists]="controller.lists()" [fromMe]="true">

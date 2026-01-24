@@ -32,8 +32,6 @@ export class UiInput implements ControlValueAccessor {
   @Input({ transform: booleanAttribute }) disabled = false;
   @Input() icon = ''
 
-  @Input({ transform: booleanAttribute }) searchinput = false;
-
   // Valor interno do input
   value = '';
 

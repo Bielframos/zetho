@@ -1,10 +1,10 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { ListsController } from '../../../core/controllers/lists.controller';
-import { ZereiListRow } from '../../../core/types';
-import { AppNewListDialog } from '../new-list-dialog/new-list-dialog';
-import { UiListCard } from '../../ui/molecules/list-card';
 import { UserStore } from '../../../core/auth/user.store';
+import { ListsController } from '../../../core/controllers/lists.controller';
 import { ProfileStore } from '../../../core/stores/profile.store';
+import { ZereiListRow } from '../../../core/types';
+import { UiListCard } from '../../ui/molecules/list-card';
+import { AppNewListDialog } from '../new-list-dialog/new-list-dialog';
 
 @Component({
     selector: 'app-user-lists',
@@ -18,6 +18,7 @@ export class AppUserLists {
     controller = inject(ListsController);
     lists = input<ZereiListRow[]>([]);
 
+    disableGrid = input(false)
     fromMe = input(false);
 
     ownerGamertag = computed(() => {

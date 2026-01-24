@@ -2,28 +2,28 @@ export const DASHBOARD_ENTRIES = [
     {
         key: 'totalsBacklog',
         label: 'Backlog',
-        icon: 'ph-fill ph-books',
-        classes: '@md:border-b @md:border-r border-gray-6',
+        icon: 'ph-fill ph-books text-[28px]',
+        classes: 'max-md:border-b max-md:border-r',
         tab: 'backlog'
     },
     {
         key: 'totalsPlaying',
         label: 'Jogando',
-        icon: 'ph-fill ph-game-controller',
-        classes: '@md:border-b border-gray-6',
+        icon: 'ph-fill ph-game-controller text-[28px]',
+        classes: 'max-md:border-b',
         tab: 'playing'
     },
     {
         key: 'totalsDropped',
         label: 'Dropados',
-        icon: 'ph-fill ph-x-circle',
-        classes: '@md:border-r border-gray-6',
+        icon: 'ph-fill ph-x-circle text-[28px]',
+        classes: 'max-md:border-r',
         tab: 'dropped'
     },
     {
         key: 'totalsWishlist',
-        label: 'Lista de Desejos',
-        icon: 'ph-fill ph-list-star',
+        label: 'Wishlist',
+        icon: 'ph-fill ph-list-star text-[28px]',
         classes: '',
         tab: 'wishlist'
     },
