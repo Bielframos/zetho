@@ -8,7 +8,7 @@ import { ShortNumberPipe } from '../../../core/modules/pipes';
   template: `
     <div class="@container">
       <div
-        class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden border rounded-lg border-gray-6 bg-blue-2 my-10"
+        class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden rounded-2xl p-2 bg-blue-2"
       >
         <!-- Zerado -->
         <div

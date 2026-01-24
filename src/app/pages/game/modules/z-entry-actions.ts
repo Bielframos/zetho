@@ -9,14 +9,13 @@ import { ZEntry } from '../../../core/types';
   imports: [NgClass],
   template: `
     <div
-      class="mt-4 grid grid-cols-4 md:grid-cols-2 border-t md:border bg-blue-2 border-gray-6 rounded-lg overflow-hidden fixed md:relative bottom-0 left-0 w-full z-999 animate-fade-in-slide"
+      class="grid grid-cols-4 md:grid-cols-2 auto-rows-auto md:h-full gap-1 max-md:border-t bg-blue-2 border-gray-6 md:p-2 md:rounded-2xl overflow-hidden fixed md:relative bottom-0 left-0 w-full z-999 animate-fade-in-slide"
     >
       @for (action of actions; track action.key) {
       <button
         (click)="controller.updateStatus(action.key)"
-        class="flex flex-col gap-2 items-center justify-center px-4 py-4 w-full cursor-pointer transition-colors text-sm md:text-md md:border-b border-gray-6"
+        class="flex flex-col gap-2 items-center justify-center w-full cursor-pointer transition-colors text-sm md:text-md border-gray-6 md:rounded-xl max-md:py-4"
         [ngClass]="[
-          action.key === 'completed' || action.key === 'playing' ? 'md:border-r' : '',
           action.key === controller.zEntry()?.status ? activeClasses[action.key] : inactiveClasses[action.key]
         ]"
       >
@@ -74,8 +73,8 @@ export class UiZEntryActions {
 
   inactiveClasses = {
     completed: 'text-gray-11 hover:bg-blue-9 hover:text-white',
-    backlog: 'text-gray-11 hover:text-green-300',
-    playing: 'text-gray-11 hover:text-purple-300',
-    dropped: 'text-gray-11 hover:text-red-300',
+    backlog: 'text-gray-11 hover:text-green-300 hover:bg-green-600/10',
+    playing: 'text-gray-11 hover:text-purple-300 hover:bg-purple-600/10',
+    dropped: 'text-gray-11 hover:text-red-300 hover:bg-red-600/10',
   };
 }

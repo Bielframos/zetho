@@ -11,18 +11,17 @@ import { NgClass } from '@angular/common';
   selector: 'ui-game-actions',
   standalone: true,
   template: `
-    <div class="flex gap-2 flex-wrap mb-4">
+    <div class="flex gap-2 flex-wrap justify-center mb-4">
       <!-- Ação de curtida -->
       <button
         (click)="handleLike()"
-        class="ui-action-btn"
-        data-size="icon"
+        class="p-2 rounded-xl bg-blue-2 hover:bg-blue-3 flex cursor-pointer"
         [aria-label]="gameController.zEntry()?.liked ? 'Descurtir' : 'Curtir'"
       >
         @if (gameController.zEntry()?.liked) {
-          <i class="ph-fill ph-heart text-red-400 text-[16px]"></i>
+          <i class="ph-fill ph-heart text-red-400"></i>
         } @else {
-          <i class="ph ph-heart text-[16px]"></i>
+          <i class="ph ph-heart"></i>
         }
        
       </button>
@@ -31,7 +30,7 @@ import { NgClass } from '@angular/common';
        <button
         (click)="gameController.updateStatus('wishlist')"
         [ngClass]="[
-          'ui-action-btn',
+          'rounded-xl px-4 py-1 h-[36px] bg-blue-2 hover:bg-blue-3 flex items-center gap-2',
           gameController.zEntry()?.status === 'wishlist' ? 'text-blue-12' : ''
         ]"
       >
@@ -45,8 +44,8 @@ import { NgClass } from '@angular/common';
         actionLabel="Salvar na lista"
         (submit)="handleAddToList($event)"
       >
-        <button modalTrigger class="ui-action-btn">
-          <i class="ph ph-list-plus text-[16px]"></i>
+        <button modalTrigger class="rounded-xl h-[36px] px-4 py-1 bg-blue-2 hover:bg-blue-3 flex items-center gap-2">
+          <i class="ph ph-list-plus"></i>
           Adicionar à lista
         </button>
 

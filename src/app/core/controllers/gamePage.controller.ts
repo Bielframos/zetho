@@ -56,7 +56,7 @@ export class GamePageController {
             try {
                 const similar = await this.gameService.getGames(
                     game.similarGames,
-                    { summarized: true, pageSize: 8 }
+                    { summarized: true, pageSize: 6 }
                 );
                 this.similarGames.set(similar);
             } catch (e) {
