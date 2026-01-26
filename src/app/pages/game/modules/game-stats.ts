@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { ZStatsRow } from '../../../core/types';
-import { ShortNumberPipe } from '../../../core/modules/pipes';
+import { ShortNumberPipe } from '../../../utils/pipes';
 
 @Component({
   selector: 'ui-game-stats',

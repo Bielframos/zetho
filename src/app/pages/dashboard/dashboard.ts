@@ -2,10 +2,10 @@ import { Component, inject } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { UserStore } from "../../core/auth/user.store";
 import { ListsController } from "../../core/controllers/lists.controller";
-import { ShortNumberPipe } from "../../core/modules/pipes";
 import { AppUserLists } from "../../shared/app/user-lists/user-lists";
 import { DASHBOARD_ENTRIES } from "./utils";
 import { ProfileStore } from "../../core/stores/profile.store";
+import { ShortNumberPipe } from "../../utils/pipes";
 
 @Component({
     selector: 'app-dashboard',

@@ -4,8 +4,8 @@ import { UserStore } from "../../core/auth/user.store";
 import { UiInput } from "../../shared/ui/atoms/input/input";
 import { AuthService } from "../../core/auth/auth.service";
 import { Router } from "@angular/router";
-import { changedValidator, gamertagAsyncValidator, gamertagFormatValidator, nameValidator } from "../../core/modules/validators";
 import { UserProfileService } from "../../core/services/userProfile.service";
+import { changedValidator, gamertagAsyncValidator, gamertagFormatValidator, nameValidator } from "../../utils/validators";
 
 @Component({
     selector: 'app-account',

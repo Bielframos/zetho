@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import slugify from 'slugify';
 import { appwrite, Query } from '../appwrite/appwrite.client';
-import { between } from '../modules/lexorank';
 import { GameRow, ZereiListItemRow, ZereiListRow } from '../types';
+import { between } from '../../utils/lexorank';
 
 const LIST_TABLE_ID = 'lists';
 const LIST_ITEM_TABLE_ID = 'list_items';

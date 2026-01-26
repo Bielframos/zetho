@@ -4,7 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { UserStore } from '../../core/auth/user.store';
 import { UserProfileService } from '../../core/services/userProfile.service';
 import { UiInput } from '../../shared/ui/atoms/input/input';
-import { gamertagAsyncValidator, gamertagFormatValidator, nameValidator } from '../../core/modules/validators';
+import { gamertagAsyncValidator, gamertagFormatValidator, nameValidator } from '../../utils/validators';
 
 @Component({
   selector: 'app-register-page',
