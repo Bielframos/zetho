@@ -21,7 +21,7 @@ import {
       class="group flex gap-2 items-center cursor-pointer"
     >
       <div
-        class="flex items-center justify-center w-6 aspect-square rounded-sm bg-blue-2 border border-gray-6 group-has-checked:bg-blue-9"
+        class="flex items-center justify-center w-6 aspect-square rounded-sm bg-blue-2 group-has-checked:bg-blue-9"
       >
         <i
           class="ph ph-check text-white text-sm hidden group-has-checked:block"
