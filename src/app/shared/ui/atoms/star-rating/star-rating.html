@@ -1,0 +1,10 @@
+<div class="star-rating">
+  @for(star of [0,1,2,3,4]; track $index; let i = $index) {
+  <i
+    class="{{ getStarClass(i) }}"
+    (mouseenter)="onMouseEnter($event, i)"
+    (mouseleave)="onMouseLeave()"
+    (click)="onClick()"
+  ></i>
+  }
+</div>

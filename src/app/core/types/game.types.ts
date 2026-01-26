@@ -14,7 +14,10 @@ type Game = {
     involvedCompanies: string | any,
     syncedAt: string,
     zStats: ZStatsRow,
-    similarGames: string[]
+    similarGames: string[],
+    ratingAvg: number,
+    ratingCount: number,
+    ratingSum: number
 }
 
 type GameRow = StoredRow<Game>

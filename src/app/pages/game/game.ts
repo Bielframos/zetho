@@ -11,11 +11,12 @@ import { UiGameStats } from "./modules/game-stats";
 import { UiZEntryActions } from './modules/z-entry-actions';
 import { UiGameLobby } from "./modules/game-lobby";
 import { UiGameActions } from "./modules/game-actions";
+import { UiGameRating } from "./modules/game-rating";
 
 @Component({
     selector: 'app-game',
     standalone: true,
-    imports: [UiGameCard, UiZEntryActions, RouterLink, UiGameHeader, UiGameStats, UiGameLobby, UiGameActions],
+    imports: [UiGameCard, UiZEntryActions, RouterLink, UiGameHeader, UiGameStats, UiGameLobby, UiGameActions, UiGameRating],
     templateUrl: './game.html'
 })
 export class Game {

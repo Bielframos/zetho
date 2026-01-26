@@ -3,6 +3,7 @@
 >
   <ui-game-actions [game]="controller.game()"></ui-game-actions>
   <ui-game-header [game]="controller.game()"></ui-game-header>
+  <!-- <ui-game-rating [game]="controller.game()"></ui-game-rating> -->
 
   <section class="animate-fade-in-slide" style="animation-delay: 400ms">
     <div class="md:grid grid-cols-[320px_1fr] gap-4 mt-4">
@@ -10,9 +11,9 @@
       <ui-z-entry-actions></ui-z-entry-actions>
       } @else {
       <div
-        class="mt-4 flex w-full flex-col items-center rounded-2xl bg-blue-2 p-6 text-center animate-fade-in-slide"
+        class="w-full flex mt-4 flex-col items-center rounded-2xl bg-blue-2 p-6 text-center animate-fade-in-slide"
       >
-        <i class="ph ph-game-controller mb-2 text-[40px]"></i>
+        <i class="ph ph-game-controller text-[40px] mb-2"></i>
         <h3 class="mb-1 text-lg">Ei, player! Que tal acessar sua conta?</h3>
         <span class="font-light text-gray-11">
           Entre para salvar este jogo na sua coleção.

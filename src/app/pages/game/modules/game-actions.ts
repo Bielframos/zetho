@@ -50,7 +50,7 @@ import { NgClass } from '@angular/common';
         </button>
 
         <div
-          class="flex flex-col my-4 overflow-y-auto rounded-lg border border-gray-6 divide-y divide-gray-6 transition-colors"
+          class="flex flex-col my-4 overflow-y-auto transition-colors gap-1"
         >
           @for (list of listController.lists(); track $index) {
             <label
