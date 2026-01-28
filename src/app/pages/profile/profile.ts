@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { UiUserLibGrid } from './modules/profile-entries';
 import { ProfileLayoutStore } from '../../shared/app/profile-layout/profile-layout.store';
-import { AppProfileSidebar } from './modules/profie-sidebar';
+import { AppProfileSidebar } from './modules/profile-sidebar';
 
 @Component({
     selector: 'app-layout',

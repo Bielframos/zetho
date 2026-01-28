@@ -1,10 +1,10 @@
 import { Component, computed, inject } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { ZEntriesController } from '../../../core/controllers/zEntries.controller';
 import { ProfileStore } from '../../../core/stores/profile.store';
 import { ProfileLayoutStore } from './profile-layout.store';
 import { NgComponentOutlet } from '@angular/common';
+import { ZEntriesController } from '../../../core/zEntries/zEntries.controller';
 
 @Component({
     selector: 'app-profile-layout',

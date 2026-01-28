@@ -1,10 +1,11 @@
-import { Injectable } from "@angular/core";
-import { appwrite, Query } from "../appwrite/appwrite.client";
-import { GameRow } from "./game.types";
-import { normalize } from "./games.utils";
+import { Injectable } from '@angular/core';
+import { appwrite, Query } from '../appwrite/appwrite.client';
+import { GameRow } from './game.types';
+import { normalize } from './games.utils';
+import slugify from 'slugify';
 
 const DATABASE_ID = 'app';
-const GAMES_TABLE_ID = 'games'
+const GAMES_TABLE_ID = 'games';
 
 @Injectable({ providedIn: 'root' })
 export class GameRepository {
@@ -15,38 +16,50 @@ export class GameRepository {
             databaseId: DATABASE_ID,
             tableId: GAMES_TABLE_ID,
             queries: [
-                Query.equal('slug', normalize(query)),
+                Query.equal('slug', slugify(normalize(query))),
                 Query.select(['$id', 'name', 'slug', 'coverUrl', 'releaseYear']),
                 Query.limit(1),
-            ]
-        })
+            ],
+        });
     }
 
-    async findByKeywords(keywords: string[], opts: { pageSize: number, offset: number, excludeSlug?: string } = { pageSize: 12, offset: 0 }) {
-        const andQueries = keywords.map(k => Query.contains('name', k));
-        let limit = opts.pageSize
+    async findByKeywords(
+        keywords: string[],
+        opts: { pageSize: number; offset: number; excludeSlug?: string } = {
+            pageSize: 12,
+            offset: 0,
+        },
+    ) {
+        let limit = opts.pageSize;
+
+        let queries: string[] = [
+            Query.select(['$id', 'name', 'slug', 'coverUrl', 'releaseYear']),
+            Query.limit(limit),
+            Query.offset(opts.offset),
+        ];
+
+        const containsQueries = keywords.map((k) => Query.contains('name', k));
 
         if (opts.excludeSlug) {
-            andQueries.push(Query.notEqual('slug', normalize(opts.excludeSlug)))
-            limit = limit - 1
+            queries.unshift(
+                Query.and([
+                    ...containsQueries,
+                    Query.notEqual('slug', normalize(opts.excludeSlug)),
+                ]),
+            );
+            limit = limit - 1;
+        } else {
+            queries.unshift(...containsQueries)
         }
 
         return await appwrite.databases.listRows<GameRow>({
             databaseId: DATABASE_ID,
             tableId: GAMES_TABLE_ID,
-            queries: [
-                Query.and([...andQueries]),
-                Query.select(['$id', 'name', 'slug', 'coverUrl', 'releaseYear']),
-                Query.limit(limit),
-                Query.offset(opts.offset)
-            ]
+            queries,
         });
     }
 
-    async findBySlug(
-        slug: string,
-        fields: string[],
-    ): Promise<GameRow | null> {
+    async findBySlug(slug: string, fields: string[]): Promise<GameRow | null> {
         const result = await appwrite.databases.listRows<GameRow>({
             databaseId: DATABASE_ID,
             tableId: GAMES_TABLE_ID,
@@ -73,10 +86,7 @@ export class GameRepository {
     ): Promise<GameRow[]> {
         if (ids.length === 0) return [];
 
-        const queries = [
-            Query.equal('$id', ids),
-            Query.select(opts.fields),
-        ];
+        const queries = [Query.equal('$id', ids), Query.select(opts.fields)];
 
         if (opts.orderByCreatedAtDesc) {
             queries.push(Query.orderDesc('$createdAt'));

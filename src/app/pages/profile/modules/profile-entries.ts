@@ -2,7 +2,7 @@ import { Component, inject } from "@angular/core";
 import { UserStore } from "../../../core/auth/user.store";
 import { UiGameCard } from "../../../shared/ui/atoms/game-card/game-card";
 import { UiLoading } from "../../../shared/ui/molecules/loading";
-import { ZEntriesController } from "../../../core/controllers/zEntries.controller";
+import { ZEntriesController } from "../../../core/zEntries/zEntries.controller";
 
 
 @Component({

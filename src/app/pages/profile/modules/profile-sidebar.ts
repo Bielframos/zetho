@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
-import { ZEntriesController } from '../../../core/controllers/zEntries.controller';
 import { ProfileStore } from '../../../core/stores/profile.store';
 import { RouterLink } from '@angular/router';
+import { ZEntriesController } from '../../../core/zEntries/zEntries.controller';
 
 @Component({
   selector: 'app-profile-sidebar',

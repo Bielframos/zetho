@@ -11,7 +11,7 @@ import { UiZEntryActions } from './modules/z-entry-actions';
 import { UiGameLobby } from "./modules/game-lobby";
 import { UiGameActions } from "./modules/game-actions";
 import { UiGameRating } from "./modules/game-rating";
-import { GameController } from '../../core/games/game.controller';
+import { GameController } from '../../core/games/gamePage.controller';
 
 @Component({
     selector: 'app-game',

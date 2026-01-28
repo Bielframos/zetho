@@ -1,15 +1,17 @@
 <ng-template #cardImg>
-  @if (game()?.coverUrl) {
+  @if (displayGame().coverUrl) {
   <img
-    [src]="game()?.coverUrl"
-    [alt]="game()?.name + ' cover'"
+    [src]="displayGame().coverUrl"
+    [alt]="displayGame().name + ' cover'"
     class="w-full h-auto"
   />
   } @else {
   <div class="fallback-cover">
     <h4>
-      {{ game()?.name }}
-      <span class="text-gray-11 font-light">{{ game()?.releaseYear }}</span>
+      {{ displayGame().name }}
+      <span class="text-gray-11 font-light"
+        >{{ displayGame().releaseYear }}</span
+      >
     </h4>
   </div>
   }
@@ -19,25 +21,27 @@
 <div
   class="base-card"
   [style.width.px]="width()"
-  [style.view-transition-name]="game()!.$id"
+  [style.view-transition-name]="displayGame().$id"
 >
   <ng-container [ngTemplateOutlet]="cardImg" />
 </div>
 } @else {
 <a
-  [routerLink]="['/jogo', game()?.slug]"
+  [routerLink]="['/jogo', displayGame().slug]"
   class="base-card group relative"
   [style.width.px]="width()"
-  [style.view-transition-name]="game()!.$id"
+  [style.view-transition-name]="displayGame().$id"
   (click)="updateGame()"
 >
   <ng-container [ngTemplateOutlet]="cardImg" />
 
-  @if (game()?.coverUrl) {
+  @if (displayGame().coverUrl) {
   <div class="hover-overlay">
     <h4>
-      {{ game()?.name }}
-      <span class="text-gray-11 font-light">{{ game()?.releaseYear }}</span>
+      {{ displayGame().name }}
+      <span class="text-gray-11 font-light"
+        >{{ displayGame().releaseYear }}</span
+      >
     </h4>
   </div>
   }

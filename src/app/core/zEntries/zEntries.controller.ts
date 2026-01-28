@@ -3,7 +3,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { distinctUntilChanged, filter, map } from 'rxjs';
 import { GameRepository } from '../games/games.repository';
-import { ZEntryService } from '../services/zEntries.service';
+import { ZEntryService } from '../zEntries/zEntries.service';
 import { ProfileStore } from '../stores/profile.store';
 import { GameRow, ZEntryRow } from '../types';
 

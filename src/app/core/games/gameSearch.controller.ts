@@ -1,7 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { GameRow } from '../types';
 import { GameService } from '../games/games.service';
-import { ZEntryService } from '../services/zEntries.service';
+import { ZEntryService } from '../zEntries/zEntries.service';
 
 @Injectable({ providedIn: 'root' })
 export class GameSearchController {
@@ -21,8 +21,8 @@ export class GameSearchController {
                 const offset = (pageNumber - 1) * pageSize;
                 const games = await this.gameService.searchGame(query, { pageSize, offset });
 
+                // TODO: Obter zEntries para cada jogo localizado
                 const gameIds = games.rows.map(g => g.$id)
-                const entries = await this.ZEntryService
 
                 _results.set(games.rows);
                 _total.set(games.total);

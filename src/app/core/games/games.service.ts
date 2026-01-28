@@ -1,10 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { appwrite, Query } from '../appwrite/appwrite.client';
+import type { GameRow, ZEntryRow } from '../types';
+import { ZEntryService } from '../zEntries/zEntries.service';
 import { GameStore } from './game.store';
 import { GameRepository } from './games.repository';
 import { extractKeywords, rankAndMerge } from './games.utils';
-import type { GameRow, ZEntryRow } from '../types';
-import { ZEntryService } from '../services/zEntries.service';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
@@ -34,9 +33,8 @@ export class GameService {
     }
 
     async getGame(slug: string) {
-        const cached = this.gameStore.currentGame();
-
         let fields = [
+            '*',
             'genres.name',
             'genres.slug',
             'involvedCompanies.name',
@@ -44,16 +42,11 @@ export class GameService {
             'zStats.*',
         ];
 
-        if (!cached) fields.push('*');
-        else fields.push('releaseDate', 'summary', 'similarGames');
-
         const game = await this.repository.findBySlug(slug, fields);
 
-        const merged = cached ? { ...cached, ...game } : game;
+        this.gameStore.setGame(game);
 
-        this.gameStore.setGame(merged);
-
-        return merged;
+        return game;
     }
 
     async getGames(
