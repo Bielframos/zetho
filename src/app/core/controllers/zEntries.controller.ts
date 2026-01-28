@@ -2,14 +2,14 @@ import { Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { distinctUntilChanged, filter, map } from 'rxjs';
-import { GameService } from '../services/games.service';
+import { GameRepository } from '../games/games.repository';
 import { ZEntryService } from '../services/zEntries.service';
 import { ProfileStore } from '../stores/profile.store';
 import { GameRow, ZEntryRow } from '../types';
 
 @Injectable({ providedIn: 'root' })
 export class ZEntriesController {
-    pageSize = 24
+    pageSize = 24;
 
     status = signal<Exclude<ZEntryRow['status'], null | undefined>>('completed');
     games = signal<GameRow[]>([]);
@@ -22,33 +22,40 @@ export class ZEntriesController {
     errors = signal<Record<string, any>>({});
 
     constructor(
-        private gameService: GameService,
+        private gameRepo: GameRepository,
         private zEntryService: ZEntryService,
         private profileStore: ProfileStore,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
     ) {
-        const profile$ = toObservable(profileStore.current)
+        const profile$ = toObservable(profileStore.current);
 
-        profile$.pipe(filter(profile => profile !== null && profile !== undefined)).subscribe(() => {
-            this.resetState()
-            this.loadEntries()
-        })
+        profile$
+            .pipe(filter((profile) => profile !== null && profile !== undefined))
+            .subscribe(() => {
+                this.resetState();
+                this.loadEntries();
+            });
 
-        this.route.queryParams.pipe(map(params => params['t']), distinctUntilChanged()).subscribe((t) => {
-            if (t === this.status()) return
-            const status = t ?? 'completed'
+        this.route.queryParams
+            .pipe(
+                map((params) => params['t']),
+                distinctUntilChanged(),
+            )
+            .subscribe((t) => {
+                if (t === this.status()) return;
+                const status = t ?? 'completed';
 
-            this.status.set(status)
-            this.resetState()
-            this.loadEntries()
-        })
+                this.status.set(status);
+                this.resetState();
+                this.loadEntries();
+            });
     }
 
     loadEntries = async () => {
         const profile = this.profileStore.current();
 
         if (!profile) {
-            this.errors.update(s => ({ ...s, auth: 'Usuário não autenticado.' }));
+            this.errors.update((s) => ({ ...s, auth: 'Usuário não autenticado.' }));
             return;
         }
 
@@ -60,18 +67,21 @@ export class ZEntriesController {
             const entries = await this.zEntryService.getUserEntries(
                 profile.fingerprint,
                 this.status(),
-                { pageSize: this.pageSize, offset: this.offset() }
+                { pageSize: this.pageSize, offset: this.offset() },
             );
 
-            this.entries.update(prev => [...prev, ...entries.rows]);
+            this.entries.update((prev) => [...prev, ...entries.rows]);
             this.total.set(entries.total);
 
-            const ids = entries.rows.map(e => e.gameId).filter(Boolean);
+            const ids = entries.rows.map((e) => e.gameId).filter(Boolean);
             if (ids.length > 0) {
-                const games = await this.gameService.getGames(ids, { pageSize: this.pageSize, summarized: true });
+                const games = await this.gameRepo.findByIds(ids, {
+                    fields: ['$id', 'name', 'slug', 'releaseYear', 'coverUrl'],
+                    pageSize: this.pageSize,
+                });
 
                 if (games) {
-                    this.games.update(prev => [...prev, ...games]);
+                    this.games.update((prev) => [...prev, ...games]);
                 }
             }
 
@@ -79,7 +89,7 @@ export class ZEntriesController {
             this.offset.set(newOffset);
             this.hasMore.set(newOffset < entries.total);
         } catch (e) {
-            this.errors.update(prev => ({ ...prev, loadMore: e }));
+            this.errors.update((prev) => ({ ...prev, loadMore: e }));
         } finally {
             this.initialLoading.set(false);
             this.loadingMore.set(false);
@@ -95,5 +105,5 @@ export class ZEntriesController {
 
         this.initialLoading.set(true);
         this.loadingMore.set(false);
-    }
+    };
 }

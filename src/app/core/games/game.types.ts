@@ -1,5 +1,5 @@
 import { StoredList, StoredRow } from "../appwrite/appwrite.types"
-import { ZStatsRow } from "./zStats.types"
+import { ZStatsRow } from "../types"
 
 type Game = {
     name: string,

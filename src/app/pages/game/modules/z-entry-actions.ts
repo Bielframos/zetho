@@ -1,7 +1,7 @@
 import { NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { GamePageController } from '../../../core/controllers/gamePage.controller';
 import { ZEntry } from '../../../core/types';
+import { GameController } from '../../../core/games/game.controller';
 
 @Component({
   selector: 'ui-z-entry-actions',
@@ -51,7 +51,7 @@ import { ZEntry } from '../../../core/types';
   }
 })
 export class UiZEntryActions {
-  controller = inject(GamePageController)
+  controller = inject(GameController)
 
   actions: {
     key: Exclude<ZEntry['status'], 'wishlist' | null | undefined>;

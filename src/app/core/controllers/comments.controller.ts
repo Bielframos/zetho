@@ -1,7 +1,7 @@
 import { computed, effect, Injectable, signal, untracked } from '@angular/core';
 import { UserStore } from '../auth/user.store';
 import { CommentService, type VoteAction } from '../services/comments.service';
-import { GameStore } from '../stores/game.store';
+import { GameStore } from '../games/game.store';
 import { CommentRow } from '../types';
 import { ID } from 'appwrite';
 

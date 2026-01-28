@@ -1,5 +1,5 @@
 import { StoredList, StoredRow } from "../appwrite/appwrite.types"
-import { GameRow } from "./game.types"
+import { GameRow } from "../games/game.types"
 
 type ZStats = {
     game: GameRow | string,

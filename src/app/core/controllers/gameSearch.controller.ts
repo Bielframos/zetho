@@ -1,6 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { GameRow } from '../types';
-import { GameService } from '../services/games.service';
+import { GameService } from '../games/games.service';
 import { ZEntryService } from '../services/zEntries.service';
 
 @Injectable({ providedIn: 'root' })

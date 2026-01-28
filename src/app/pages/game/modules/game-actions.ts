@@ -4,8 +4,8 @@ import { ListsController } from '../../../core/controllers/lists.controller';
 import { GameRow, ZereiListRow } from '../../../core/types';
 import { UiModal } from '../../../shared/ui/molecules/modal/modal';
 import { ModalTriggerDirective } from '../../../shared/ui/molecules/modal/modal-trigger.directive';
-import { GamePageController } from '../../../core/controllers/gamePage.controller';
 import { NgClass } from '@angular/common';
+import { GameController } from '../../../core/games/game.controller';
 
 @Component({
   selector: 'ui-game-actions',
@@ -99,7 +99,7 @@ import { NgClass } from '@angular/common';
 })
 export class UiGameActions {
   userStore = inject(UserStore);
-  gameController = inject(GamePageController);
+  gameController = inject(GameController);
   listController = inject(ListsController);
 
   get profile() {

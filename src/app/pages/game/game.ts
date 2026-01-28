@@ -4,7 +4,6 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { UserStore } from '../../core/auth/user.store';
-import { GamePageController } from '../../core/controllers/gamePage.controller';
 import { UiGameCard } from '../../shared/ui/atoms/game-card/game-card';
 import { UiGameHeader } from "./modules/game-header";
 import { UiGameStats } from "./modules/game-stats";
@@ -12,6 +11,7 @@ import { UiZEntryActions } from './modules/z-entry-actions';
 import { UiGameLobby } from "./modules/game-lobby";
 import { UiGameActions } from "./modules/game-actions";
 import { UiGameRating } from "./modules/game-rating";
+import { GameController } from '../../core/games/game.controller';
 
 @Component({
     selector: 'app-game',
@@ -25,7 +25,7 @@ export class Game {
      * --------------------------------------------------------- */
     private title = inject(Title);
     private route = inject(ActivatedRoute);
-    controller = inject(GamePageController)
+    controller = inject(GameController)
     userStore = inject(UserStore);
 
     // Slug vindo da rota
@@ -41,7 +41,7 @@ export class Game {
         // Atualiza o estado quando o slug mudar
         effect(() => {
             const slug = this.slug();
-            if (slug) this.controller.init(slug);
+            if (slug) this.controller.loadPage(slug);
         });
 
         // Atualiza o título da página quando o jogo carregar
