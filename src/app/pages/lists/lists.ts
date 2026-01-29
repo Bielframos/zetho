@@ -2,7 +2,7 @@ import { Component, effect, inject, untracked } from '@angular/core';
 import { ProfileLayoutStore } from '../../shared/app/profile-layout/profile-layout.store';
 import { AppUserLists } from '../../shared/app/user-lists/user-lists';
 import { AppNewListDialog } from '../../shared/app/new-list-dialog/new-list-dialog';
-import { ProfileStore } from '../../core/stores/profile.store';
+import { ProfileStore } from '../../core/userProfiles/profile.store';
 import { UserStore } from '../../core/auth/user.store';
 import { ListsController } from '../../core/lists/lists.controller';
 

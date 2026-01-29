@@ -4,7 +4,7 @@ import { AppwriteException } from 'appwrite';
 
 import { AppError, GameRow, ZereiListItemRow, ZereiListRow } from '../types';
 import { ListService } from '../lists/list.service';
-import { ProfileStore } from '../stores/profile.store';
+import { ProfileStore } from '../userProfiles/profile.store';
 
 export type ZereiListItemRowExpanded = Omit<ZereiListItemRow, 'game'> & {
   game: GameRow;

@@ -1,6 +1,6 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { UserStore } from '../../../core/auth/user.store';
-import { ProfileStore } from '../../../core/stores/profile.store';
+import { ProfileStore } from '../../../core/userProfiles/profile.store';
 import { ZereiListRow } from '../../../core/types';
 import { UiListCard } from '../../ui/molecules/list-card';
 import { AppNewListDialog } from '../new-list-dialog/new-list-dialog';

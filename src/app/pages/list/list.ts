@@ -7,7 +7,7 @@ import { UiLoading } from '../../shared/ui/molecules/loading';
 import { UiDraggableList } from './modules/draggable-list';
 import { AppListMenu } from './modules/list-menu';
 import { UserStore } from '../../core/auth/user.store';
-import { ProfileStore } from '../../core/stores/profile.store';
+import { ProfileStore } from '../../core/userProfiles/profile.store';
 import { ListController } from '../../core/lists/list.controller';
 
 @Component({

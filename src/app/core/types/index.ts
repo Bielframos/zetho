@@ -5,7 +5,7 @@ export type {
   UserProfile,
   UserProfileRow,
   UserProfileList,
-} from './userProfile.types';
+} from '../userProfiles/userProfile.types';
 export type { ZEntry, ZEntryRow, ZEntryList } from '../zEntries/zEntries.types';
 export type { ZStats, ZStatsRow, ZStatsList } from './zStats.types';
 export type {

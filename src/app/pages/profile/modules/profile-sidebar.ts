@@ -1,5 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
-import { ProfileStore } from '../../../core/stores/profile.store';
+import { ProfileStore } from '../../../core/userProfiles/profile.store';
 import { RouterLink } from '@angular/router';
 import { ZEntriesController } from '../../../core/zEntries/zEntries.controller';
 
@@ -8,7 +8,9 @@ import { ZEntriesController } from '../../../core/zEntries/zEntries.controller';
   standalone: true,
   imports: [RouterLink],
   template: `
-    <ul class="flex md:flex-col p-2 space-y-1 overflow-x-auto border-t border-gray-6">
+    <ul
+      class="flex md:flex-col p-2 space-y-1 overflow-x-auto border-t border-gray-6"
+    >
       @for (tab of tabs(); track tab.key) {
         <li
           class="group"
