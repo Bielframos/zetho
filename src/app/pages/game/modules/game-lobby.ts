@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommentsController } from '../../../core/controllers/comments.controller';
+import { CommentsController } from '../../../core/comments/comments.controller';
 import { AppCommentItem } from '../../../shared/app/comment-item/comment-item';
 
 @Component({
@@ -69,7 +69,7 @@ import { AppCommentItem } from '../../../shared/app/comment-item/comment-item';
         <footer class="w-full flex justify-center">
           <button
             class="ui-primary-btn"
-            (click)="controller.loadRootComments({loadMore: true})"
+            (click)="controller.loadRootComments({ loadMore: true })"
           >
             Carregar mais
           </button>

@@ -17,8 +17,7 @@ import { UiSkeleton } from '../../../shared/ui/atoms/skeleton';
       </div>
 
       <div
-        class="flex flex-1 flex-col gap-4 max-sm:mt-6 max-sm:text-center justify-center"
-        [class.items-center]="!game()"
+        class="flex flex-1 flex-col gap-4 max-sm:mt-6 max-sm:text-center max-sm:items-center justify-center"
       >
         @if (game()) {
           <h1 class="text-4xl">{{ game()?.name }}</h1>
