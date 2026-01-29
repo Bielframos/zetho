@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ParsedZereiListRow } from '../../../core/controllers/lists.controller';
 import { ShortNumberPipe } from '../../../utils/pipes';
+import { ParsedZereiListRow } from '../../../core/lists/lists.controller';
 
 @Component({
   selector: 'ui-list-card',

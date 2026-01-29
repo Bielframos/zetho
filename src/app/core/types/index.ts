@@ -20,4 +20,4 @@ export type {
   ZereiListItem,
   ZereiListItemRow,
   ZereiListItems,
-} from './lists.type';
+} from '../lists/lists.type';

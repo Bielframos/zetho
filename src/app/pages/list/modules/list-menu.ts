@@ -9,12 +9,12 @@ import {
   viewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ListController } from '../../../core/controllers/list.controller';
 import { UiCheckbox } from '../../../shared/ui/atoms/checkbox';
 import { UiInput } from '../../../shared/ui/atoms/input/input';
 import { UiModal } from '../../../shared/ui/molecules/modal/modal';
 import { Router } from '@angular/router';
 import { ProfileStore } from '../../../core/stores/profile.store';
+import { ListController } from '../../../core/lists/list.controller';
 
 @Component({
   selector: 'app-list-menu',
@@ -118,8 +118,8 @@ import { ProfileStore } from '../../../core/stores/profile.store';
   ],
 })
 export class AppListMenu {
-  private router = inject(Router)
-  private profileStore = inject(ProfileStore)
+  private router = inject(Router);
+  private profileStore = inject(ProfileStore);
   controller = inject(ListController);
   formatMenu = viewChild<Menu<string>>('formatMenu');
 
@@ -144,9 +144,13 @@ export class AppListMenu {
 
   async handleDeleteList() {
     try {
-      await this.controller.deleteList()
-      this.router.navigate(['player', this.profileStore.current()?.gamertag, 'listas']);
-    } catch { }
+      await this.controller.deleteList();
+      this.router.navigate([
+        'player',
+        this.profileStore.current()?.gamertag,
+        'listas',
+      ]);
+    } catch {}
   }
 
   openModal() {

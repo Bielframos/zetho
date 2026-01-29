@@ -1,7 +1,10 @@
 import { Menu, MenuContent, MenuItem, MenuTrigger } from '@angular/aria/menu';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { Component, inject, input, viewChild } from '@angular/core';
-import { ListController, ZereiListItemRowExpanded } from '../../../core/controllers/list.controller';
+import {
+  ListController,
+  ZereiListItemRowExpanded,
+} from '../../../core/lists/list.controller';
 
 @Component({
   selector: 'app-list-card-menu',
@@ -33,7 +36,11 @@ import { ListController, ZereiListItemRowExpanded } from '../../../core/controll
     >
       <div ngMenu class="menu" #formatMenu="ngMenu">
         <ng-template ngMenuContent>
-          <div ngMenuItem value="Remover da lista" (click)="controller.removeItem(item())">
+          <div
+            ngMenuItem
+            value="Remover da lista"
+            (click)="controller.removeItem(item())"
+          >
             <i class="ph ph-trash" aria-hidden="true"> </i>
             <span class="label">Remover da lista</span>
           </div>
@@ -44,7 +51,7 @@ import { ListController, ZereiListItemRowExpanded } from '../../../core/controll
   imports: [Menu, MenuContent, MenuItem, MenuTrigger, OverlayModule],
 })
 export class AppListCardMenu {
-  controller = inject(ListController)
-  item = input.required<ZereiListItemRowExpanded>()
+  controller = inject(ListController);
+  item = input.required<ZereiListItemRowExpanded>();
   formatMenu = viewChild<Menu<string>>('formatMenu');
 }
