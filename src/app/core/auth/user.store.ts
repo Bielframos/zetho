@@ -3,7 +3,7 @@ import { Models } from 'appwrite';
 import { AuthService } from './auth.service';
 import { appwrite } from '../appwrite/appwrite.client';
 import { UserProfileService } from '../userProfiles/userProfile.service';
-import { UserProfileRow } from '../types';
+import { UserProfileRow } from '../../types';
 
 @Injectable({ providedIn: 'root' })
 export class UserStore {

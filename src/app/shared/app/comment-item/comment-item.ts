@@ -3,7 +3,7 @@ import { Component, inject, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { appwrite } from '../../../core/appwrite/appwrite.client';
 import { CommentsController } from '../../../core/comments/comments.controller';
-import { CommentRow } from '../../../core/types';
+import { CommentRow } from '../../../types';
 
 @Component({
   selector: 'app-comment-item',

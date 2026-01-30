@@ -2,7 +2,7 @@ import { Component, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UiGameCard } from '../../shared/ui/atoms/game-card/game-card';
 import { UiLoading } from '../../shared/ui/molecules/loading';
-import { GameRow } from '../../core/types';
+import { GameRow } from '../../types';
 import { ZStatsService } from '../../core/zStats/zStats.service';
 import { GameSearchController } from '../../core/games/gameSearch.controller';
 

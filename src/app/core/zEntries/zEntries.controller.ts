@@ -5,7 +5,7 @@ import { distinctUntilChanged, filter, map } from 'rxjs';
 import { GameRepository } from '../games/games.repository';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { ProfileStore } from '../userProfiles/profile.store';
-import { GameRow, ZEntryRow } from '../types';
+import { GameRow, ZEntryRow } from '../../types';
 
 @Injectable({ providedIn: 'root' })
 export class ZEntriesController {

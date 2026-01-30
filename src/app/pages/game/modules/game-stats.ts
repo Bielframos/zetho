@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { ZStatsRow } from '../../../core/types';
+import { ZStatsRow } from '../../../types';
 import { ShortNumberPipe } from '../../../utils/pipes';
 
 @Component({
@@ -34,13 +34,17 @@ import { ShortNumberPipe } from '../../../utils/pipes';
 
         <!-- Demais categorias -->
         @for (item of entries; track $index) {
-        <div class="{{ item.classes }} px-4 py-4 text-gray-11 flex justify-between">
-          <div class="flex gap-2 items-center">
-            <i class="{{ item.icon }} text-gray-11"></i>
-            <span>{{ item.label }}</span>
+          <div
+            class="{{
+              item.classes
+            }} px-4 py-4 text-gray-11 flex justify-between"
+          >
+            <div class="flex gap-2 items-center">
+              <i class="{{ item.icon }} text-gray-11"></i>
+              <span>{{ item.label }}</span>
+            </div>
+            <span>{{ stats()?.[item.key] | shortNumber }}</span>
           </div>
-          <span>{{ stats()?.[item.key] | shortNumber }}</span>
-        </div>
         }
       </div>
     </div>

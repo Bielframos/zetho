@@ -1,7 +1,7 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { UserStore } from '../../core/auth/user.store';
-import { GameRow } from '../../core/types';
+import { GameRow } from '../../types';
 import { ZEntryService } from '../../core/zEntries/zEntries.service';
 import { UserProfileService } from '../../core/userProfiles/userProfile.service';
 import { ZStatsService } from '../../core/zStats/zStats.service';

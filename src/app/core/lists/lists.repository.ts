@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { appwrite, Query } from '../appwrite/appwrite.client';
-import { GameRow, ZereiList, ZereiListItemRow, ZereiListRow } from '../types';
+import {
+  GameRow,
+  ZereiList,
+  ZereiListItemRow,
+  ZereiListRow,
+} from '../../types';
 
 const LIST_TABLE_ID = 'lists';
 const LIST_ITEM_TABLE_ID = 'list_items';

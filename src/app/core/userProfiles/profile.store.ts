@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { appwrite } from '../appwrite/appwrite.client';
 import { UserStore } from '../auth/user.store';
-import { UserProfileRow } from '../types';
+import { UserProfileRow } from '../../types';
 import { UserProfileService } from './userProfile.service';
 
 @Injectable({ providedIn: 'root' })

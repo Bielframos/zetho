@@ -1,5 +1,5 @@
 import { StoredList, StoredRow } from '../appwrite/appwrite.types';
-import { UserProfileRow } from '../types';
+import { UserProfileRow } from '../../types';
 
 type Comment = {
   gameId: string;

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UserProfile, UserProfileRow } from '../types';
+import { UserProfile, UserProfileRow } from '../../types';
 import { UserProfileRepository } from './userProfile.repository';
 
 @Injectable({ providedIn: 'root' })

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import slugify from 'slugify';
 import { Query } from '../appwrite/appwrite.client';
-import { GameRow, ZereiListItemRow, ZereiListRow } from '../types';
+import { GameRow, ZereiListItemRow, ZereiListRow } from '../../types';
 import { between } from '../../utils/lexorank';
 import { ListsRepository } from './lists.repository';
 

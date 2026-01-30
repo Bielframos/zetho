@@ -2,7 +2,7 @@ import { computed, Injectable, signal } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
 import { AppwriteException } from 'appwrite';
 
-import { AppError, GameRow, ZereiListItemRow, ZereiListRow } from '../types';
+import { AppError, GameRow, ZereiListItemRow, ZereiListRow } from '../../types';
 import { ListService } from '../lists/list.service';
 import { ProfileStore } from '../userProfiles/profile.store';
 

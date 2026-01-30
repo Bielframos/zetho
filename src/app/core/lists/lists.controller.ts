@@ -1,7 +1,7 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { AppwriteException } from 'appwrite';
 import { CreateListInput, ListService } from '../lists/list.service';
-import { AppError, GameRow, ZereiListRow } from '../types';
+import { AppError, GameRow, ZereiListRow } from '../../types';
 
 export type ParsedZereiListRow = ZereiListRow & {
   parsedLatestAdditions?: {

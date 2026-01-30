@@ -1,6 +1,6 @@
 import { NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { ZEntry } from '../../../core/types';
+import { ZEntry } from '../../../types';
 import { GameController } from '../../../core/games/gamePage.controller';
 
 @Component({
@@ -69,11 +69,11 @@ export class UiZEntryActions {
     label: string;
     icon?: string;
   }[] = [
-      { key: 'completed', label: 'Zerei' },
-      { key: 'backlog', label: 'Backlog', icon: 'ph-fill ph-books' },
-      { key: 'playing', label: 'Jogando', icon: 'ph-fill ph-game-controller' },
-      { key: 'dropped', label: 'Dropei', icon: 'ph-fill ph-x-circle' },
-    ];
+    { key: 'completed', label: 'Zerei' },
+    { key: 'backlog', label: 'Backlog', icon: 'ph-fill ph-books' },
+    { key: 'playing', label: 'Jogando', icon: 'ph-fill ph-game-controller' },
+    { key: 'dropped', label: 'Dropei', icon: 'ph-fill ph-x-circle' },
+  ];
 
   activeClasses = {
     completed: 'bg-blue-9 text-white hover:bg-blue-10',

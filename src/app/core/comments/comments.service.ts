@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Query, ID } from '../appwrite/appwrite.client';
-import { CommentRow } from '../types';
+import { CommentRow } from '../../types';
 import { CommentInput, CommentsRepository } from './comments.repository';
 
 export type VoteAction = {

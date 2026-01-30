@@ -2,7 +2,7 @@ import { computed, effect, Injectable, signal, untracked } from '@angular/core';
 import { UserStore } from '../auth/user.store';
 import { CommentService } from './comments.service';
 import { GameStore } from '../games/game.store';
-import { CommentRow } from '../types';
+import { CommentRow } from '../../types';
 
 @Injectable({ providedIn: 'root' })
 export class CommentsController {
