@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { UiInput } from '../../shared/ui/input/input';
-import { UserStore } from '../../core/auth/user.store';
 import { Router, RouterLink } from '@angular/router';
+import { UiInput } from '../../../../shared/ui/input/input';
+import { UserStore } from '../../user.store';
 
 @Component({
   selector: 'app-login-page',
@@ -12,7 +12,7 @@ import { Router, RouterLink } from '@angular/router';
     class: 'h-full',
   },
 })
-export class Login {
+export class LoginPage {
   userStore = inject(UserStore);
   router = inject(Router);
 

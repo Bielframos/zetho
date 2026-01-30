@@ -1,16 +1,16 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UserStore } from '../../core/auth/user.store';
-import { UiInput } from '../../shared/ui/input/input';
-import { AuthService } from '../../core/auth/auth.service';
 import { Router } from '@angular/router';
-import { UserProfileService } from '../../core/userProfiles/userProfile.service';
+import { UiInput } from '../../../../shared/ui/input/input';
+import { AuthService } from '../../auth.service';
+import { UserProfileService } from '../../../userProfiles/userProfile.service';
+import { UserStore } from '../../user.store';
 import {
   changedValidator,
   gamertagAsyncValidator,
   gamertagFormatValidator,
   nameValidator,
-} from '../../utils/validators';
+} from '../../../../utils/validators';
 
 @Component({
   selector: 'app-account',
@@ -18,7 +18,7 @@ import {
   imports: [UiInput, ReactiveFormsModule],
   templateUrl: './account.html',
 })
-export class Account {
+export class AccountPage {
   private router = inject(Router);
   private authService = inject(AuthService);
   private userProfileService = inject(UserProfileService);

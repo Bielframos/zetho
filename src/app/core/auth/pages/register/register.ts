@@ -7,14 +7,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { UserStore } from '../../core/auth/user.store';
-import { UserProfileService } from '../../core/userProfiles/userProfile.service';
-import { UiInput } from '../../shared/ui/input/input';
+import { UiInput } from '../../../../shared/ui/input/input';
+import { UserStore } from '../../user.store';
+import { UserProfileService } from '../../../userProfiles/userProfile.service';
 import {
   gamertagAsyncValidator,
   gamertagFormatValidator,
   nameValidator,
-} from '../../utils/validators';
+} from '../../../../utils/validators';
 
 @Component({
   selector: 'app-register-page',
@@ -25,7 +25,7 @@ import {
     class: 'h-full',
   },
 })
-export class Register {
+export class RegisterPage {
   private router = inject(Router);
   private userStore = inject(UserStore);
   private profileService = inject(UserProfileService);

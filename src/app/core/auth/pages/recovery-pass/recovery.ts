@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../core/auth/auth.service';
-import { UiInput } from '../../shared/ui/input/input';
+import { UiInput } from '../../../../shared/ui/input/input';
+import { AuthService } from '../../auth.service';
 
 @Component({
   selector: 'app-recovery-pass-page',
@@ -12,7 +12,7 @@ import { UiInput } from '../../shared/ui/input/input';
     class: 'h-full',
   },
 })
-export class Recovery {
+export class RecoveryPage {
   authService = inject(AuthService);
   router = inject(Router);
 

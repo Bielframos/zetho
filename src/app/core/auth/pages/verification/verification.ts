@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { UiLoading } from '../../shared/ui/loading';
-import { AuthService } from '../../core/auth/auth.service';
-import { UserStore } from '../../core/auth/user.store';
+import { UiLoading } from '../../../../shared/ui/loading';
+import { AuthService } from '../../auth.service';
+import { UserStore } from '../../user.store';
 
 @Component({
   selector: 'app-verification-page',
@@ -13,7 +13,7 @@ import { UserStore } from '../../core/auth/user.store';
     class: 'h-full',
   },
 })
-export class Verification {
+export class VerificationPage {
   private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
   private userStore = inject(UserStore);

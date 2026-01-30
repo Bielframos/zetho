@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { AuthService } from '../../core/auth/auth.service';
-import { UiInput } from '../../shared/ui/input/input';
+import { UiInput } from '../../../../shared/ui/input/input';
+import { AuthService } from '../../auth.service';
 
 @Component({
   selector: 'app-reset-pass-page',
@@ -13,7 +13,7 @@ import { UiInput } from '../../shared/ui/input/input';
     class: 'h-full',
   },
 })
-export class ResetPass {
+export class ResetPassPage {
   private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
 
