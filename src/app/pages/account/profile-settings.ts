@@ -1,7 +1,7 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserStore } from '../../core/auth/user.store';
-import { UiInput } from '../../shared/ui/atoms/input/input';
+import { UiInput } from '../../shared/ui/input/input';
 import { AuthService } from '../../core/auth/auth.service';
 import { Router } from '@angular/router';
 import { UserProfileService } from '../../core/userProfiles/userProfile.service';

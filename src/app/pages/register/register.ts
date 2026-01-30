@@ -9,7 +9,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { UserStore } from '../../core/auth/user.store';
 import { UserProfileService } from '../../core/userProfiles/userProfile.service';
-import { UiInput } from '../../shared/ui/atoms/input/input';
+import { UiInput } from '../../shared/ui/input/input';
 import {
   gamertagAsyncValidator,
   gamertagFormatValidator,

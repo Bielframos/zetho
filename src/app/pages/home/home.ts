@@ -5,8 +5,8 @@ import { GameRow } from '../../types';
 import { ZEntryService } from '../../core/zEntries/zEntries.service';
 import { UserProfileService } from '../../core/userProfiles/userProfile.service';
 import { ZStatsService } from '../../core/zStats/zStats.service';
-import { UiGameCard } from '../../shared/ui/atoms/game-card/game-card';
-import { UiLoading } from '../../shared/ui/molecules/loading';
+import { UiGameCard } from '../../shared/ui/game-card/game-card';
+import { UiLoading } from '../../shared/ui/loading';
 
 @Component({
   selector: 'app-home',

@@ -1,22 +1,26 @@
-import { Component, input, output } from "@angular/core";
-import { ReactiveFormsModule, FormControl } from "@angular/forms";
+import { Component, input, output } from '@angular/core';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
-import { UiInput } from "../../ui/atoms/input/input";
+import { UiInput } from '../../ui/input/input';
 
 @Component({
-    selector: 'app-search-input',
-    standalone: true,
-    templateUrl: './search-input.html',
-    imports: [UiInput, ReactiveFormsModule]
+  selector: 'app-search-input',
+  standalone: true,
+  templateUrl: './search-input.html',
+  imports: [UiInput, ReactiveFormsModule],
 })
 export class AppSearchInput {
-    placeholder = input<string>('')
-    readonly search = output<string>()
-    searchControl = new FormControl('')
+  placeholder = input<string>('');
+  readonly search = output<string>();
+  searchControl = new FormControl('');
 
-    constructor() {
-        this.searchControl.valueChanges
-            .pipe(debounceTime(600), filter((value) => value !== ''), distinctUntilChanged())
-            .subscribe((value) => this.search.emit(value ?? ''))
-    }
-}   
+  constructor() {
+    this.searchControl.valueChanges
+      .pipe(
+        debounceTime(600),
+        filter((value) => value !== ''),
+        distinctUntilChanged(),
+      )
+      .subscribe((value) => this.search.emit(value ?? ''));
+  }
+}

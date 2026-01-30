@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
-import { UiLoading } from '../../shared/ui/molecules/loading';
+import { UiLoading } from '../../shared/ui/loading';
 import { UiDraggableList } from './modules/draggable-list';
 import { AppListMenu } from './modules/list-menu';
 import { UserStore } from '../../core/auth/user.store';

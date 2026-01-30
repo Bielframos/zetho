@@ -6,10 +6,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { UserStore } from '../../../core/auth/user.store';
-import { UiModal } from '../../ui/molecules/modal/modal';
-import { UiInput } from '../../ui/atoms/input/input';
-import { UiCheckbox } from '../../ui/atoms/checkbox';
+import { UiModal } from '../../ui/modal/modal';
+import { UiInput } from '../../ui/input/input';
 import { ListsController } from '../../../core/lists/lists.controller';
+import { UiCheckbox } from '../../ui/checkbox';
 
 @Component({
   selector: 'app-new-list-dialog',

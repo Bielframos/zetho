@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import { GameRow } from '../../../types';
-import { UiGameCard } from '../../../shared/ui/atoms/game-card/game-card';
-import { UiSkeleton } from '../../../shared/ui/atoms/skeleton';
+import { UiGameCard } from '../../../shared/ui/game-card/game-card';
+import { UiSkeleton } from '../../../shared/ui/skeleton';
 
 @Component({
   selector: 'ui-game-header',

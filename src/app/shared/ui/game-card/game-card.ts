@@ -7,8 +7,8 @@ import {
   input,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { GameStore } from '../../../../core/games/game.store';
-import { GameRow } from '../../../../types';
+import { GameStore } from '../../../core/games/game.store';
+import { GameRow } from '../../../types';
 
 @Component({
   selector: 'ui-game-card',

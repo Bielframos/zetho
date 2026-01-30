@@ -2,8 +2,8 @@ import { Component, inject, input, signal } from '@angular/core';
 import { UserStore } from '../../../core/auth/user.store';
 
 import { GameRow, ZereiListRow } from '../../../types';
-import { UiModal } from '../../../shared/ui/molecules/modal/modal';
-import { ModalTriggerDirective } from '../../../shared/ui/molecules/modal/modal-trigger.directive';
+import { UiModal } from '../../../shared/ui/modal/modal';
+import { ModalTriggerDirective } from '../../../shared/ui/modal/modal-trigger.directive';
 import { NgClass } from '@angular/common';
 import { GameController } from '../../../core/games/gamePage.controller';
 import { ListsController } from '../../../core/lists/lists.controller';

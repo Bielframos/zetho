@@ -9,9 +9,9 @@ import {
   viewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { UiCheckbox } from '../../../shared/ui/atoms/checkbox';
-import { UiInput } from '../../../shared/ui/atoms/input/input';
-import { UiModal } from '../../../shared/ui/molecules/modal/modal';
+import { UiCheckbox } from '../../../shared/ui/checkbox';
+import { UiInput } from '../../../shared/ui/input/input';
+import { UiModal } from '../../../shared/ui/modal/modal';
 import { Router } from '@angular/router';
 import { ProfileStore } from '../../../core/userProfiles/profile.store';
 import { ListController } from '../../../core/lists/list.controller';
