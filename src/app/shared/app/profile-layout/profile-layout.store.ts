@@ -1,40 +1,37 @@
 import { Injectable, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
-import { ProfileStore } from '../../../core/stores/profile.store';
+import { ProfileStore } from '../../../core/userProfiles/profile.store';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileLayoutStore {
-    currentTab = signal<string | undefined>('');
-    sidebarComponent = signal<any | null>(null);
+  currentTab = signal<string | undefined>('');
+  sidebarComponent = signal<any | null>(null);
 
-    constructor(
-        private router: Router,
-        private profileStore: ProfileStore
-    ) {
-        this.router.events
-            .pipe(filter((e) => e instanceof NavigationEnd))
-            .subscribe(() => {
-                const segments = this.router.url
-                    .split('?')[0]
-                    .split('#')[0]
-                    .split('/')
-                    .filter(Boolean);
+  constructor(
+    private router: Router,
+    private profileStore: ProfileStore,
+  ) {
+    this.router.events
+      .pipe(filter((e) => e instanceof NavigationEnd))
+      .subscribe(() => {
+        const segments = this.router.url
+          .split('?')[0]
+          .split('#')[0]
+          .split('/')
+          .filter(Boolean);
 
-                if (segments[0] !== 'player') return
+        if (segments[0] !== 'player') return;
 
-                const profile = this.profileStore.current()
-                const gamertag = segments[1];
-                const lastSegment = segments.at(-1);
+        const profile = this.profileStore.current();
+        const gamertag = segments[1];
+        const lastSegment = segments.at(-1);
 
-                if (profile?.gamertag !== gamertag) {
-                    this.profileStore.update(gamertag)
-                }
+        if (profile?.gamertag !== gamertag) {
+          this.profileStore.update(gamertag);
+        }
 
-                this.currentTab.set(
-                    lastSegment === gamertag ? 'games' : lastSegment,
-                );
-            });
-    }
-
+        this.currentTab.set(lastSegment === gamertag ? 'games' : lastSegment);
+      });
+  }
 }

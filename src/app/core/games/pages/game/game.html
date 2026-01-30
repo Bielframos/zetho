@@ -1,0 +1,46 @@
+<main
+  class="relative min-h-dvh w-full max-w-5xl mx-auto px-4 md:px-10 py-4 md:py-10"
+>
+  <ui-game-actions [game]="controller.game()"></ui-game-actions>
+  <ui-game-header [game]="controller.game()"></ui-game-header>
+  <!-- <ui-game-rating [game]="controller.game()"></ui-game-rating> -->
+
+  @if (controller.game()) {
+  <section class="animate-fade-in-slide" style="animation-delay: 400ms">
+    <div class="md:grid grid-cols-[320px_1fr] gap-4 mt-4">
+      @if (controller.game() && userStore.isAuthenticated()) {
+      <ui-z-entry-actions></ui-z-entry-actions>
+      } @else {
+      <div
+        class="w-full flex mt-4 flex-col items-center rounded-2xl bg-blue-2 p-6 text-center animate-fade-in-slide"
+      >
+        <i class="ph ph-game-controller text-[40px] mb-2"></i>
+        <h3 class="mb-1 text-lg">Ei, player! Que tal acessar sua conta?</h3>
+        <span class="font-light text-gray-11">
+          Entre para salvar este jogo na sua coleção.
+        </span>
+        <a routerLink="/entrar" class="ui-primary-btn mt-4">
+          Acessar minha conta
+        </a>
+      </div>
+      }
+
+      <ui-game-stats [stats]="controller.game()?.zStats"></ui-game-stats>
+    </div>
+
+    <hr class="border-blue-2 w-full my-10" />
+
+    <ui-game-lobby></ui-game-lobby>
+
+    @if (controller.similarGames(); as similarGames) {
+    <hr class="border-blue-2 w-full my-10" />
+    <h3 class="text-2xl max-w-xl mb-6">Talvez você goste</h3>
+    <ul class="grid grid-cols-6 gap-2">
+      @for (game of similarGames; track $index) {
+      <li><ui-game-card [game]="game"></ui-game-card></li>
+      }
+    </ul>
+    }
+  </section>
+  }
+</main>
