@@ -1,10 +1,10 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { UiGameCard } from '../../shared/ui/game-card/game-card';
-import { UiLoading } from '../../shared/ui/loading';
-import { GameRow } from '../../types';
-import { ZStatsService } from '../../core/zStats/zStats.service';
-import { GameSearchController } from '../../core/games/gameSearch.controller';
+import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
+import { UiLoading } from '../../../../shared/ui/loading';
+import { SearchController } from '../../search.controller';
+import { ZStatsService } from '../../../zStats/zStats.service';
+import { GameRow } from '../../../games/game.types';
 
 @Component({
   selector: 'app-search-page',
@@ -12,13 +12,13 @@ import { GameSearchController } from '../../core/games/gameSearch.controller';
   imports: [UiGameCard, UiLoading],
   templateUrl: './search.html',
 })
-export class Search {
-  private searchController = inject(GameSearchController);
+export class SearchPage {
+  private searchController = inject(SearchController);
   private route = inject(ActivatedRoute);
   private zStatsService = inject(ZStatsService);
 
   query = signal<string>('');
-  searchGame = signal<ReturnType<GameSearchController['create']> | null>(null);
+  searchGame = signal<ReturnType<SearchController['create']> | null>(null);
   popularGames = signal<GameRow[]>([]);
 
   constructor() {

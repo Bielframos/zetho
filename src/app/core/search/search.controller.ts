@@ -4,7 +4,7 @@ import { GameService } from '../games/games.service';
 import { ZEntryService } from '../zEntries/zEntries.service';
 
 @Injectable({ providedIn: 'root' })
-export class GameSearchController {
+export class SearchController {
   constructor(
     private gameService: GameService,
     private ZEntryService: ZEntryService,
