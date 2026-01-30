@@ -3,12 +3,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
-import { UiLoading } from '../../shared/ui/loading';
+import { UiLoading } from '../../../../shared/ui/loading';
 import { UiDraggableList } from './modules/draggable-list';
 import { AppListMenu } from './modules/list-menu';
-import { UserStore } from '../../core/auth/user.store';
-import { ProfileStore } from '../../core/userProfiles/profile.store';
-import { ListController } from '../../core/lists/list.controller';
+import { UserStore } from '../../../auth/user.store';
+import { ProfileStore } from '../../../userProfiles/profile.store';
+import { ListController } from '../../../lists/list.controller';
 
 @Component({
   selector: 'app-list',
@@ -16,7 +16,7 @@ import { ListController } from '../../core/lists/list.controller';
   templateUrl: './list.html',
   imports: [UiDraggableList, UiLoading, ReactiveFormsModule, AppListMenu],
 })
-export class List {
+export class ListPage {
   private userStore = inject(UserStore);
   private profileStore = inject(ProfileStore);
   private route = inject(ActivatedRoute);

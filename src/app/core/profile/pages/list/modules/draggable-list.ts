@@ -6,10 +6,10 @@ import {
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import { Component, inject, input } from '@angular/core';
-import { ZereiListItemRow } from '../../../types';
-import { UiGameCard } from '../../../shared/ui/game-card/game-card';
+import { ZereiListItemRow } from '../../../../../types';
+import { UiGameCard } from '../../../../../shared/ui/game-card/game-card';
 import { AppListCardMenu } from './list-card-menu';
-import { ListController } from '../../../core/lists/list.controller';
+import { ListController } from '../../../../lists/list.controller';
 
 @Component({
   selector: 'ui-draggable-list',

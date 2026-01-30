@@ -4,7 +4,7 @@ import { Component, inject, input, viewChild } from '@angular/core';
 import {
   ListController,
   ZereiListItemRowExpanded,
-} from '../../../core/lists/list.controller';
+} from '../../../../lists/list.controller';
 
 @Component({
   selector: 'app-list-card-menu',
