@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { userGuard } from './core/auth/auth.guards';
 import { AUTH_ROUTES } from './core/auth/auth.routes';
 import { Dashboard } from './pages/dashboard/dashboard';
-import { Game } from './pages/game/game';
 import { Home } from './pages/home/home';
 import { List } from './pages/list/list';
 import { Lists } from './pages/lists/lists';
@@ -20,7 +19,6 @@ export const routes: Routes = [
     title: 'Zetho',
   },
   { path: 'buscar', component: Search, title: 'Zetho | Busque um jogo' },
-  { path: 'jogo/:slug', component: Game },
   {
     path: 'player/:gamertag',
     component: AppProfileLayout,

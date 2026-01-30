@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommentsController } from '../../../core/comments/comments.controller';
-import { AppCommentItem } from '../../../shared/app/comment-item/comment-item';
+import { AppCommentItem } from '../../../../../shared/app/comment-item/comment-item';
+import { CommentsController } from '../../../../comments/comments.controller';
 
 @Component({
   selector: 'ui-game-lobby',

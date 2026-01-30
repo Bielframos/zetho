@@ -1,7 +1,7 @@
 import { NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { ZEntry } from '../../../types';
-import { GameController } from '../../../core/games/gamePage.controller';
+import { GameController } from '../../../game.controller';
+import { ZEntry } from '../../../../zEntries/zEntries.types';
 
 @Component({
   selector: 'ui-z-entry-actions',

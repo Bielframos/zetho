@@ -3,15 +3,15 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
-import { UserStore } from '../../core/auth/user.store';
-import { UiGameCard } from '../../shared/ui/game-card/game-card';
 import { UiGameHeader } from './modules/game-header';
 import { UiGameStats } from './modules/game-stats';
 import { UiZEntryActions } from './modules/z-entry-actions';
 import { UiGameLobby } from './modules/game-lobby';
 import { UiGameActions } from './modules/game-actions';
 import { UiGameRating } from './modules/game-rating';
-import { GameController } from '../../core/games/gamePage.controller';
+import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
+import { GameController } from '../../game.controller';
+import { UserStore } from '../../../auth/user.store';
 
 @Component({
   selector: 'app-game',
@@ -28,7 +28,7 @@ import { GameController } from '../../core/games/gamePage.controller';
   ],
   templateUrl: './game.html',
 })
-export class Game {
+export class GamePage {
   /* ---------------------------------------------------------
    * INJEÇÕES DE DEPENDÊNCIA
    * --------------------------------------------------------- */

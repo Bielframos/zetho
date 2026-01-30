@@ -1,12 +1,12 @@
 import { Component, inject, input, signal } from '@angular/core';
-import { UserStore } from '../../../core/auth/user.store';
-
-import { GameRow, ZereiListRow } from '../../../types';
-import { UiModal } from '../../../shared/ui/modal/modal';
-import { ModalTriggerDirective } from '../../../shared/ui/modal/modal-trigger.directive';
+import { UiModal } from '../../../../../shared/ui/modal/modal';
+import { ModalTriggerDirective } from '../../../../../shared/ui/modal/modal-trigger.directive';
 import { NgClass } from '@angular/common';
-import { GameController } from '../../../core/games/gamePage.controller';
-import { ListsController } from '../../../core/lists/lists.controller';
+import { UserStore } from '../../../../auth/user.store';
+import { GameController } from '../../../game.controller';
+import { ListsController } from '../../../../lists/lists.controller';
+import { GameRow } from '../../../game.types';
+import { ZereiListRow } from '../../../../lists/lists.type';
 
 @Component({
   selector: 'ui-game-actions',

@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
-import { GameRow } from '../../../types';
-import { AppStartingRating } from '../../../shared/ui/star-rating/star-rating';
+import { AppStartingRating } from '../../../../../shared/ui/star-rating/star-rating';
+import { GameRow } from '../../../game.types';
 
 @Component({
   selector: 'ui-game-rating',
