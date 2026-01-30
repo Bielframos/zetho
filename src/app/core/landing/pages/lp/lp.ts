@@ -1,20 +1,20 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { UserStore } from '../../core/auth/user.store';
-import { GameRow } from '../../types';
-import { ZEntryService } from '../../core/zEntries/zEntries.service';
-import { UserProfileService } from '../../core/userProfiles/userProfile.service';
-import { ZStatsService } from '../../core/zStats/zStats.service';
-import { UiGameCard } from '../../shared/ui/game-card/game-card';
-import { UiLoading } from '../../shared/ui/loading';
+import { UserStore } from '../../../auth/user.store';
+import { ZEntryService } from '../../../zEntries/zEntries.service';
+import { UserProfileService } from '../../../userProfiles/userProfile.service';
+import { ZStatsService } from '../../../zStats/zStats.service';
+import { GameRow } from '../../../games/game.types';
+import { UiLoading } from '../../../../shared/ui/loading';
+import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [RouterLink, UiLoading, UiGameCard],
-  templateUrl: './home.html',
+  templateUrl: './lp.html',
 })
-export class Home {
+export class LandingPage {
   platformStats = signal<{ zEntryCount: number; profileCount: number } | null>(
     null,
   );
