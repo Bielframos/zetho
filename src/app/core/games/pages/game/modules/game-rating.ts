@@ -8,7 +8,7 @@ import { GameRow } from '../../../game.types';
   imports: [AppStartingRating],
   template: `
     <div
-      class="p-6 bg-blue-2 rounded-2xl mt-4 flex gap-4 justify-between items-end"
+      class="p-6 bg-blue-2 rounded-2xl mt-4 flex gap-4 justify-between flex-col items-center sm:flex-row sm:items-end"
     >
       <div class="flex gap-4 items-end">
         <h3 class="text-6xl max-w-xl">{{ game()?.ratingAvg ?? '0.0' }}</h3>
@@ -19,9 +19,10 @@ import { GameRow } from '../../../game.types';
           <div class="-ml-2 mt-1"><app-star-rating></app-star-rating></div>
         </div>
       </div>
-      <a href="" class="text-blue-11 hover:underline hover:text-blue-9"
-        >Ver avaliações</a
-      >
+
+      <a href="" class="text-blue-11 hover:underline hover:text-blue-9">
+        Ver avaliações
+      </a>
     </div>
   `,
 })

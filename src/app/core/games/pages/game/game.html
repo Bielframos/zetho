@@ -3,10 +3,10 @@
 >
   <ui-game-actions [game]="controller.game()"></ui-game-actions>
   <ui-game-header [game]="controller.game()"></ui-game-header>
-  <!-- <ui-game-rating [game]="controller.game()"></ui-game-rating> -->
 
   @if (controller.game()) {
   <section class="animate-fade-in-slide" style="animation-delay: 400ms">
+    <ui-game-rating [game]="controller.game()"></ui-game-rating>
     <div class="md:grid grid-cols-[320px_1fr] gap-4 mt-4">
       @if (controller.game() && userStore.isAuthenticated()) {
       <ui-z-entry-actions></ui-z-entry-actions>
