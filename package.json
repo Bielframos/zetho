@@ -1,6 +1,6 @@
 {
-  "name": "zerei",
-  "version": "0.0.0",
+  "name": "zetho",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
