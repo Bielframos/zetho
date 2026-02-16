@@ -12,8 +12,7 @@ export class ZEntriesController {
   pageSize = 24;
 
   status = signal<Exclude<ZEntryRow['status'], null | undefined>>('completed');
-  games = signal<GameRow[]>([]);
-  entries = signal<ZEntryRow[]>([]);
+  entries = signal<(ZEntryRow & { game: GameRow })[]>([]);
   offset = signal(0);
   total = signal(0);
   hasMore = signal(true);
@@ -70,19 +69,24 @@ export class ZEntriesController {
         { pageSize: this.pageSize, offset: this.offset() },
       );
 
-      this.entries.update((prev) => [...prev, ...entries.rows]);
-      this.total.set(entries.total);
+      const gameIds = entries.rows.map((e) => e.gameId).filter(Boolean);
 
-      const ids = entries.rows.map((e) => e.gameId).filter(Boolean);
-      if (ids.length > 0) {
-        const games = await this.gameRepo.findByIds(ids, {
+      if (gameIds.length > 0) {
+        const games = await this.gameRepo.findByIds(gameIds, {
           fields: ['$id', 'name', 'slug', 'releaseYear', 'coverUrl'],
           pageSize: this.pageSize,
         });
 
-        if (games) {
-          this.games.update((prev) => [...prev, ...games]);
-        }
+        this.entries.update((prev) => {
+          return [
+            ...prev,
+            ...entries.rows.map((e) => ({
+              ...e,
+              game: games.find((g) => g.$id === e.gameId)!,
+            })),
+          ];
+        });
+        this.total.set(entries.total);
       }
 
       const newOffset = this.offset() + this.pageSize;
@@ -97,7 +101,6 @@ export class ZEntriesController {
   };
 
   resetState = () => {
-    this.games.set([]);
     this.entries.set([]);
     this.offset.set(0);
     this.total.set(0);
