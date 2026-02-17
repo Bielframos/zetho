@@ -1,7 +1,7 @@
 <div
   cdkDropList
   (cdkDropListDropped)="drop($event)"
-  class="bg-blue-2 border border-gray-6 rounded-lg divide-y divide-gray-6"
+  class="bg-blue-2 p-2 rounded-2xl divide-y divide-gray-6"
 >
   @for (item of controller.items(); let idx = $index; track item.$id) {
   <div
@@ -10,20 +10,27 @@
     class="flex gap-4 pl-2 pr-4 py-4 md:py-2 items-center font-light relative"
   >
     @if (itsMe()) {
-    <div class="cursor-grab" cdkDragHandle>
+    <div class="cursor-grab" cdkDragHandle (click)="$event.stopPropagation()">
       <i class="ph ph-dots-six-vertical text-gray-11"></i>
     </div>
     }
 
-    <ui-game-card [width]="64" [game]="item.game" readonlyMode></ui-game-card>
-
-    <span
-      class="font-normal font-mono text-gray-11 px-3 rounded-full bg-blue-1 w-fit border border-gray-6"
+    <a
+      [routerLink]="['/jogo', item.game.slug]"
+      class="flex gap-4 items-center flex-1"
     >
-      {{idx + 1}}
-    </span>
+      <ui-game-card [width]="64" [game]="item.game" readonlyMode></ui-game-card>
 
-    {{ item.game.name }} @if (itsMe()) {
+      <span
+        class="font-normal font-mono text-gray-11 px-3 rounded-full bg-blue-1 w-fit border border-gray-6"
+      >
+        {{idx + 1}}
+      </span>
+
+      <span>{{ item.game.name }} </span>
+    </a>
+
+    @if (itsMe()) {
     <app-list-card-menu [item]="item"></app-list-card-menu>
     }
   </div>
