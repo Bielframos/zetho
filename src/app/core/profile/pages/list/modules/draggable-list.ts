@@ -10,12 +10,20 @@ import { ZereiListItemRow } from '../../../../../types';
 import { UiGameCard } from '../../../../../shared/ui/game-card/game-card';
 import { AppListCardMenu } from './list-card-menu';
 import { ListController } from '../../../../lists/list.controller';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'ui-draggable-list',
   templateUrl: './draggable-list.html',
   styleUrl: './draggable-list.css',
-  imports: [CdkDropList, CdkDrag, UiGameCard, AppListCardMenu, CdkDragHandle],
+  imports: [
+    CdkDropList,
+    CdkDrag,
+    UiGameCard,
+    AppListCardMenu,
+    CdkDragHandle,
+    RouterLink,
+  ],
 })
 export class UiDraggableList {
   controller = inject(ListController);
