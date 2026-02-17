@@ -36,6 +36,12 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 - Para instalar/rodar localmente, veja o `README.md` e os `package.json` dos serviços.
 - Dependências principais: Node.js, pnpm, e Appwrite configurado conforme `appwrite.config.json`.
 
+## [1.0.1] - 2026-02-17
+
+### Added
+
+- Nova visualização da página idividual de uma lista
+
 ### Contributors
 
 - Equipe Zetho
