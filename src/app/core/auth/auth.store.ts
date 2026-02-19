@@ -135,7 +135,7 @@ export class AuthStore {
 
     try {
       const response = await this.authService.createJWT();
-      this.cachedJwt.set(response.jwt);
+      this.cachedJwt.set(response);
       this.jwtExpirationTime.set(Date.now());
 
       return this.cachedJwt;

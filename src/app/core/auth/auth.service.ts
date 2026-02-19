@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { appwrite, ExecutionMethod } from '../appwrite/appwrite.client';
+import { appwrite } from '../appwrite/appwrite.client';
+import { UserProfileRow } from '../userProfiles/userProfile.types';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  constructor() {}
+
   /**
    * Método de registro para novos usuários
    * @param email
@@ -11,46 +14,51 @@ export class AuthService {
    * @param name
    * @param gamertag
    */
-  async register(email: string, password: string, name: string, gamertag: string) {
+  async register(
+    email: string,
+    password: string,
+    name: string,
+    gamertag: string,
+  ) {
     try {
-      const execution = await appwrite.functions.createExecution({
-        functionId: 'users-core',
-        xpath: '/register',
-        method: ExecutionMethod.POST,
-        body: JSON.stringify({ email, name, gamertag, password }),
+      await appwrite.account.create({
+        userId: 'unique()',
+        name,
+        email,
+        password,
       });
 
-      let body: any;
+      await this.login(email, password);
+      const user = await this.getLoggedInUser();
 
-      try {
-        body = JSON.parse(execution.responseBody || '{}');
-      } catch (e) {
-        throw { message: 'Invalid JSON returned by server.', code: 500 };
-      }
+      if (!user)
+        throw { message: 'Ocorreu um erro ao fazer o registro.', code: 500 };
 
-      // Se a function retornou um código 4xx ou 5xx, trate como erro
-      if (execution.responseStatusCode >= 400 || body.error) {
-        throw { message: body.message || 'Registration failed.', code: execution.responseStatusCode };
-      }
+      const res = await fetch(
+        new URL('profile', environment.zethoApiEndpoint),
+        {
+          headers: {
+            Authorization: `Bearer ${await this.createJWT()}`,
+            'x-appwrite-session': localStorage.getItem('cookieFallback') ?? '',
+            'Content-Type': 'application/json',
+          },
+          method: 'POST',
+          body: JSON.stringify({ gamertag }),
+        },
+      );
 
-      // Profile retornado pelo backend
-      const profile = body.profile;
-      if (!profile) {
-        throw { message: 'Missing profile in server response.', code: 500 };
-      }
+      if (!res.ok)
+        throw { message: 'Ocorreu um erro ao fazer o registro.', code: 500 };
 
-      // Cria sessão automaticamente
-      await appwrite.account.createEmailPasswordSession({ email, password });
-      const user = await appwrite.account.get()
-
-      return { user, profile };
-
+      return {
+        user,
+        profile: (await res.json()) as UserProfileRow,
+      };
     } catch (error) {
       console.error('Error registering user:', error);
       throw error;
     }
   }
-
 
   /**
    * Método de login com e-mail e senha
@@ -58,7 +66,10 @@ export class AuthService {
    * @param password
    */
   async login(email: string, password: string) {
-    return await appwrite.account.createEmailPasswordSession({ email, password });
+    return await appwrite.account.createEmailPasswordSession({
+      email,
+      password,
+    });
   }
 
   /**
@@ -67,6 +78,15 @@ export class AuthService {
    */
   async logout() {
     return await appwrite.account.deleteSession({ sessionId: 'current' });
+  }
+
+  /**
+   * Método para gerar um JWT válido do usuário logado
+   * @returns
+   */
+  async createJWT() {
+    const token = await appwrite.account.createJWT();
+    return token.jwt;
   }
 
   /**
@@ -85,23 +105,38 @@ export class AuthService {
    * Método para gerar uma verificação de e-mail
    */
   async createEmailVerification() {
-    await appwrite.account.createEmailVerification({ url: new URL('/verificacao', environment.appUrl).toString() })
+    await appwrite.account.createEmailVerification({
+      url: new URL('/verificacao', environment.appUrl).toString(),
+    });
   }
 
   /**
    * Método que confirma a verificação do e-mail
-   * @param userId 
-   * @param secret 
+   * @param userId
+   * @param secret
    */
   async verifyEmail(userId: string, secret: string) {
-    await appwrite.account.updateEmailVerification({ userId, secret })
+    await appwrite.account.updateEmailVerification({ userId, secret });
   }
 
+  /**
+   * Inicia um fluxo de recuperação de senha
+   * @param email
+   */
   async createRecoveryPass(email: string) {
-    await appwrite.account.createRecovery({ email, url: new URL('/redefinir-senha', environment.appUrl).toString() })
+    await appwrite.account.createRecovery({
+      email,
+      url: new URL('/redefinir-senha', environment.appUrl).toString(),
+    });
   }
 
+  /**
+   * Encerra o fluxo de recuperação de senha
+   * @param userId
+   * @param secret
+   * @param password
+   */
   async recoveryPass(userId: string, secret: string, password: string) {
-    await appwrite.account.updateRecovery({ userId, secret, password })
+    await appwrite.account.updateRecovery({ userId, secret, password });
   }
 }
