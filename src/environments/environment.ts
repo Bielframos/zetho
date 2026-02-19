@@ -3,7 +3,7 @@ export const environment = {
   appUrl: 'https://www.zetho.app/',
   appwriteEndpoint: 'https://api.zereiapp.com/v1',
   appwriteProject: '690a16460002c718253a',
-  zethoApiEndpoint: 'http://api.zetho.app/',
+  zethoApiEndpoint: 'https://api.zetho.app/',
   firebase: {
     apiKey: 'AIzaSyCzPo_B-Imte8ojtAsQAYg-oQ3FaFp34dg',
     authDomain: 'zetho-7dc25.firebaseapp.com',
