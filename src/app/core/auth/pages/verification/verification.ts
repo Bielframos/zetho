@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { AuthService } from '../../auth.service';
-import { UserStore } from '../../user.store';
+import { AuthStore } from '../../auth.store';
 
 @Component({
   selector: 'app-verification-page',
@@ -16,7 +16,7 @@ import { UserStore } from '../../user.store';
 export class VerificationPage {
   private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
-  private userStore = inject(UserStore);
+  private authStore = inject(AuthStore);
 
   loading = signal(true);
   verified = signal(false);
@@ -47,7 +47,7 @@ export class VerificationPage {
       .verifyEmail(this.userId, this.secret)
       .then(() => {
         this.verified.set(true);
-        this.userStore.refresh();
+        this.authStore.refresh();
         this.loading.set(false);
       })
       .catch((e) => {

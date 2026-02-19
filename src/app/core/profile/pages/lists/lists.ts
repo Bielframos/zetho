@@ -3,7 +3,7 @@ import { ProfileLayoutStore } from '../../../../shared/app/profile-layout/profil
 import { AppUserLists } from '../../../../shared/app/user-lists/user-lists';
 import { AppNewListDialog } from '../../../../shared/app/new-list-dialog/new-list-dialog';
 import { ProfileStore } from '../../../userProfiles/profile.store';
-import { UserStore } from '../../../auth/user.store';
+import { AuthStore } from '../../../auth/auth.store';
 import { ListsController } from '../../../lists/lists.controller';
 
 @Component({
@@ -13,12 +13,12 @@ import { ListsController } from '../../../lists/lists.controller';
   templateUrl: './lists.html',
 })
 export class ListsPage {
-  private userStore = inject(UserStore);
+  private authStore = inject(AuthStore);
   private profileStore = inject(ProfileStore);
   controller = inject(ListsController);
 
   get itsMe() {
-    return this.userStore.profile()?.$id === this.profileStore.current()?.$id;
+    return this.authStore.profile()?.$id === this.profileStore.current()?.$id;
   }
 
   constructor(private layoutStore: ProfileLayoutStore) {

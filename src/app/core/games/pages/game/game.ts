@@ -11,7 +11,7 @@ import { UiGameActions } from './modules/game-actions';
 import { UiGameRating } from './modules/game-rating';
 import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
 import { GameController } from '../../game.controller';
-import { UserStore } from '../../../auth/user.store';
+import { AuthStore } from '../../../auth/auth.store';
 
 @Component({
   selector: 'app-game',
@@ -35,7 +35,7 @@ export class GamePage {
   private title = inject(Title);
   private route = inject(ActivatedRoute);
   controller = inject(GameController);
-  userStore = inject(UserStore);
+  authStore = inject(AuthStore);
 
   // Slug vindo da rota
   slug = toSignal(

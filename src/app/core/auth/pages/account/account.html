@@ -3,13 +3,13 @@
 >
   <div>
     <header>
-      <h1 class="text-3xl">Olá, {{userStore.user()?.name}}</h1>
+      <h1 class="text-3xl">Olá, {{authStore.user()?.name}}</h1>
       <p class="text-gray-11 font-light mt-2">
         Gerencie seu perfil e as informações da sua conta no Zetho.
       </p>
     </header>
 
-    @if (!userStore.user()?.emailVerification) {
+    @if (!authStore.user()?.emailVerification) {
     <div class="bg-blue-2 overflow-hidden border border-gray-6 rounded-lg mt-6">
       <div class="w-full h-1 bg-amber-400"></div>
 
@@ -40,7 +40,7 @@
     </div>
     }
 
-    <button (click)="userStore.logout()" class="ui-secondary-btn w-full mt-4">
+    <button (click)="authStore.logout()" class="ui-secondary-btn w-full mt-4">
       <i class="ph ph-sign-out"></i> Sair
     </button>
   </div>

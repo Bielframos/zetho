@@ -1,5 +1,5 @@
 import { computed, effect, Injectable, signal, untracked } from '@angular/core';
-import { UserStore } from '../auth/user.store';
+import { AuthStore } from '../auth/auth.store';
 import { CommentService } from './comments.service';
 import { GameStore } from '../games/game.store';
 import { CommentRow } from '../../types';
@@ -29,7 +29,7 @@ export class CommentsController {
   loadingReplies = signal<Record<string, boolean>>({});
 
   constructor(
-    private userStore: UserStore,
+    private authStore: AuthStore,
     private gameStore: GameStore,
     private commentService: CommentService,
   ) {
@@ -131,7 +131,7 @@ export class CommentsController {
   async addComment(content: string, parentId?: string, depth?: number) {
     const newComment = await this.commentService.createComment({
       gameId: this.gameStore.currentGame()!.$id,
-      userProfileId: this.userStore.profile()!.$id,
+      userProfileId: this.authStore.profile()!.$id,
       content,
       parentId,
       depth,
@@ -161,7 +161,7 @@ export class CommentsController {
     commentId: string;
     parentId?: string;
   }) {
-    const userId = this.userStore.user()!.$id;
+    const userId = this.authStore.user()!.$id;
     const comment = this.findLocalComment(params.commentId, params.parentId);
 
     if (!comment) return;
@@ -253,7 +253,7 @@ export class CommentsController {
   }
 
   getUserVoteFor(comment: CommentRow) {
-    const userId = this.userStore.user()?.$id;
+    const userId = this.authStore.user()?.$id;
     return comment.votes?.find((v) => v.userId === userId)?.type;
   }
 

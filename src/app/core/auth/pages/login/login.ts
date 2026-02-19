@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
-import { UserStore } from '../../user.store';
+import { AuthStore } from '../../auth.store';
 
 @Component({
   selector: 'app-login-page',
@@ -13,7 +13,7 @@ import { UserStore } from '../../user.store';
   },
 })
 export class LoginPage {
-  userStore = inject(UserStore);
+  authStore = inject(AuthStore);
   router = inject(Router);
 
   email = '';
@@ -30,7 +30,7 @@ export class LoginPage {
     this.isLoading.set(true);
 
     try {
-      await this.userStore.login(this.email, this.password);
+      await this.authStore.login(this.email, this.password);
       this.router.navigate(['/dashboard']);
     } catch (e: any) {
       if (e.code === 401)
