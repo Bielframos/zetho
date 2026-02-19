@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { UserStore } from '../auth/user.store';
+import { AuthStore } from '../auth/auth.store';
 import { GameRow, ZEntryRow } from '../../types';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { GameService } from './games.service';
@@ -16,7 +16,7 @@ export class GameController {
   constructor(
     private gameService: GameService,
     private zEntryService: ZEntryService,
-    private userStore: UserStore,
+    private authStore: AuthStore,
   ) {}
 
   async loadPage(slug: string) {
@@ -28,8 +28,8 @@ export class GameController {
       this.errors.set({});
       this.loading.set(true);
 
-      const user = this.userStore.user();
-      const profile = this.userStore.profile();
+      const user = this.authStore.user();
+      const profile = this.authStore.profile();
 
       const data = await this.gameService.loadGamePage(slug, {
         userId: user?.$id,
@@ -61,7 +61,7 @@ export class GameController {
     try {
       this.updating.set(true);
 
-      const profile = this.userStore.profile();
+      const profile = this.authStore.profile();
 
       const updated = await this.zEntryService.createEntryLog(
         profile!.fingerprint,

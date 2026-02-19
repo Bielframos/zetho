@@ -42,6 +42,17 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 - Nova visualização da página idividual de uma lista
 
+## [1.0.2] - 2026-02-17
+
+### Added
+
+- Implementa gerenciamento local do JWT do usuário
+- Integra fluxo de registro com a API oficial do Zetho
+
+### Changed
+
+- Renomeia o `UserStore` para `AuthStore`
+
 ### Contributors
 
 - Equipe Zetho

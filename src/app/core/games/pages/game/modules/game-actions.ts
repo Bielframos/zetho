@@ -2,7 +2,7 @@ import { Component, inject, input, signal } from '@angular/core';
 import { UiModal } from '../../../../../shared/ui/modal/modal';
 import { ModalTriggerDirective } from '../../../../../shared/ui/modal/modal-trigger.directive';
 import { NgClass } from '@angular/common';
-import { UserStore } from '../../../../auth/user.store';
+import { AuthStore } from '../../../../auth/auth.store';
 import { GameController } from '../../../game.controller';
 import { ListsController } from '../../../../lists/lists.controller';
 import { GameRow } from '../../../game.types';
@@ -108,7 +108,7 @@ import { ZereiListRow } from '../../../../lists/lists.type';
   imports: [UiModal, ModalTriggerDirective, NgClass],
 })
 export class UiGameActions {
-  userStore = inject(UserStore);
+  authStore = inject(AuthStore);
   gameController = inject(GameController);
   listController = inject(ListsController);
   game = input<GameRow | null>();
@@ -121,7 +121,7 @@ export class UiGameActions {
   }
 
   get profile() {
-    return this.userStore.profile()!;
+    return this.authStore.profile()!;
   }
 
   selectedList = signal<ZereiListRow | undefined>(undefined);

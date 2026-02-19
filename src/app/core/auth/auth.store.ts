@@ -6,17 +6,21 @@ import { UserProfileService } from '../userProfiles/userProfile.service';
 import { UserProfileRow } from '../../types';
 
 @Injectable({ providedIn: 'root' })
-export class UserStore {
+export class AuthStore {
   private userProfileService = inject(UserProfileService);
 
   private userSignal = signal<Models.User<Models.Preferences> | null>(null);
   private profileSignal = signal<UserProfileRow | null>(null);
   private loadingSignal = signal(false);
+  private cachedJwt = signal<string | null>(null);
+  private jwtExpirationTime = signal(0);
 
   readonly user = computed(() => this.userSignal());
   readonly profile = computed(() => this.profileSignal());
-  readonly loading = computed(() => this.loadingSignal());
   readonly isAuthenticated = computed(() => this.user() !== null);
+
+  readonly loading = computed(() => this.loadingSignal());
+
   readonly avatarUrl = computed(() =>
     appwrite.avatars.getInitials({
       name: this.user()?.name,
@@ -117,6 +121,28 @@ export class UserStore {
       await this.authService.logout();
     } catch {}
     this.clear();
+  }
+
+  /**
+   * Método para obter um JWT válido do usuário logado
+   */
+  async getJwt() {
+    const currentTime = Date.now();
+
+    if (this.cachedJwt && currentTime - this.jwtExpirationTime() < 840000) {
+      return this.cachedJwt;
+    }
+
+    try {
+      const response = await this.authService.createJWT();
+      this.cachedJwt.set(response);
+      this.jwtExpirationTime.set(Date.now());
+
+      return this.cachedJwt;
+    } catch (error) {
+      console.error('Erro ao gerar JWT do Appwrite', error);
+      throw error;
+    }
   }
 
   /**

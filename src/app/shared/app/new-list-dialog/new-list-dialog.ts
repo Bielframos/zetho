@@ -5,7 +5,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { UserStore } from '../../../core/auth/user.store';
+import { AuthStore } from '../../../core/auth/auth.store';
 import { UiModal } from '../../ui/modal/modal';
 import { UiInput } from '../../ui/input/input';
 import { ListsController } from '../../../core/lists/lists.controller';
@@ -18,7 +18,7 @@ import { UiCheckbox } from '../../ui/checkbox';
   imports: [UiModal, UiInput, UiCheckbox, ReactiveFormsModule],
 })
 export class AppNewListDialog {
-  private userStore = inject(UserStore);
+  private authStore = inject(AuthStore);
   controller = inject(ListsController);
 
   form = new FormGroup({
@@ -32,7 +32,7 @@ export class AppNewListDialog {
 
   async handleSubmit({ close }: { close: () => void }) {
     await this.controller.createList({
-      ownerFingerprint: this.userStore.profile()?.fingerprint!,
+      ownerFingerprint: this.authStore.profile()?.fingerprint!,
       title: this.form.controls.listName.value,
       description: this.form.controls.listDescription.value,
       isPublic: this.form.controls.isPublic.value || undefined,

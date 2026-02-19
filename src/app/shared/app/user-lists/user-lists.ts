@@ -1,5 +1,5 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { UserStore } from '../../../core/auth/user.store';
+import { AuthStore } from '../../../core/auth/auth.store';
 import { ProfileStore } from '../../../core/userProfiles/profile.store';
 import { ZereiListRow } from '../../../types';
 import { UiListCard } from '../../ui/list-card';
@@ -13,7 +13,7 @@ import { ListsController } from '../../../core/lists/lists.controller';
   imports: [AppNewListDialog, UiListCard],
 })
 export class AppUserLists {
-  userStore = inject(UserStore);
+  authStore = inject(AuthStore);
   profileStore = inject(ProfileStore);
   controller = inject(ListsController);
   lists = input<ZereiListRow[]>([]);
@@ -22,7 +22,7 @@ export class AppUserLists {
   fromMe = input(false);
 
   ownerGamertag = computed(() => {
-    if (this.fromMe()) return this.userStore.profile()?.gamertag || '';
+    if (this.fromMe()) return this.authStore.profile()?.gamertag || '';
     else return this.profileStore.current()?.gamertag || '';
   });
 }

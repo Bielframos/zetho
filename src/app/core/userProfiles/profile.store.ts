@@ -1,12 +1,12 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { appwrite } from '../appwrite/appwrite.client';
-import { UserStore } from '../auth/user.store';
+import { AuthStore } from '../auth/auth.store';
 import { UserProfileRow } from '../../types';
 import { UserProfileService } from './userProfile.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileStore {
-  private userStore = inject(UserStore);
+  private authStore = inject(AuthStore);
   private profileService = inject(UserProfileService);
 
   private _loading = signal(false);
@@ -23,11 +23,11 @@ export class ProfileStore {
     }),
   );
   readonly itsMe = computed(
-    () => this.userStore.profile()?.$id === this._current()?.$id,
+    () => this.authStore.profile()?.$id === this._current()?.$id,
   );
 
   async update(gamertag: string) {
-    const myProfile = this.userStore.profile();
+    const myProfile = this.authStore.profile();
 
     if (myProfile!.gamertag === gamertag) {
       this._current.set(myProfile);

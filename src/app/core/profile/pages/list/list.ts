@@ -6,7 +6,7 @@ import { map } from 'rxjs';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { UiDraggableList } from './modules/draggable-list';
 import { AppListMenu } from './modules/list-menu';
-import { UserStore } from '../../../auth/user.store';
+import { AuthStore } from '../../../auth/auth.store';
 import { ProfileStore } from '../../../userProfiles/profile.store';
 import { ListController } from '../../../lists/list.controller';
 
@@ -17,13 +17,13 @@ import { ListController } from '../../../lists/list.controller';
   imports: [UiDraggableList, UiLoading, ReactiveFormsModule, AppListMenu],
 })
 export class ListPage {
-  private userStore = inject(UserStore);
+  private authStore = inject(AuthStore);
   private profileStore = inject(ProfileStore);
   private route = inject(ActivatedRoute);
   controller = inject(ListController);
 
   itsMe = computed(
-    () => this.userStore.profile()?.$id === this.profileStore.current()?.$id,
+    () => this.authStore.profile()?.$id === this.profileStore.current()?.$id,
   );
 
   slug = toSignal(

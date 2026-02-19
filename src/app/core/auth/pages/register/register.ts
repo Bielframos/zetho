@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
-import { UserStore } from '../../user.store';
+import { AuthStore } from '../../auth.store';
 import { UserProfileService } from '../../../userProfiles/userProfile.service';
 import {
   gamertagAsyncValidator,
@@ -27,7 +27,7 @@ import {
 })
 export class RegisterPage {
   private router = inject(Router);
-  private userStore = inject(UserStore);
+  private authStore = inject(AuthStore);
   private profileService = inject(UserProfileService);
 
   isSubmitting = signal(false);
@@ -83,7 +83,7 @@ export class RegisterPage {
 
     try {
       const { email, password, name, gamertag } = this.form.getRawValue();
-      await this.userStore.register(email, password, name, gamertag);
+      await this.authStore.register(email, password, name, gamertag);
       await this.router.navigate(['/']);
     } catch (e) {
       this.form.setErrors({ submitFailed: true });

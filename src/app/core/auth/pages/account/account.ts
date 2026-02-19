@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
 import { AuthService } from '../../auth.service';
 import { UserProfileService } from '../../../userProfiles/userProfile.service';
-import { UserStore } from '../../user.store';
+import { AuthStore } from '../../auth.store';
 import {
   changedValidator,
   gamertagAsyncValidator,
@@ -22,39 +22,39 @@ export class AccountPage {
   private router = inject(Router);
   private authService = inject(AuthService);
   private userProfileService = inject(UserProfileService);
-  userStore = inject(UserStore);
+  authStore = inject(AuthStore);
 
   private getNameValidators() {
     return [
       Validators.required,
       nameValidator,
-      changedValidator(this.userStore.user()?.name),
+      changedValidator(this.authStore.user()?.name),
     ];
   }
   private getGamertagValidators() {
     return [
       Validators.required,
       Validators.minLength(3),
-      changedValidator(this.userStore.profile()?.gamertag),
+      changedValidator(this.authStore.profile()?.gamertag),
       gamertagFormatValidator,
     ];
   }
 
-  name = new FormControl(this.userStore.user()?.name ?? '', {
+  name = new FormControl(this.authStore.user()?.name ?? '', {
     nonNullable: true,
     validators: this.getNameValidators(),
   });
-  gamertag = new FormControl(this.userStore.profile()?.gamertag ?? '', {
+  gamertag = new FormControl(this.authStore.profile()?.gamertag ?? '', {
     nonNullable: true,
     validators: this.getGamertagValidators(),
     asyncValidators: [gamertagAsyncValidator(this.userProfileService)],
     updateOn: 'blur',
   });
-  email = new FormControl(this.userStore.user()?.email ?? '', {
+  email = new FormControl(this.authStore.user()?.email ?? '', {
     nonNullable: true,
     validators: [
       Validators.required,
-      changedValidator(this.userStore.user()?.email),
+      changedValidator(this.authStore.user()?.email),
     ],
   });
 
@@ -73,7 +73,7 @@ export class AccountPage {
 
   async updateName() {
     try {
-      await this.userStore.updateName(this.name.value);
+      await this.authStore.updateName(this.name.value);
       this.name.setValidators(this.getNameValidators());
       this.name.updateValueAndValidity();
     } catch (e) {
@@ -84,7 +84,7 @@ export class AccountPage {
 
   async updateGamertag() {
     try {
-      await this.userStore.updateGamertag(this.gamertag.value);
+      await this.authStore.updateGamertag(this.gamertag.value);
       this.gamertag.setValidators(this.getGamertagValidators());
       this.gamertag.updateValueAndValidity();
     } catch (e) {
@@ -95,7 +95,7 @@ export class AccountPage {
 
   constructor() {
     effect(() => {
-      if (!this.userStore.isAuthenticated()) {
+      if (!this.authStore.isAuthenticated()) {
         this.router.navigate(['/']);
       }
     });

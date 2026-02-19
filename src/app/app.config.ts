@@ -1,11 +1,17 @@
-import { ApplicationConfig, inject, provideAppInitializer, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  inject,
+  provideAppInitializer,
+  provideBrowserGlobalErrorListeners,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import { getAnalytics, provideAnalytics } from '@angular/fire/analytics';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { provideRouter, withViewTransitions } from '@angular/router';
 
 import { environment } from '../environments/environment';
 import { routes } from './app.routes';
-import { UserStore } from './core/auth/user.store';
+import { AuthStore } from './core/auth/auth.store';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,8 +21,8 @@ export const appConfig: ApplicationConfig = {
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAnalytics(() => getAnalytics()),
     provideAppInitializer(async () => {
-      const userStore = inject(UserStore)
-      await userStore.init()
-    })
-  ]
+      const authStore = inject(AuthStore);
+      await authStore.init();
+    }),
+  ],
 };

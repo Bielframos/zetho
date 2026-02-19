@@ -1,12 +1,12 @@
 import { inject } from '@angular/core';
 import { CanMatchFn, Router } from '@angular/router';
-import { UserStore } from './user.store';
+import { AuthStore } from './auth.store';
 
 export const guestGuard: CanMatchFn = () => {
-  const userStore = inject(UserStore);
+  const authStore = inject(AuthStore);
   const router = inject(Router);
 
-  if (userStore.isAuthenticated()) {
+  if (authStore.isAuthenticated()) {
     return router.parseUrl('/dashboard');
   }
 
@@ -14,10 +14,10 @@ export const guestGuard: CanMatchFn = () => {
 };
 
 export const userGuard: CanMatchFn = () => {
-  const userStore = inject(UserStore);
+  const authStore = inject(AuthStore);
   const router = inject(Router);
 
-  if (!userStore.isAuthenticated()) {
+  if (!authStore.isAuthenticated()) {
     return router.parseUrl('/');
   }
 

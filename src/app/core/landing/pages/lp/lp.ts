@@ -1,6 +1,6 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { UserStore } from '../../../auth/user.store';
+import { AuthStore } from '../../../auth/auth.store';
 import { ZEntryService } from '../../../zEntries/zEntries.service';
 import { UserProfileService } from '../../../userProfiles/userProfile.service';
 import { ZStatsService } from '../../../zStats/zStats.service';
@@ -22,12 +22,12 @@ export class LandingPage {
 
   constructor(
     private router: Router,
-    private userStore: UserStore,
+    private authStore: AuthStore,
     private zEntryService: ZEntryService,
     private userProfileService: UserProfileService,
     private zStatsService: ZStatsService,
   ) {
-    if (this.userStore.isAuthenticated()) {
+    if (this.authStore.isAuthenticated()) {
       this.router.navigateByUrl('/dashboard');
     }
 
