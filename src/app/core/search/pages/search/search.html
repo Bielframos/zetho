@@ -1,23 +1,21 @@
 <main class="w-full mb-10 max-w-5xl mx-auto px-6 max-md:mt-6 mt-10 md:px-10">
   @if (!query()) {
-  <div
-    class="my-auto flex flex-col items-center justify-center text-center text-gray-11 px-4"
-  >
-    <i class="ph ph-magnifying-glass text-[56px] text-blue-9 mb-4"></i>
-    <h1 class="text-center text-4xl text-blue-9 max-w-xl font-bold">
-      Buscando um jogo?
-    </h1>
-    <p class="text-center max-w-md mt-2">
-      Comece digitando o nome do jogo que você deseja encontrar na barra de
-      busca acima.
-    </p>
-  </div>
+  <header class="my-auto flex justify-between mb-6">
+    <div class="">
+      <h1 class="text-3xl">Buscando um jogo?</h1>
 
-  <hr class="border-blue-6 w-full my-10" />
+      <p class="max-w-md mt-2 text-gray-11">
+        Comece digitando o nome do jogo que você deseja encontrar na barra de
+        busca acima.
+      </p>
+    </div>
 
-  <div class="mx-auto w-fit px-4 mb-6 py-1 rounded-full bg-blue-3 text-blue-10">
-    Jogos populares no Zetho!
-  </div>
+    <span
+      class="uppercase text-sm text-blue-12 bg-blue-2 px-2 py-1 rounded-lg border border-gray-6 w-fit h-fit self-end"
+    >
+      Jogos em alta
+    </span>
+  </header>
 
   <ul
     class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-2 md:gap-4"

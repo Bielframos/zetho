@@ -61,6 +61,11 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 - Atualização do e-mail do usuário
 - Exclusão da conta do usuário
 
+### Changed
+
+- Interface da Landing Page
+- Interface da página de buscas
+
 ### Contributors
 
 - Equipe Zetho
