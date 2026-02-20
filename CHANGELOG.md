@@ -42,7 +42,7 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 - Nova visualização da página idividual de uma lista
 
-## [1.0.2] - 2026-02-17
+## [1.0.2] - 2026-02-19
 
 ### Added
 
@@ -52,6 +52,12 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 ### Changed
 
 - Renomeia o `UserStore` para `AuthStore`
+
+## [1.1.0] - 2026-02-20
+
+### Added
+
+- Atualização da foto de perfil do usuário
 
 ### Contributors
 

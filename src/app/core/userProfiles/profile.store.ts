@@ -14,14 +14,20 @@ export class ProfileStore {
 
   readonly isLoading = computed(() => this._loading());
   readonly current = computed(() => this._current());
-  readonly avatarUrl = computed(() =>
-    appwrite.avatars.getInitials({
-      name: this.current()?.gamertag,
-      width: 64,
-      height: 64,
-      background: '3e63dd',
-    }),
-  );
+
+  readonly avatarUrl = computed(() => {
+    if (!this.current()?.avatarUrl) {
+      return appwrite.avatars.getInitials({
+        name: this.current()?.gamertag,
+        width: 64,
+        height: 64,
+        background: '3e63dd',
+      });
+    }
+
+    return this.current()?.avatarUrl!;
+  });
+
   readonly itsMe = computed(
     () => this.authStore.profile()?.$id === this._current()?.$id,
   );

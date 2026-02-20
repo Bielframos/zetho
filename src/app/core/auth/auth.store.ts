@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Models } from 'appwrite';
+import { AppwriteException, Models } from 'appwrite';
 import { AuthService } from './auth.service';
 import { appwrite } from '../appwrite/appwrite.client';
 import { UserProfileService } from '../userProfiles/userProfile.service';
@@ -21,14 +21,18 @@ export class AuthStore {
 
   readonly loading = computed(() => this.loadingSignal());
 
-  readonly avatarUrl = computed(() =>
-    appwrite.avatars.getInitials({
-      name: this.user()?.name,
-      width: 64,
-      height: 64,
-      background: '3e63dd',
-    }),
-  );
+  readonly avatarUrl = computed(() => {
+    if (!this.profile()?.avatarUrl) {
+      return appwrite.avatars.getInitials({
+        name: this.profile()?.gamertag,
+        width: 160,
+        height: 160,
+        background: '3e63dd',
+      });
+    }
+
+    return this.profile()?.avatarUrl!;
+  });
 
   constructor(private authService: AuthService) {}
 
@@ -171,6 +175,30 @@ export class AuthStore {
       this.profileSignal.set(updatedProfile);
     } catch (e) {
       throw e;
+    }
+  }
+
+  /**
+   * Método para atualizar a foto do perfil de um usuário
+   * @param file
+   */
+  async updateProfilePic(file: File) {
+    try {
+      const updatedProfile = await this.authService.updateProfilePic(
+        this.profile()!.$id,
+        file,
+      );
+
+      this.profileSignal.set(updatedProfile);
+    } catch (e) {
+      const error = e as AppwriteException;
+      console.error(e);
+
+      if (error.type === 'storage_invalid_file_size')
+        alert('A imagem excede o limite de 2mb.');
+      else if (error.type === 'storage_file_type_unsupported')
+        alert('O tipo de arquivo não é suportado.');
+      else alert('Ocorreu um erro ao atualizar a foto de perfil.');
     }
   }
 

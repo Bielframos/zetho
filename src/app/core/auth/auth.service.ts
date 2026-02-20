@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { appwrite } from '../appwrite/appwrite.client';
 import { UserProfileRow } from '../userProfiles/userProfile.types';
+import { UserProfileRepository } from '../userProfiles/userProfile.repository';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  constructor() {}
+  constructor(private userProfileRepo: UserProfileRepository) {}
 
   /**
    * Método de registro para novos usuários
@@ -138,5 +139,44 @@ export class AuthService {
    */
   async recoveryPass(userId: string, secret: string, password: string) {
     await appwrite.account.updateRecovery({ userId, secret, password });
+  }
+
+  /**
+   * Atualiza a foto de perfil de um usuário
+   * @param profileId
+   * @param file
+   * @returns
+   */
+  async updateProfilePic(profileId: string, file: File) {
+    const currentPic = await appwrite.storage
+      .getFile({
+        bucketId: 'profile-pics',
+        fileId: profileId,
+      })
+      .catch(() => null);
+
+    if (currentPic) {
+      await appwrite.storage.deleteFile({
+        bucketId: 'profile-pics',
+        fileId: profileId,
+      });
+    }
+
+    const uploadedFile = await appwrite.storage.createFile({
+      bucketId: 'profile-pics',
+      fileId: profileId,
+      file,
+    });
+
+    const avatarUrl = appwrite.storage.getFileView({
+      bucketId: 'profile-pics',
+      fileId: uploadedFile.$id,
+    });
+
+    const updatedProfile = await this.userProfileRepo.update(profileId, {
+      avatarUrl: `${avatarUrl}&t=${Date.now()}`,
+    });
+
+    return updatedProfile;
   }
 }
