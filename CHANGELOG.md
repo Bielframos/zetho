@@ -57,8 +57,9 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ### Added
 
-- Implementa gerenciamento da foto de perfil
-- Implementa atualização do email do usuário
+- Gerenciamento da foto do perfil
+- Atualização do e-mail do usuário
+- Exclusão da conta do usuário
 
 ### Contributors
 

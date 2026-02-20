@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { appwrite } from '../appwrite/appwrite.client';
 import { UserProfileRow } from '../userProfiles/userProfile.types';
-import { UserProfileRepository } from '../userProfiles/userProfile.repository';
+import { UserProfileService } from '../userProfiles/userProfile.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  constructor(private userProfileRepo: UserProfileRepository) {}
+  constructor(private userProfService: UserProfileService) {}
 
   /**
    * Método de registro para novos usuários
@@ -59,6 +59,15 @@ export class AuthService {
       console.error('Error registering user:', error);
       throw error;
     }
+  }
+
+  async deleteAccount(profileId: string) {
+    await this.userProfService.updateProfile(profileId, {
+      status: 'pending_deletion',
+      deletedAt: new Date(Date.now()).toISOString(),
+    });
+
+    await appwrite.account.updateStatus();
   }
 
   /**
@@ -180,7 +189,7 @@ export class AuthService {
       fileId: uploadedFile.$id,
     });
 
-    const updatedProfile = await this.userProfileRepo.update(profileId, {
+    const updatedProfile = await this.userProfService.updateProfile(profileId, {
       avatarUrl: `${avatarUrl}&t=${Date.now()}`,
     });
 

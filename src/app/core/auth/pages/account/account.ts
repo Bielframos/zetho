@@ -1,4 +1,11 @@
-import { Component, effect, inject, signal, viewChild } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
@@ -34,7 +41,31 @@ export class AccountPage {
   authStore: AuthStore = inject(AuthStore);
 
   /** Estado da exibição da caixa de dialogo de verificação de identidade */
+  dialogType = signal<'email' | 'profileDeletion'>('email');
+
+  dialogState = computed(() => {
+    if (this.dialogType() === 'email')
+      return {
+        title: 'Verificação de identidade',
+        actionLabel: 'Alterar e-mail',
+        destructive: false,
+        action: (event: any) => this.changeEmail(event),
+      };
+    else
+      return {
+        title: 'Realmente deseja excluir sua conta?',
+        actionLabel: 'Excluir minha conta',
+        destructive: true,
+        action: (event: any) => this.deleteProfile(event),
+      };
+  });
+
   dialogIsOpen = signal(false);
+
+  openDialog(type: 'email' | 'profileDeletion') {
+    this.dialogIsOpen.set(true);
+    this.dialogType.set(type);
+  }
 
   /** Retorna validadores para o campo `name`. Inclui verificação de mudança. */
   private getNameValidators() {
@@ -175,6 +206,19 @@ export class AccountPage {
     } catch (e) {
       console.error(e);
       alert('Ocorreu um erro ao atualizar o seu e-mail.');
+    }
+  }
+
+  /**
+   * Exclue a conta de um usuário
+   */
+  async deleteProfile(event: any) {
+    try {
+      await this.authStore.delete();
+      event.close();
+    } catch (e) {
+      console.error(e);
+      alert('Ocorreu um erro ao excluir sua conta.');
     }
   }
 

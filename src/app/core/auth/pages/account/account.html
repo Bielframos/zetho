@@ -9,32 +9,30 @@
     </header>
 
     @if (!authStore.user()?.emailVerification) {
-    <div class="bg-blue-2 overflow-hidden rounded-lg mt-6">
-      <div class="w-full h-1 bg-amber-400"></div>
-
-      <div class="p-4 flex flex-col">
-        <h4 class="font-medium text-lg mb-2 w-full">E-mail não verificado</h4>
-        <span class="text-gray-11"
-          >Para manter sua conta ativa, verifique seu e-mail.</span
+    <div
+      class="bg-blue-2 overflow-hidden rounded-b-2xl mt-6 p-4 flex flex-col border-t-4 border-amber-400"
+    >
+      <h4 class="font-medium text-lg mb-2 w-full">E-mail não verificado</h4>
+      <span class="text-gray-11"
+        >Para manter sua conta ativa, verifique seu e-mail.</span
+      >
+      <div class="flex items-end justify-between gap-4">
+        @if (mailVerification().sended) {
+        <small class="text-red text-green-300"
+          >Confira sua caixa de e-mail.</small
         >
-        <div class="flex items-end justify-between gap-4">
-          @if (mailVerification().sended) {
-          <small class="text-red text-green-300"
-            >Confira sua caixa de e-mail.</small
-          >
-          } @else if (mailVerification().error) {
-          <small class="text-red text-red-300"
-            >Erro ao enviar e-mail de verificação.</small
-          >
-          }
+        } @else if (mailVerification().error) {
+        <small class="text-red text-red-300"
+          >Erro ao enviar e-mail de verificação.</small
+        >
+        }
 
-          <button
-            class="ui-primary-btn whitespace-nowrap max-md:w-full mt-4 ml-auto"
-            (click)="requestMailVerification()"
-          >
-            Verificar e-mail
-          </button>
-        </div>
+        <button
+          class="ui-primary-btn whitespace-nowrap max-md:w-full mt-4 ml-auto"
+          (click)="requestMailVerification()"
+        >
+          Verificar e-mail
+        </button>
       </div>
     </div>
     }
@@ -161,29 +159,11 @@
       }
     </div>
 
-    <ui-modal
-      [(isOpen)]="dialogIsOpen"
-      title="Confirme sua identidade"
-      actionLabel="Alterar e-mail"
-      (submit)="changeEmail($event)"
-    >
-      <div class="mt-2 mb-4">
-        <ui-input
-          type="password"
-          label="Senha"
-          name="'password"
-          [formControl]="password"
-          placeholder="Informe sua senha"
-          required
-        ></ui-input>
-      </div>
-    </ui-modal>
-
     <button
       type="submit"
       class="ui-primary-btn w-fit ml-auto"
       [disabled]="email.errors?.['notChanged']"
-      (click)="dialogIsOpen.set(true)"
+      (click)="openDialog('email')"
     >
       Alterar e-mail
     </button>
@@ -195,22 +175,85 @@
     <h2 class="text-3xl">Zona de risco</h2>
   </header>
 
-  <div class="bg-blue-2 overflow-hidden rounded-lg mt-6">
-    <div class="w-full h-1 bg-red-400"></div>
+  <div
+    class="bg-blue-2 overflow-hidden rounded-b-2xl mt-6 p-4 flex flex-col border-t-4 border-red-400"
+  >
+    <h4 class="font-medium text-lg mb-2 w-full">Excluir minha conta</h4>
+    <span class="text-gray-11">
+      Ao excluir sua conta todos os seus dados e registros serão perdidos.
+    </span>
 
-    <div class="p-4 flex flex-col">
-      <h4 class="font-medium text-lg mb-2 w-full">Excluir minha conta</h4>
-      <span class="text-gray-11">
-        Ao excluir sua conta todos os seus dados e registros serão perdidos.
-      </span>
-
-      <div class="flex items-end justify-between gap-4">
-        <button
-          class="ui-secondary-btn whitespace-nowrap max-md:w-full mt-4 ml-auto"
-        >
-          Excluir minha conta
-        </button>
-      </div>
+    <div class="flex items-end justify-between gap-4">
+      <button
+        class="ui-destructive-btn whitespace-nowrap max-md:w-full mt-4 ml-auto"
+        (click)="openDialog('profileDeletion')"
+      >
+        Excluir minha conta
+      </button>
     </div>
   </div>
 </main>
+
+<!-- Caixa de dialógo primária da página -->
+<ui-modal
+  [(isOpen)]="dialogIsOpen"
+  [title]="dialogState().title"
+  [actionLabel]="dialogState().actionLabel"
+  [destructive]="dialogState().destructive"
+  (submit)="dialogState().action($event)"
+>
+  <div class="mt-2 mb-4">
+    @if (dialogType() === 'email') {
+    <ui-input
+      type="password"
+      label="Senha"
+      name="'password"
+      [formControl]="password"
+      placeholder="Informe sua senha"
+      required
+    ></ui-input>
+    } @else {
+    <div
+      class="bg-blue-2 overflow-hidden rounded-b-lg mt-6 p-4 border-t-4 border-amber-400"
+    >
+      <p>
+        Sua conta será <strong>permanentemente excluída</strong>. todos os seus
+        dados e conquistas no Zetho serão perdidos sem possibilidade de
+        recuperação.
+      </p>
+    </div>
+
+    <div class="mt-4">
+      <p class="font-medium text-gray-11 mb-2 uppercase text-xs tracking-wider">
+        Seus registros atuais:
+      </p>
+      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <li class="flex items-center gap-2 p-2 rounded-lg bg-blue-2">
+          <span class="font-bold text-blue-9"
+            >{{ authStore.profile()?.totalsCompleted }}</span
+          >
+          <span>Jogos zerados</span>
+        </li>
+        <li class="flex items-center gap-2 p-2 rounded-lg bg-blue-2">
+          <span class="font-bold text-purple-400"
+            >{{ authStore.profile()?.totalsPlaying }}</span
+          >
+          <span>Jogando</span>
+        </li>
+        <li class="flex items-center gap-2 p-2 rounded-lg bg-blue-2">
+          <span class="font-bold text-green-400"
+            >{{ authStore.profile()?.totalsBacklog }}</span
+          >
+          <span>Na backlog</span>
+        </li>
+        <li class="flex items-center gap-2 p-2 rounded-lg bg-blue-2">
+          <span class="font-bold text-red-400"
+            >{{ authStore.profile()?.totalsDropped }}</span
+          >
+          <span>Abandonados</span>
+        </li>
+      </ul>
+    </div>
+    }
+  </div>
+</ui-modal>

@@ -36,6 +36,13 @@ export class AuthStore {
 
   constructor(private authService: AuthService) {}
 
+  /**
+   * Método para registro de novos usuários
+   * @param email
+   * @param password
+   * @param name
+   * @param gamertag
+   */
   async register(
     email: string,
     password: string,
@@ -54,6 +61,18 @@ export class AuthStore {
       this.profileSignal.set(profile);
     } catch (e: any) {
       alert(e.message);
+    }
+  }
+
+  /**
+   * Método para exclusão de uma conta
+   */
+  async delete() {
+    try {
+      await this.authService.deleteAccount(this.profile()!.$id);
+      this.clear();
+    } catch (e) {
+      throw e;
     }
   }
 
@@ -143,9 +162,9 @@ export class AuthStore {
       this.jwtExpirationTime.set(Date.now());
 
       return this.cachedJwt;
-    } catch (error) {
-      console.error('Erro ao gerar JWT do Appwrite', error);
-      throw error;
+    } catch (e) {
+      console.error('Erro ao gerar JWT do Appwrite', e);
+      throw e;
     }
   }
 
