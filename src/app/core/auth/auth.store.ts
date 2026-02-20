@@ -179,6 +179,20 @@ export class AuthStore {
   }
 
   /**
+   * Método para atualização do e-mail de um usuário
+   * @param newEmail
+   * @param password
+   */
+  async updateEmail(newEmail: string, password: string) {
+    try {
+      await this.authService.updateEmail(newEmail, password);
+      this.refresh();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  /**
    * Método para atualizar a foto do perfil de um usuário
    * @param file
    */

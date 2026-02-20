@@ -103,6 +103,13 @@ export class AuthService {
   }
 
   /**
+   * Método para atualizar o e-mail do usuário
+   */
+  async updateEmail(newEmail: string, password: string) {
+    return await appwrite.account.updateEmail({ email: newEmail, password });
+  }
+
+  /**
    * Método para gerar uma verificação de e-mail
    */
   async createEmailVerification() {

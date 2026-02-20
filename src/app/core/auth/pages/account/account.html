@@ -84,6 +84,7 @@
       [formControl]="name"
       required
     />
+
     @if (name.errors?.['invalidName']) {
     <small class="text-red px-4 text-red-300 -mt-2">O nome é inválido</small>
     }
@@ -126,6 +127,7 @@
       >
       }
     </div>
+
     <div class="flex gap-2 justify-end flex-wrap">
       <button class="ui-secondary-btn">Validar gamertag</button>
       <button
@@ -142,18 +144,46 @@
   <hr class="w-full border-gray-6 my-10" />
 
   <div class="flex flex-col gap-2.5 w-full">
-    <ui-input
-      type="email"
-      label="E-mail"
-      placeholder="bielframos@zetho.com"
-      name="email"
-      [formControl]="email"
-      required
-    />
+    <div>
+      <ui-input
+        type="email"
+        label="E-mail"
+        placeholder="bielframos@zetho.com"
+        name="email"
+        [formControl]="email"
+        [disabled]="!authStore.user()?.emailVerification"
+        required
+      />
+      @if (!authStore.user()?.emailVerification) {
+      <small class="text-red px-4 text-gray-11">
+        Para trocar o seu e-mail, é necessário verificá-lo antes.
+      </small>
+      }
+    </div>
+
+    <ui-modal
+      [(isOpen)]="dialogIsOpen"
+      title="Confirme sua identidade"
+      actionLabel="Alterar e-mail"
+      (submit)="changeEmail($event)"
+    >
+      <div class="mt-2 mb-4">
+        <ui-input
+          type="password"
+          label="Senha"
+          name="'password"
+          [formControl]="password"
+          placeholder="Informe sua senha"
+          required
+        ></ui-input>
+      </div>
+    </ui-modal>
+
     <button
       type="submit"
       class="ui-primary-btn w-fit ml-auto"
       [disabled]="email.errors?.['notChanged']"
+      (click)="dialogIsOpen.set(true)"
     >
       Alterar e-mail
     </button>
@@ -173,17 +203,8 @@
       <span class="text-gray-11">
         Ao excluir sua conta todos os seus dados e registros serão perdidos.
       </span>
-      <div class="flex items-end justify-between gap-4">
-        @if (mailVerification().sended) {
-        <small class="text-red text-green-300"
-          >Confira sua caixa de e-mail.</small
-        >
-        } @else if (mailVerification().error) {
-        <small class="text-red text-red-300"
-          >Erro ao enviar e-mail de verificação.</small
-        >
-        }
 
+      <div class="flex items-end justify-between gap-4">
         <button
           class="ui-secondary-btn whitespace-nowrap max-md:w-full mt-4 ml-auto"
         >

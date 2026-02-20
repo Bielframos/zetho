@@ -11,11 +11,12 @@ import {
   gamertagFormatValidator,
   nameValidator,
 } from '../../../../utils/validators';
+import { UiModal } from '../../../../shared/ui/modal/modal';
 
 @Component({
   selector: 'app-account',
   standalone: true,
-  imports: [UiInput, ReactiveFormsModule],
+  imports: [UiInput, ReactiveFormsModule, UiModal],
   templateUrl: './account.html',
 })
 export class AccountPage {
@@ -31,6 +32,9 @@ export class AccountPage {
 
   /** Estado centralizado de autenticação e perfil do usuário */
   authStore: AuthStore = inject(AuthStore);
+
+  /** Estado da exibição da caixa de dialogo de verificação de identidade */
+  dialogIsOpen = signal(false);
 
   /** Retorna validadores para o campo `name`. Inclui verificação de mudança. */
   private getNameValidators() {
@@ -111,6 +115,12 @@ export class AccountPage {
     ],
   });
 
+  /** Controle do modal de confirmação de identidade do usuário. */
+  password = new FormControl<string>('', {
+    nonNullable: true,
+    validators: [Validators.required],
+  });
+
   // Estado reativo da página para rastrear envio de verificação de email
   mailVerification = signal<{ sended?: boolean; error?: boolean }>({});
 
@@ -152,6 +162,19 @@ export class AccountPage {
     } catch (e) {
       console.error(e);
       alert('Ocorreu um erro ao atualizar a sua gamertag.');
+    }
+  }
+
+  /**
+   * Altera o e-mail de um usuário
+   */
+  async changeEmail(event: any) {
+    try {
+      await this.authStore.updateEmail(this.email.value, this.password.value);
+      event.close();
+    } catch (e) {
+      console.error(e);
+      alert('Ocorreu um erro ao atualizar o seu e-mail.');
     }
   }
 
