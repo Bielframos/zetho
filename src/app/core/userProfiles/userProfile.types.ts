@@ -13,6 +13,10 @@ type UserProfile = {
   totalsPlaying: number;
   totalsWishlist: number;
   fingerprint: string;
+  socialXbox?: string;
+  socialSteam?: string;
+  socialPsn?: string;
+  socialNintendo?: string;
 };
 
 type UserProfileRow = StoredRow<UserProfile>;

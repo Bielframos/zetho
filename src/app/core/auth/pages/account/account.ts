@@ -9,16 +9,18 @@ import {
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
-import { AuthService } from '../../auth.service';
-import { UserProfileService } from '../../../userProfiles/userProfile.service';
-import { AuthStore } from '../../auth.store';
+import { UiModal } from '../../../../shared/ui/modal/modal';
 import {
   changedValidator,
   gamertagAsyncValidator,
   gamertagFormatValidator,
   nameValidator,
 } from '../../../../utils/validators';
-import { UiModal } from '../../../../shared/ui/modal/modal';
+import { UserProfileService } from '../../../userProfiles/userProfile.service';
+import { AuthService } from '../../auth.service';
+import { AuthStore } from '../../auth.store';
+
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-account',
@@ -137,6 +139,24 @@ export class AccountPage {
     updateOn: 'blur',
   });
 
+  /** Controle do formulário da bio de um usuário */
+  bio = new FormControl(this.authStore.profile()?.bio ?? '', {
+    nonNullable: true,
+    validators: [
+      Validators.minLength(3),
+      Validators.maxLength(350),
+      changedValidator(this.authStore.profile()?.bio || ''),
+    ],
+  });
+
+  private bioValue = toSignal(this.bio.valueChanges, {
+    initialValue: '',
+  });
+
+  readonly bioCharsCount = computed(() => {
+    return this.bioValue().length;
+  });
+
   /** Controle do formulário do e-mail do usuário. */
   email = new FormControl<string>(this.authStore.user()?.email ?? '', {
     nonNullable: true,
@@ -193,6 +213,20 @@ export class AccountPage {
     } catch (e) {
       console.error(e);
       alert('Ocorreu um erro ao atualizar a sua gamertag.');
+    }
+  }
+
+  /**
+   * Atualiza a bio do usuário
+   */
+  async updateBio() {
+    try {
+      await this.authStore.updateProfile({ bio: this.bio.value });
+      this.bio.setValidators(this.bio.validator);
+      this.bio.updateValueAndValidity();
+    } catch (e) {
+      console.error(e);
+      alert('Ocorreu um erro ao atualizar a sua bio.');
     }
   }
 

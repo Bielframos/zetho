@@ -235,6 +235,26 @@ export class AuthStore {
     }
   }
 
+  /** Método genérico para atualização de informações adicionais do perfil */
+  async updateProfile(profile: {
+    bio?: string;
+    socialXbox?: string;
+    socialSteam?: string;
+    socialPsn?: string;
+    socialNintendo?: string;
+  }) {
+    try {
+      const updatedProfile = await this.userProfileService.updateProfile(
+        this.profile()!.$id,
+        { ...profile },
+      );
+
+      this.profileSignal.set(updatedProfile);
+    } catch (e) {
+      throw e;
+    }
+  }
+
   /**
    * Método para limpar o estado de autenticação
    */

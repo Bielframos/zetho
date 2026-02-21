@@ -60,6 +60,8 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 - Gerenciamento da foto do perfil
 - Atualização do e-mail do usuário
 - Exclusão da conta do usuário
+- Página `/404` e tratativa para perfis e jogos não econtrados
+- Bio no perfil do usuário
 
 ### Changed
 

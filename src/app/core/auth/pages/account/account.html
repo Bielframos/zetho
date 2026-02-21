@@ -141,6 +141,44 @@
 
   <hr class="w-full border-gray-6 my-10" />
 
+  <div>
+    <label [for]="bio" class="text-sm text-gray-12 px-4 text-start">Bio </label>
+
+    <textarea
+      name="bio"
+      id="bio"
+      placeholder="Diga algo sobre você…"
+      class="mt-1.5 rounded-lg px-4 w-full py-2 font-light border-gray-6 bg-blue-2 placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11 min-h-[64px] max-h-[160px]"
+      [formControl]="bio"
+      maxlength="128"
+      required
+    ></textarea>
+
+    <div class="mt-2 flex justify-between">
+      <div>
+        <small
+          class="transition-colors"
+          [class.text-green-300]="bioCharsCount() > 0 && bioCharsCount() < 128"
+          [class.text-red-300]="bioCharsCount() > 350"
+        >
+          <span>{{ bioCharsCount() }}</span>
+          /128
+        </small>
+      </div>
+
+      <button
+        type="submit"
+        class="ui-primary-btn w-fit ml-auto"
+        [disabled]="bio.errors?.['notChanged']"
+        (click)="updateBio()"
+      >
+        Alterar bio
+      </button>
+    </div>
+  </div>
+
+  <hr class="w-full border-gray-6 my-10" />
+
   <div class="flex flex-col gap-2.5 w-full">
     <div>
       <ui-input
