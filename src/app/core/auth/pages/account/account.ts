@@ -6,7 +6,12 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
 import { UiModal } from '../../../../shared/ui/modal/modal';
@@ -157,6 +162,19 @@ export class AccountPage {
     return this.bioValue().length;
   });
 
+  /** Controle do perfil social */
+  social = new FormGroup({
+    steam: new FormControl(this.authStore.profile()?.socialSteam ?? '', {
+      nonNullable: true,
+    }),
+    xbox: new FormControl(this.authStore.profile()?.socialXbox ?? '', {
+      nonNullable: true,
+    }),
+    psn: new FormControl(this.authStore.profile()?.socialPsn ?? '', {
+      nonNullable: true,
+    }),
+  });
+
   /** Controle do formulário do e-mail do usuário. */
   email = new FormControl<string>(this.authStore.user()?.email ?? '', {
     nonNullable: true,
@@ -227,6 +245,22 @@ export class AccountPage {
     } catch (e) {
       console.error(e);
       alert('Ocorreu um erro ao atualizar a sua bio.');
+    }
+  }
+
+  /**
+   * Atualiza o perfil social
+   */
+  async updateSocial() {
+    try {
+      await this.authStore.updateProfile({
+        socialSteam: this.social.controls.steam.value,
+        socialXbox: this.social.controls.xbox.value,
+        socialPsn: this.social.controls.psn.value,
+      });
+    } catch (e) {
+      console.error(e);
+      alert('Ocorreu um erro ao atualizar o seu perfil social.');
     }
   }
 

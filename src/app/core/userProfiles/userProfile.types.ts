@@ -16,7 +16,6 @@ type UserProfile = {
   socialXbox?: string;
   socialSteam?: string;
   socialPsn?: string;
-  socialNintendo?: string;
 };
 
 type UserProfileRow = StoredRow<UserProfile>;
