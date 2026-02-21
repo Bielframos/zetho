@@ -8,6 +8,17 @@
   <li class="flex flex-col">
     <ui-game-card [game]="entry.game"></ui-game-card>
   </li>
+  } @empty {
+  <li
+    class="p-10 flex flex-col items-center justify-center text-center border-2 border-gray-6 border-dashed rounded-2xl col-span-10 aspect-square"
+  >
+    <i class="ph ph-game-controller text-[32px] mb-2"></i>
+    <h1 class="text-center text-2xl max-w-xl">Sem registros</h1>
+    <p class="text-center max-w-md mt-2 mb-6 text-gray-11">
+      Que tal adicionar o primeiro jogo aqui?
+    </p>
+    <a class="ui-primary-btn" routerLink="/buscar"> Buscar um jogo </a>
+  </li>
   }
 </ul>
 @if (controller.hasMore()) {

@@ -22,12 +22,16 @@
       />
       <h3 class="text-xl text-center">{{profile?.gamertag}}</h3>
 
-      <p class="text-center text-gray-11">{{profile?.bio}}</p>
-
+      @if (profile?.bio; as bio) {
+      <p class="text-center text-gray-11">{{bio}}</p>
+      } @if (hasSocialNicks) {
       <div class="flex flex-wrap gap-2 justify-center mt-2">
         <!-- Perfil da Steam -->
         @if(profileStore.current()?.socialSteam) {
-        <div class="flex gap-2 items-center">
+        <button
+          class="flex gap-2 items-center hover:bg-blue-3 rounded-lg px-2 py-0.5 cursor-pointer border border-gray-6"
+          (click)="copySocial('socialSteam')"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="20"
@@ -42,12 +46,15 @@
           </svg>
 
           <span>{{profileStore.current()?.socialSteam}}</span>
-        </div>
+        </button>
         }
 
         <!-- Perfil do Xbox -->
         @if(profileStore.current()?.socialXbox) {
-        <div class="flex gap-2 items-center">
+        <button
+          class="flex gap-2 items-center hover:bg-blue-3 rounded-lg px-2 py-0.5 cursor-pointer border border-gray-6"
+          (click)="copySocial('socialXbox')"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="20"
@@ -62,12 +69,15 @@
           </svg>
 
           <span>{{profileStore.current()?.socialXbox}}</span>
-        </div>
+        </button>
         }
 
         <!-- Perfil do Playstation -->
         @if(profileStore.current()?.socialPsn) {
-        <div class="flex gap-2 items-center">
+        <button
+          class="flex gap-2 items-center hover:bg-blue-3 rounded-lg px-2 py-0.5 cursor-pointer border border-gray-6"
+          (click)="copySocial('socialPsn')"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="20"
@@ -82,9 +92,10 @@
           </svg>
 
           <span>{{profileStore.current()?.socialPsn}}</span>
-        </div>
+        </button>
         }
       </div>
+      }
     </header>
 
     <ul class="flex md:flex-col p-2 space-y-1 overflow-x-auto">

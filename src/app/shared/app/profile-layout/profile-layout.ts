@@ -1,10 +1,12 @@
+import { NgComponentOutlet } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { ProfileStore } from '../../../core/userProfiles/profile.store';
-import { ProfileLayoutStore } from './profile-layout.store';
-import { NgComponentOutlet } from '@angular/common';
 import { ZEntriesController } from '../../../core/zEntries/zEntries.controller';
+import { ProfileLayoutStore } from './profile-layout.store';
+import { NotificationStore } from '../../../core/notifications/notification.store';
+import { UserProfileRow } from '../../../types';
 
 @Component({
   selector: 'app-profile-layout',
@@ -14,6 +16,7 @@ import { ZEntriesController } from '../../../core/zEntries/zEntries.controller';
 })
 export class AppProfileLayout {
   private meta = inject(Meta);
+  private notification = inject(NotificationStore);
 
   profileStore = inject(ProfileStore);
   layoutStore = inject(ProfileLayoutStore);
@@ -34,6 +37,24 @@ export class AppProfileLayout {
 
   get profile() {
     return this.profileStore.current();
+  }
+
+  get hasSocialNicks() {
+    return (
+      this.profile?.socialSteam ||
+      this.profile?.socialXbox ||
+      this.profile?.socialPsn
+    );
+  }
+
+  async copySocial(key: string) {
+    try {
+      const valorParaCopiar = this.profile?.[key as keyof UserProfileRow] ?? '';
+      await navigator.clipboard.writeText(String(valorParaCopiar));
+      this.notification.show({ message: 'Copiado!', type: 'success' });
+    } catch (e) {
+      this.notification.show({ message: 'Erro ao copiar', type: 'error' });
+    }
   }
 
   constructor() {

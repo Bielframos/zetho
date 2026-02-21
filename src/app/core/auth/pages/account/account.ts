@@ -214,10 +214,7 @@ export class AccountPage {
       await this.authStore.updateName(this.name.value);
       this.name.setValidators(this.getNameValidators());
       this.name.updateValueAndValidity();
-    } catch (e) {
-      console.error(e);
-      alert('Ocorreu um erro ao atualizar o seu nome.');
-    }
+    } catch {}
   }
 
   /**
@@ -228,10 +225,7 @@ export class AccountPage {
       await this.authStore.updateGamertag(this.gamertag.value);
       this.gamertag.setValidators(this.getGamertagValidators());
       this.gamertag.updateValueAndValidity();
-    } catch (e) {
-      console.error(e);
-      alert('Ocorreu um erro ao atualizar a sua gamertag.');
-    }
+    } catch (e) {}
   }
 
   /**
@@ -242,10 +236,7 @@ export class AccountPage {
       await this.authStore.updateProfile({ bio: this.bio.value });
       this.bio.setValidators(this.bio.validator);
       this.bio.updateValueAndValidity();
-    } catch (e) {
-      console.error(e);
-      alert('Ocorreu um erro ao atualizar a sua bio.');
-    }
+    } catch (e) {}
   }
 
   /**

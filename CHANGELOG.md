@@ -62,6 +62,9 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 - Exclusão da conta do usuário
 - Página `/404` e tratativa para perfis e jogos não econtrados
 - Bio no perfil do usuário
+- Perfil social do usuário (Xbox, Steam e Psn)
+- Estado vazio no perfil do usuário
+- Componente toaster para exibir notificações
 
 ### Changed
 

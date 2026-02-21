@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { appwrite } from '../appwrite/appwrite.client';
 import { UserProfileService } from '../userProfiles/userProfile.service';
 import { UserProfileRow } from '../../types';
+import { NotificationStore } from '../notifications/notification.store';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore {
@@ -34,7 +35,10 @@ export class AuthStore {
     return this.profile()?.avatarUrl!;
   });
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private notification: NotificationStore,
+  ) {}
 
   /**
    * Método para registro de novos usuários
@@ -176,7 +180,17 @@ export class AuthStore {
     try {
       const updatedUser = await appwrite.account.updateName({ name: newName });
       this.userSignal.set(updatedUser);
+
+      this.notification.show({
+        message: 'Nome atualizado.',
+        type: 'success',
+      });
     } catch (e) {
+      console.error(e);
+      this.notification.show({
+        message: 'Ocorreu um erro ao atualizar o seu nome.',
+        type: 'error',
+      });
       throw e;
     }
   }
@@ -191,8 +205,19 @@ export class AuthStore {
         this.profile()!.$id,
         { gamertag: newGamertag },
       );
+
       this.profileSignal.set(updatedProfile);
+
+      this.notification.show({
+        message: 'Gamertag atualizada.',
+        type: 'success',
+      });
     } catch (e) {
+      console.error(e);
+      this.notification.show({
+        message: 'Ocorreu um erro ao atualizar a sua gamertag.',
+        type: 'error',
+      });
       throw e;
     }
   }
@@ -223,15 +248,30 @@ export class AuthStore {
       );
 
       this.profileSignal.set(updatedProfile);
+
+      this.notification.show({
+        message: 'Foto de perfil atualizada.',
+        type: 'success',
+      });
     } catch (e) {
       const error = e as AppwriteException;
       console.error(e);
 
       if (error.type === 'storage_invalid_file_size')
-        alert('A imagem excede o limite de 2mb.');
+        this.notification.show({
+          message: 'A imagem excede o limite de 2mb.',
+          type: 'error',
+        });
       else if (error.type === 'storage_file_type_unsupported')
-        alert('O tipo de arquivo não é suportado.');
-      else alert('Ocorreu um erro ao atualizar a foto de perfil.');
+        this.notification.show({
+          message: 'O tipo de arquivo não é suportado.',
+          type: 'error',
+        });
+      else
+        this.notification.show({
+          message: 'Ocorreu um erro ao atualizar a foto de perfil.',
+          type: 'error',
+        });
     }
   }
 
@@ -250,7 +290,19 @@ export class AuthStore {
       );
 
       this.profileSignal.set(updatedProfile);
+
+      this.notification.show({
+        message: 'Informações atualizadas.',
+        type: 'success',
+      });
     } catch (e) {
+      console.error(e);
+
+      this.notification.show({
+        message: 'Ocorreu um erro ao atualizar o seu perfil.',
+        type: 'error',
+      });
+
       throw e;
     }
   }
