@@ -24,7 +24,7 @@
           <img
             [src]="authStore.avatarUrl()"
             alt="{{`Avatar do ${authStore.user()?.name}`}}"
-            class="h-[34px] w-[34px]"
+            class="h-[34px] w-[34px] object-cover"
           />
         </a>
         } @else {
@@ -67,3 +67,6 @@
     >
   </footer>
 </div>
+
+<!-- Toaster global -->
+<app-toaster></app-toaster>

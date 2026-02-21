@@ -1,9 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ShortNumberPipe } from '../../../../utils/pipes';
 import { AppUserLists } from '../../../../shared/app/user-lists/user-lists';
+import { ShortNumberPipe } from '../../../../utils/pipes';
 import { AuthStore } from '../../../auth/auth.store';
-import { ProfileStore } from '../../../userProfiles/profile.store';
 import { ListsController } from '../../../lists/lists.controller';
 import { DASHBOARD_ENTRIES } from '../../dashboard.utils';
 
@@ -15,7 +14,6 @@ import { DASHBOARD_ENTRIES } from '../../dashboard.utils';
 })
 export class DashboardPage {
   authStore = inject(AuthStore);
-  profileStore = inject(ProfileStore);
   controller = inject(ListsController);
 
   get profile() {

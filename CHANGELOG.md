@@ -42,7 +42,7 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 - Nova visualização da página idividual de uma lista
 
-## [1.0.2] - 2026-02-17
+## [1.0.2] - 2026-02-19
 
 ### Added
 
@@ -52,6 +52,24 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 ### Changed
 
 - Renomeia o `UserStore` para `AuthStore`
+
+## [1.1.0] - 2026-02-20
+
+### Added
+
+- Gerenciamento da foto do perfil
+- Atualização do e-mail do usuário
+- Exclusão da conta do usuário
+- Página `/404` e tratativa para perfis e jogos não econtrados
+- Bio no perfil do usuário
+- Perfil social do usuário (Xbox, Steam e Psn)
+- Estado vazio no perfil do usuário
+- Componente toaster para exibir notificações
+
+### Changed
+
+- Interface da Landing Page
+- Interface da página de buscas
 
 ### Contributors
 

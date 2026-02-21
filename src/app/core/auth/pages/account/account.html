@@ -1,164 +1,382 @@
-<main
-  class="md:grid grid-cols-[384px_1fr] gap-10 mx-auto w-full max-w-4xl px-6 py-10 lg:pt-24"
->
+<main class="mx-auto max-w-2xl mb-10">
   <div>
-    <header>
+    <header class="flex gap-4 justify-between items-end mb-6">
       <h1 class="text-3xl">Olá, {{authStore.user()?.name}}</h1>
-      <p class="text-gray-11 font-light mt-2">
-        Gerencie seu perfil e as informações da sua conta no Zetho.
-      </p>
+
+      <button (click)="authStore.logout()" class="ui-secondary-btn mt-4">
+        <i class="ph ph-sign-out"></i> Sair
+      </button>
     </header>
 
     @if (!authStore.user()?.emailVerification) {
-    <div class="bg-blue-2 overflow-hidden border border-gray-6 rounded-lg mt-6">
-      <div class="w-full h-1 bg-amber-400"></div>
-
-      <div class="p-4">
-        <h4 class="font-medium text-lg mb-2 w-full">E-mail não verificado</h4>
-        <span class="text-gray-11"
-          >Para manter sua conta ativa, verifique seu e-mail.</span
-        >
-        <div class="flex items-end justify-between gap-4">
-          @if (mailVerification().sended) {
-          <small class="text-red text-green-300"
-            >Confira sua caixa de e-mail.</small
-          >
-          } @else if (mailVerification().error) {
-          <small class="text-red text-red-300"
-            >Erro ao enviar e-mail de verificação.</small
-          >
-          }
-
-          <button
-            class="ui-primary-btn whitespace-nowrap max-md:w-full mt-4"
-            (click)="requestMailVerification()"
-          >
-            Verificar e-mail
-          </button>
-        </div>
-      </div>
-    </div>
-    }
-
-    <button (click)="authStore.logout()" class="ui-secondary-btn w-full mt-4">
-      <i class="ph ph-sign-out"></i> Sair
-    </button>
-  </div>
-
-  <hr class="w-full border-gray-6 my-10 md:hidden" />
-
-  <div>
-    <div class="flex flex-col gap-2.5 w-full">
-      <ui-input
-        type="text"
-        label="Nome"
-        placeholder="Gabriel França"
-        name="name"
-        [formControl]="name"
-        required
-      />
-      @if (name.errors?.['invalidName']) {
-      <small class="text-red px-4 text-red-300 -mt-2">O nome é inválido</small>
-      }
-      <button
-        type="submit"
-        class="ui-primary-btn w-fit ml-auto"
-        [disabled]="name.errors?.['notChanged']"
-        (click)="updateName()"
+    <div
+      class="bg-blue-2 overflow-hidden rounded-b-2xl mt-6 p-4 flex flex-col border-t-4 border-amber-400"
+    >
+      <h4 class="font-medium text-lg mb-2 w-full">E-mail não verificado</h4>
+      <span class="text-gray-11"
+        >Para manter sua conta ativa, verifique seu e-mail.</span
       >
-        Editar nome
-      </button>
-    </div>
-
-    <hr class="w-full border-blue-6 my-10" />
-
-    <div class="flex flex-col gap-2.5 w-full">
-      <div class="relative">
-        <ui-input
-          label="Gamertag"
-          type="text"
-          placeholder="Bielframos"
-          name="gamertag"
-          [formControl]="gamertag"
-          required
-        />
-
-        <div class="absolute right-2 bottom-1">
-          @if(gamertag.pending) {
-          <i class="ph ph-spinner animate-spin text-md text-gray-6"></i>
-          } @else if(gamertag.errors?.['gamertagTaken'] && gamertag.dirty) {
-          <i class="ph ph-x-circle text-md text-red-600"></i>
-          } @else if(gamertag.valid && gamertag.dirty) {
-          <i class="ph ph-check-circle text-md text-green-600"></i>
-          }
-        </div>
-
-        @if (gamertag.errors?.['invalidGamertagFormat']) {
-        <small class="text-red px-4 text-red-300"
-          >Use apenas letras, números e _</small
+      <div class="flex items-end justify-between gap-4">
+        @if (mailVerification().sended) {
+        <small class="text-red text-green-300"
+          >Confira sua caixa de e-mail.</small
+        >
+        } @else if (mailVerification().error) {
+        <small class="text-red text-red-300"
+          >Erro ao enviar e-mail de verificação.</small
         >
         }
-      </div>
-      <div class="flex gap-2 justify-end flex-wrap">
-        <button class="ui-secondary-btn">Validar gamertag</button>
+
         <button
-          type="submit"
-          class="ui-primary-btn w-fit"
-          [disabled]="gamertag.errors?.['notChanged']"
-          (click)="updateGamertag()"
+          class="ui-primary-btn whitespace-nowrap max-md:w-full mt-4 ml-auto"
+          (click)="requestMailVerification()"
         >
-          Editar gamertag
+          Verificar e-mail
         </button>
       </div>
     </div>
+    }
+  </div>
 
-    <hr class="w-full border-blue-6 my-10" />
+  <div class="flex items-center flex-col pt-6">
+    <button
+      class="group relative cursor-pointer w-40 h-40 rounded-full border border-gray-6 overflow-hidden"
+      (click)="profilePicInput.click()"
+    >
+      @if (profilePicUrl(); as profilePicUrl) {
+      <img [src]="profilePicUrl" alt="" class="object-cover w-full h-full" />
+      }
 
-    <div class="flex flex-col gap-2.5 w-full">
+      <div
+        class="absolute inset-0 bg-blue-2/50 hidden group-hover:flex items-center justify-center"
+      >
+        <i class="ph ph-upload-simple text-white text-3xl"></i>
+      </div>
+    </button>
+
+    <label class="text-xs text-gray-11 mt-2">Foto de perfil</label>
+
+    <button
+      class="ui-secondary-btn mt-4"
+      [disabled]="!profilePicFile()"
+      (click)="saveProfilePic()"
+    >
+      Salvar foto
+    </button>
+
+    <input
+      #profilePicInput
+      type="file"
+      class="hidden"
+      (change)="onSelectProfilePic($event)"
+      accept="image/*"
+    />
+  </div>
+
+  <div class="flex flex-col gap-2.5 w-full mt-4 rounded-2xl">
+    <ui-input
+      type="text"
+      label="Nome"
+      placeholder="Gabriel França"
+      name="name"
+      [formControl]="name"
+      required
+    />
+
+    @if (name.errors?.['invalidName']) {
+    <small class="text-red px-4 text-red-300 -mt-2">O nome é inválido</small>
+    }
+    <button
+      type="submit"
+      class="ui-primary-btn w-fit ml-auto"
+      [disabled]="name.errors?.['notChanged']"
+      (click)="updateName()"
+    >
+      Alterar nome
+    </button>
+  </div>
+
+  <hr class="w-full border-gray-6 my-10" />
+
+  <div class="flex flex-col gap-2.5 w-full">
+    <div class="relative">
+      <ui-input
+        label="Gamertag"
+        type="text"
+        placeholder="Bielframos"
+        name="gamertag"
+        [formControl]="gamertag"
+        required
+      />
+
+      <div class="absolute right-2 bottom-1">
+        @if(gamertag.pending) {
+        <i class="ph ph-spinner animate-spin text-md text-gray-6"></i>
+        } @else if(gamertag.errors?.['gamertagTaken'] && gamertag.dirty) {
+        <i class="ph ph-x-circle text-md text-red-600"></i>
+        } @else if(gamertag.valid && gamertag.dirty) {
+        <i class="ph ph-check-circle text-md text-green-600"></i>
+        }
+      </div>
+
+      @if (gamertag.errors?.['invalidGamertagFormat']) {
+      <small class="text-red px-4 text-red-300"
+        >Use apenas letras, números e _</small
+      >
+      }
+    </div>
+
+    <div class="flex gap-2 justify-end flex-wrap">
+      <button class="ui-secondary-btn">Validar gamertag</button>
+      <button
+        type="submit"
+        class="ui-primary-btn w-fit"
+        [disabled]="gamertag.errors?.['notChanged']"
+        (click)="updateGamertag()"
+      >
+        Alterar gamertag
+      </button>
+    </div>
+  </div>
+
+  <hr class="w-full border-gray-6 my-10" />
+
+  <div>
+    <label [for]="bio" class="text-sm text-gray-12 px-4 text-start">Bio</label>
+
+    <textarea
+      name="bio"
+      id="bio"
+      placeholder="Diga algo sobre você…"
+      class="mt-1.5 rounded-lg px-4 w-full py-2 font-light border-gray-6 bg-blue-2 placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11 min-h-[64px] max-h-[160px]"
+      [formControl]="bio"
+      maxlength="128"
+      required
+    ></textarea>
+
+    <div class="mt-2 flex justify-between">
+      <div>
+        <small
+          class="transition-colors"
+          [class.text-green-300]="bioCharsCount() > 0 && bioCharsCount() < 128"
+          [class.text-red-300]="bioCharsCount() > 350"
+        >
+          <span>{{ bioCharsCount() }}</span>
+          /128
+        </small>
+      </div>
+
+      <button
+        type="submit"
+        class="ui-primary-btn w-fit ml-auto"
+        [disabled]="bio.errors?.['notChanged']"
+        (click)="updateBio()"
+      >
+        Alterar bio
+      </button>
+    </div>
+  </div>
+
+  <hr class="w-full border-gray-6 my-10" />
+
+  <form
+    [formGroup]="social"
+    class="flex flex-col gap-2 text-gray-11"
+    (submit)="updateSocial()"
+  >
+    <h4 class="text-sm text-gray-12 text-start">Social</h4>
+    <!-- Perfil da Steam -->
+    <div class="flex gap-2 items-center">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="20"
+        width="20"
+        viewBox="0 0 512 512"
+        fill="currentColor"
+      >
+        <!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+        <path
+          d="M504 256c0 137-111.2 248-248.4 248-113.8 0-209.6-76.3-239-180.4l95.2 39.3c6.4 32.1 34.9 56.4 68.9 56.4 39.2 0 71.9-32.4 70.2-73.5l84.5-60.2c52.1 1.3 95.8-40.9 95.8-93.5 0-51.6-42-93.5-93.7-93.5s-93.7 42-93.7 93.5l0 1.2-59.2 85.7c-15.5-.9-30.7 3.4-43.5 12.1L8 236.1C18.2 108.4 125.1 8 255.6 8 392.8 8 504 119 504 256zM163.7 384.3l-30.5-12.6c5.6 11.6 15.3 20.8 27.2 25.8 26.9 11.2 57.8-1.6 69-28.4 5.4-13 5.5-27.3 .1-40.3S214 305.6 201 300.2c-12.9-5.4-26.7-5.2-38.9-.6l31.5 13c19.8 8.2 29.2 30.9 20.9 50.7-8.3 19.9-31 29.2-50.8 21zM337.5 129.8a62.3 62.3 0 1 1 0 124.6 62.3 62.3 0 1 1 0-124.6zm.1 109a46.8 46.8 0 1 0 0-93.6 46.8 46.8 0 1 0 0 93.6z"
+        />
+      </svg>
+
+      <ui-input
+        type="text"
+        name="steam"
+        formControlName="steam"
+        placeholder="Seu perfil Steam"
+        class="flex-1"
+      />
+    </div>
+
+    <!-- Perfil do Xbox -->
+    <div class="flex gap-2 items-center">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="20"
+        width="20"
+        viewBox="0 0 512 512"
+        fill="currentColor"
+      >
+        <!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+        <path
+          d="M369.9 318.2c44.3 54.3 64.7 98.8 54.4 118.7-7.9 15.1-56.7 44.6-92.6 55.9-29.6 9.3-68.4 13.3-100.4 10.2-38.2-3.7-76.9-17.4-110.1-39-27.9-18.2-34.2-25.7-34.2-40.6 0-29.9 32.9-82.3 89.2-142.1 32-33.9 76.5-73.7 81.4-72.6 9.4 2.1 84.3 75.1 112.3 109.5zM188.6 143.8c-29.7-26.9-58.1-53.9-86.4-63.4-15.2-5.1-16.3-4.8-28.7 8.1-29.2 30.4-53.5 79.7-60.3 122.4-5.4 34.2-6.1 43.8-4.2 60.5 5.6 50.5 17.3 85.4 40.5 120.9 9.5 14.6 12.1 17.3 9.3 9.9-4.2-11-.3-37.5 9.5-64 14.3-39 53.9-112.9 120.3-194.4zm311.6 63.5c-16.9-80-67.5-130.3-74.6-130.3-7.3 0-24.2 6.5-36 13.9-23.3 14.5-41 31.4-64.3 52.8 42.4 53.3 102.2 139.4 122.9 202.3 6.8 20.7 9.7 41.1 7.4 52.3-1.7 8.5-1.7 8.5 1.4 4.6 6.1-7.7 19.9-31.3 25.4-43.5 7.4-16.2 15-40.2 18.6-58.7 4.3-22.5 3.9-70.8-.8-93.4zM141.3 43c47.7-2.5 109.7 34.5 114.3 35.4 .7 .1 10.4-4.2 21.6-9.7 63.9-31.1 94-25.8 107.4-25.2-63.9-39.3-152.7-50-233.9-11.7-23.4 11.1-24 11.9-9.4 11.2z"
+        />
+      </svg>
+
+      <ui-input
+        type="text"
+        name="xbox"
+        formControlName="xbox"
+        placeholder="Seu perfil Xbox"
+        class="flex-1"
+      />
+    </div>
+
+    <!-- Perfil do Playstation -->
+    <div class="flex gap-2 items-center">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="20"
+        width="20"
+        viewBox="0 0 576 512"
+        fill="currentColor"
+      >
+        <!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+        <path
+          d="M571 372.3c-11.3 14.2-38.8 24.3-38.8 24.3l-205.1 73.6 0-54.3 150.9-53.8c17.1-6.1 19.8-14.8 5.8-19.4-13.9-4.6-39.1-3.3-56.2 2.9l-100.5 35.5 0-56.4c23.2-7.8 47.1-13.6 75.7-16.8 40.9-4.5 90.9 .6 130.2 15.5 44.2 14 49.2 34.7 38 48.9zM346.6 279.8l0-139c0-16.3-3-31.3-18.3-35.6-11.7-3.8-19 7.1-19 23.4l0 347.9-93.8-29.8 0-414.7c39.9 7.4 98 24.9 129.2 35.4 79.5 27.3 106.4 61.3 106.4 137.8 0 74.5-46 102.8-104.5 74.6zM43.3 410.2c-45.4-12.8-53-39.5-32.3-54.8 19.1-14.2 51.7-24.9 51.7-24.9l134.5-47.8 0 54.5-96.8 34.6c-17.1 6.1-19.7 14.8-5.8 19.4s39.1 3.3 56.2-2.9l46.4-16.9 0 48.8c-51.6 9.3-101.4 7.3-153.9-10z"
+        />
+      </svg>
+
+      <ui-input
+        type="text"
+        name="psn"
+        formControlName="psn"
+        placeholder="Seu perfil Playstation"
+        class="flex-1"
+      />
+    </div>
+
+    <button type="submit" class="ui-secondary-btn w-fit ml-auto">
+      Salvar perfil social
+    </button>
+  </form>
+
+  <hr class="w-full border-gray-6 my-10" />
+
+  <div class="flex flex-col gap-2.5 w-full">
+    <div>
       <ui-input
         type="email"
         label="E-mail"
         placeholder="bielframos@zetho.com"
         name="email"
         [formControl]="email"
+        [disabled]="!authStore.user()?.emailVerification"
         required
-        [disabled]="true"
       />
-      <button
-        type="submit"
-        class="ui-primary-btn w-fit ml-auto"
-        [disabled]="email.errors?.['notChanged']"
-      >
-        Alterar e-mail
-      </button>
+      @if (!authStore.user()?.emailVerification) {
+      <small class="text-red px-4 text-gray-11">
+        Para trocar o seu e-mail, é necessário verificá-lo antes.
+      </small>
+      }
     </div>
+
+    <button
+      type="submit"
+      class="ui-primary-btn w-fit ml-auto"
+      [disabled]="email.errors?.['notChanged']"
+      (click)="openDialog('email')"
+    >
+      Alterar e-mail
+    </button>
   </div>
 
-  <hr class="w-full border-gray-6 my-10 col-span-2" />
+  <hr class="w-full border-gray-6 my-10" />
 
-  <header class="mb-10">
-    <h1 class="text-3xl">Zona de risco</h1>
-    <p class="text-gray-11 font-light mt-2">
-      Ações tomadas aqui podem não ser reversíveis.
-    </p>
+  <header class="mb-6">
+    <h2 class="text-3xl">Zona de risco</h2>
   </header>
 
-  <div>
-    <div class="flex flex-col gap-4">
-      <div>
-        <h4 class="text-lg font-medium">Excluir minha conta</h4>
-        <span class="text-gray-11"
-          >Ao excluir sua conta todos os seus dados e registros serão
-          perdidos.</span
-        >
-      </div>
+  <div
+    class="bg-blue-2 overflow-hidden rounded-b-2xl mt-6 p-4 flex flex-col border-t-4 border-red-400"
+  >
+    <h4 class="font-medium text-lg mb-2 w-full">Excluir minha conta</h4>
+    <span class="text-gray-11">
+      Ao excluir sua conta todos os seus dados e registros serão perdidos.
+    </span>
+
+    <div class="flex items-end justify-between gap-4">
       <button
-        type="submit"
-        class="ui-destructive-btn border border-transparent disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-10 disabled:pointer-events-none"
-        disabled
+        class="ui-destructive-btn whitespace-nowrap max-md:w-full mt-4 ml-auto"
+        (click)="openDialog('profileDeletion')"
       >
         Excluir minha conta
       </button>
     </div>
   </div>
 </main>
+
+<!-- Caixa de dialógo primária da página -->
+<ui-modal
+  [(isOpen)]="dialogIsOpen"
+  [title]="dialogState().title"
+  [actionLabel]="dialogState().actionLabel"
+  [destructive]="dialogState().destructive"
+  (submit)="dialogState().action($event)"
+>
+  <div class="mt-2 mb-4">
+    @if (dialogType() === 'email') {
+    <ui-input
+      type="password"
+      label="Senha"
+      name="'password"
+      [formControl]="password"
+      placeholder="Informe sua senha"
+      required
+    ></ui-input>
+    } @else {
+    <div
+      class="bg-blue-2 overflow-hidden rounded-b-lg mt-6 p-4 border-t-4 border-amber-400"
+    >
+      <p>
+        Sua conta será <strong>permanentemente excluída</strong>. todos os seus
+        dados e conquistas no Zetho serão perdidos sem possibilidade de
+        recuperação.
+      </p>
+    </div>
+
+    <div class="mt-4">
+      <p class="font-medium text-gray-11 mb-2 uppercase text-xs tracking-wider">
+        Seus registros atuais:
+      </p>
+      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <li class="flex items-center gap-2 p-2 rounded-lg bg-blue-2">
+          <span class="font-bold text-blue-9"
+            >{{ authStore.profile()?.totalsCompleted }}</span
+          >
+          <span>Jogos zerados</span>
+        </li>
+        <li class="flex items-center gap-2 p-2 rounded-lg bg-blue-2">
+          <span class="font-bold text-purple-400"
+            >{{ authStore.profile()?.totalsPlaying }}</span
+          >
+          <span>Jogando</span>
+        </li>
+        <li class="flex items-center gap-2 p-2 rounded-lg bg-blue-2">
+          <span class="font-bold text-green-400"
+            >{{ authStore.profile()?.totalsBacklog }}</span
+          >
+          <span>Na backlog</span>
+        </li>
+        <li class="flex items-center gap-2 p-2 rounded-lg bg-blue-2">
+          <span class="font-bold text-red-400"
+            >{{ authStore.profile()?.totalsDropped }}</span
+          >
+          <span>Abandonados</span>
+        </li>
+      </ul>
+    </div>
+    }
+  </div>
+</ui-modal>

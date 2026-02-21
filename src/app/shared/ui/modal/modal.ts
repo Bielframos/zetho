@@ -4,6 +4,7 @@ import {
   effect,
   ElementRef,
   input,
+  inputBinding,
   model,
   output,
   viewChild,
@@ -38,7 +39,11 @@ import { ModalTriggerDirective } from './modal-trigger.directive';
           Cancelar
         </button>
 
-        <button class="ui-primary-btn" (click)="handleSubmit()">
+        <button
+          [class.ui-primary-btn]="!destructive()"
+          [class.ui-destructive-btn]="destructive()"
+          (click)="handleSubmit()"
+        >
           @if (loading()) {
             <i class="ph ph-spinner animate-spin"></i>
           } @else {
@@ -63,6 +68,7 @@ export class UiModal {
   description = input('');
   submit = output<{ close: () => void }>();
   loading = input(false);
+  destructive = input(false);
 
   private modal = viewChild<ElementRef<HTMLDialogElement>>('modal');
   private trigger = contentChild(ModalTriggerDirective);
@@ -79,7 +85,7 @@ export class UiModal {
 
   closeModal() {
     this.modal()?.nativeElement.close();
-    this.isOpen.set(false)
+    this.isOpen.set(false);
   }
 
   handleSubmit() {
@@ -94,8 +100,8 @@ export class UiModal {
 
   constructor() {
     effect(() => {
-      if (this.isOpen()) this.showModal()
-      else this.closeModal()
-    })
+      if (this.isOpen()) this.showModal();
+      else this.closeModal();
+    });
   }
 }

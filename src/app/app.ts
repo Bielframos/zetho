@@ -2,10 +2,11 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AuthStore } from './core/auth/auth.store';
 import { AppSearchInput } from './shared/app/search-input/search-input';
+import { ToasterComponent } from './core/notifications/toaster.component';
 
 @Component({
   selector: 'app-root',
-  imports: [AppSearchInput, RouterLink, RouterOutlet],
+  imports: [AppSearchInput, RouterLink, RouterOutlet, ToasterComponent],
   templateUrl: './app.html',
 })
 export class App {

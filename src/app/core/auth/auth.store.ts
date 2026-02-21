@@ -1,9 +1,10 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Models } from 'appwrite';
+import { AppwriteException, Models } from 'appwrite';
 import { AuthService } from './auth.service';
 import { appwrite } from '../appwrite/appwrite.client';
 import { UserProfileService } from '../userProfiles/userProfile.service';
 import { UserProfileRow } from '../../types';
+import { NotificationStore } from '../notifications/notification.store';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore {
@@ -21,17 +22,31 @@ export class AuthStore {
 
   readonly loading = computed(() => this.loadingSignal());
 
-  readonly avatarUrl = computed(() =>
-    appwrite.avatars.getInitials({
-      name: this.user()?.name,
-      width: 64,
-      height: 64,
-      background: '3e63dd',
-    }),
-  );
+  readonly avatarUrl = computed(() => {
+    if (!this.profile()?.avatarUrl) {
+      return appwrite.avatars.getInitials({
+        name: this.profile()?.gamertag,
+        width: 160,
+        height: 160,
+        background: '3e63dd',
+      });
+    }
 
-  constructor(private authService: AuthService) {}
+    return this.profile()?.avatarUrl!;
+  });
 
+  constructor(
+    private authService: AuthService,
+    private notification: NotificationStore,
+  ) {}
+
+  /**
+   * Método para registro de novos usuários
+   * @param email
+   * @param password
+   * @param name
+   * @param gamertag
+   */
   async register(
     email: string,
     password: string,
@@ -50,6 +65,18 @@ export class AuthStore {
       this.profileSignal.set(profile);
     } catch (e: any) {
       alert(e.message);
+    }
+  }
+
+  /**
+   * Método para exclusão de uma conta
+   */
+  async delete() {
+    try {
+      await this.authService.deleteAccount(this.profile()!.$id);
+      this.clear();
+    } catch (e) {
+      throw e;
     }
   }
 
@@ -139,9 +166,9 @@ export class AuthStore {
       this.jwtExpirationTime.set(Date.now());
 
       return this.cachedJwt;
-    } catch (error) {
-      console.error('Erro ao gerar JWT do Appwrite', error);
-      throw error;
+    } catch (e) {
+      console.error('Erro ao gerar JWT do Appwrite', e);
+      throw e;
     }
   }
 
@@ -153,7 +180,17 @@ export class AuthStore {
     try {
       const updatedUser = await appwrite.account.updateName({ name: newName });
       this.userSignal.set(updatedUser);
+
+      this.notification.show({
+        message: 'Nome atualizado.',
+        type: 'success',
+      });
     } catch (e) {
+      console.error(e);
+      this.notification.show({
+        message: 'Ocorreu um erro ao atualizar o seu nome.',
+        type: 'error',
+      });
       throw e;
     }
   }
@@ -168,8 +205,104 @@ export class AuthStore {
         this.profile()!.$id,
         { gamertag: newGamertag },
       );
+
       this.profileSignal.set(updatedProfile);
+
+      this.notification.show({
+        message: 'Gamertag atualizada.',
+        type: 'success',
+      });
     } catch (e) {
+      console.error(e);
+      this.notification.show({
+        message: 'Ocorreu um erro ao atualizar a sua gamertag.',
+        type: 'error',
+      });
+      throw e;
+    }
+  }
+
+  /**
+   * Método para atualização do e-mail de um usuário
+   * @param newEmail
+   * @param password
+   */
+  async updateEmail(newEmail: string, password: string) {
+    try {
+      await this.authService.updateEmail(newEmail, password);
+      this.refresh();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  /**
+   * Método para atualizar a foto do perfil de um usuário
+   * @param file
+   */
+  async updateProfilePic(file: File) {
+    try {
+      const updatedProfile = await this.authService.updateProfilePic(
+        this.profile()!.$id,
+        file,
+      );
+
+      this.profileSignal.set(updatedProfile);
+
+      this.notification.show({
+        message: 'Foto de perfil atualizada.',
+        type: 'success',
+      });
+    } catch (e) {
+      const error = e as AppwriteException;
+      console.error(e);
+
+      if (error.type === 'storage_invalid_file_size')
+        this.notification.show({
+          message: 'A imagem excede o limite de 2mb.',
+          type: 'error',
+        });
+      else if (error.type === 'storage_file_type_unsupported')
+        this.notification.show({
+          message: 'O tipo de arquivo não é suportado.',
+          type: 'error',
+        });
+      else
+        this.notification.show({
+          message: 'Ocorreu um erro ao atualizar a foto de perfil.',
+          type: 'error',
+        });
+    }
+  }
+
+  /** Método genérico para atualização de informações adicionais do perfil */
+  async updateProfile(profile: {
+    bio?: string;
+    socialXbox?: string;
+    socialSteam?: string;
+    socialPsn?: string;
+    socialNintendo?: string;
+  }) {
+    try {
+      const updatedProfile = await this.userProfileService.updateProfile(
+        this.profile()!.$id,
+        { ...profile },
+      );
+
+      this.profileSignal.set(updatedProfile);
+
+      this.notification.show({
+        message: 'Informações atualizadas.',
+        type: 'success',
+      });
+    } catch (e) {
+      console.error(e);
+
+      this.notification.show({
+        message: 'Ocorreu um erro ao atualizar o seu perfil.',
+        type: 'error',
+      });
+
       throw e;
     }
   }
