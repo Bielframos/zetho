@@ -1,11 +1,14 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { AuthStore } from '../auth/auth.store';
 import { GameRow, ZEntryRow } from '../../types';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { GameService } from './games.service';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class GameController {
+  private router = inject(Router);
+
   game = signal<GameRow | null>(null);
   similarGames = signal<GameRow[] | null>(null);
   zEntry = signal<ZEntryRow | null>(null);
@@ -40,6 +43,10 @@ export class GameController {
       this.zEntry.set(data.zEntry);
       this.similarGames.set(data.similarGames);
     } catch (e) {
+      if (e instanceof Error && e.message === 'game_not_found') {
+        this.router.navigate(['/404']);
+      }
+
       this.errors.update((state) => ({ ...state, page: e }));
     } finally {
       this.loading.set(false);

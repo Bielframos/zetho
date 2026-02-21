@@ -21,7 +21,11 @@ export class UserProfileRepository {
     const response = await appwrite.databases.listRows<UserProfileRow>({
       databaseId: DATABASE_ID,
       tableId: TABLE_ID,
-      queries: [Query.equal('gamertag', gamertag), Query.limit(1)],
+      queries: [
+        Query.equal('gamertag', gamertag),
+        Query.or([Query.equal('status', 'active'), Query.isNull('status')]),
+        Query.limit(1),
+      ],
     });
 
     return response.total === 0 ? null : response.rows[0];

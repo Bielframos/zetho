@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { distinctUntilChanged, filter, map } from 'rxjs';
+import { combineLatest, distinctUntilChanged, filter, map } from 'rxjs';
 import { GameRepository } from '../games/games.repository';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { ProfileStore } from '../userProfiles/profile.store';
@@ -26,25 +26,32 @@ export class ZEntriesController {
     private profileStore: ProfileStore,
     private route: ActivatedRoute,
   ) {
-    const profile$ = toObservable(profileStore.current);
+    const profile$ = toObservable(profileStore.current).pipe(
+      filter((profile) => profile !== null && profile !== undefined),
+    );
 
-    profile$
-      .pipe(filter((profile) => profile !== null && profile !== undefined))
-      .subscribe(() => {
-        this.resetState();
-        this.loadEntries();
-      });
+    const status$ = this.route.queryParams.pipe(
+      map((params) => params['t'] ?? 'completed'),
+      distinctUntilChanged(),
+    );
 
-    this.route.queryParams
+    combineLatest([profile$, status$])
       .pipe(
-        map((params) => params['t']),
-        distinctUntilChanged(),
-      )
-      .subscribe((t) => {
-        if (t === this.status()) return;
-        const status = t ?? 'completed';
+        distinctUntilChanged(
+          ([prevProfile, prevStatus], [nextProfile, nextStatus]) => {
+            const sameProfile =
+              (prevProfile as any).$id === (nextProfile as any).$id;
 
-        this.status.set(status);
+            const sameStatus = prevStatus === nextStatus;
+            return sameProfile && sameStatus;
+          },
+        ),
+      )
+      .subscribe(([_profile, statusParam]) => {
+        if (statusParam !== this.status()) {
+          this.status.set(statusParam);
+        }
+
         this.resetState();
         this.loadEntries();
       });

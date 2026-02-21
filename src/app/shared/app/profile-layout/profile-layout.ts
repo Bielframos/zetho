@@ -14,6 +14,7 @@ import { ZEntriesController } from '../../../core/zEntries/zEntries.controller';
 })
 export class AppProfileLayout {
   private meta = inject(Meta);
+
   profileStore = inject(ProfileStore);
   layoutStore = inject(ProfileLayoutStore);
   controller = inject(ZEntriesController);

@@ -97,7 +97,7 @@ export class GameService {
 
     const game = await this.getGame(slug);
 
-    if (!game) throw Error('GAME_NOT_FOUND');
+    if (!game) throw Error('game_not_found');
 
     result.game = {
       ...game,
