@@ -86,13 +86,13 @@ import { ZereiListRow } from '../../../../lists/lists.type';
             <span class="p-4">Você ainda não tem nenhuma lista.</span>
           }
 
-          @if (listController.hasMore()) {
+          @if (listController.hasMore() && profile; as currentProfile) {
             <footer class="w-full flex justify-center">
               <button
                 class="ui-primary-btn"
                 (click)="
                   listController.loadLists({
-                    ownerFingerprint: this.profile.fingerprint,
+                    ownerFingerprint: currentProfile.fingerprint,
                     loadMore: true,
                   })
                 "
@@ -115,13 +115,16 @@ export class UiGameActions {
   isLiking = signal(false);
 
   constructor() {
+    const profile = this.profile;
+    if (!profile) return;
+
     void this.listController.loadLists({
-      ownerFingerprint: this.profile.fingerprint,
+      ownerFingerprint: profile.fingerprint,
     });
   }
 
   get profile() {
-    return this.authStore.profile()!;
+    return this.authStore.profile();
   }
 
   selectedList = signal<ZereiListRow | undefined>(undefined);
@@ -138,6 +141,8 @@ export class UiGameActions {
   }
 
   async handleLike() {
+    if (!this.authStore.isAuthenticated()) return;
+
     this.isLiking.set(true);
 
     try {

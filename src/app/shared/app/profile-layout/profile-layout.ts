@@ -1,12 +1,12 @@
 import { NgComponentOutlet } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
-import { Meta } from '@angular/platform-browser';
+import { Component, computed, effect, inject, OnDestroy } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { ProfileStore } from '../../../core/userProfiles/profile.store';
 import { ZEntriesController } from '../../../core/zEntries/zEntries.controller';
 import { ProfileLayoutStore } from './profile-layout.store';
 import { NotificationStore } from '../../../core/notifications/notification.store';
 import { UserProfileRow } from '../../../types';
+import { SeoService } from '../../../core/seo/seo.service';
 
 @Component({
   selector: 'app-profile-layout',
@@ -15,7 +15,7 @@ import { UserProfileRow } from '../../../types';
   templateUrl: './profile-layout.html',
 })
 export class AppProfileLayout {
-  private meta = inject(Meta);
+  private seo = inject(SeoService);
   private notification = inject(NotificationStore);
 
   profileStore = inject(ProfileStore);
@@ -58,11 +58,40 @@ export class AppProfileLayout {
   }
 
   constructor() {
-    this.meta.addTags([
-      {
-        name: 'og:title',
-        content: `Veja o perfil de ${this.profile?.gamertag} no Zetho`,
-      },
-    ]);
+    effect(() => {
+      const profile = this.profileStore.current();
+      if (!profile) return;
+
+      const gamertag = profile.gamertag;
+      const canonical = `/player/${encodeURIComponent(gamertag)}`;
+      const description =
+        profile.bio?.trim() ||
+        `Veja o perfil gamer de ${gamertag}, jogos zerados e listas no Zetho.`;
+
+      this.seo.apply({
+        title: `${gamertag} — Perfil gamer | Zetho`,
+        description,
+        canonical,
+        robots: 'index,follow',
+        ogType: 'profile',
+        ogImage: profile.avatarUrl,
+      });
+
+      this.seo.setJsonLd('profile-page', {
+        '@context': 'https://schema.org',
+        '@type': 'ProfilePage',
+        name: `Perfil de ${gamertag} no Zetho`,
+        mainEntity: {
+          '@type': 'Person',
+          name: gamertag,
+          description,
+          image: profile.avatarUrl,
+        },
+      });
+    });
+  }
+
+  ngOnDestroy() {
+    this.seo.clearJsonLd('profile-page');
   }
 }

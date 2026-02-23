@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /dashboard
+Disallow: /minha-conta
+
+Sitemap: https://api.zetho.app/sitemap.xml

@@ -1,7 +1,9 @@
 <main
   class="relative min-h-dvh w-full max-w-5xl mx-auto px-4 md:px-10 py-4 md:py-10"
 >
+  @if (authStore.isAuthenticated()) {
   <ui-game-actions [game]="controller.game()"></ui-game-actions>
+  }
   <ui-game-header [game]="controller.game()"></ui-game-header>
   <!-- <ui-game-rating [game]="controller.game()"></ui-game-rating> -->
 
@@ -12,15 +14,16 @@
       <ui-z-entry-actions></ui-z-entry-actions>
       } @else {
       <div
-        class="w-full flex mt-4 flex-col items-center rounded-2xl bg-blue-2 p-6 text-center animate-fade-in-slide"
+        class="w-full flex flex-col items-center rounded-2xl bg-blue-2 p-6 text-center animate-fade-in-slide max-md:mb-4"
       >
         <i class="ph ph-game-controller text-[40px] mb-2"></i>
-        <h3 class="mb-1 text-lg">Ei, player! Que tal acessar sua conta?</h3>
+        <h3 class="mb-1 text-lg">Acompanhar seus jogos</h3>
         <span class="font-light text-gray-11">
-          Entre para salvar este jogo na sua coleção.
+          Faça login para curtir, adicionar à sua coleção e comentar com a
+          comunidade.
         </span>
         <a routerLink="/entrar" class="ui-primary-btn mt-4">
-          Acessar minha conta
+          Criar conta ou entrar
         </a>
       </div>
       }
