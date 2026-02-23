@@ -8,11 +8,11 @@ import { ZStatsRow } from '../../../../zStats/zStats.types';
   template: `
     <div class="@container">
       <div
-        class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden rounded-2xl p-2 bg-blue-2"
+        class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden rounded-2xl p-2 bg-blue-2 h-full"
       >
         <!-- Zerado -->
         <div
-          class="col-span-2 @md:border-b border-gray-6 px-4 py-4 text-gray-11 flex justify-between"
+          class="col-span-2 @md:border-b border-gray-6 px-4 py-4 text-gray-11 flex justify-between items-center"
         >
           <div class="flex gap-2 items-center">
             <svg
@@ -37,7 +37,7 @@ import { ZStatsRow } from '../../../../zStats/zStats.types';
           <div
             class="{{
               item.classes
-            }} px-4 py-4 text-gray-11 flex justify-between"
+            }} px-4 py-4 text-gray-11 flex justify-between items-center"
           >
             <div class="flex gap-2 items-center">
               <i class="{{ item.icon }} text-gray-11"></i>
@@ -50,6 +50,9 @@ import { ZStatsRow } from '../../../../zStats/zStats.types';
     </div>
   `,
   imports: [ShortNumberPipe],
+  host: {
+    class: 'contents',
+  },
 })
 export class UiGameStats {
   stats = input<ZStatsRow>();

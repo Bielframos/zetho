@@ -61,17 +61,20 @@ export class GameController {
     | { action: 'like'; value: boolean }) {
     const game = this.game();
     const zEntry = this.zEntry();
+    const profile = this.authStore.profile();
 
     if (!game) return;
     if (this.updating()) return;
+    if (!profile) {
+      this.errors.update((state) => ({ ...state, entry: 'auth_required' }));
+      return;
+    }
 
     try {
       this.updating.set(true);
 
-      const profile = this.authStore.profile();
-
       const updated = await this.zEntryService.createEntryLog(
-        profile!.fingerprint,
+        profile.fingerprint,
         game.$id,
         zEntry,
         action === 'updateStatus' ? { status: value } : { liked: value },

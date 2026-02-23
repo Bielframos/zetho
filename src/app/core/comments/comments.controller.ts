@@ -129,9 +129,14 @@ export class CommentsController {
      ======================= */
 
   async addComment(content: string, parentId?: string, depth?: number) {
+    const currentGame = this.gameStore.currentGame();
+    const profile = this.authStore.profile();
+
+    if (!currentGame || !profile) return;
+
     const newComment = await this.commentService.createComment({
-      gameId: this.gameStore.currentGame()!.$id,
-      userProfileId: this.authStore.profile()!.$id,
+      gameId: currentGame.$id,
+      userProfileId: profile.$id,
       content,
       parentId,
       depth,
@@ -161,7 +166,10 @@ export class CommentsController {
     commentId: string;
     parentId?: string;
   }) {
-    const userId = this.authStore.user()!.$id;
+    const user = this.authStore.user();
+    if (!user) return;
+
+    const userId = user.$id;
     const comment = this.findLocalComment(params.commentId, params.parentId);
 
     if (!comment) return;
