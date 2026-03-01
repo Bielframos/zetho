@@ -1,16 +1,16 @@
 import { inject, Injectable, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { GameRow, GameWithEntry, ZEntryRow } from '../../types';
 import { AuthStore } from '../auth/auth.store';
-import { GameRow, ZEntryRow } from '../../types';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { GameService } from './games.service';
-import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class GameController {
   private router = inject(Router);
 
   game = signal<GameRow | null>(null);
-  similarGames = signal<GameRow[] | null>(null);
+  similarGames = signal<GameWithEntry[] | null>(null);
   zEntry = signal<ZEntryRow | null>(null);
   errors = signal<Record<string, any>>({});
   loading = signal(false);

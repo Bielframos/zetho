@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import type { GameRow, ZEntryRow } from '../../types';
+import type { GameWithEntry } from './game.types';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { GameStore } from './game.store';
 import { GameRepository } from './games.repository';
@@ -11,9 +12,32 @@ export class GameService {
   private zEntryService = inject(ZEntryService);
   private gameStore = inject(GameStore);
 
+  private async appendZEntries(
+    games: GameRow[],
+    fingerprint?: string,
+  ): Promise<GameWithEntry[]> {
+    if (!games.length || !fingerprint) return games as GameWithEntry[];
+
+    const rows = await Promise.all(
+      games.map(async (game) => {
+        try {
+          const zEntry = await this.zEntryService.getEntry(
+            fingerprint,
+            game.$id,
+          );
+          return { ...game, zEntry };
+        } catch {
+          return { ...game, zEntry: null };
+        }
+      }),
+    );
+
+    return rows;
+  }
+
   async searchGame(
     query: string,
-    opts: { pageSize?: number; offset?: number },
+    opts: { pageSize?: number; offset?: number; fingerprint?: string },
   ) {
     const pageSize = opts?.pageSize ?? 12;
     const offset = opts?.offset ?? 0;
@@ -29,24 +53,13 @@ export class GameService {
       excludeSlug: exact?.rows[0]?.slug,
     });
 
-    return rankAndMerge(exact, matches, query, keywords);
-  }
+    const result = rankAndMerge(exact, matches, query, keywords);
+    const rows = await this.appendZEntries(result.rows, opts?.fingerprint);
 
-  async getGame(slug: string) {
-    let fields = [
-      '*',
-      'genres.name',
-      'genres.slug',
-      'involvedCompanies.name',
-      'involvedCompanies.slug',
-      'zStats.*',
-    ];
-
-    const game = await this.repository.findBySlug(slug, fields);
-
-    this.gameStore.setGame(game);
-
-    return game;
+    return {
+      ...result,
+      rows,
+    };
   }
 
   async getGames(
@@ -55,6 +68,7 @@ export class GameService {
       summarized?: boolean;
       pageSize?: number;
       offset?: number;
+      fingerprint?: string;
     },
   ) {
     if (!ids.length) return [];
@@ -75,7 +89,24 @@ export class GameService {
       offset: opts?.offset,
     });
 
-    return games;
+    return this.appendZEntries(games, opts?.fingerprint);
+  }
+
+  async getGame(slug: string) {
+    let fields = [
+      '*',
+      'genres.name',
+      'genres.slug',
+      'involvedCompanies.name',
+      'involvedCompanies.slug',
+      'zStats.*',
+    ];
+
+    const game = await this.repository.findBySlug(slug, fields);
+
+    this.gameStore.setGame(game);
+
+    return game;
   }
 
   async loadGamePage(
@@ -119,6 +150,7 @@ export class GameService {
       result.similarGames = await this.getGames(game.similarGames, {
         summarized: true,
         pageSize: 6,
+        fingerprint: context.fingerprint,
       });
     }
 

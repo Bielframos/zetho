@@ -1,5 +1,5 @@
 import { StoredList, StoredRow } from '../appwrite/appwrite.types';
-import { ZStatsRow } from '../../types';
+import { ZEntryRow, ZStatsRow } from '../../types';
 
 type Game = {
   name: string;
@@ -23,4 +23,8 @@ type Game = {
 type GameRow = StoredRow<Game>;
 type GameList = StoredList<GameRow>;
 
-export type { Game, GameList, GameRow };
+type GameWithEntry = GameRow & {
+  zEntry?: ZEntryRow | null;
+};
+
+export type { Game, GameList, GameRow, GameWithEntry };
