@@ -61,11 +61,11 @@ import { ZereiListRow } from '../../../../lists/lists.type';
           Adicionar à lista
         </button>
 
-        <div class="flex flex-col my-4 overflow-y-auto transition-colors gap-1">
+        <div class="flex flex-col my-4 overflow-y-auto divide-y divide-gray-6">
           @for (list of listController.lists(); track $index) {
             <label
               [htmlFor]="list.$id"
-              class="flex flex-1 gap-2 p-4 cursor-pointer has-checked:bg-blue-3"
+              class="flex flex-1 gap-2 p-4 cursor-pointer has-checked:bg-blue-4 hover:bg-blue-2 first:rounded-t-xl last:rounded-b-xl transition-colors"
             >
               @if (selectedList()?.$id === list.$id) {
                 <i class="ph-fill ph-radio-button text-blue-9"></i>

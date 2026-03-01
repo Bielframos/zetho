@@ -1,6 +1,11 @@
 export type { AppError } from './app.types';
 
-export type { Game, GameRow, GameList } from '../core/games/game.types';
+export type {
+  Game,
+  GameRow,
+  GameList,
+  GameWithEntry,
+} from '../core/games/game.types';
 
 export type {
   UserProfile,

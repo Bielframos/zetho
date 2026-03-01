@@ -42,7 +42,10 @@
   >
     @for (game of search.results(); track game.$id) {
     <li class="flex flex-col">
-      <ui-game-card [game]="game"></ui-game-card>
+      <ui-game-card
+        [game]="game"
+        [entryStatus]="game.zEntry?.status"
+      ></ui-game-card>
     </li>
     }
   </ul>

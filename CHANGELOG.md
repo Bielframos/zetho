@@ -4,6 +4,16 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [1.2.1] - 2026-03-01
+
+### Added
+
+- Tag de status na capa de jogos dentro da página de buscas ou games similares dentro de um jogo.
+
+### Changed
+
+- Estilo da exiblição e interação do seletor de listas na caixa de dialogo `Adicionar à lista` dentro da página de um jogo.
+
 ## [1.2.0] - 2026-02-23
 
 ### Added

@@ -1,17 +1,17 @@
-import { Injectable, signal, computed } from '@angular/core';
-import { GameRow } from '../../types';
+import { computed, Injectable, signal } from '@angular/core';
+import { GameRow, GameWithEntry } from '../../types';
+import { AuthStore } from '../auth/auth.store';
 import { GameService } from '../games/games.service';
-import { ZEntryService } from '../zEntries/zEntries.service';
 
 @Injectable({ providedIn: 'root' })
 export class SearchController {
   constructor(
     private gameService: GameService,
-    private ZEntryService: ZEntryService,
+    private authStore: AuthStore,
   ) {}
 
   create(query: string, pageSize: number = 12) {
-    const _results = signal<GameRow[]>([]);
+    const _results = signal<GameWithEntry[]>([]);
     const _total = signal(0);
     const _page = signal(0);
     const _pageCount = signal(0);
@@ -25,10 +25,8 @@ export class SearchController {
         const games = await this.gameService.searchGame(query, {
           pageSize,
           offset,
+          fingerprint: this.authStore.profile()?.fingerprint,
         });
-
-        // TODO: Obter zEntries para cada jogo localizado
-        const gameIds = games.rows.map((g) => g.$id);
 
         _results.set(games.rows);
         _total.set(games.total);
