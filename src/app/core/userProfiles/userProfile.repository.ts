@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { appwrite, Query } from '../appwrite/appwrite.client';
 import { UserProfile, UserProfileRow } from '../../types';
+import { normalize } from '../search/search.helpers';
 
 const TABLE_ID = 'user_profiles';
 const DATABASE_ID = 'app';
@@ -29,6 +30,42 @@ export class UserProfileRepository {
     });
 
     return response.total === 0 ? null : response.rows[0];
+  }
+
+  async findByKeywords(
+    keywords: string[],
+    opts: { pageSize: number; offset: number; excludeGamertag?: string } = {
+      pageSize: 12,
+      offset: 0,
+    },
+  ) {
+    let limit = opts.pageSize;
+
+    let queries: string[] = [
+      Query.select(['$id', 'gamertag', 'avatarUrl']),
+      Query.limit(limit),
+      Query.offset(opts.offset),
+    ];
+
+    const containsQueries = keywords.map((k) => Query.contains('gamertag', k));
+
+    if (opts.excludeGamertag) {
+      queries.unshift(
+        Query.and([
+          ...containsQueries,
+          Query.notEqual('gamertag', normalize(opts.excludeGamertag)),
+        ]),
+      );
+      limit = limit - 1;
+    } else {
+      queries.unshift(...containsQueries);
+    }
+
+    return await appwrite.databases.listRows<UserProfileRow>({
+      databaseId: DATABASE_ID,
+      tableId: TABLE_ID,
+      queries,
+    });
   }
 
   async create(userId: string, gamertag: string): Promise<void> {

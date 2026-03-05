@@ -1,27 +1,50 @@
-import { Component, effect, inject, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { NgClass } from '@angular/common';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
 import { UiLoading } from '../../../../shared/ui/loading';
-import { SearchController } from '../../search.controller';
-import { ZStatsService } from '../../../zStats/zStats.service';
+import { appwrite } from '../../../appwrite/appwrite.client';
 import { GameRow } from '../../../games/game.types';
 import { SeoService } from '../../../seo/seo.service';
+import { UserProfileRow } from '../../../userProfiles/userProfile.types';
+import { ZStatsService } from '../../../zStats/zStats.service';
+import { SearchController } from '../../search.controller';
 
 @Component({
   selector: 'app-search-page',
   standalone: true,
-  imports: [UiGameCard, UiLoading],
+  imports: [UiGameCard, UiLoading, NgClass, RouterLink],
   templateUrl: './search.html',
 })
 export class SearchPage {
+  readonly minSearchLength = 3;
+
   private searchController = inject(SearchController);
   private route = inject(ActivatedRoute);
   private zStatsService = inject(ZStatsService);
   private seo = inject(SeoService);
 
   query = signal<string>('');
-  searchGame = signal<ReturnType<SearchController['create']> | null>(null);
+  searchType = signal<'games' | 'players'>('games');
+  controller = signal<ReturnType<SearchController['create']> | null>(null);
   popularGames = signal<GameRow[]>([]);
+
+  normalizedQuery = computed(() => this.query().trim());
+  canSearch = computed(
+    () => this.normalizedQuery().length >= this.minSearchLength,
+  );
+
+  activeSearch = computed(() => {
+    const controller = this.controller();
+    if (!controller) return null;
+
+    return this.searchType() === 'games'
+      ? controller.games
+      : controller.players;
+  });
+
+  gameResults = computed(() => this.controller()?.games.results() ?? []);
+  playerResults = computed(() => this.controller()?.players.results() ?? []);
 
   constructor() {
     this.seo.apply({
@@ -34,15 +57,15 @@ export class SearchPage {
     });
 
     effect(() => {
-      const q = this.query();
+      const q = this.normalizedQuery();
 
-      if (!q) {
-        this.searchGame.set(null);
+      if (q.length < this.minSearchLength) {
+        this.controller.set(null);
         return;
       }
 
       const controller = this.searchController.create(q);
-      this.searchGame.set(controller);
+      this.controller.set(controller);
     });
   }
 
@@ -58,7 +81,22 @@ export class SearchPage {
     }
 
     this.route.queryParams.subscribe((params) => {
-      if (params['q']) this.query.set(params['q']);
+      this.query.set(params['q'] ?? '');
+    });
+  }
+
+  setSearchType(type: 'games' | 'players') {
+    this.searchType.set(type);
+  }
+
+  playerAvatar(profile: UserProfileRow) {
+    if (profile.avatarUrl) return profile.avatarUrl;
+
+    return appwrite.avatars.getInitials({
+      name: profile.gamertag,
+      width: 80,
+      height: 80,
+      background: '3e63dd',
     });
   }
 }

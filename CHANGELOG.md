@@ -4,6 +4,16 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [1.3.0] - Não lançado
+
+### Added
+
+- Busca por perfis de usuários na página de busca, com alternância entre `Jogos` e `Perfis`.
+
+### Changed
+
+- Paginação da busca agora é isolada por tipo de resultado (`jogos` e `perfis`), preservando o estado ao trocar de aba.
+
 ## [1.2.1] - 2026-03-01
 
 ### Added
