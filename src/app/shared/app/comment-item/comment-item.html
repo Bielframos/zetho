@@ -1,12 +1,15 @@
 <div class="comment">
-  <div class="flex gap-2 items-center">
+  <a
+    class="flex gap-2 items-center"
+    [routerLink]="['/player', comment().userProfile.gamertag]"
+  >
     <img
-      [src]="getAvatar(comment().userProfile.gamertag)"
+      [src]="getAvatar(comment().userProfile)"
       alt="{{`Avatar do ${comment().userProfile.gamertag}`}}"
-      class="h-8 w-8 rounded-full"
+      class="h-8 w-8 rounded-full object-cover"
     />
     <span class="text-lg">{{ comment().userProfile.gamertag }}</span>
-  </div>
+  </a>
 
   <!-- Conteúdo -->
   <p class="pl-10 font-light -mt-1">{{ comment().content }}</p>

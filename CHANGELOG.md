@@ -9,10 +9,12 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 ### Added
 
 - Busca por perfis de usuários na página de busca, com alternância entre `Jogos` e `Perfis`.
+- Link para o perfil de um usuário vinculado ao comentário no `Game Lobby`
 
 ### Changed
 
 - Paginação da busca agora é isolada por tipo de resultado (`jogos` e `perfis`), preservando o estado ao trocar de aba.
+- Exibição do avatar de um perfil no comentário dentro do `Game Lobby`.
 
 ## [1.2.1] - 2026-03-01
 
