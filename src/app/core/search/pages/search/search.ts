@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
 import { UiLoading } from '../../../../shared/ui/loading';
@@ -26,25 +26,22 @@ export class SearchPage {
 
   query = signal<string>('');
   searchType = signal<'games' | 'players'>('games');
-  controller = signal<ReturnType<SearchController['create']> | null>(null);
   popularGames = signal<GameRow[]>([]);
 
   normalizedQuery = computed(() => this.query().trim());
+
   canSearch = computed(
     () => this.normalizedQuery().length >= this.minSearchLength,
   );
 
   activeSearch = computed(() => {
-    const controller = this.controller();
-    if (!controller) return null;
-
     return this.searchType() === 'games'
-      ? controller.games
-      : controller.players;
+      ? this.searchController.games
+      : this.searchController.players;
   });
 
-  gameResults = computed(() => this.controller()?.games.results() ?? []);
-  playerResults = computed(() => this.controller()?.players.results() ?? []);
+  gameResults = computed(() => this.searchController.games.results());
+  playerResults = computed(() => this.searchController.players.results());
 
   constructor() {
     this.seo.apply({
@@ -54,18 +51,6 @@ export class SearchPage {
       canonical: '/buscar',
       robots: 'noindex,follow',
       ogType: 'website',
-    });
-
-    effect(() => {
-      const q = this.normalizedQuery();
-
-      if (q.length < this.minSearchLength) {
-        this.controller.set(null);
-        return;
-      }
-
-      const controller = this.searchController.create(q);
-      this.controller.set(controller);
     });
   }
 
@@ -82,6 +67,14 @@ export class SearchPage {
 
     this.route.queryParams.subscribe((params) => {
       this.query.set(params['q'] ?? '');
+      const q = this.normalizedQuery();
+
+      if (q.length < this.minSearchLength) {
+        this.searchController.reset();
+        return;
+      }
+
+      this.searchController.search(q);
     });
   }
 
