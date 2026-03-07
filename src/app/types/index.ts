@@ -11,6 +11,7 @@ export type {
   UserProfile,
   UserProfileRow,
   UserProfileList,
+  ProfileWithConnection,
 } from '../core/userProfiles/userProfile.types';
 
 export type {

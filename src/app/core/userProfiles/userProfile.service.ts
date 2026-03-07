@@ -2,10 +2,14 @@ import { Injectable } from '@angular/core';
 import { UserProfile, UserProfileRow } from '../../types';
 import { UserProfileRepository } from './userProfile.repository';
 import { extractKeywords } from '../search/search.helpers';
+import { ConnectionsService } from '../connections/connections.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserProfileService {
-  constructor(private repository: UserProfileRepository) {}
+  constructor(
+    private repository: UserProfileRepository,
+    private connectionsService: ConnectionsService,
+  ) {}
 
   async getProfileByUserId(userId: string): Promise<UserProfileRow | null> {
     return this.repository.findByUserId(userId);
@@ -62,5 +66,14 @@ export class UserProfileService {
       total: matches.total + (exact ? 1 : 0),
       rows: exact ? [exact, ...matches.rows] : matches.rows,
     };
+  }
+
+  async toggleFollow(profileId: string, followerId: string) {
+    const connection = await this.connectionsService.followOrUnfollow(
+      profileId,
+      followerId,
+    );
+
+    return connection;
   }
 }
