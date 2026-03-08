@@ -1,4 +1,4 @@
-import { Component, effect, inject, untracked } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ProfileLayoutStore } from '../../../../shared/app/profile-layout/profile-layout.store';
 import { AppUserLists } from '../../../../shared/app/user-lists/user-lists';
 import { AppNewListDialog } from '../../../../shared/app/new-list-dialog/new-list-dialog';
@@ -23,19 +23,5 @@ export class ListsPage {
 
   constructor(private layoutStore: ProfileLayoutStore) {
     this.layoutStore.sidebarComponent.set(null);
-
-    effect(() => {
-      const profile = this.profileStore.current();
-      const userFingerprint = profile?.fingerprint;
-
-      if (profile) {
-        untracked(() => {
-          void this.controller.loadLists({
-            ownerFingerprint: userFingerprint!,
-            onlyPublicOnes: this.profileStore.itsMe() ? undefined : true,
-          });
-        });
-      }
-    });
   }
 }

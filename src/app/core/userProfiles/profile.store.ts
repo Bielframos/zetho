@@ -1,4 +1,5 @@
 import { computed, effect, Injectable, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import type { ProfileWithConnection, UserProfileRow } from '../../types';
 import { appwrite } from '../appwrite/appwrite.client';
 import { AuthStore } from '../auth/auth.store';
@@ -35,6 +36,7 @@ export class ProfileStore {
 
   readonly isLoading = computed(() => this._loading());
   readonly current = computed(() => this._current());
+  readonly profile$ = toObservable(this.current);
 
   readonly avatarUrl = computed(() => {
     if (!this.current()?.avatarUrl) {

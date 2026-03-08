@@ -1,7 +1,9 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { AppwriteException } from 'appwrite';
+import { distinctUntilChanged, filter } from 'rxjs';
 import { CreateListInput, ListService } from '../lists/list.service';
 import { AppError, GameRow, ZereiListRow } from '../../types';
+import { ProfileStore } from '../userProfiles/profile.store';
 
 export type ParsedZereiListRow = ZereiListRow & {
   parsedLatestAdditions?: {
@@ -34,7 +36,28 @@ export class ListsController {
   awaitingCreation = signal(false);
   error = signal<AppError | undefined>(undefined);
 
-  constructor(private listService: ListService) {}
+  constructor(
+    private listService: ListService,
+    private profileStore: ProfileStore,
+  ) {
+    this.profileStore.profile$
+      .pipe(
+        filter((profile) => profile !== null && profile !== undefined),
+        distinctUntilChanged(
+          (prev, next) =>
+            prev.$id === next.$id &&
+            prev.fingerprint === next.fingerprint &&
+            prev.gamertag === next.gamertag,
+        ),
+      )
+      .subscribe((profile) => {
+        this.resetState();
+        void this.loadLists({
+          ownerFingerprint: profile.fingerprint,
+          onlyPublicOnes: this.profileStore.itsMe() ? undefined : true,
+        });
+      });
+  }
 
   /* =======================
      Carregamento
@@ -164,5 +187,13 @@ export class ListsController {
         JSON.parse(item),
       ),
     };
+  }
+
+  private resetState() {
+    this.lists.set([]);
+    this.total.set(0);
+    this.currentPage.set(0);
+    this.hasMore.set(true);
+    this.error.set(undefined);
   }
 }
