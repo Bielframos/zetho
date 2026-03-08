@@ -1,19 +1,18 @@
 import { NgClass } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
 import { UiLoading } from '../../../../shared/ui/loading';
-import { appwrite } from '../../../appwrite/appwrite.client';
+import { UiProfileCard } from '../../../../shared/ui/profile-card';
 import { GameRow } from '../../../games/game.types';
 import { SeoService } from '../../../seo/seo.service';
-import { UserProfileRow } from '../../../userProfiles/userProfile.types';
 import { ZStatsService } from '../../../zStats/zStats.service';
 import { SearchController } from '../../search.controller';
 
 @Component({
   selector: 'app-search-page',
   standalone: true,
-  imports: [UiGameCard, UiLoading, NgClass, RouterLink],
+  imports: [UiGameCard, UiLoading, NgClass, UiProfileCard],
   templateUrl: './search.html',
 })
 export class SearchPage {
@@ -80,16 +79,5 @@ export class SearchPage {
 
   setSearchType(type: 'games' | 'players') {
     this.searchType.set(type);
-  }
-
-  playerAvatar(profile: UserProfileRow) {
-    if (profile.avatarUrl) return profile.avatarUrl;
-
-    return appwrite.avatars.getInitials({
-      name: profile.gamertag,
-      width: 80,
-      height: 80,
-      background: '3e63dd',
-    });
   }
 }

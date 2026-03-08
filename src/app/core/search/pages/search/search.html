@@ -89,29 +89,7 @@
   <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
     @for (player of playerResults(); track player.$id) {
     <li>
-      <a
-        [routerLink]="['/player', player.gamertag]"
-        class="group flex items-center gap-3 rounded-2xl bg-blue-2 px-3 py-3 hover:bg-blue-3 transition-colors"
-      >
-        <img
-          [src]="playerAvatar(player)"
-          alt="{{`Avatar de ${player.gamertag}`}}"
-          class="h-12 w-12 rounded-full object-cover border border-gray-6"
-        />
-
-        <div class="min-w-0">
-          <p class="text-gray-12 font-medium truncate">{{ player.gamertag }}</p>
-          <p
-            class="text-xs text-gray-11 group-hover:text-gray-12 transition-colors"
-          >
-            Ver perfil
-          </p>
-        </div>
-
-        <i
-          class="ph ph-arrow-right ml-auto text-gray-10 group-hover:text-blue-11 group-hover:translate-x-1 transition-all"
-        ></i>
-      </a>
+      <ui-profile-card [profile]="player"></ui-profile-card>
     </li>
     }
   </ul>
