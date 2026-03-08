@@ -4,6 +4,13 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [1.3.1] - 2026-03-07
+
+### Fixed
+
+- Garante limpeza das referências do perfil logado após logout.
+- Oculta exibição dos botões de seguir/deixar de seguir quando não existe usuário logado.
+
 ## [1.3.0] - 2026-03-07
 
 ### Added

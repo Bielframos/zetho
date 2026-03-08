@@ -312,6 +312,7 @@ export class AuthStore {
    */
   clear() {
     this.userSignal.set(null);
+    this.profileSignal.set(null);
     sessionStorage.removeItem('user');
   }
 }
