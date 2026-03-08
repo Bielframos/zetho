@@ -33,6 +33,11 @@ export class AppProfileLayout {
       label: 'Listas',
       icon: 'ph-list-star',
     },
+    {
+      key: 'conexoes',
+      label: 'Conexões',
+      icon: 'ph-users-three',
+    },
   ]);
 
   get profile() {

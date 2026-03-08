@@ -4,7 +4,7 @@ import { ConnectionRow } from './connections.types';
 
 @Injectable({ providedIn: 'root' })
 export class ConnectionsService {
-  connectionsCache: Record<string, ConnectionRow> = {};
+  myConnectionsCache: Record<string, ConnectionRow> = {};
 
   constructor(private repository: ConnectionsRepository) {}
 
@@ -19,10 +19,10 @@ export class ConnectionsService {
 
       if (existingConnection) {
         await this.repository.delete(existingConnection.$id);
-        delete this.connectionsCache[profileId];
+        delete this.myConnectionsCache[profileId];
       } else {
         const connection = await this.repository.create(profileId, followerId);
-        this.connectionsCache[profileId] = connection;
+        this.myConnectionsCache[profileId] = connection;
       }
     } catch (e) {
       throw new Error(
@@ -35,7 +35,7 @@ export class ConnectionsService {
     try {
       let connection: ConnectionRow | null = null;
 
-      const cachedConnection = this.connectionsCache[profileId];
+      const cachedConnection = this.myConnectionsCache[profileId];
 
       if (cachedConnection && cachedConnection.targetProfileId === followerId) {
         connection = cachedConnection;
@@ -43,7 +43,7 @@ export class ConnectionsService {
         connection = await this.repository.findUnique(profileId, followerId);
 
         if (connection) {
-          this.connectionsCache[profileId] = connection;
+          this.myConnectionsCache[profileId] = connection;
         }
       }
 
