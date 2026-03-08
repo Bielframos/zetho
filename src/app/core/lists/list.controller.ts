@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { debounceTime, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, Subject } from 'rxjs';
 import { AppwriteException } from 'appwrite';
 
 import { AppError, GameRow, ZereiListItemRow, ZereiListRow } from '../../types';
@@ -39,6 +39,19 @@ export class ListController {
     private profileStore: ProfileStore,
     private listService: ListService,
   ) {
+    this.profileStore.profile$
+      .pipe(
+        filter((profile) => profile !== null && profile !== undefined),
+        distinctUntilChanged(
+          (prev, next) =>
+            prev.$id === next.$id && prev.gamertag === next.gamertag,
+        ),
+      )
+      .subscribe((profile) => {
+        this.reset();
+        void this.load({ slug: profile.gamertag });
+      });
+
     this.reorder$.pipe(debounceTime(500)).subscribe(() => this.persistOrder());
   }
 
@@ -60,6 +73,16 @@ export class ListController {
       const profile = this.profileStore.current();
       if (!profile) return;
 
+      const effectiveSlug = slug ?? this.list()?.slug ?? profile.gamertag;
+      if (!effectiveSlug) {
+        this.error.set({
+          message: 'Slug da lista não encontrado.',
+          code: 400,
+          type: 'bad_request',
+        });
+        return;
+      }
+
       if (!loadMore) {
         this.reset();
         this.currentPage.set(1);
@@ -68,11 +91,11 @@ export class ListController {
       }
 
       const list =
-        this.list()?.slug !== slug
+        this.list()?.slug !== effectiveSlug
           ? (
               await this.listService.getLists({
                 userFingerprint: profile.fingerprint,
-                bySlug: slug,
+                bySlug: effectiveSlug,
               })
             ).rows[0]
           : this.list();

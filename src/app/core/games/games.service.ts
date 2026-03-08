@@ -4,7 +4,8 @@ import type { GameWithEntry } from './game.types';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { GameStore } from './game.store';
 import { GameRepository } from './games.repository';
-import { extractKeywords, rankAndMerge } from './games.utils';
+import { rankAndMerge } from './games.utils';
+import { extractKeywords } from '../search/search.helpers';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {

@@ -1,5 +1,4 @@
 import { Injectable, signal } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, distinctUntilChanged, filter, map } from 'rxjs';
 import { GameRepository } from '../games/games.repository';
@@ -26,7 +25,7 @@ export class ZEntriesController {
     private profileStore: ProfileStore,
     private route: ActivatedRoute,
   ) {
-    const profile$ = toObservable(profileStore.current).pipe(
+    const profile$ = this.profileStore.profile$.pipe(
       filter((profile) => profile !== null && profile !== undefined),
     );
 

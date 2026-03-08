@@ -4,6 +4,22 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [1.3.0] - 2026-03-07
+
+### Added
+
+- Busca por perfis de usuários na página de busca, com alternância entre `Jogos` e `Perfis`.
+- Link para o perfil de um usuário vinculado ao comentário no `Game Lobby`
+- Usuários podem criar conexões entre si, seguindo ou deixando de seguir perfis de usuários dentro do Zetho.
+- Página de conexões de um usuário, permitindo visualiar quem segue e que está seguindo.
+- Novo componente `ui-profile-card` para exibição de perfis na busca.
+
+### Changed
+
+- Paginação da busca agora é isolada por tipo de resultado (`jogos` e `perfis`), preservando o estado ao trocar de aba.
+- Exibição do avatar de um perfil no comentário dentro do `Game Lobby`.
+- Refatoração do carregamento inicial de dados relacionados ao perfil do usuário.
+
 ## [1.2.1] - 2026-03-01
 
 ### Added

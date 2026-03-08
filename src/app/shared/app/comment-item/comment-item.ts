@@ -3,12 +3,13 @@ import { Component, inject, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { appwrite } from '../../../core/appwrite/appwrite.client';
 import { CommentsController } from '../../../core/comments/comments.controller';
-import { CommentRow } from '../../../types';
+import { CommentRow, UserProfileRow } from '../../../types';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-comment-item',
   templateUrl: './comment-item.html',
-  imports: [FormsModule, NgClass],
+  imports: [FormsModule, NgClass, RouterLink],
 })
 export class AppCommentItem {
   controller = inject(CommentsController);
@@ -38,9 +39,11 @@ export class AppCommentItem {
     this.showReplyBox = false;
   }
 
-  getAvatar(gamertag: string) {
+  getAvatar(profile: UserProfileRow) {
+    if (profile.avatarUrl) return profile.avatarUrl;
+
     return appwrite.avatars.getInitials({
-      name: gamertag,
+      name: profile.gamertag,
       width: 64,
       height: 64,
       background: '3e63dd',

@@ -32,7 +32,12 @@ export class CommentService {
       Query.limit(opts?.pageSize ?? 6),
       Query.offset(opts?.offset ?? 0),
       Query.orderDesc('$createdAt'),
-      Query.select(['*', 'userProfile.gamertag', 'votes.*']),
+      Query.select([
+        '*',
+        'userProfile.gamertag',
+        'userProfile.avatarUrl',
+        'votes.*',
+      ]),
     ];
 
     if (opts?.byParent) {

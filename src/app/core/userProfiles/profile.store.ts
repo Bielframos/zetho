@@ -1,17 +1,42 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
-import { UserProfileRow } from '../../types';
+import { computed, effect, Injectable, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import type { ProfileWithConnection, UserProfileRow } from '../../types';
 import { appwrite } from '../appwrite/appwrite.client';
 import { AuthStore } from '../auth/auth.store';
+import { ConnectionsService } from '../connections/connections.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileStore {
-  private authStore = inject(AuthStore);
+  constructor(
+    private authStore: AuthStore,
+    private connectionsService: ConnectionsService,
+  ) {
+    // Sempre que o perfil atual ou o perfil do usuário logado mudarem, verificamos a conexão entre eles
+    effect(() => {
+      const myProfile = this.authStore.profile();
+      const currentProfile = this._current();
+
+      if (myProfile && currentProfile && myProfile.$id !== currentProfile.$id) {
+        this.connectionsService
+          .getConnection(currentProfile.$id, myProfile.$id)
+          .then((connection) => {
+            this._current.update((profile) => {
+              if (!profile) return profile;
+              return { ...profile, connection };
+            });
+          });
+      }
+    });
+  }
 
   private _loading = signal(false);
-  private _current = signal<UserProfileRow | null>(null);
+  private _current = signal<UserProfileRow | ProfileWithConnection | null>(
+    null,
+  );
 
   readonly isLoading = computed(() => this._loading());
   readonly current = computed(() => this._current());
+  readonly profile$ = toObservable(this.current);
 
   readonly avatarUrl = computed(() => {
     if (!this.current()?.avatarUrl) {
@@ -31,4 +56,19 @@ export class ProfileStore {
   );
 
   set = this._current.set;
+
+  async followOrUnfollow() {
+    const target = this.current()?.$id;
+    const follower = this.authStore.profile()?.$id;
+
+    if (!target || !follower) {
+      throw new Error('Perfil ou usuário não encontrado.');
+    }
+
+    if (target === follower) {
+      throw new Error('Você não pode seguir a si mesmo.');
+    }
+
+    await this.connectionsService.followOrUnfollow(target, follower);
+  }
 }

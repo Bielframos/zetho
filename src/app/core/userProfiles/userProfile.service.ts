@@ -1,10 +1,15 @@
 import { Injectable } from '@angular/core';
 import { UserProfile, UserProfileRow } from '../../types';
 import { UserProfileRepository } from './userProfile.repository';
+import { extractKeywords } from '../search/search.helpers';
+import { ConnectionsService } from '../connections/connections.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserProfileService {
-  constructor(private repository: UserProfileRepository) {}
+  constructor(
+    private repository: UserProfileRepository,
+    private connectionsService: ConnectionsService,
+  ) {}
 
   async getProfileByUserId(userId: string): Promise<UserProfileRow | null> {
     return this.repository.findByUserId(userId);
@@ -37,5 +42,38 @@ export class UserProfileService {
 
   async getProfileCount(): Promise<number> {
     return this.repository.count();
+  }
+
+  async searchProfile(
+    query: string,
+    opts: { pageSize?: number; offset?: number },
+  ) {
+    const pageSize = opts?.pageSize ?? 12;
+    const offset = opts?.offset ?? 0;
+
+    const keywords = extractKeywords(query);
+
+    const exact =
+      offset === 0 ? await this.repository.findByGamertag(query) : null;
+
+    const matches = await this.repository.findByKeywords(keywords, {
+      pageSize,
+      offset,
+      excludeGamertag: exact?.gamertag,
+    });
+
+    return {
+      total: matches.total + (exact ? 1 : 0),
+      rows: exact ? [exact, ...matches.rows] : matches.rows,
+    };
+  }
+
+  async toggleFollow(profileId: string, followerId: string) {
+    const connection = await this.connectionsService.followOrUnfollow(
+      profileId,
+      followerId,
+    );
+
+    return connection;
   }
 }

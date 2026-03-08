@@ -1,5 +1,5 @@
-<main class="w-full mb-10 max-w-5xl mx-auto px-6 max-md:mt-6 mt-10 md:px-10">
-  @if (!query()) {
+<main class="w-full mb-10 max-w-5xl mx-auto px-4 max-md:mt-6 mt-10 md:px-10">
+  @if (!normalizedQuery()) {
   <header class="my-auto flex justify-between mb-6">
     <div class="">
       <h1 class="text-3xl">Buscando um jogo?</h1>
@@ -26,21 +26,57 @@
     </li>
     }
   </ul>
-  } @else if (searchGame(); as search) { @if (search.loading()) {
-  <ui-loading></ui-loading>
-  } @else { @if (search.total() === 0) {
-  <p>Nenhum jogo localizado.</p>
-  } @else {
-  <header class="text-gray-11 font-light mb-6">
+  } @else if (!canSearch()) {
+  <header class="text-gray-11 font-light mb-4">
     <h2>
-      Buscando por <span class="font-normal text-gray-12">"{{ query() }}"</span>
+      Buscando por
+      <span class="font-normal text-gray-12">"{{ normalizedQuery() }}"</span>
     </h2>
   </header>
 
+  <p class="text-gray-11">
+    Digite pelo menos {{ minSearchLength }} caracteres para iniciar a busca.
+  </p>
+  } @else if (activeSearch(); as search) {
+  <header
+    class="text-gray-11 font-light mb-6 flex justify-between gap-4 items-center"
+  >
+    <h2>
+      Buscando por
+      <span class="font-normal text-gray-12">"{{ normalizedQuery() }}"</span>
+    </h2>
+
+    <div class="flex p-1 rounded-full bg-blue-2">
+      <button
+        class="px-2 py-1 rounded-full hover:bg-blue-3 cursor-pointer transition-colors"
+        [ngClass]="{'bg-blue-4 hover:bg-blue-5 text-white': searchType() === 'games'}"
+        (click)="setSearchType('games')"
+      >
+        Jogos
+      </button>
+      <button
+        class="px-2 py-1 rounded-full hover:bg-blue-3 cursor-pointer transition-colors"
+        [ngClass]="{'bg-blue-4 hover:bg-blue-5 text-white': searchType() === 'players'}"
+        (click)="setSearchType('players')"
+      >
+        Perfis
+      </button>
+    </div>
+  </header>
+
+  @if (search.loading()) {
+  <ui-loading></ui-loading>
+  } @else if (search.total() === 0) {
+  <p>
+    @if (searchType() === 'games') { Nenhum jogo encontrado para "{{
+    normalizedQuery() }}". } @else { Nenhum perfil encontrado para "{{
+    normalizedQuery() }}". }
+  </p>
+  } @else { @if (searchType() === 'games') {
   <ul
     class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-2 md:gap-4"
   >
-    @for (game of search.results(); track game.$id) {
+    @for (game of gameResults(); track game.$id) {
     <li class="flex flex-col">
       <ui-game-card
         [game]="game"
@@ -49,6 +85,15 @@
     </li>
     }
   </ul>
+  } @else {
+  <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+    @for (player of playerResults(); track player.$id) {
+    <li>
+      <ui-profile-card [profile]="player"></ui-profile-card>
+    </li>
+    }
+  </ul>
+  }
 
   <nav class="flex my-10 w-full justify-center gap-4 items-center">
     <button
@@ -69,5 +114,5 @@
       <i class="ph ph-caret-right"></i>
     </button>
   </nav>
-  } } }
+  }}
 </main>

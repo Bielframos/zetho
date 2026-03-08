@@ -16,12 +16,23 @@
         </a>
       </div>
       } @else {
-      <div class="flex justify-end w-full pt-2"></div>
+      <div class="flex justify-end w-full pt-2">
+        @if (this.profile && 'connection' in this.profile &&
+        this.profile.connection) {
+        <button class="ui-action-btn" (click)="profileStore.followOrUnfollow()">
+          <i class="ph ph-user-minus text-[16px]"></i> deixar de seguir
+        </button>
+        } @else {
+        <button class="ui-action-btn" (click)="profileStore.followOrUnfollow()">
+          <i class="ph ph-user-plus text-[16px]"></i> seguir
+        </button>
+        }
+      </div>
       }
 
       <img
         [src]="profileStore.avatarUrl()"
-        alt="{{`Avatar do ${profileStore.current()?.gamertag}`}}"
+        alt="{{`Avatar do ${profile?.gamertag}`}}"
         class="rounded-full w-24 h-24 object-cover border border-gray-6"
       />
       <h3 class="text-xl text-center">{{profile?.gamertag}}</h3>
@@ -31,7 +42,7 @@
       } @if (hasSocialNicks) {
       <div class="flex flex-wrap gap-2 justify-center mt-2">
         <!-- Perfil da Steam -->
-        @if(profileStore.current()?.socialSteam) {
+        @if(profile?.socialSteam) {
         <button
           class="flex gap-2 items-center hover:bg-blue-3 rounded-lg px-2 py-0.5 cursor-pointer border border-gray-6"
           (click)="copySocial('socialSteam')"
@@ -49,12 +60,12 @@
             />
           </svg>
 
-          <span>{{profileStore.current()?.socialSteam}}</span>
+          <span>{{profile?.socialSteam}}</span>
         </button>
         }
 
         <!-- Perfil do Xbox -->
-        @if(profileStore.current()?.socialXbox) {
+        @if(profile?.socialXbox) {
         <button
           class="flex gap-2 items-center hover:bg-blue-3 rounded-lg px-2 py-0.5 cursor-pointer border border-gray-6"
           (click)="copySocial('socialXbox')"
@@ -72,12 +83,12 @@
             />
           </svg>
 
-          <span>{{profileStore.current()?.socialXbox}}</span>
+          <span>{{profile?.socialXbox}}</span>
         </button>
         }
 
         <!-- Perfil do Playstation -->
-        @if(profileStore.current()?.socialPsn) {
+        @if(profile?.socialPsn) {
         <button
           class="flex gap-2 items-center hover:bg-blue-3 rounded-lg px-2 py-0.5 cursor-pointer border border-gray-6"
           (click)="copySocial('socialPsn')"
@@ -95,7 +106,7 @@
             />
           </svg>
 
-          <span>{{profileStore.current()?.socialPsn}}</span>
+          <span>{{profile?.socialPsn}}</span>
         </button>
         }
       </div>
@@ -109,7 +120,7 @@
         [attr.data-active]="layoutStore.currentTab() === tab.key"
       >
         <a
-          [routerLink]="tab.key === 'games' ? ['/player', profileStore.current()?.gamertag] : tab.key"
+          [routerLink]="tab.key === 'games' ? ['/player', profile?.gamertag] : tab.key"
           class="flex gap-2 w-full whitespace-nowrap max-md:justify-center pl-2 pr-4 py-2 rounded-lg hover:bg-blue-4 hover:text-white group-data-[active=true]:bg-blue-3 group-data-[active=true]:hover:bg-blue-4 transition-colors"
         >
           <i class="ph {{ tab.icon }}"></i>

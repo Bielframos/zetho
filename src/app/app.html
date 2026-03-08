@@ -9,10 +9,10 @@
       <div class="flex items-center gap-4">
         <!-- Barra de busca desktop — Só exibe se não for página de autenticação -->
         @if (!isAuthRoute()) {
-        <div class="hidden md:block">
+        <div class="hidden md:block w-72">
           <app-search-input
             name="desktopSearchInput"
-            placeholder="Busque um jogo"
+            placeholder="Busque um jogo ou player"
             (search)="onSearch($event)"
           />
         </div>
@@ -41,7 +41,7 @@
     <div class="md:hidden mt-4">
       <app-search-input
         name="mobileSearchInput"
-        placeholder="Busque um jogo"
+        placeholder="Busque um jogo ou player"
         (search)="onSearch($event)"
       />
     </div>

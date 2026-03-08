@@ -4,7 +4,8 @@ import { filter } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileLayoutStore {
-  private knownTabs = ['games', 'listas'];
+  private knownTabs = ['games', 'listas', 'conexoes'];
+
   currentTab = signal<string | undefined>('');
   sidebarComponent = signal<any | null>(null);
 

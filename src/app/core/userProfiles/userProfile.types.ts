@@ -1,4 +1,5 @@
 import { StoredList, StoredRow } from '../appwrite/appwrite.types';
+import { ConnectionRow } from '../connections/connections.types';
 
 type UserProfile = {
   userId: string;
@@ -21,4 +22,13 @@ type UserProfile = {
 type UserProfileRow = StoredRow<UserProfile>;
 type UserProfileList = StoredList<UserProfileRow>;
 
-export type { UserProfile, UserProfileRow, UserProfileList };
+type ProfileWithConnection = UserProfileRow & {
+  connection: ConnectionRow | null;
+};
+
+export type {
+  UserProfile,
+  UserProfileRow,
+  UserProfileList,
+  ProfileWithConnection,
+};
