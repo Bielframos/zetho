@@ -6,6 +6,8 @@ import { AppListMenu } from './modules/list-menu';
 import { AuthStore } from '../../../auth/auth.store';
 import { ProfileStore } from '../../../userProfiles/profile.store';
 import { ListController } from '../../../lists/list.controller';
+import { ActivatedRoute } from '@angular/router';
+import { distinctUntilChanged, map } from 'rxjs';
 
 @Component({
   selector: 'app-list',
@@ -14,6 +16,7 @@ import { ListController } from '../../../lists/list.controller';
   imports: [UiDraggableList, UiLoading, ReactiveFormsModule, AppListMenu],
 })
 export class ListPage {
+  private route = inject(ActivatedRoute);
   private authStore = inject(AuthStore);
   private profileStore = inject(ProfileStore);
   controller = inject(ListController);
@@ -21,4 +24,18 @@ export class ListPage {
   itsMe = computed(
     () => this.authStore.profile()?.$id === this.profileStore.current()?.$id,
   );
+
+  ngOnInit() {
+    this.route.paramMap
+      .pipe(
+        map((params) => params.get('slug')),
+        distinctUntilChanged(),
+      )
+      .subscribe((slug) => {
+        if (slug) {
+          // Atualiza o slug no controller para carregar a lista correta
+          this.controller.slug$.next(slug);
+        }
+      });
+  }
 }

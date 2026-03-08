@@ -1,7 +1,8 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { debounceTime, distinctUntilChanged, filter, Subject } from 'rxjs';
 import { AppwriteException } from 'appwrite';
+import { debounceTime, Subject } from 'rxjs';
 
+import { ActivatedRoute } from '@angular/router';
 import { AppError, GameRow, ZereiListItemRow, ZereiListRow } from '../../types';
 import { ListService } from '../lists/list.service';
 import { ProfileStore } from '../userProfiles/profile.store';
@@ -20,6 +21,9 @@ const PAGE_SIZE = 50;
 
 @Injectable({ providedIn: 'root' })
 export class ListController {
+  // O valor do slug é fornecido pelo componente pai (ListPage)
+  slug$ = new Subject<string>();
+
   list = signal<ZereiListRow | null>(null);
   items = signal<ZereiListItemRowExpanded[]>([]);
 
@@ -39,18 +43,14 @@ export class ListController {
     private profileStore: ProfileStore,
     private listService: ListService,
   ) {
-    this.profileStore.profile$
-      .pipe(
-        filter((profile) => profile !== null && profile !== undefined),
-        distinctUntilChanged(
-          (prev, next) =>
-            prev.$id === next.$id && prev.gamertag === next.gamertag,
-        ),
-      )
-      .subscribe((profile) => {
+    this.slug$.subscribe((slug) => {
+      console.log('Slug changed:', slug);
+
+      if (slug) {
         this.reset();
-        void this.load({ slug: profile.gamertag });
-      });
+        void this.load({ slug });
+      }
+    });
 
     this.reorder$.pipe(debounceTime(500)).subscribe(() => this.persistOrder());
   }
