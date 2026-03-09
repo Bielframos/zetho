@@ -4,6 +4,12 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [1.4.1] - 2026-03-09
+
+### Changed
+
+- Restaura tamanho de fonte padrão do Zetho para melhorar a UX em dispositivos móveis.
+
 ## [1.4.0] - 2026-03-09
 
 ### Added
