@@ -4,6 +4,17 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [1.4.0] - 2026-03-09
+
+### Added
+
+- Configura o Zetho para ser um PWA instalável
+- Verifica e redireciona usuários sem conexão para a rota `/sem-conexao`
+
+### Changed
+
+- Exibe uma perfil por linha na página de conexões em dispositivos mobile.
+
 ## [1.3.2] - 2026-03-08
 
 ### Fixed
