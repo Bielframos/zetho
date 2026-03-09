@@ -34,7 +34,7 @@
     </div>
   </header>
 
-  <ol class="grid gap-3 grid-cols-2">
+  <ol class="grid gap-3 md:grid-cols-2">
     @for (profile of controller.profiles(); track profile.$id) {
     <ui-profile-card [profile]="profile"></ui-profile-card>
     } @empty {
