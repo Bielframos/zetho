@@ -22,6 +22,7 @@
     "@angular/forms": "^20.3.0",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
+    "@angular/service-worker": "^20.3.17",
     "@fontsource-variable/readex-pro": "^5.2.11",
     "@fontsource/jersey-10": "^5.2.8",
     "@phosphor-icons/web": "^2.1.2",
