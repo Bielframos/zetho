@@ -35,8 +35,10 @@
   --color-gray-11: #b0b4ba;
   --color-gray-12: #edeef0;
 
+  /* Fontes */
   --font-display: "Jersey 10", system-ui;
 
+  /* Animações */
   --animate-fade-in-slide: fade-in-slide 0.4s ease-out backwards;
 
   @keyframes fade-in-slide {
@@ -52,11 +54,6 @@
 }
 
 @layer base {
-  .ph,
-  .ph-fill {
-    font-size: 20px;
-  }
-
   html,
   body {
     height: 100%;
@@ -64,6 +61,12 @@
     background: var(--color-blue-1);
     color: var(--color-gray-12);
     font-family: "Readex Pro Variable", sans-serif;
+  }
+
+  /* Ícones */
+  .ph,
+  .ph-fill {
+    font-size: 20px;
   }
 
   /* NG Menu */
