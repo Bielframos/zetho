@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -5,12 +6,16 @@ import {
   forwardRef,
   Input,
 } from '@angular/core';
-import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  ControlValueAccessor,
+  FormsModule,
+  NG_VALUE_ACCESSOR,
+} from '@angular/forms';
 
 @Component({
   selector: 'ui-input',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, NgClass],
   templateUrl: './input.html',
   providers: [
     {
@@ -30,14 +35,15 @@ export class UiInput implements ControlValueAccessor {
   @Input() placeholder = '';
   @Input({ transform: booleanAttribute }) required = false;
   @Input({ transform: booleanAttribute }) disabled = false;
-  @Input() icon = ''
+  @Input() icon = '';
+  @Input() variant: 'primary' | 'secondary' = 'primary';
 
   // Valor interno do input
   value = '';
 
   // Métodos padrão do ControlValueAccessor
-  onChange = (value: any) => { };
-  onTouched = () => { };
+  onChange = (value: any) => {};
+  onTouched = () => {};
 
   // Método chamado pelo Angular para atualizar o valor no template
   writeValue(value: any): void {
