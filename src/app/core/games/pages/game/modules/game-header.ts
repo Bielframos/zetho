@@ -7,7 +7,7 @@ import { GameRow } from '../../../game.types';
   selector: 'ui-game-header',
   standalone: true,
   template: `
-    <header class="p-6 bg-blue-2 rounded-2xl sm:flex gap-10">
+    <header class="p-6 max-md:py-10 bg-blue-2 md:rounded-2xl sm:flex gap-10">
       <div class="mx-auto w-fit">
         <ui-game-card
           [game]="game()!"

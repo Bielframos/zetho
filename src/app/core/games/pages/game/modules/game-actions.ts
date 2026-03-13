@@ -34,17 +34,15 @@ import { ZereiListRow } from '../../../../lists/lists.type';
             value: 'wishlist',
           })
         "
-        [ngClass]="[
-          'rounded-xl px-4 py-1 h-[36px] bg-blue-2 hover:bg-blue-3 flex items-center gap-2',
-          gameController.zEntry()?.status === 'wishlist' ? 'text-blue-12' : '',
-        ]"
+        class="rounded-xl px-4 py-1 h-[36px] bg-blue-2 hover:bg-blue-3 flex items-center gap-2"
       >
-        <i class="ph ph-list-star"></i>
-        {{
-          gameController.zEntry()?.status === 'wishlist'
-            ? 'Na lista de desejos'
-            : 'Quero comprar'
-        }}
+        @if (gameController.zEntry()?.status === 'wishlist') {
+          <i class="ph-fill ph-shopping-bag-open text-amber-400"></i>
+        } @else {
+          <i class="ph ph-shopping-bag"></i>
+        }
+
+        Wishlist
       </button>
 
       <!-- Modal para registro do jogo em uma lista -->
@@ -61,11 +59,13 @@ import { ZereiListRow } from '../../../../lists/lists.type';
           Adicionar à lista
         </button>
 
-        <div class="flex flex-col my-4 overflow-y-auto divide-y divide-gray-6">
+        <div
+          class="flex flex-col my-4 overflow-y-auto divide-y divide-gray-6 bg-blue-1/60 border border-gray-6 rounded-2xl"
+        >
           @for (list of listController.lists(); track $index) {
             <label
               [htmlFor]="list.$id"
-              class="flex flex-1 gap-2 p-4 cursor-pointer has-checked:bg-blue-4 hover:bg-blue-2 first:rounded-t-xl last:rounded-b-xl transition-colors"
+              class="flex flex-1 gap-2 p-4 cursor-pointer has-checked:bg-blue-4 hover:bg-blue-3 first:rounded-t-xl last:rounded-b-xl transition-colors"
             >
               @if (selectedList()?.$id === list.$id) {
                 <i class="ph-fill ph-radio-button text-blue-9"></i>
@@ -102,6 +102,8 @@ import { ZereiListRow } from '../../../../lists/lists.type';
             </footer>
           }
         </div>
+
+        <div class="h-1"></div>
       </ui-modal>
     </div>
   `,

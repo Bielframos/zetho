@@ -1,6 +1,6 @@
-<div class="px-4 py-10 w-full max-w-5xl mx-auto">
+<div class="md:px-4 py-10 w-full max-w-5xl mx-auto">
   <header class="mb-14">
-    <div class="mb-6 flex gap-4 items-baseline flex-wrap">
+    <div class="mb-6 flex gap-4 items-baseline flex-wrap max-md:px-4">
       <h1 class="text-3xl max-w-xl">Olá, {{ profile?.gamertag }}!</h1>
       <a
         [routerLink]="['/player', profile?.gamertag]"
@@ -10,7 +10,7 @@
     </div>
 
     <div class="@container">
-      <div class="grid grid-cols-2 md:flex bg-blue-2 rounded-2xl p-2 md:p-1">
+      <div class="grid grid-cols-2 md:flex bg-blue-2 md:rounded-2xl p-2 md:p-1">
         <!-- Zerado -->
         <a
           [routerLink]="['/player', profile?.gamertag]"
@@ -61,7 +61,7 @@
     </div>
   </header>
 
-  <header class="mb-6 flex gap-4 items-baseline flex-wrap">
+  <header class="mb-6 flex gap-4 items-baseline flex-wrap max-md:px-4">
     <h2 class="text-2xl">Minhas listas</h2>
 
     <a

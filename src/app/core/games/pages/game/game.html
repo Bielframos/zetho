@@ -1,6 +1,4 @@
-<main
-  class="relative min-h-dvh w-full max-w-5xl mx-auto px-4 md:px-10 py-4 md:py-10"
->
+<main class="relative min-h-dvh w-full max-w-5xl mx-auto md:px-4 py-4 md:py-10">
   @if (authStore.isAuthenticated()) {
   <ui-game-actions [game]="controller.game()"></ui-game-actions>
   }
@@ -14,7 +12,7 @@
       <ui-z-entry-actions></ui-z-entry-actions>
       } @else {
       <div
-        class="w-full flex flex-col items-center rounded-2xl bg-blue-2 p-6 text-center animate-fade-in-slide max-md:mb-4"
+        class="w-full flex flex-col items-center md:rounded-2xl bg-blue-2 p-6 text-center animate-fade-in-slide max-md:mb-4"
       >
         <i class="ph ph-game-controller text-[40px] mb-2"></i>
         <h3 class="mb-1 text-lg">Acompanhar seus jogos</h3>
@@ -37,8 +35,8 @@
 
     @if (controller.similarGames(); as similarGames) {
     <hr class="border-blue-2 w-full my-10" />
-    <h3 class="text-2xl max-w-xl mb-6">Talvez você goste</h3>
-    <ul class="grid grid-cols-3 md:grid-cols-6 gap-2">
+    <h3 class="text-2xl max-w-xl mb-6 max-md:px-4">Talvez você goste</h3>
+    <ul class="grid grid-cols-3 md:grid-cols-6 gap-2 max-md:px-4">
       @for (game of similarGames; track $index) {
       <li>
         <ui-game-card

@@ -37,11 +37,6 @@ export class App {
     return authRoutes.some((route) => path.startsWith(route));
   }
 
-  isGameRoute() {
-    const path = this.route.url;
-    return path.startsWith('/jogo');
-  }
-
   isOfflineRoute() {
     return this.route.url.startsWith('/sem-conexao');
   }

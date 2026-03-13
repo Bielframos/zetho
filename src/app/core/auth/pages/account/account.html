@@ -1,5 +1,5 @@
-<main class="mx-auto max-w-2xl mb-10 px-4">
-  <div class="p-4 rounded-2xl bg-blue-2 mt-4">
+<main class="mx-auto max-w-2xl my-6 md:px-4">
+  <div class="p-4 md:rounded-2xl bg-blue-2">
     <header class="flex gap-4 justify-between items-center">
       <h1 class="text-2xl">{{authStore.user()?.name}}</h1>
 
@@ -38,7 +38,7 @@
     }
   </div>
 
-  <div class="flex items-center flex-col p-6 rounded-2xl bg-blue-2 mt-4">
+  <div class="flex items-center flex-col p-6 md:rounded-2xl bg-blue-2 mt-4">
     <button
       class="group relative cursor-pointer w-40 h-40 rounded-full border border-gray-6 overflow-hidden"
       (click)="profilePicInput.click()"
@@ -73,12 +73,12 @@
     />
   </div>
 
-  <header class="my-6">
+  <header class="my-6 max-md:px-4">
     <h2 class="text-2xl">Meus dados</h2>
   </header>
 
-  <div class="p-4 rounded-2xl bg-blue-2 mb-6">
-    <div class="flex flex-col gap-2.5 w-full mt-4 rounded-2xl">
+  <div class="p-4 md:rounded-2xl bg-blue-2 mb-6">
+    <div class="flex flex-col gap-2.5 w-full mt-4 md:rounded-2xl">
       <ui-input
         type="text"
         label="Nome"
@@ -306,7 +306,7 @@
     </div>
   </div>
 
-  <header class="mb-6">
+  <header class="mb-6 max-md:px-4">
     <h2 class="text-2xl">Zona de risco</h2>
   </header>
 

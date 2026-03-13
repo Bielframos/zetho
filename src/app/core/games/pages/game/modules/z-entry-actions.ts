@@ -9,7 +9,7 @@ import { ZEntry } from '../../../../zEntries/zEntries.types';
   imports: [NgClass],
   template: `
     <div
-      class="grid grid-cols-4 md:grid-cols-2 auto-rows-auto md:h-full gap-1 max-md:border-t bg-blue-2 border-gray-6 md:p-2 md:rounded-2xl overflow-hidden fixed md:relative bottom-0 left-0 w-full z-999 animate-fade-in-slide"
+      class="grid grid-cols-4 md:grid-cols-2 auto-rows-auto md:h-full gap-1 bg-blue-2 md:p-2 md:rounded-2xl w-full animate-fade-in-slide mb-4"
     >
       @for (action of actions; track action.key) {
         <button

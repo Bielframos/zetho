@@ -8,7 +8,7 @@ import { ZStatsRow } from '../../../../zStats/zStats.types';
   template: `
     <div class="@container">
       <div
-        class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden rounded-2xl p-2 bg-blue-2 h-full"
+        class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden md:rounded-2xl p-2 bg-blue-2 h-full"
       >
         <!-- Zerado -->
         <div

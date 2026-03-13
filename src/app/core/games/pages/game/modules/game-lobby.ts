@@ -8,7 +8,7 @@ import { CommentsController } from '../../../../comments/comments.controller';
   standalone: true,
   imports: [AppCommentItem, ReactiveFormsModule],
   template: `
-    <article class="flex flex-col gap-4">
+    <article class="flex flex-col gap-4 max-md:px-4">
       <header class="flex gap-4 items-center">
         <div
           class="h-10 w-10 flex items-center justify-center rounded-full bg-blue-3"
