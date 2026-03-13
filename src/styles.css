@@ -83,6 +83,59 @@
   }
 }
 
+/* Transicao de paginas (Angular Router + View Transitions API) */
+@supports (view-transition-name: route-scope) {
+  .route-transition-scope {
+    view-transition-name: route-scope;
+    contain: layout;
+  }
+
+  ::view-transition-group(route-scope) {
+    animation-duration: 320ms;
+    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  ::view-transition-old(route-scope) {
+    animation: page-out 320ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+
+  ::view-transition-new(route-scope) {
+    animation: page-in 320ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.995);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes page-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.995);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(route-scope),
+  ::view-transition-old(route-scope),
+  ::view-transition-new(route-scope) {
+    animation: none !important;
+  }
+}
+
 /* Componentes */
 @layer components {
   /* Link */
