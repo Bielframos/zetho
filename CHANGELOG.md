@@ -4,6 +4,12 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [1.4.2] - 2026-03-13
+
+### Changed
+
+- Faz ajustes de design para o mobile, trazendo uma nova visualização para as telas internas do aplicativo.
+
 ## [1.4.1] - 2026-03-09
 
 ### Changed
