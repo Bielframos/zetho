@@ -4,6 +4,11 @@ import { AuthStore } from '../auth/auth.store';
 import { GameService } from '../games/games.service';
 import { UserProfileService } from '../userProfiles/userProfile.service';
 
+export type SearchFilters = {
+  genre?: string;
+  year?: string;
+};
+
 type SearchKind = 'games' | 'players';
 
 type SearchState<T> = {
@@ -35,6 +40,7 @@ const DEFAULT_PAGE_SIZE = 12;
 @Injectable({ providedIn: 'root' })
 export class SearchController {
   query = signal('');
+  filters = signal<SearchFilters>({});
 
   private gamesState = signal<SearchState<GameWithEntry>>(
     this.createEmptyState<GameWithEntry>(DEFAULT_PAGE_SIZE),
@@ -80,15 +86,21 @@ export class SearchController {
     private authStore: AuthStore,
   ) {}
 
-  search(query: string, pageSize: number = DEFAULT_PAGE_SIZE) {
+  search(
+    query: string,
+    filters: SearchFilters = {},
+    pageSize: number = DEFAULT_PAGE_SIZE,
+  ) {
     const normalizedQuery = query.trim();
+    const hasFilters = !!filters.genre || !!filters.year;
 
-    if (!normalizedQuery) {
+    if (!normalizedQuery && !hasFilters) {
       this.reset(pageSize);
       return;
     }
 
     this.query.set(normalizedQuery);
+    this.filters.set(filters);
 
     this.gamesState.set({
       ...this.createEmptyState<GameWithEntry>(pageSize),
@@ -107,6 +119,7 @@ export class SearchController {
 
   reset(pageSize: number = DEFAULT_PAGE_SIZE) {
     this.query.set('');
+    this.filters.set({});
 
     // Invalidates in-flight requests.
     this.gamesRequestVersion += 1;
@@ -176,7 +189,10 @@ export class SearchController {
       initialized: true,
     }));
 
-    if (!query) {
+    const filters = this.filters();
+    const hasFilters = !!filters.genre || !!filters.year;
+
+    if (!query && !hasFilters) {
       if (currentVersion === this.gamesRequestVersion) {
         this.gamesState.set(
           this.createEmptyState<GameWithEntry>(this.gamesState().pageSize),
@@ -192,6 +208,7 @@ export class SearchController {
         pageSize,
         offset,
         fingerprint: this.authStore.profile()?.fingerprint,
+        filters,
       });
 
       if (

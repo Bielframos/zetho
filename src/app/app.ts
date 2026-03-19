@@ -31,6 +31,11 @@ export class App {
     this.route.navigate(['/buscar'], { queryParams: { q: query } });
   }
 
+  onSearchInputFocus() {
+    if (this.route.url.startsWith('/buscar')) return;
+    void this.route.navigate(['/buscar']);
+  }
+
   isAuthRoute() {
     const path = this.route.url;
     const authRoutes = ['/entrar', '/registrar'];

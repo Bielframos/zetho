@@ -3,15 +3,37 @@ import { appwrite, Query } from '../appwrite/appwrite.client';
 import { GameRow } from './game.types';
 import slugify from 'slugify';
 import { normalize } from '../search/search.helpers';
+import { StoredRow } from '../appwrite/appwrite.types';
 
 const DATABASE_ID = 'app';
 const GAMES_TABLE_ID = 'games';
+const GENRES_TABLE_ID = 'genres';
+
+type GenreCache = {
+  name: string;
+  slug: string;
+  namePt?: string | null;
+};
+
+type GenreCacheRow = StoredRow<GenreCache>;
 
 @Injectable({ providedIn: 'root' })
 export class GameRepository {
   constructor() {}
 
-  async findExactBySlug(query: string) {
+  async findAllGenres() {
+    return await appwrite.databases.listRows<GenreCacheRow>({
+      databaseId: DATABASE_ID,
+      tableId: GENRES_TABLE_ID,
+      queries: [
+        Query.select(['$id', 'name', 'namePt', 'slug']),
+        Query.orderAsc('name'),
+        Query.limit(5000),
+      ],
+    });
+  }
+
+  async find(query: string) {
     return await appwrite.databases.listRows<GameRow>({
       databaseId: DATABASE_ID,
       tableId: GAMES_TABLE_ID,
@@ -23,9 +45,14 @@ export class GameRepository {
     });
   }
 
-  async findByKeywords(
+  async findBySearchCriteria(
     keywords: string[],
-    opts: { pageSize: number; offset: number; excludeSlug?: string } = {
+    opts: {
+      pageSize: number;
+      offset: number;
+      excludeSlug?: string;
+      filters?: { genreId?: string; year?: string };
+    } = {
       pageSize: 12,
       offset: 0,
     },
@@ -38,18 +65,32 @@ export class GameRepository {
       Query.offset(opts.offset),
     ];
 
-    const containsQueries = keywords.map((k) => Query.contains('name', k));
+    const filterConditions: string[] = [];
+
+    if (keywords.length > 0) {
+      filterConditions.push(...keywords.map((k) => Query.contains('name', k)));
+    }
+
+    if (opts.filters?.genreId) {
+      filterConditions.push(Query.contains('genres', opts.filters.genreId));
+    }
+
+    if (opts.filters?.year) {
+      filterConditions.push(Query.equal('releaseYear', opts.filters.year));
+    }
 
     if (opts.excludeSlug) {
       queries.unshift(
         Query.and([
-          ...containsQueries,
+          ...filterConditions,
           Query.notEqual('slug', normalize(opts.excludeSlug)),
         ]),
       );
       limit = limit - 1;
-    } else {
-      queries.unshift(...containsQueries);
+    } else if (filterConditions.length > 1) {
+      queries.unshift(Query.and(filterConditions));
+    } else if (filterConditions.length === 1) {
+      queries.unshift(filterConditions[0]);
     }
 
     return await appwrite.databases.listRows<GameRow>({

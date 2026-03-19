@@ -1,17 +1,31 @@
 import { inject, Injectable } from '@angular/core';
 import type { GameRow, ZEntryRow } from '../../types';
 import type { GameWithEntry } from './game.types';
+import type { SearchFilters } from '../search/search.controller';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { GameStore } from './game.store';
 import { GameRepository } from './games.repository';
 import { rankAndMerge } from './games.utils';
 import { extractKeywords } from '../search/search.helpers';
+import { GenresCacheService } from './genres-cache.service';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
   private repository = inject(GameRepository);
   private zEntryService = inject(ZEntryService);
   private gameStore = inject(GameStore);
+  private genresCache = inject(GenresCacheService);
+
+  private appendGenres(game: GameRow): GameRow {
+    return {
+      ...game,
+      genres: this.genresCache.normalizeGameGenres(game.genres),
+    };
+  }
+
+  private appendGenresList(games: GameRow[]): GameRow[] {
+    return games.map((game) => this.appendGenres(game));
+  }
 
   private async appendZEntries(
     games: GameRow[],
@@ -38,21 +52,54 @@ export class GameService {
 
   async searchGame(
     query: string,
-    opts: { pageSize?: number; offset?: number; fingerprint?: string },
+    opts: {
+      pageSize?: number;
+      offset?: number;
+      fingerprint?: string;
+      filters?: SearchFilters;
+    },
   ) {
     const pageSize = opts?.pageSize ?? 12;
     const offset = opts?.offset ?? 0;
+    const filters = opts?.filters;
 
-    const keywords = extractKeywords(query);
+    await this.genresCache.ensureLoaded();
+
+    const parsedFilters: {
+      genreId?: string;
+      year?: string;
+    } = {};
+
+    if (filters?.year) {
+      parsedFilters.year = filters.year;
+    }
+
+    if (filters?.genre) {
+      const genreId = this.genresCache.getGenreIdFromSlug(filters.genre);
+
+      if (!genreId) {
+        return { total: 0, rows: [] };
+      }
+
+      parsedFilters.genreId = genreId;
+    }
+
+    const keywords = query ? extractKeywords(query) : [];
 
     const exact =
-      offset === 0 ? await this.repository.findExactBySlug(query) : null;
+      offset === 0 && query ? await this.repository.find(query) : null;
 
-    const matches = await this.repository.findByKeywords(keywords, {
+    const matches = await this.repository.findBySearchCriteria(keywords, {
       pageSize,
       offset,
       excludeSlug: exact?.rows[0]?.slug,
+      filters: parsedFilters,
     });
+
+    if (!query) {
+      const rows = await this.appendZEntries(matches.rows, opts?.fingerprint);
+      return { total: matches.total, rows };
+    }
 
     const result = rankAndMerge(exact, matches, query, keywords);
     const rows = await this.appendZEntries(result.rows, opts?.fingerprint);
@@ -74,15 +121,15 @@ export class GameService {
   ) {
     if (!ids.length) return [];
 
+    const shouldAttachGenres = !opts?.summarized;
+
+    if (shouldAttachGenres) {
+      await this.genresCache.ensureLoaded();
+    }
+
     const fields = opts?.summarized
       ? ['\$id', 'name', 'slug', 'releaseYear', 'coverUrl']
-      : [
-          '*',
-          'genres.name',
-          'genres.slug',
-          'involvedCompanies.name',
-          'involvedCompanies.slug',
-        ];
+      : ['*', 'involvedCompanies.name', 'involvedCompanies.slug'];
 
     const games = await this.repository.findByIds(ids, {
       fields,
@@ -90,14 +137,14 @@ export class GameService {
       offset: opts?.offset,
     });
 
-    return this.appendZEntries(games, opts?.fingerprint);
+    const rows = shouldAttachGenres ? this.appendGenresList(games) : games;
+
+    return this.appendZEntries(rows, opts?.fingerprint);
   }
 
   async getGame(slug: string) {
     let fields = [
       '*',
-      'genres.name',
-      'genres.slug',
       'involvedCompanies.name',
       'involvedCompanies.slug',
       'zStats.*',
@@ -105,9 +152,15 @@ export class GameService {
 
     const game = await this.repository.findBySlug(slug, fields);
 
-    this.gameStore.setGame(game);
+    if (game) {
+      await this.genresCache.ensureLoaded();
+    }
 
-    return game;
+    const result = game ? this.appendGenres(game) : null;
+
+    this.gameStore.setGame(result);
+
+    return result;
   }
 
   async loadGamePage(
@@ -117,6 +170,8 @@ export class GameService {
       fingerprint?: string;
     },
   ) {
+    await this.genresCache.ensureLoaded();
+
     const result: {
       game: GameRow;
       zEntry: ZEntryRow | null;

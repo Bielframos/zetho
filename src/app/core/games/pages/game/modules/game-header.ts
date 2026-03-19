@@ -1,4 +1,5 @@
 import { Component, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { UiGameCard } from '../../../../../shared/ui/game-card/game-card';
 import { UiSkeleton } from '../../../../../shared/ui/skeleton';
 import { GameRow } from '../../../game.types';
@@ -53,12 +54,15 @@ import { GameRow } from '../../../game.types';
           <div>
             <span class="text-sm font-light text-gray-11">Gêneros</span> <br />
             @for (genre of game()?.genres; track $index) {
-              <span
-                >{{ genre.name }}
-                @if ($index < game()?.genres.length - 1) {
-                  <span>, </span>
-                }
-              </span>
+              <a
+                [routerLink]="['/buscar']"
+                [queryParams]="{ genre: genre.slug }"
+                class="hover:text-blue-11 transition-colors"
+                >{{ genre.name }}</a
+              >
+              @if ($index < (game()?.genres?.length ?? 0) - 1) {
+                <span>, </span>
+              }
             }
           </div>
         } @else {
@@ -77,7 +81,7 @@ import { GameRow } from '../../../game.types';
       </div>
     </header>
   `,
-  imports: [UiGameCard, UiSkeleton],
+  imports: [UiGameCard, UiSkeleton, RouterLink],
 })
 export class UiGameHeader {
   game = input<GameRow | null>();

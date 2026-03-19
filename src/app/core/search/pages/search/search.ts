@@ -1,13 +1,23 @@
 import { NgClass } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { UiProfileCard } from '../../../../shared/ui/profile-card';
 import { GameRow } from '../../../games/game.types';
+import { GenresCacheService } from '../../../games/genres-cache.service';
 import { SeoService } from '../../../seo/seo.service';
 import { ZStatsService } from '../../../zStats/zStats.service';
 import { SearchController } from '../../search.controller';
+
+function buildYearOptions(): string[] {
+  const currentYear = new Date().getFullYear();
+  const years: string[] = [];
+  for (let y = currentYear; y >= 1970; y--) {
+    years.push(String(y));
+  }
+  return years;
+}
 
 @Component({
   selector: 'app-search-page',
@@ -17,20 +27,31 @@ import { SearchController } from '../../search.controller';
 })
 export class SearchPage {
   readonly minSearchLength = 3;
+  readonly years = buildYearOptions();
 
   private searchController = inject(SearchController);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private zStatsService = inject(ZStatsService);
   private seo = inject(SeoService);
+  private genresCache = inject(GenresCacheService);
+
+  readonly genres = this.genresCache.options;
 
   query = signal<string>('');
+  genre = signal<string>('');
+  year = signal<string>('');
   searchType = signal<'games' | 'players'>('games');
   popularGames = signal<GameRow[]>([]);
 
   normalizedQuery = computed(() => this.query().trim());
 
+  hasActiveFilters = computed(() => !!this.genre() || !!this.year());
+
   canSearch = computed(
-    () => this.normalizedQuery().length >= this.minSearchLength,
+    () =>
+      this.normalizedQuery().length >= this.minSearchLength ||
+      this.hasActiveFilters(),
   );
 
   activeSearch = computed(() => {
@@ -54,6 +75,8 @@ export class SearchPage {
   }
 
   async ngOnInit() {
+    await this.genresCache.ensureLoaded();
+
     const popularGames = sessionStorage.getItem('popularGames');
 
     if (!popularGames) {
@@ -66,18 +89,49 @@ export class SearchPage {
 
     this.route.queryParams.subscribe((params) => {
       this.query.set(params['q'] ?? '');
-      const q = this.normalizedQuery();
+      this.genre.set(params['genre'] ?? '');
+      this.year.set(params['year'] ?? '');
 
-      if (q.length < this.minSearchLength) {
+      const q = this.normalizedQuery();
+      const filters = {
+        genre: this.genre() || undefined,
+        year: this.year() || undefined,
+      };
+      const hasFilters = !!filters.genre || !!filters.year;
+
+      if (q.length < this.minSearchLength && !hasFilters) {
         this.searchController.reset();
         return;
       }
 
-      this.searchController.search(q);
+      this.searchController.search(q, filters);
     });
   }
 
   setSearchType(type: 'games' | 'players') {
     this.searchType.set(type);
+  }
+
+  onFilterChange(type: 'genre' | 'year', value: string) {
+    const params: Record<string, string> = {};
+
+    const q = this.query();
+    if (q) params['q'] = q;
+
+    const newGenre = type === 'genre' ? value : this.genre();
+    const newYear = type === 'year' ? value : this.year();
+
+    if (newGenre) params['genre'] = newGenre;
+    if (newYear) params['year'] = newYear;
+
+    this.router.navigate(['/buscar'], { queryParams: params });
+  }
+
+  clearFilters() {
+    const params: Record<string, string> = {};
+    const q = this.query();
+    if (q) params['q'] = q;
+
+    this.router.navigate(['/buscar'], { queryParams: params });
   }
 }

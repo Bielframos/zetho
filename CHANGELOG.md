@@ -4,6 +4,20 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [1.5.0] - 2026-03-19
+
+### Added
+
+- Cache local de gêneros carregado da tabela `genres` para reaproveitamento na busca e na página de jogo.
+- Evento de foco no campo de busca global para abrir a página `/buscar` mesmo sem digitação inicial.
+
+### Changed
+
+- Busca de jogos passa a aceitar filtros de gênero e ano junto com palavras-chave.
+- Filtro de gênero na URL continua usando o slug, com resolução local para id antes da consulta no banco.
+- Repositório de jogos passa a expor `find`, substituindo o antigo fluxo focado apenas em palavras-chave.
+- Gêneros no cabeçalho da página de jogo agora são links para a busca com filtro aplicado.
+
 ## [1.4.2] - 2026-03-13
 
 ### Changed

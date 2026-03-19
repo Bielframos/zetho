@@ -72,8 +72,11 @@ export class GamePage {
 
       const genres = Array.isArray(game.genres)
         ? game.genres
-            .map((genre: { name?: string }) => genre?.name)
-            .filter(Boolean)
+            .map((genre: { name?: string } | string) => {
+              if (typeof genre === 'string') return null;
+              return genre?.name;
+            })
+            .filter((genreName): genreName is string => !!genreName)
         : [];
 
       const developers = Array.isArray(game.involvedCompanies)
