@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
   appUrl: 'http://localhost:4200/',
-  appwriteEndpoint: 'https://api.zereiapp.com/v1',
+  appwriteEndpoint: 'https://appwrite.adstrito.com/v1',
   appwriteProject: '690a16460002c718253a',
   zethoApiEndpoint: 'http://localhost:3000/',
   firebase: {
