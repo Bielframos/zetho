@@ -78,6 +78,7 @@ import { ListController } from '../../../../lists/list.controller';
             name="listName"
             placeholder="Top 100 de todos os tempos"
             formControlName="listName"
+            variant="secondary"
           ></ui-input>
 
           <fieldset class="flex flex-col gap-1">
@@ -91,7 +92,7 @@ import { ListController } from '../../../../lists/list.controller';
             <textarea
               name="listDescription"
               placeholder="Uma lista com os 100 melhores jogos de todos os tempos, selecionados com muito carinho."
-              class="rounded-lg px-4 w-full py-2 font-light border-gray-6 bg-blue-2 placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11 min-h-[80px] max-h-[160px] mb-4"
+              class="border rounded-lg px-4 w-full py-2 font-light bg-blue-1/60 border-gray-6 placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11 min-h-[80px] max-h-[160px] mb-4"
               formControlName="listDescription"
             ></textarea>
 

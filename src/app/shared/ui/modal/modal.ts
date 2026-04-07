@@ -4,7 +4,6 @@ import {
   effect,
   ElementRef,
   input,
-  inputBinding,
   model,
   output,
   viewChild,

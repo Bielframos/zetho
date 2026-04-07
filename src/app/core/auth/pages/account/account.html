@@ -349,7 +349,7 @@
     ></ui-input>
     } @else {
     <div
-      class="bg-blue-2 overflow-hidden rounded-b-lg mt-6 p-4 border-t-4 border-amber-400"
+      class="bg-blue-1/60 overflow-hidden rounded-b-lg mt-6 p-4 border-t-4 border-amber-400"
     >
       <p>
         Sua conta será <strong>permanentemente excluída</strong>. todos os seus
@@ -363,25 +363,25 @@
         Seus registros atuais:
       </p>
       <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <li class="flex items-center gap-2 p-2 rounded-lg bg-blue-2">
+        <li class="flex items-center gap-2 p-2 rounded-lg bg-blue-1/60">
           <span class="font-bold text-blue-9"
             >{{ authStore.profile()?.totalsCompleted }}</span
           >
           <span>Jogos zerados</span>
         </li>
-        <li class="flex items-center gap-2 p-2 rounded-lg bg-blue-2">
+        <li class="flex items-center gap-2 p-2 rounded-lg bg-blue-1/60">
           <span class="font-bold text-purple-400"
             >{{ authStore.profile()?.totalsPlaying }}</span
           >
           <span>Jogando</span>
         </li>
-        <li class="flex items-center gap-2 p-2 rounded-lg bg-blue-2">
+        <li class="flex items-center gap-2 p-2 rounded-lg bg-blue-1/60">
           <span class="font-bold text-green-400"
             >{{ authStore.profile()?.totalsBacklog }}</span
           >
           <span>Na backlog</span>
         </li>
-        <li class="flex items-center gap-2 p-2 rounded-lg bg-blue-2">
+        <li class="flex items-center gap-2 p-2 rounded-lg bg-blue-1/60">
           <span class="font-bold text-red-400"
             >{{ authStore.profile()?.totalsDropped }}</span
           >

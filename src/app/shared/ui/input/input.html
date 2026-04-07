@@ -20,7 +20,7 @@
       [value]="value"
       (input)="handleChange($event)"
       (blur)="handleBlur()"
-      class="rounded-xl leading-[24px] h-[40px] px-4 w-full flex-1 py-1 font-light text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:bg-transparent"
+      class="rounded-xl leading-[24px] h-[40px] px-4 w-full flex-1 py-1 font-light text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:bg-transparent placeholder:text-gray-10"
       [ngClass]="{
         'bg-blue-2': variant === 'primary',
         'bg-blue-1/60 border border-gray-6': variant === 'secondary'
