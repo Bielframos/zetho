@@ -29,7 +29,7 @@ import {
 export class UiInput implements ControlValueAccessor {
   // Input
   @Input() label = '';
-  @Input() type: 'text' | 'email' | 'password' = 'text';
+  @Input() type: 'text' | 'email' | 'password' | 'number' = 'text';
   @Input() name = '';
   @Input() id = '';
   @Input() placeholder = '';

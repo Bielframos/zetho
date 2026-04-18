@@ -58,15 +58,29 @@
   @if (!isOfflineRoute()) {
   <!-- Footer do app -->
   <footer
-    class="w-full flex flex-col items-center border-t border-blue-2 px-6 md:px-10 py-4 bg-blue-1 z-20"
+    class="w-full flex justify-between items-center border-t border-blue-2 px-6 md:px-10 py-4 bg-blue-1 z-20"
   >
-    <h6 class="text-4xl font-display">Zetho</h6>
-    <small class="text-gray-11"
-      >Powered by
-      <a href="https://www.igdb.com/" class="font-semibold" class="text-blue-12"
-        >IGDB</a
-      ></small
-    >
+    <div>
+      <h6 class="text-4xl font-display">Zetho</h6>
+
+      <small class="text-gray-11"
+        >Powered by
+        <a
+          href="https://www.igdb.com/"
+          class="font-semibold"
+          class="text-blue-12"
+          >IGDB</a
+        ></small
+      >
+    </div>
+
+    @if (authStore.isAdmin()) {
+    <a routerLink="/admin" class="ui-link h-fit">Painel administrativo</a>
+    } @else {
+    <div class="text-sm text-gray-11">
+      <p>Feito por jogadores, para jogadores.</p>
+    </div>
+    }
   </footer>
   }
 </div>

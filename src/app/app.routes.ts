@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { ADMIN_ROUTES } from './core/admin/admin.routes';
 import { AUTH_ROUTES } from './core/auth/auth.routes';
 import { DASHBOARD_ROUTES } from './core/dashboard/dashboard.routes';
 import { GAME_ROUTES } from './core/games/game.routes';
@@ -11,6 +12,7 @@ import { SEARCH_ROUTES } from './core/search/search.routes';
 export const routes: Routes = [
   ...LANDING_ROUTES,
   ...AUTH_ROUTES,
+  ...ADMIN_ROUTES,
   ...GAME_ROUTES,
   ...SEARCH_ROUTES,
   ...OFFLINE_ROUTES,

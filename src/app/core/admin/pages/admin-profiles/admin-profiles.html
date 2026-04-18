@@ -1,0 +1,151 @@
+<div class="space-y-4">
+  <header class="bg-blue-2 rounded-2xl p-4 md:p-6">
+    <h2 class="text-xl md:text-2xl">Perfis</h2>
+    <p class="text-gray-11">
+      Listagem administrativa de perfis com ações em lote e por perfil.
+    </p>
+  </header>
+
+  <section class="bg-blue-2 rounded-2xl p-4 md:p-6">
+    <h3 class="text-lg">Ações em lote</h3>
+    <p class="text-sm text-gray-11 mt-1">Executa ações para todos os perfis.</p>
+
+    <div class="mt-4 flex flex-wrap gap-2">
+      <button
+        class="ui-action-btn border border-gray-6"
+        [disabled]="batchLoading()"
+        (click)="runBatchAudit(false)"
+      >
+        Auditar todos
+      </button>
+
+      <button
+        class="ui-action-btn border border-gray-6"
+        [disabled]="batchLoading()"
+        (click)="runBatchAudit(true)"
+      >
+        Auditar e corrigir todos
+      </button>
+    </div>
+
+    @if (batchActionResult(); as batchResult) {
+    <div class="mt-4 rounded-lg p-3 bg-blue-1">
+      <p class="text-sm text-gray-11">
+        Auditados: {{batchResult.auditedProfiles}} | Divergentes:
+        {{batchResult.mismatchedProfiles}} | Corrigidos:
+        {{batchResult.fixedProfiles}}
+      </p>
+    </div>
+    } @if (batchActionError(); as errorMessage) {
+    <div
+      class="mt-4 p-3 rounded-lg border border-red-700/40 bg-red-900/20 text-red-200"
+    >
+      {{errorMessage}}
+    </div>
+    }
+  </section>
+
+  <section class="bg-blue-2 rounded-2xl p-4 md:p-6">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h3 class="text-lg">Lista de perfis</h3>
+      <div class="flex items-center gap-2">
+        <button
+          class="ui-secondary-btn"
+          (click)="prevPage()"
+          [disabled]="listLoading() || page() <= 1"
+        >
+          Anterior
+        </button>
+        <button
+          class="ui-secondary-btn"
+          (click)="nextPage()"
+          [disabled]="listLoading() || page() >= totalPages()"
+        >
+          Próxima
+        </button>
+      </div>
+    </div>
+
+    <p class="mt-2 text-sm text-gray-11">{{paginationLabel()}}</p>
+
+    @if (listError(); as errorMessage) {
+    <div
+      class="mt-4 p-3 rounded-lg border border-red-700/40 bg-red-900/20 text-red-200"
+    >
+      {{errorMessage}}
+    </div>
+    }
+
+    <div class="mt-4 overflow-x-auto admin-table-scrollbar pb-2">
+      <table class="w-full min-w-[900px] border-collapse">
+        <thead>
+          <tr class="text-left text-sm text-gray-11 border-b border-gray-6">
+            <th class="py-2 pr-3">Gamertag</th>
+            <th class="py-2 pr-3">User ID</th>
+            <th class="py-2 pr-3">Fingerprint</th>
+            <th class="py-2 pr-3">Concluídos</th>
+            <th class="py-2 pr-3">Jogando</th>
+            <th class="py-2 pr-3">Backlog</th>
+            <th class="py-2 pr-3">Wishlist</th>
+            <th class="py-2 pr-3">Ações por perfil</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @if (listLoading()) {
+          <tr>
+            <td colspan="8" class="py-4 text-gray-11">Carregando perfis...</td>
+          </tr>
+          } @else { @for (profile of profiles(); track profile.$id) {
+          <tr class="border-b border-gray-6/60">
+            <td class="py-3 pr-3">{{profile.gamertag}}</td>
+            <td class="py-3 pr-3 text-sm text-gray-11">{{profile.userId}}</td>
+            <td class="py-3 pr-3 text-sm text-gray-11">
+              {{profile.fingerprint}}
+            </td>
+            <td class="py-3 pr-3">{{profile.totalsCompleted}}</td>
+            <td class="py-3 pr-3">{{profile.totalsPlaying}}</td>
+            <td class="py-3 pr-3">{{profile.totalsBacklog}}</td>
+            <td class="py-3 pr-3">{{profile.totalsWishlist}}</td>
+            <td class="py-3 pr-3">
+              <div class="flex gap-2 whitespace-nowrap min-w-max">
+                <button
+                  class="ui-action-btn border border-gray-6"
+                  [disabled]="profileActionLoading() === profile.$id"
+                  (click)="runProfileAudit(profile.$id, false)"
+                >
+                  Auditar
+                </button>
+
+                <button
+                  class="ui-action-btn border border-gray-6"
+                  [disabled]="profileActionLoading() === profile.$id"
+                  (click)="runProfileAudit(profile.$id, true)"
+                >
+                  Auditar + corrigir
+                </button>
+              </div>
+            </td>
+          </tr>
+          } }
+        </tbody>
+      </table>
+    </div>
+
+    @if (profileActionResult(); as profileAudit) {
+    <div
+      class="mt-4 rounded-lg border border-gray-6 p-3 bg-blue-1 text-sm text-gray-11"
+    >
+      Perfil auditado: {{profileAudit.gamertag}} | Divergências:
+      {{profileAudit.mismatchFields.length}} | Corrigido: {{profileAudit.fixed ?
+      'sim' : 'não'}}
+    </div>
+    } @if (profileActionError(); as errorMessage) {
+    <div
+      class="mt-4 p-3 rounded-lg border border-red-700/40 bg-red-900/20 text-red-200"
+    >
+      {{errorMessage}}
+    </div>
+    }
+  </section>
+</div>

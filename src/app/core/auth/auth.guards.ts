@@ -23,3 +23,18 @@ export const userGuard: CanMatchFn = () => {
 
   return true;
 };
+
+export const adminGuard: CanMatchFn = () => {
+  const authStore = inject(AuthStore);
+  const router = inject(Router);
+
+  if (!authStore.isAuthenticated()) {
+    return router.parseUrl('/');
+  }
+
+  if (!authStore.isAdmin()) {
+    return router.parseUrl('/dashboard');
+  }
+
+  return true;
+};

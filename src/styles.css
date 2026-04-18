@@ -136,6 +136,29 @@
   }
 }
 
+.admin-table-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-blue-7) var(--color-blue-2);
+}
+
+.admin-table-scrollbar::-webkit-scrollbar {
+  height: 10px;
+}
+
+.admin-table-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-blue-2);
+  border-radius: 9999px;
+}
+
+.admin-table-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, var(--color-blue-6), var(--color-blue-8));
+  border-radius: 9999px;
+}
+
+.admin-table-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, var(--color-blue-7), var(--color-blue-9));
+}
+
 /* Componentes */
 @layer components {
   /* Link */
