@@ -10,6 +10,7 @@ import { filter } from 'rxjs';
 import { AuthStore } from './core/auth/auth.store';
 import { AppSearchInput } from './shared/app/search-input/search-input';
 import { ToasterComponent } from './core/notifications/toaster.component';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,7 @@ import { ToasterComponent } from './core/notifications/toaster.component';
 })
 export class App {
   authStore = inject(AuthStore);
+  appVersion = environment.appVersion;
   private route = inject(Router);
   private destroyRef = inject(DestroyRef);
   private lastOnlineRoute = '/';

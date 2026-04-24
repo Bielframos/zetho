@@ -23,6 +23,11 @@
                 "input": "public"
               },
               {
+                "glob": "CHANGELOG.md",
+                "input": ".",
+                "output": "/"
+              },
+              {
                 "glob": "ads.txt",
                 "input": "src/assets",
                 "output": "/"

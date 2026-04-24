@@ -74,13 +74,25 @@
       >
     </div>
 
-    @if (authStore.isAdmin()) {
-    <a routerLink="/admin" class="ui-link h-fit">Painel administrativo</a>
-    } @else {
-    <div class="text-sm text-gray-11">
-      <p>Feito por jogadores, para jogadores.</p>
+    <div
+      class="text-sm text-gray-11 flex items-center gap-3 flex-wrap justify-end"
+    >
+      <span>v{{ appVersion }}</span>
+
+      •
+
+      <a
+        routerLink="/changelog"
+        class="text-sm hover:underline hover:text-blue-9"
+        >Changelog</a
+      >
+
+      • @if (authStore.isAdmin()) {
+      <a routerLink="/admin" class="text-sm hover:underline hover:text-blue-9"
+        >Admin</a
+      >
+      }
     </div>
-    }
   </footer>
   }
 </div>

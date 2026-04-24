@@ -49,7 +49,7 @@ import { ZereiListRow } from '../../../../lists/lists.type';
         class="rounded-xl px-4 py-1 h-[36px] bg-blue-2 hover:bg-blue-3 flex items-center gap-2 cursor-pointer"
       >
         @if (gameController.zEntry()?.status === 'wishlist') {
-          <i class="ph-fill ph-shopping-bag-open text-amber-400"></i>
+          <i class="ph-fill ph-shopping-bag-open text-blue-9"></i>
         } @else {
           <i class="ph ph-shopping-bag"></i>
         }
