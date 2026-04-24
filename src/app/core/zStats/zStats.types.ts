@@ -8,7 +8,8 @@ type ZStats = {
     droppedCount: number,
     playingCount: number,
     wishlistCount: number,
-    likes: number
+    likes: number,
+    hypes?: number
 }
 
 type ZStatsRow = StoredRow<ZStats>

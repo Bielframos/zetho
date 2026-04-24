@@ -7,7 +7,9 @@ type Game = {
   coverUrl: string;
   releaseYear: string;
   releaseDate: string;
+  rawReleaseDate?: string;
   summary: string;
+  hypes: number;
   externalReference: number;
   gameType: string | any;
   genres: string | any;

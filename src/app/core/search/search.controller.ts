@@ -7,6 +7,7 @@ import { UserProfileService } from '../userProfiles/userProfile.service';
 export type SearchFilters = {
   genre?: string;
   year?: string;
+  view?: 'hyped-upcoming';
 };
 
 type SearchKind = 'games' | 'players';
@@ -93,8 +94,9 @@ export class SearchController {
   ) {
     const normalizedQuery = query.trim();
     const hasFilters = !!filters.genre || !!filters.year;
+    const hasSpecialView = filters.view === 'hyped-upcoming';
 
-    if (!normalizedQuery && !hasFilters) {
+    if (!normalizedQuery && !hasFilters && !hasSpecialView) {
       this.reset(pageSize);
       return;
     }
@@ -110,9 +112,14 @@ export class SearchController {
 
     this.playersState.set({
       ...this.createEmptyState<UserProfileRow>(pageSize),
-      loading: true,
-      initialized: true,
+      loading: !hasSpecialView,
+      initialized: !hasSpecialView,
     });
+
+    if (hasSpecialView) {
+      void this.loadGamesPage(1);
+      return;
+    }
 
     void Promise.all([this.loadGamesPage(1), this.loadPlayersPage(1)]);
   }
@@ -191,8 +198,9 @@ export class SearchController {
 
     const filters = this.filters();
     const hasFilters = !!filters.genre || !!filters.year;
+    const isHypedUpcomingView = filters.view === 'hyped-upcoming';
 
-    if (!query && !hasFilters) {
+    if (!query && !hasFilters && !isHypedUpcomingView) {
       if (currentVersion === this.gamesRequestVersion) {
         this.gamesState.set(
           this.createEmptyState<GameWithEntry>(this.gamesState().pageSize),
@@ -204,16 +212,23 @@ export class SearchController {
     try {
       const pageSize = this.gamesState().pageSize;
       const offset = (safePage - 1) * pageSize;
-      const response = await this.gameService.searchGame(query, {
-        pageSize,
-        offset,
-        fingerprint: this.authStore.profile()?.fingerprint,
-        filters,
-      });
+      const response = isHypedUpcomingView
+        ? await this.gameService.getUpcomingHypedGames({
+            pageSize,
+            offset,
+            fingerprint: this.authStore.profile()?.fingerprint,
+          })
+        : await this.gameService.searchGame(query, {
+            pageSize,
+            offset,
+            fingerprint: this.authStore.profile()?.fingerprint,
+            filters,
+          });
 
       if (
         currentVersion !== this.gamesRequestVersion ||
-        query !== this.query()
+        query !== this.query() ||
+        filters.view !== this.filters().view
       ) {
         return;
       }
@@ -243,6 +258,13 @@ export class SearchController {
   }
 
   private async loadPlayersPage(pageNumber: number) {
+    if (this.filters().view === 'hyped-upcoming') {
+      this.playersState.set(
+        this.createEmptyState<UserProfileRow>(this.playersState().pageSize),
+      );
+      return;
+    }
+
     const currentVersion = ++this.playersRequestVersion;
     const safePage = Math.max(1, pageNumber);
     const query = this.query();

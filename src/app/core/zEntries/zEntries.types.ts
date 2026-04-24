@@ -3,6 +3,7 @@ import { StoredList, StoredRow } from "../appwrite/appwrite.types"
 type ZEntry = {
     gameId: string,
     liked?: boolean,
+    hyped?: boolean,
     status?: 'completed' | 'backlog' | 'dropped' | 'playing' | 'wishlist' | null,
     startedAt?: string,
     finishedAt?: string,

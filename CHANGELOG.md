@@ -4,6 +4,14 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [1.6.0] - 2026-04-24
+
+### Added
+
+- Novo recurso de `hypes` dentro do Zetho para marcar jogos aguardados.
+- Seção de jogos mais aguardados no dashboard com link para ver todos os jogos hypados.
+- Visualização especial de stats para jogos ainda não lançados, exibindo hypes em primeiro lugar.
+
 ## [1.5.0] - 2026-03-19
 
 ### Added

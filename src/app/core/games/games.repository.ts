@@ -100,6 +100,33 @@ export class GameRepository {
     });
   }
 
+  async findUpcomingByHypes(opts?: { pageSize?: number; offset?: number }) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return await appwrite.databases.listRows<GameRow>({
+      databaseId: DATABASE_ID,
+      tableId: GAMES_TABLE_ID,
+      queries: [
+        Query.select([
+          '$id',
+          'name',
+          'slug',
+          'coverUrl',
+          'releaseYear',
+          'releaseDate',
+          'hypes',
+        ]),
+        Query.greaterThan('releaseDate', today.toISOString()),
+        Query.greaterThanEqual('hypes', 35),
+        Query.orderDesc('hypes'),
+        Query.orderAsc('releaseDate'),
+        Query.limit(opts?.pageSize ?? 12),
+        Query.offset(opts?.offset ?? 0),
+      ],
+    });
+  }
+
   async findBySlug(slug: string, fields: string[]): Promise<GameRow | null> {
     const result = await appwrite.databases.listRows<GameRow>({
       databaseId: DATABASE_ID,

@@ -1,7 +1,6 @@
 import { Component, inject, input, signal } from '@angular/core';
 import { UiModal } from '../../../../../shared/ui/modal/modal';
 import { ModalTriggerDirective } from '../../../../../shared/ui/modal/modal-trigger.directive';
-import { NgClass } from '@angular/common';
 import { AuthStore } from '../../../../auth/auth.store';
 import { GameController } from '../../../game.controller';
 import { ListsController } from '../../../../lists/lists.controller';
@@ -26,6 +25,19 @@ import { ZereiListRow } from '../../../../lists/lists.type';
         }
       </button>
 
+      <!-- Ação de hype -->
+      <button
+        (click)="handleHype()"
+        class="p-2 rounded-xl bg-blue-2 hover:bg-blue-3 flex cursor-pointer"
+        [aria-label]="gameController.zEntry()?.hyped ? 'Remover hype' : 'Hypar'"
+      >
+        @if (gameController.zEntry()?.hyped) {
+          <i class="ph-fill ph-fire text-orange-400"></i>
+        } @else {
+          <i class="ph ph-fire"></i>
+        }
+      </button>
+
       <!-- Ações de lista de desejos -->
       <button
         (click)="
@@ -34,7 +46,7 @@ import { ZereiListRow } from '../../../../lists/lists.type';
             value: 'wishlist',
           })
         "
-        class="rounded-xl px-4 py-1 h-[36px] bg-blue-2 hover:bg-blue-3 flex items-center gap-2"
+        class="rounded-xl px-4 py-1 h-[36px] bg-blue-2 hover:bg-blue-3 flex items-center gap-2 cursor-pointer"
       >
         @if (gameController.zEntry()?.status === 'wishlist') {
           <i class="ph-fill ph-shopping-bag-open text-amber-400"></i>
@@ -53,7 +65,7 @@ import { ZereiListRow } from '../../../../lists/lists.type';
       >
         <button
           modalTrigger
-          class="rounded-xl h-[36px] px-4 py-1 bg-blue-2 hover:bg-blue-3 flex items-center gap-2"
+          class="rounded-xl h-[36px] px-4 py-1 bg-blue-2 hover:bg-blue-3 flex items-center gap-2 cursor-pointer"
         >
           <i class="ph ph-list-plus"></i>
           Adicionar à lista
@@ -107,7 +119,7 @@ import { ZereiListRow } from '../../../../lists/lists.type';
       </ui-modal>
     </div>
   `,
-  imports: [UiModal, ModalTriggerDirective, NgClass],
+  imports: [UiModal, ModalTriggerDirective],
 })
 export class UiGameActions {
   authStore = inject(AuthStore);
@@ -115,6 +127,7 @@ export class UiGameActions {
   listController = inject(ListsController);
   game = input<GameRow | null>();
   isLiking = signal(false);
+  isHyping = signal(false);
 
   constructor() {
     const profile = this.profile;
@@ -154,6 +167,21 @@ export class UiGameActions {
       });
     } finally {
       this.isLiking.set(false);
+    }
+  }
+
+  async handleHype() {
+    if (!this.authStore.isAuthenticated()) return;
+
+    this.isHyping.set(true);
+
+    try {
+      await this.gameController.handleEntry({
+        action: 'hype',
+        value: !this.gameController.zEntry()?.hyped,
+      });
+    } finally {
+      this.isHyping.set(false);
     }
   }
 }

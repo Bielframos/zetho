@@ -16,9 +16,11 @@ export class ZEntriesRepository {
         opts?: {
             status?: ZEntryRow['status'] | null;
             liked?: boolean;
+            hyped?: boolean;
         },
     ) {
         const liked = 'liked' in (opts ?? {}) ? opts!.liked : current?.liked ?? false;
+        const hyped = 'hyped' in (opts ?? {}) ? opts!.hyped : current?.hyped ?? false;
         const status = opts?.status
             ? opts.status === current?.status
                 ? null
@@ -30,6 +32,7 @@ export class ZEntriesRepository {
             ownerFingerprint: userFingerprint,
             status,
             liked,
+            hyped,
         };
 
         if (current) {
@@ -43,6 +46,7 @@ export class ZEntriesRepository {
                 $permissions,
                 status: _s,
                 liked: _l,
+                hyped: _h,
                 ...cleanCurrent
             } = current;
             Object.assign(data, cleanCurrent);

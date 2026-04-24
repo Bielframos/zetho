@@ -142,6 +142,24 @@ export class GameService {
     return this.appendZEntries(rows, opts?.fingerprint);
   }
 
+  async getUpcomingHypedGames(opts?: {
+    pageSize?: number;
+    offset?: number;
+    fingerprint?: string;
+  }) {
+    const result = await this.repository.findUpcomingByHypes({
+      pageSize: opts?.pageSize,
+      offset: opts?.offset,
+    });
+
+    const rows = await this.appendZEntries(result.rows, opts?.fingerprint);
+
+    return {
+      total: result.total,
+      rows,
+    };
+  }
+
   async getGame(slug: string) {
     let fields = [
       '*',
@@ -188,6 +206,7 @@ export class GameService {
 
     result.game = {
       ...game,
+      rawReleaseDate: game.releaseDate,
       releaseDate: new Date(game.releaseDate).toLocaleDateString('pt-br'),
     };
 

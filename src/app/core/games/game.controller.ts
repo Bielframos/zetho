@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { GameRow, GameWithEntry, ZEntryRow } from '../../types';
 import { AuthStore } from '../auth/auth.store';
@@ -15,6 +15,21 @@ export class GameController {
   errors = signal<Record<string, any>>({});
   loading = signal(false);
   updating = signal(false);
+  isUpcomingRelease = computed(() => {
+    const game = this.game();
+    const rawReleaseDate = game?.rawReleaseDate;
+
+    if (!rawReleaseDate) return false;
+
+    const releaseDate = new Date(rawReleaseDate);
+
+    if (Number.isNaN(releaseDate.getTime())) return false;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return releaseDate.getTime() > today.getTime();
+  });
 
   constructor(
     private gameService: GameService,
@@ -58,7 +73,8 @@ export class GameController {
     value,
   }:
     | { action: 'updateStatus'; value: ZEntryRow['status'] }
-    | { action: 'like'; value: boolean }) {
+    | { action: 'like'; value: boolean }
+    | { action: 'hype'; value: boolean }) {
     const game = this.game();
     const zEntry = this.zEntry();
     const profile = this.authStore.profile();
@@ -70,6 +86,19 @@ export class GameController {
       return;
     }
 
+    if (
+      action === 'updateStatus' &&
+      value !== 'wishlist' &&
+      this.isUpcomingRelease()
+    ) {
+      this.errors.update((state) => ({
+        ...state,
+        entry:
+          'progress_not_available_for_unreleased_game',
+      }));
+      return;
+    }
+
     try {
       this.updating.set(true);
 
@@ -77,7 +106,11 @@ export class GameController {
         profile.fingerprint,
         game.$id,
         zEntry,
-        action === 'updateStatus' ? { status: value } : { liked: value },
+        action === 'updateStatus'
+          ? { status: value }
+          : action === 'hype'
+            ? { hyped: value }
+            : { liked: value },
       );
 
       this.zEntry.set(updated);

@@ -73,4 +73,32 @@
 
   <app-user-lists [lists]="controller.lists()" [fromMe]="true">
   </app-user-lists>
+
+  <section class="mt-14 max-md:px-4">
+    <header class="mb-6 flex gap-4 items-baseline flex-wrap">
+      <h2 class="text-2xl">Mais aguardados</h2>
+
+      <a
+        [routerLink]="['/buscar']"
+        [queryParams]="{ view: 'hyped-upcoming' }"
+        class="text-blue-11 hover:underline hover:text-blue-9"
+      >
+        Ver todos os mais hypados
+      </a>
+    </header>
+
+    @if (loadingUpcomingHyped()) {
+    <ui-loading></ui-loading>
+    } @else if (upcomingHypedGames().length > 0) {
+    <ul class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-2 md:gap-4">
+      @for (game of upcomingHypedGames(); track game.$id) {
+      <li class="flex flex-col">
+        <ui-game-card [game]="game"></ui-game-card>
+      </li>
+      }
+    </ul>
+    } @else {
+    <p class="text-gray-11">Nenhum jogo hypado encontrado no momento.</p>
+    }
+  </section>
 </div>

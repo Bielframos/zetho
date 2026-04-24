@@ -41,15 +41,18 @@ export class SearchPage {
   query = signal<string>('');
   genre = signal<string>('');
   year = signal<string>('');
+  view = signal<string>('');
   searchType = signal<'games' | 'players'>('games');
   popularGames = signal<GameRow[]>([]);
 
   normalizedQuery = computed(() => this.query().trim());
 
   hasActiveFilters = computed(() => !!this.genre() || !!this.year());
+  isHypedUpcomingView = computed(() => this.view() === 'hyped-upcoming');
 
   canSearch = computed(
     () =>
+      this.isHypedUpcomingView() ||
       this.normalizedQuery().length >= this.minSearchLength ||
       this.hasActiveFilters(),
   );
@@ -91,15 +94,24 @@ export class SearchPage {
       this.query.set(params['q'] ?? '');
       this.genre.set(params['genre'] ?? '');
       this.year.set(params['year'] ?? '');
+      this.view.set(params['view'] ?? '');
+
+      if (this.isHypedUpcomingView()) {
+        this.searchType.set('games');
+      }
 
       const q = this.normalizedQuery();
       const filters = {
         genre: this.genre() || undefined,
         year: this.year() || undefined,
+        view: this.isHypedUpcomingView()
+          ? ('hyped-upcoming' as const)
+          : undefined,
       };
       const hasFilters = !!filters.genre || !!filters.year;
+      const hasSpecialView = filters.view === 'hyped-upcoming';
 
-      if (q.length < this.minSearchLength && !hasFilters) {
+      if (q.length < this.minSearchLength && !hasFilters && !hasSpecialView) {
         this.searchController.reset();
         return;
       }
@@ -109,6 +121,10 @@ export class SearchPage {
   }
 
   setSearchType(type: 'games' | 'players') {
+    if (this.isHypedUpcomingView() && type === 'players') {
+      return;
+    }
+
     this.searchType.set(type);
   }
 
@@ -120,9 +136,11 @@ export class SearchPage {
 
     const newGenre = type === 'genre' ? value : this.genre();
     const newYear = type === 'year' ? value : this.year();
+    const view = this.view();
 
     if (newGenre) params['genre'] = newGenre;
     if (newYear) params['year'] = newYear;
+    if (view) params['view'] = view;
 
     this.router.navigate(['/buscar'], { queryParams: params });
   }
@@ -130,7 +148,9 @@ export class SearchPage {
   clearFilters() {
     const params: Record<string, string> = {};
     const q = this.query();
+    const view = this.view();
     if (q) params['q'] = q;
+    if (view) params['view'] = view;
 
     this.router.navigate(['/buscar'], { queryParams: params });
   }

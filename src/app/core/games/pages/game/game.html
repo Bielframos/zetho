@@ -8,8 +8,23 @@
   @if (controller.game()) {
   <section class="animate-fade-in-slide" style="animation-delay: 400ms">
     <div class="md:grid grid-cols-[320px_1fr] gap-4 mt-4">
-      @if (controller.game() && authStore.isAuthenticated()) {
+      @if (
+        controller.game() &&
+        authStore.isAuthenticated() &&
+        !controller.isUpcomingRelease()
+      ) {
       <ui-z-entry-actions></ui-z-entry-actions>
+      } @else if (controller.game() && authStore.isAuthenticated()) {
+      <div
+        class="w-full flex flex-col items-center md:rounded-2xl bg-blue-2 p-6 text-center animate-fade-in-slide max-md:mb-4"
+      >
+        <i class="ph ph-calendar-plus text-[40px] mb-2"></i>
+        <h3 class="mb-1 text-lg">Jogo ainda não lançado</h3>
+        <span class="font-light text-gray-11">
+          Para jogos futuros, você pode curtir, hypar e adicionar na wishlist.
+          Os status de progresso serão liberados após o lançamento.
+        </span>
+      </div>
       } @else {
       <div
         class="w-full flex flex-col items-center md:rounded-2xl bg-blue-2 p-6 text-center animate-fade-in-slide max-md:mb-4"
@@ -26,7 +41,11 @@
       </div>
       }
 
-      <ui-game-stats [stats]="controller.game()?.zStats"></ui-game-stats>
+      <ui-game-stats
+        [stats]="controller.game()?.zStats"
+        [gameHypes]="controller.game()?.hypes"
+        [isUpcomingRelease]="controller.isUpcomingRelease()"
+      ></ui-game-stats>
     </div>
 
     <hr class="border-blue-2 w-full my-10" />
