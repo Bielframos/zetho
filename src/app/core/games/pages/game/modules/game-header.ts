@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UiGameCard } from '../../../../../shared/ui/game-card/game-card';
 import { UiSkeleton } from '../../../../../shared/ui/skeleton';
@@ -42,9 +42,11 @@ import { GameRow } from '../../../game.types';
 
             <!-- Data de lançamento -->
             <div>
-              <span class="text-sm font-light text-gray-11">Lançado em</span>
+              <span class="text-sm font-light text-gray-11">{{
+                releaseLabel()
+              }}</span>
               <br />
-              <span>{{ game()?.releaseDate }}</span>
+              <span>{{ releaseValue() }}</span>
             </div>
           </div>
 
@@ -85,4 +87,42 @@ import { GameRow } from '../../../game.types';
 })
 export class UiGameHeader {
   game = input<GameRow | null>();
+
+  releaseLabel = computed(() => {
+    const game = this.game();
+    const releaseDate = game?.releaseDate;
+    const releaseYear = game?.releaseYear;
+
+    if (!releaseDate || !releaseYear) {
+      return 'Data de lançamento';
+    }
+
+    const rawReleaseDate = game?.rawReleaseDate;
+
+    if (rawReleaseDate) {
+      const release = new Date(rawReleaseDate);
+      if (!Number.isNaN(release.getTime())) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        return release.getTime() > today.getTime()
+          ? 'Data de lançamento:'
+          : 'Lançado em';
+      }
+    }
+
+    return 'Lançado em';
+  });
+
+  releaseValue = computed(() => {
+    const game = this.game();
+    const releaseDate = game?.releaseDate;
+    const releaseYear = game?.releaseYear;
+
+    if (!releaseDate || !releaseYear) {
+      return 'A definir';
+    }
+
+    return releaseDate;
+  });
 }

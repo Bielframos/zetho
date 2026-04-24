@@ -17,6 +17,10 @@ export class GameController {
   updating = signal(false);
   isUpcomingRelease = computed(() => {
     const game = this.game();
+    if (!game) return false;
+
+    if (game.releaseDate == null || game.releaseYear == null) return true;
+
     const rawReleaseDate = game?.rawReleaseDate;
 
     if (!rawReleaseDate) return false;
