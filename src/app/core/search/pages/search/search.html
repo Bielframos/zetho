@@ -3,8 +3,8 @@
     class="text-gray-11 font-light mb-4 flex justify-between gap-4 items-center"
   >
     <h2>
-      @if (isHypedUpcomingView()) { Jogos mais hypados ainda não lançados } @else if
-      (normalizedQuery()) { Buscando por
+      @if (isHypedUpcomingView()) { Jogos mais hypados ainda não lançados }
+      @else if (normalizedQuery()) { Buscando por
       <span class="font-normal text-gray-12">"{{ normalizedQuery() }}"</span>
       } @else if (hasActiveFilters()) { Navegando por filtros } @else { Explore
       por filtros }
@@ -107,10 +107,10 @@
   } @else if (search.total() === 0) {
   <p>
     @if (isHypedUpcomingView()) { Nenhum jogo hypado e ainda não lançado foi
-    encontrado. } @else if (searchType() === 'games') { Nenhum jogo encontrado@if
-    (normalizedQuery()) { para "{{ normalizedQuery() }}"}. } @else { Nenhum
-    perfil encontrado@if (normalizedQuery()) { para "{{ normalizedQuery() }}"}.
-    }
+    encontrado. } @else if (searchType() === 'games') { Nenhum jogo
+    encontrado@if (normalizedQuery()) { para "{{ normalizedQuery() }}"}. } @else
+    { Nenhum perfil encontrado@if (normalizedQuery()) { para "{{
+    normalizedQuery() }}"}. }
   </p>
   } @else { @if (searchType() === 'games') {
   <ul

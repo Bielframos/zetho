@@ -90,7 +90,9 @@
     @if (loadingUpcomingHyped()) {
     <ui-loading></ui-loading>
     } @else if (upcomingHypedGames().length > 0) {
-    <ul class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-2 md:gap-4">
+    <ul
+      class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-2 md:gap-4"
+    >
       @for (game of upcomingHypedGames(); track game.$id) {
       <li class="flex flex-col">
         <ui-game-card [game]="game"></ui-game-card>

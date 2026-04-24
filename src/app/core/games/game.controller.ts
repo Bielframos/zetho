@@ -93,8 +93,7 @@ export class GameController {
     ) {
       this.errors.update((state) => ({
         ...state,
-        entry:
-          'progress_not_available_for_unreleased_game',
+        entry: 'progress_not_available_for_unreleased_game',
       }));
       return;
     }

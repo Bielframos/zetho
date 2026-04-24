@@ -8,11 +8,8 @@
   @if (controller.game()) {
   <section class="animate-fade-in-slide" style="animation-delay: 400ms">
     <div class="md:grid grid-cols-[320px_1fr] gap-4 mt-4">
-      @if (
-        controller.game() &&
-        authStore.isAuthenticated() &&
-        !controller.isUpcomingRelease()
-      ) {
+      @if ( controller.game() && authStore.isAuthenticated() &&
+      !controller.isUpcomingRelease() ) {
       <ui-z-entry-actions></ui-z-entry-actions>
       } @else if (controller.game() && authStore.isAuthenticated()) {
       <div
