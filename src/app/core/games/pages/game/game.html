@@ -1,5 +1,32 @@
 <main class="relative min-h-dvh w-full max-w-5xl mx-auto md:px-4 py-4 md:py-10">
-  @if (authStore.isAuthenticated()) {
+  <!-- Hero background -->
+  @if (controller.heroImage()) {
+  <div
+    class="pointer-events-none absolute w-full -z-50 overflow-hidden 2xl:rounded-3xl -top-[106px] 2xl:top-0 h-[600px] max-2xl:w-screen max-2xl:left-1/2 max-2xl:-translate-x-1/2"
+    aria-hidden="true"
+    animate.enter="enter-animation"
+  >
+    <div
+      class="absolute inset-0"
+      [style.background-image]="'url(' + controller.heroImage()!.url + ')'"
+      style="
+        background-size: cover;
+        background-position: center top;
+        opacity: 0.4;
+        mask-image: radial-gradient(
+          ellipse 90% 80% at 50% 10%,
+          black 0%,
+          transparent 70%
+        );
+        -webkit-mask-image: radial-gradient(
+          ellipse 90% 80% at 50% 10%,
+          black 0%,
+          transparent 70%
+        );
+      "
+    ></div>
+  </div>
+  } @if (authStore.isAuthenticated()) {
   <ui-game-actions [game]="controller.game()"></ui-game-actions>
   }
   <ui-game-header [game]="controller.game()"></ui-game-header>
@@ -46,6 +73,11 @@
     </div>
 
     <hr class="border-blue-2 w-full my-10" />
+
+    @if (controller.medias().length > 0) {
+    <ui-game-medias [medias]="controller.medias()"></ui-game-medias>
+    <hr class="border-blue-2 w-full my-10" />
+    }
 
     <ui-game-lobby></ui-game-lobby>
 

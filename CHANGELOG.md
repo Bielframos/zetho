@@ -4,6 +4,14 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [1.7.0] - 2026-04-25
+
+### Added
+
+- Nova seção `Mídias` nas páginas internas dos jogos.
+- Estilização da página individual dos jogos com uma screenshot ou arte conceitual como background.
+- Galeria interativa na página interna dos jogos.
+
 ## [1.6.0] - 2026-04-24
 
 ### Added

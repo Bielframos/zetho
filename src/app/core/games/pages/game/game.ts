@@ -1,16 +1,17 @@
-import { Component, effect, inject, OnDestroy } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
-import { UiGameHeader } from './modules/game-header';
-import { UiGameStats } from './modules/game-stats';
-import { UiZEntryActions } from './modules/z-entry-actions';
-import { UiGameLobby } from './modules/game-lobby';
-import { UiGameActions } from './modules/game-actions';
 import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
-import { GameController } from '../../game.controller';
 import { AuthStore } from '../../../auth/auth.store';
 import { SeoService } from '../../../seo/seo.service';
+import { GameController } from '../../game.controller';
+import { UiGameActions } from './modules/game-actions';
+import { UiGameHeader } from './modules/game-header';
+import { UiGameLobby } from './modules/game-lobby';
+import { UiGameMedias } from './modules/game-medias';
+import { UiGameStats } from './modules/game-stats';
+import { UiZEntryActions } from './modules/z-entry-actions';
 
 @Component({
   selector: 'app-game',
@@ -23,6 +24,7 @@ import { SeoService } from '../../../seo/seo.service';
     UiGameStats,
     UiGameLobby,
     UiGameActions,
+    UiGameMedias,
   ],
   templateUrl: './game.html',
 })

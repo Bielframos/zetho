@@ -11,7 +11,7 @@ import { ZereiListRow } from '../../../../lists/lists.type';
   selector: 'ui-game-actions',
   standalone: true,
   template: `
-    <div class="flex gap-2 flex-wrap justify-center mb-4">
+    <div class="flex gap-2 flex-wrap justify-center px-4">
       <!-- Ação de curtida -->
       <button
         (click)="handleLike()"

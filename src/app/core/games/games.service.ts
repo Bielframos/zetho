@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import type { GameRow, ZEntryRow } from '../../types';
-import type { GameWithEntry } from './game.types';
+import type { GameWithEntry, GameMedia, GameHero } from './game.types';
 import type { SearchFilters } from '../search/search.controller';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { GameStore } from './game.store';
@@ -8,6 +8,7 @@ import { GameRepository } from './games.repository';
 import { rankAndMerge } from './games.utils';
 import { extractKeywords } from '../search/search.helpers';
 import { GenresCacheService } from './genres-cache.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
@@ -160,19 +161,48 @@ export class GameService {
     };
   }
 
-  async getGame(slug: string) {
-    let fields = [
-      '*',
-      'involvedCompanies.name',
-      'involvedCompanies.slug',
-      'zStats.*',
-    ];
-
-    const game = await this.repository.findBySlug(slug, fields);
-
-    if (game) {
-      await this.genresCache.ensureLoaded();
+  private async getGameFromApi(slug: string): Promise<GameRow | null> {
+    const response = await fetch(
+      new URL(
+        `games/${slug}?select=*,involvedCompanies.name,involvedCompanies.slug,zStats.*`,
+        environment.zethoApiEndpoint,
+      ),
+    );
+    if (!response.ok) {
+      if (response.status === 404) return null;
+      throw new Error(`API error: ${response.status}`);
     }
+    return (await response.json()) as GameRow;
+  }
+
+  async getGameMedias(slug: string): Promise<GameMedia[]> {
+    try {
+      const response = await fetch(
+        new URL(`games/${slug}/medias`, environment.zethoApiEndpoint),
+      );
+      if (!response.ok) return [];
+      return (await response.json()) as GameMedia[];
+    } catch {
+      return [];
+    }
+  }
+
+  async getGameHero(slug: string): Promise<GameHero | null> {
+    try {
+      const response = await fetch(
+        new URL(`games/${slug}/hero`, environment.zethoApiEndpoint),
+      );
+      if (!response.ok) return null;
+      return (await response.json()) as GameHero;
+    } catch {
+      return null;
+    }
+  }
+
+  async getGame(slug: string) {
+    await this.genresCache.ensureLoaded();
+
+    const game = await this.getGameFromApi(slug);
 
     const result = game ? this.appendGenres(game) : null;
 
@@ -188,16 +218,18 @@ export class GameService {
       fingerprint?: string;
     },
   ) {
-    await this.genresCache.ensureLoaded();
-
     const result: {
       game: GameRow;
       zEntry: ZEntryRow | null;
       similarGames: GameRow[];
+      medias: GameMedia[];
+      heroImage: GameHero | null;
     } = {
       game: null as any,
       zEntry: null,
       similarGames: [],
+      medias: [],
+      heroImage: null,
     };
 
     const game = await this.getGame(slug);
@@ -210,24 +242,33 @@ export class GameService {
       releaseDate: new Date(game.releaseDate).toLocaleDateString('pt-br'),
     };
 
-    if (context.userId && context.fingerprint) {
-      try {
-        result.zEntry = await this.zEntryService.getEntry(
-          context.fingerprint,
-          game.$id,
-        );
-      } catch {
-        result.zEntry = null;
-      }
-    }
+    const zEntryPromise =
+      context.userId && context.fingerprint
+        ? this.zEntryService
+            .getEntry(context.fingerprint, game.$id)
+            .catch(() => null)
+        : Promise.resolve(null);
 
-    if (game.similarGames?.length > 0) {
-      result.similarGames = await this.getGames(game.similarGames, {
-        summarized: true,
-        pageSize: 6,
-        fingerprint: context.fingerprint,
-      });
-    }
+    const similarGamesPromise =
+      game.similarGames?.length > 0
+        ? this.getGames(game.similarGames, {
+            summarized: true,
+            pageSize: 6,
+            fingerprint: context.fingerprint,
+          })
+        : Promise.resolve([]);
+
+    const [zEntry, similarGames, medias, heroImage] = await Promise.all([
+      zEntryPromise,
+      similarGamesPromise,
+      this.getGameMedias(slug),
+      this.getGameHero(slug),
+    ]);
+
+    result.zEntry = zEntry;
+    result.similarGames = similarGames;
+    result.medias = medias;
+    result.heroImage = heroImage;
 
     return result;
   }

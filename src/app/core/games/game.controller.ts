@@ -1,6 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { GameRow, GameWithEntry, ZEntryRow } from '../../types';
+import type { GameMedia, GameHero } from './game.types';
 import { AuthStore } from '../auth/auth.store';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { GameService } from './games.service';
@@ -12,6 +13,8 @@ export class GameController {
   game = signal<GameRow | null>(null);
   similarGames = signal<GameWithEntry[] | null>(null);
   zEntry = signal<ZEntryRow | null>(null);
+  medias = signal<GameMedia[]>([]);
+  heroImage = signal<GameHero | null>(null);
   errors = signal<Record<string, any>>({});
   loading = signal(false);
   updating = signal(false);
@@ -47,6 +50,8 @@ export class GameController {
       this.game.set(null);
       this.similarGames.set(null);
       this.zEntry.set(null);
+      this.medias.set([]);
+      this.heroImage.set(null);
       this.errors.set({});
       this.loading.set(true);
 
@@ -61,6 +66,8 @@ export class GameController {
       this.game.set(data.game);
       this.zEntry.set(data.zEntry);
       this.similarGames.set(data.similarGames);
+      this.medias.set(data.medias);
+      this.heroImage.set(data.heroImage);
     } catch (e) {
       if (e instanceof Error && e.message === 'game_not_found') {
         this.router.navigate(['/404']);
