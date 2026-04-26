@@ -5,17 +5,15 @@ import type { SearchFilters } from '../search/search.controller';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { GameStore } from './game.store';
 import { GameRepository } from './games.repository';
-import { rankAndMerge } from './games.utils';
-import { extractKeywords } from '../search/search.helpers';
 import { GenresCacheService } from './genres-cache.service';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
-  private repository = inject(GameRepository);
   private zEntryService = inject(ZEntryService);
   private gameStore = inject(GameStore);
   private genresCache = inject(GenresCacheService);
+  private repository = inject(GameRepository);
 
   private appendGenres(game: GameRow): GameRow {
     return {
@@ -51,6 +49,37 @@ export class GameService {
     return rows;
   }
 
+  private buildSearchParams(
+    params: Record<string, string | number | undefined>,
+  ) {
+    const searchParams = new URLSearchParams();
+
+    for (const [key, value] of Object.entries(params)) {
+      if (value === undefined || value === null || value === '') continue;
+      searchParams.append(key, String(value));
+    }
+
+    return searchParams;
+  }
+
+  private async fetchSearchApi<T>(
+    path: string,
+    params: Record<string, string | number | undefined>,
+  ) {
+    const queryString = this.buildSearchParams(params).toString();
+    const url = new URL(
+      `${path}${queryString ? `?${queryString}` : ''}`,
+      environment.zethoApiEndpoint,
+    );
+    const response = await fetch(url.toString());
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    return (await response.json()) as T;
+  }
+
   async searchGame(
     query: string,
     opts: {
@@ -66,48 +95,39 @@ export class GameService {
 
     await this.genresCache.ensureLoaded();
 
-    const parsedFilters: {
-      genreId?: string;
-      year?: string;
-    } = {};
+    const parsedGenreId = filters?.genre
+      ? (this.genresCache.getGenreIdFromSlug(filters.genre) ?? undefined)
+      : undefined;
 
-    if (filters?.year) {
-      parsedFilters.year = filters.year;
+    if (filters?.genre && !parsedGenreId) {
+      return { total: 0, rows: [] };
     }
 
-    if (filters?.genre) {
-      const genreId = this.genresCache.getGenreIdFromSlug(filters.genre);
+    const page = Math.max(1, Math.floor(offset / pageSize) + 1);
 
-      if (!genreId) {
-        return { total: 0, rows: [] };
-      }
-
-      parsedFilters.genreId = genreId;
-    }
-
-    const keywords = query ? extractKeywords(query) : [];
-
-    const exact =
-      offset === 0 && query ? await this.repository.find(query) : null;
-
-    const matches = await this.repository.findBySearchCriteria(keywords, {
+    const response = await this.fetchSearchApi<{
+      total: number;
+      page: number;
+      pageCount: number;
+      pageSize: number;
+      results: GameRow[];
+    }>('games/search', {
+      q: query || undefined,
+      genre: parsedGenreId,
+      year: filters?.year,
+      page,
       pageSize,
-      offset,
-      excludeSlug: exact?.rows[0]?.slug,
-      filters: parsedFilters,
+      fingerprint: opts?.fingerprint,
     });
 
-    if (!query) {
-      const rows = await this.appendZEntries(matches.rows, opts?.fingerprint);
-      return { total: matches.total, rows };
-    }
-
-    const result = rankAndMerge(exact, matches, query, keywords);
-    const rows = await this.appendZEntries(result.rows, opts?.fingerprint);
+    const rows = await this.appendZEntries(response.results, opts?.fingerprint);
 
     return {
-      ...result,
+      total: response.total,
       rows,
+      page: response.page,
+      pageCount: response.pageCount,
+      pageSize: response.pageSize,
     };
   }
 
@@ -148,15 +168,25 @@ export class GameService {
     offset?: number;
     fingerprint?: string;
   }) {
-    const result = await this.repository.findUpcomingByHypes({
-      pageSize: opts?.pageSize,
-      offset: opts?.offset,
+    const pageSize = opts?.pageSize ?? 12;
+    const page = Math.max(1, Math.floor((opts?.offset ?? 0) / pageSize) + 1);
+
+    const response = await this.fetchSearchApi<{
+      total: number;
+      page: number;
+      pageCount: number;
+      pageSize: number;
+      results: GameRow[];
+    }>('games/hyped-upcoming', {
+      page,
+      pageSize,
+      fingerprint: opts?.fingerprint,
     });
 
-    const rows = await this.appendZEntries(result.rows, opts?.fingerprint);
+    const rows = await this.appendZEntries(response.results, opts?.fingerprint);
 
     return {
-      total: result.total,
+      total: response.total,
       rows,
     };
   }
