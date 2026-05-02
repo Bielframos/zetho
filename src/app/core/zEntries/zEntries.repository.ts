@@ -76,6 +76,25 @@ export class ZEntriesRepository {
     return zEntries.rows[0] ?? null;
   }
 
+  async findByGameIds(
+    userFingerprint: string,
+    gameIds: string[],
+  ): Promise<ZEntryRow[]> {
+    if (!gameIds.length) return [];
+
+    const result = await appwrite.databases.listRows<ZEntryRow>({
+      databaseId: 'app',
+      tableId: Z_ENTRIES_READ_TABLE_ID,
+      queries: [
+        Query.equal('ownerFingerprint', userFingerprint),
+        Query.equal('gameId', gameIds),
+        Query.limit(gameIds.length),
+      ],
+    });
+
+    return result.rows;
+  }
+
   async findMany(
     userFingerprint: string,
     opts?: {

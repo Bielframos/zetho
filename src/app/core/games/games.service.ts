@@ -32,21 +32,21 @@ export class GameService {
   ): Promise<GameWithEntry[]> {
     if (!games.length || !fingerprint) return games as GameWithEntry[];
 
-    const rows = await Promise.all(
-      games.map(async (game) => {
-        try {
-          const zEntry = await this.zEntryService.getEntry(
-            fingerprint,
-            game.$id,
-          );
-          return { ...game, zEntry };
-        } catch {
-          return { ...game, zEntry: null };
-        }
-      }),
-    );
+    try {
+      const gameIds = games.map((g) => g.$id);
+      const zEntries = await this.zEntryService.getEntriesByGameIds(
+        fingerprint,
+        gameIds,
+      );
+      const zEntryMap = new Map(zEntries.map((e) => [e.gameId, e]));
 
-    return rows;
+      return games.map((game) => ({
+        ...game,
+        zEntry: zEntryMap.get(game.$id) ?? null,
+      }));
+    } catch {
+      return games.map((game) => ({ ...game, zEntry: null }));
+    }
   }
 
   private buildSearchParams(
@@ -100,34 +100,30 @@ export class GameService {
       : undefined;
 
     if (filters?.genre && !parsedGenreId) {
-      return { total: 0, rows: [] };
+      return { total: 0, rows: [], page: 1, pageCount: 1, pageSize };
     }
 
     const page = Math.max(1, Math.floor(offset / pageSize) + 1);
 
-    const response = await this.fetchSearchApi<{
-      total: number;
-      page: number;
-      pageCount: number;
-      pageSize: number;
-      results: GameRow[];
-    }>('games/search', {
-      q: query || undefined,
-      genre: parsedGenreId,
-      year: filters?.year,
-      page,
-      pageSize,
-      fingerprint: opts?.fingerprint,
-    });
+    const { rows: gameRows, total } = await this.repository.searchGames(
+      query,
+      {
+        pageSize,
+        offset,
+        genreId: parsedGenreId,
+        year: filters?.year,
+      },
+    );
 
-    const rows = await this.appendZEntries(response.results, opts?.fingerprint);
+    const rows = await this.appendZEntries(gameRows, opts?.fingerprint);
+    const pageCount = Math.max(1, Math.ceil(total / pageSize));
 
     return {
-      total: response.total,
+      total,
       rows,
-      page: response.page,
-      pageCount: response.pageCount,
-      pageSize: response.pageSize,
+      page,
+      pageCount,
+      pageSize,
     };
   }
 

@@ -21,6 +21,13 @@ export class ZEntryService {
     return this.repository.findUnique(userFingerprint, gameId);
   }
 
+  async getEntriesByGameIds(
+    userFingerprint: string,
+    gameIds: string[],
+  ): Promise<ZEntryRow[]> {
+    return this.repository.findByGameIds(userFingerprint, gameIds);
+  }
+
   async createEntryLog(
     userFingerprint: string,
     gameId: string,

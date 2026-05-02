@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { appwrite, Query } from '../appwrite/appwrite.client';
 import { GameRow } from './game.types';
 import { StoredRow } from '../appwrite/appwrite.types';
+import { normalize } from '../search/search.helpers';
 
 const DATABASE_ID = 'app';
 const GAMES_TABLE_ID = 'games';
@@ -63,5 +64,50 @@ export class GameRepository {
     });
 
     return result.rows;
+  }
+
+  async searchGames(
+    query: string,
+    opts: {
+      pageSize?: number;
+      offset?: number;
+      genreId?: string;
+      year?: string;
+    } = {},
+  ): Promise<{ rows: GameRow[]; total: number }> {
+    const pageSize = opts.pageSize ?? 12;
+    const offset = opts.offset ?? 0;
+    const normalized = normalize(query);
+
+    const queries: string[] = [
+      Query.limit(pageSize),
+      Query.offset(offset),
+      Query.orderAsc('name'),
+    ];
+
+    if (normalized) {
+      queries.push(
+        Query.or([
+          Query.contains('name', normalized),
+          Query.contains('slug', normalized),
+        ]),
+      );
+    }
+
+    if (opts.genreId) {
+      queries.push(Query.equal('genres', opts.genreId));
+    }
+
+    if (opts.year) {
+      queries.push(Query.equal('releaseYear', opts.year));
+    }
+
+    const result = await appwrite.databases.listRows<GameRow>({
+      databaseId: DATABASE_ID,
+      tableId: GAMES_TABLE_ID,
+      queries,
+    });
+
+    return { rows: result.rows, total: result.total };
   }
 }
