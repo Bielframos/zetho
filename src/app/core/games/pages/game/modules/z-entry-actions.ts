@@ -9,7 +9,7 @@ import { ZEntry } from '../../../../zEntries/zEntries.types';
   imports: [NgClass],
   template: `
     <div
-      class="grid grid-cols-4 md:grid-cols-2 auto-rows-auto md:h-full gap-1 bg-blue-2 md:p-2 md:rounded-2xl w-full animate-fade-in-slide mb-4"
+      class="grid grid-cols-4 md:grid-cols-2 auto-rows-auto md:h-full gap-1 bg-gray-2 md:p-2 md:rounded-2xl w-full animate-fade-in-slide mb-4"
     >
       @for (action of actions; track action.key) {
         <button
@@ -70,7 +70,7 @@ export class UiZEntryActions {
     icon?: string;
   }[] = [
     { key: 'completed', label: 'Zerei' },
-    { key: 'backlog', label: 'Backlog', icon: 'ph-fill ph-books' },
+    { key: 'backlog', label: 'Biblioteca', icon: 'ph-fill ph-books' },
     { key: 'playing', label: 'Jogando', icon: 'ph-fill ph-game-controller' },
     { key: 'dropped', label: 'Dropei', icon: 'ph-fill ph-x-circle' },
   ];

@@ -10,7 +10,7 @@ import { ParsedZereiListRow } from '../../core/lists/lists.controller';
     <li>
       <a
         [routerLink]="['/player', ownerGamertag(), 'listas', list().slug]"
-        class="flex flex-row items-end gap-6 p-4 bg-blue-2 md:rounded-2xl hover:bg-blue-3 transition-colors"
+        class="flex flex-row items-end gap-6 p-4 bg-gray-2 md:rounded-2xl hover:bg-blue-3 transition-colors"
       >
         <div class="flex -space-x-14">
           @for (lastAddition of list().parsedLatestAdditions; track $index) {

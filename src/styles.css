@@ -58,7 +58,7 @@
   body {
     height: 100%;
     min-height: 100dvh;
-    background: var(--color-blue-1);
+    background: var(--color-gray-1);
     color: var(--color-gray-12);
     font-family: "Readex Pro Variable", sans-serif;
   }
@@ -71,7 +71,7 @@
 
   /* NG Menu */
   [ngMenu] {
-    @apply w-60 bg-blue-2 border border-gray-6 p-1 rounded-lg drop-shadow-2xl;
+    @apply w-60 bg-gray-3 p-1 rounded-lg drop-shadow-2xl;
   }
 
   [ngMenu][data-visible="false"] {
@@ -79,7 +79,7 @@
   }
 
   [ngMenuItem] {
-    @apply flex gap-2 px-2 py-1 hover:bg-blue-2 cursor-pointer transition-colors outline-none focus:bg-blue-3 rounded-md text-gray-11;
+    @apply flex gap-2 px-2 py-1 hover:bg-gray-4 cursor-pointer transition-colors outline-none focus:bg-gray-4 rounded-md text-gray-11;
   }
 }
 
@@ -178,7 +178,7 @@
 @layer components {
   /* Link */
   .ui-link {
-    @apply px-4 py-1 border border-transparent leading-[24px] bg-blue-2 inline-flex gap-2 items-center justify-center rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
+    @apply px-4 py-1 border border-transparent leading-[24px] bg-gray-2 inline-flex gap-2 items-center justify-center rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
   }
 
   /* Botões */
@@ -187,11 +187,11 @@
   }
 
   .ui-secondary-btn {
-    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-blue-2 rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-gray-3 rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
   }
 
   .ui-destructive-btn {
-    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-blue-2 rounded-lg text-red-300 hover:bg-red-600 hover:border-red-400 hover:text-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 ease-in-out;
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-gray-3 rounded-lg text-red-300 hover:bg-red-600 hover:border-red-400 hover:text-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 ease-in-out;
   }
 
   .ui-action-btn {

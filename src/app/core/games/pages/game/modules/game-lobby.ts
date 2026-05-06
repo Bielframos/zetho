@@ -26,7 +26,7 @@ import { CommentsController } from '../../../../comments/comments.controller';
           name="comment"
           id="comment"
           placeholder="Diga algo sobre este jogo…"
-          class="rounded-lg px-4 w-full py-2 font-light border-gray-6 bg-blue-2 placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11 min-h-[64px] max-h-[160px]"
+          class="rounded-xl px-4 w-full py-2 font-light bg-gray-2 placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11 min-h-[64px] max-h-[160px]"
           [formControl]="comment"
           required
         ></textarea>
