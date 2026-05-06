@@ -48,7 +48,7 @@ export class AppProfileSidebar {
     },
     {
       key: 'backlog',
-      label: 'Backlog',
+      label: 'Biblioteca',
       count: this.profileStore.current()?.totalsBacklog ?? 0,
     },
     {
