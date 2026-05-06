@@ -27,7 +27,7 @@ type ChangelogRelease = {
       </header>
 
       @if (loading()) {
-        <section class="bg-blue-2 rounded-2xl p-6">
+        <section class="bg-gray-2 rounded-2xl p-6">
           <p class="text-gray-11">Carregando changelog...</p>
         </section>
       } @else if (error()) {
@@ -38,22 +38,22 @@ type ChangelogRelease = {
           >
         </section>
       } @else if (!releases().length) {
-        <section class="bg-blue-2 rounded-2xl p-6">
+        <section class="bg-gray-2 rounded-2xl p-6">
           <p class="text-gray-11">Nenhuma versão encontrada no changelog.</p>
         </section>
       } @else {
         <section class="grid gap-4 md:gap-6">
           @for (release of releases(); track release.version) {
             <article
-              class="rounded-2xl p-5 md:p-6 border changelog-card"
+              class="rounded-2xl p-5 md:p-6 changelog-card"
               [class]="
                 release.isCurrent
-                  ? 'rounded-2xl p-5 md:p-6 border changelog-card changelog-card-current'
-                  : 'rounded-2xl p-5 md:p-6 border changelog-card'
+                  ? 'rounded-2xl p-5 md:p-6 changelog-card changelog-card-current'
+                  : 'rounded-2xl p-5 md:p-6 changelog-card'
               "
             >
               <header
-                class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-4 border-b border-blue-5"
+                class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-4 border-b border-gray-6"
               >
                 <div class="flex items-center gap-2 flex-wrap">
                   <h2 class="text-2xl leading-none">v{{ release.version }}</h2>
@@ -67,10 +67,8 @@ type ChangelogRelease = {
 
               <div class="grid gap-4">
                 @for (section of release.sections; track section.title) {
-                  <section
-                    class="rounded-xl bg-blue-2 p-4 border border-blue-4/60"
-                  >
-                    <h3 class="text-base md:text-lg mb-3 text-blue-11">
+                  <section>
+                    <h3 class="text-gray-11 mb-3 font-mono">
                       {{ section.title }}
                     </h3>
 
@@ -100,10 +98,9 @@ type ChangelogRelease = {
     .changelog-card {
       background: linear-gradient(
         135deg,
-        var(--color-blue-1),
-        var(--color-blue-2)
+        var(--color-gray-2),
+        var(--color-gray-3)
       );
-      border-color: var(--color-blue-4);
     }
 
     .changelog-card-current {
@@ -145,7 +142,7 @@ type ChangelogRelease = {
       width: 0.42rem;
       height: 0.42rem;
       border-radius: 999px;
-      background: var(--color-blue-9);
+      background: var(--color-gray-6);
     }
 
     .changelog-item :is(code) {
