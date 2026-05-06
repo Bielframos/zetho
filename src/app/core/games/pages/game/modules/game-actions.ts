@@ -15,7 +15,7 @@ import { ZereiListRow } from '../../../../lists/lists.type';
       <!-- Ação de curtida -->
       <button
         (click)="handleLike()"
-        class="p-2 rounded-xl bg-blue-2 hover:bg-blue-3 flex cursor-pointer"
+        class="p-2 rounded-xl bg-gray-2 hover:bg-blue-3 flex cursor-pointer"
         [aria-label]="gameController.zEntry()?.liked ? 'Descurtir' : 'Curtir'"
       >
         @if (gameController.zEntry()?.liked) {
@@ -28,7 +28,7 @@ import { ZereiListRow } from '../../../../lists/lists.type';
       <!-- Ação de hype -->
       <button
         (click)="handleHype()"
-        class="p-2 rounded-xl bg-blue-2 hover:bg-blue-3 flex cursor-pointer"
+        class="p-2 rounded-xl bg-gray-2 hover:bg-blue-3 flex cursor-pointer"
         [aria-label]="gameController.zEntry()?.hyped ? 'Remover hype' : 'Hypar'"
       >
         @if (gameController.zEntry()?.hyped) {
@@ -46,7 +46,7 @@ import { ZereiListRow } from '../../../../lists/lists.type';
             value: 'wishlist',
           })
         "
-        class="rounded-xl px-4 py-1 h-[36px] bg-blue-2 hover:bg-blue-3 flex items-center gap-2 cursor-pointer"
+        class="rounded-xl px-4 py-1 h-[36px] bg-gray-2 hover:bg-blue-3 flex items-center gap-2 cursor-pointer"
       >
         @if (gameController.zEntry()?.status === 'wishlist') {
           <i class="ph-fill ph-shopping-bag-open text-blue-9"></i>
@@ -65,7 +65,7 @@ import { ZereiListRow } from '../../../../lists/lists.type';
       >
         <button
           modalTrigger
-          class="rounded-xl h-[36px] px-4 py-1 bg-blue-2 hover:bg-blue-3 flex items-center gap-2 cursor-pointer"
+          class="rounded-xl h-[36px] px-4 py-1 bg-gray-2 hover:bg-blue-3 flex items-center gap-2 cursor-pointer"
         >
           <i class="ph ph-list-plus"></i>
           Adicionar à lista

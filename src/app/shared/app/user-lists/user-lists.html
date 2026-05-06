@@ -3,7 +3,7 @@
   <ui-list-card [ownerGamertag]="ownerGamertag()" [list]="list"></ui-list-card>
   } @empty { @if (fromMe()) {
   <li
-    class="p-10 mt-4 col-span-2 flex flex-col items-center text-center bg-blue-2 rounded-2xl"
+    class="p-10 mt-4 col-span-2 flex flex-col items-center text-center border border-dashed border-gray-6 rounded-2xl"
   >
     <i class="ph ph-list text-[32px] mb-2"></i>
     <h1 class="text-center text-2xl max-w-xl">Crie a sua primeira lista</h1>
@@ -14,7 +14,9 @@
     <app-new-list-dialog></app-new-list-dialog>
   </li>
   } @else {
-  <li class="p-6 text-center bg-blue-2 rounded-2xl text-gray-11">
+  <li
+    class="p-6 text-center border border-dashed border-gray-6 rounded-2xl text-gray-11"
+  >
     Nenhuma lista pública encontrada.
   </li>
   } }

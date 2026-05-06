@@ -9,7 +9,7 @@ import { ZStatsRow } from '../../../../zStats/zStats.types';
     <div class="@container">
       @if (isUpcomingRelease()) {
         <div
-          class="@md:grid grid-cols-2 overflow-hidden md:rounded-2xl p-2 bg-blue-2 h-full"
+          class="@md:grid grid-cols-2 overflow-hidden md:rounded-2xl p-2 bg-gray-2 h-full"
         >
           @for (item of upcomingEntries; track item.key) {
             <div
@@ -42,7 +42,7 @@ import { ZStatsRow } from '../../../../zStats/zStats.types';
         </div>
       } @else {
         <div
-          class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden md:rounded-2xl p-2 bg-blue-2 h-full"
+          class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden md:rounded-2xl p-2 bg-gray-2 h-full"
         >
           <!-- Zerado -->
           <div
@@ -106,7 +106,7 @@ export class UiGameStats {
   entries = [
     {
       key: 'backlogCount',
-      label: 'Backlog',
+      label: 'Na biblioteca',
       icon: 'ph-fill ph-books',
       classes: '@md:border-b @md:border-r border-gray-6',
     },
@@ -118,7 +118,7 @@ export class UiGameStats {
     },
     {
       key: 'droppedCount',
-      label: 'Droparam',
+      label: 'Dropados',
       icon: 'ph-fill ph-x-circle',
       classes: '@md:border-r border-gray-6',
     },
@@ -145,7 +145,7 @@ export class UiGameStats {
     },
     {
       key: 'backlogCount',
-      label: 'Backlog',
+      label: 'Na biblioteca',
       icon: 'ph-fill ph-books',
       classes: '@md:border-r @md:border-b border-gray-6',
     },
@@ -157,7 +157,7 @@ export class UiGameStats {
     },
     {
       key: 'droppedCount',
-      label: 'Droparam',
+      label: 'Dropados',
       icon: 'ph-fill ph-x-circle',
       classes: '@md:border-r border-gray-6',
     },
