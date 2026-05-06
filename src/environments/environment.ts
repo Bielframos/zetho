@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  appVersion: '1.7.0',
+  appVersion: '1.7.1',
   appUrl: 'https://www.zetho.app/',
   appwriteEndpoint: 'https://appwrite.adstrito.com/v1',
   appwriteProject: '690a16460002c718253a',
