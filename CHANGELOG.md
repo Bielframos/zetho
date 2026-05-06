@@ -4,6 +4,16 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [1.7.1] - 2026-05-06
+
+### Changed
+
+- Novo padrão de cores aplicado em toda a interface do app para reforçar a identidade visual do Zetho.
+
+### Added
+
+- Chegada do Gazetho: novo destaque visual e anúncio oficial no app.
+
 ## [1.7.0] - 2026-04-25
 
 ### Added
