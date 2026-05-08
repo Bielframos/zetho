@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UiGameCard } from '../../../../../shared/ui/game-card/game-card';
 import { UiSkeleton } from '../../../../../shared/ui/skeleton';
@@ -50,7 +50,36 @@ import { GameRow } from '../../../game.types';
             </div>
           </div>
 
-          <p class="font-light">{{ game()?.summary }}</p>
+          <div>
+            <p class="font-light">
+              {{ game()?.summaryPt ? game()?.summaryPt : game()?.summary }}
+            </p>
+
+            @if (game()?.summaryPt) {
+              <button
+                (click)="toggleSummary()"
+                class="text-xs border border-dashed border-gray-6 rounded-full w-fit px-2 py-0.5 hover:bg-gray-2 cursor-pointer mt-2"
+              >
+                {{
+                  showOriginalSummary()
+                    ? 'Esconder resumo original'
+                    : 'Mostrar resumo original'
+                }}
+              </button>
+
+              <div
+                class="overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out"
+                [class.max-h-0]="!showOriginalSummary()"
+                [class.max-h-[800px]]="showOriginalSummary()"
+                [class.opacity-0]="!showOriginalSummary()"
+                [class.opacity-100]="showOriginalSummary()"
+              >
+                <p class="font-light mt-2 text-sm">
+                  {{ game()?.summary }}
+                </p>
+              </div>
+            }
+          </div>
 
           <!-- Genêros do game -->
           <div>
@@ -87,6 +116,9 @@ import { GameRow } from '../../../game.types';
 })
 export class UiGameHeader {
   game = input<GameRow | null>();
+
+  showOriginalSummary = signal(false);
+  toggleSummary = () => this.showOriginalSummary.update((value) => !value);
 
   releaseLabel = computed(() => {
     const game = this.game();

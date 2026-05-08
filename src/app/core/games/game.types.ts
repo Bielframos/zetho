@@ -9,6 +9,7 @@ type Game = {
   releaseDate: string;
   rawReleaseDate?: string;
   summary: string;
+  summaryPt?: string;
   hypes: number;
   externalReference: number;
   gameType: string | any;
