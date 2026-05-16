@@ -44,7 +44,7 @@ export class AdminService {
   }
 
   async addGameByIgdbId(id: number) {
-    return this.request<AdminAddGameResponse>(`igdb/games/${id}`, {
+    return this.request<AdminAddGameResponse>(`igdb/games/${id}?force=true`, {
       method: 'POST',
     });
   }
