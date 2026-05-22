@@ -9,6 +9,7 @@ import { NOT_FOUND_ROUTES } from './core/notFound/notFound.routes';
 import { OFFLINE_ROUTES } from './core/offline/offline.routes';
 import { PROFILE_ROUTES } from './core/profile/profile.routes';
 import { SEARCH_ROUTES } from './core/search/search.routes';
+import { ZCOINS_ROUTES } from './core/zCoins/zcoins.routes';
 
 export const routes: Routes = [
   ...LANDING_ROUTES,
@@ -20,5 +21,6 @@ export const routes: Routes = [
   ...OFFLINE_ROUTES,
   ...DASHBOARD_ROUTES,
   ...PROFILE_ROUTES,
+  ...ZCOINS_ROUTES,
   ...NOT_FOUND_ROUTES,
 ];

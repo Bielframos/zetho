@@ -4,6 +4,15 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [1.8.0] - 2026-05-22
+
+### Added
+
+- Introduzidos os Z-Coins: uma nova moeda virtual do Zetho para recompensas e conquistas.
+- Exibição do saldo de Z-Coins no perfil do usuário.
+- Sistema inicial de ganhos de Z-Coins ao completar ações dentro do app.
+- Adicionado placar semanal de líderes para destacar os usuários mais ativos.
+
 ## [1.7.1] - 2026-05-06
 
 ### Changed

@@ -42,6 +42,32 @@ export class AuthStore {
     return this.profile()?.avatarUrl!;
   });
 
+  adjustZcoinBalance(delta: number) {
+    const current = this.profileSignal();
+
+    if (!current) {
+      return;
+    }
+
+    this.profileSignal.set({
+      ...current,
+      zcoinBalance: Number(current.zcoinBalance ?? 0) + delta,
+    });
+  }
+
+  setZcoinBalance(balance: number) {
+    const current = this.profileSignal();
+
+    if (!current) {
+      return;
+    }
+
+    this.profileSignal.set({
+      ...current,
+      zcoinBalance: balance,
+    });
+  }
+
   constructor(
     private authService: AuthService,
     private notification: NotificationStore,
