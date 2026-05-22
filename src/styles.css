@@ -51,6 +51,19 @@
       transform: translateY(0px);
     }
   }
+
+  --animate-pop-in: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+
+  @keyframes pop-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 }
 
 @layer base {
@@ -205,6 +218,10 @@
   /* Variação de tamanho para botões e links */
   [data-size="icon"] {
     @apply w-[34px] h-[34px] rounded-full p-0 flex items-center justify-center;
+  }
+
+  [data-size="sm"] {
+    @apply px-3 py-1 text-sm;
   }
 
   /* Background pattern */

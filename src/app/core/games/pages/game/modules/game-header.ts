@@ -25,7 +25,7 @@ import { GameRow } from '../../../game.types';
 
           <div class="flex gap-4 max-sm:justify-center">
             <!-- Nome dos desenvolvedores -->
-            <div class="border-r pr-4 border-blue-6">
+            <div class="border-r pr-4 border-gray-6">
               <span class="text-sm font-light text-gray-11"
                 >Desenvolvido por</span
               >
@@ -82,19 +82,28 @@ import { GameRow } from '../../../game.types';
           </div>
 
           <!-- Genêros do game -->
-          <div>
-            <span class="text-sm font-light text-gray-11">Gêneros</span> <br />
-            @for (genre of game()?.genres; track $index) {
-              <a
-                [routerLink]="['/buscar']"
-                [queryParams]="{ genre: genre.slug }"
-                class="hover:text-blue-11 transition-colors"
-                >{{ genre.name }}</a
-              >
-              @if ($index < (game()?.genres?.length ?? 0) - 1) {
-                <span>, </span>
+          <div class="flex gap-4 max-sm:flex-col max-sm:items-center">
+            <div class="border-r pr-4 border-gray-6">
+              <span class="text-sm font-light text-gray-11">Gêneros</span>
+              <br />
+              @for (genre of game()?.genres; track $index) {
+                <a
+                  [routerLink]="['/buscar']"
+                  [queryParams]="{ genre: genre.slug }"
+                  class="hover:text-blue-11 transition-colors"
+                  >{{ genre.name }}</a
+                >
+                @if ($index < (game()?.genres?.length ?? 0) - 1) {
+                  <span>, </span>
+                }
               }
-            }
+            </div>
+
+            <div>
+              <span class="text-sm font-light text-gray-11">ID do jogo</span>
+              <br />
+              <span>{{ game()?.$id }}</span>
+            </div>
           </div>
         } @else {
           <ui-skeleton [height]="40" [width]="70"></ui-skeleton>

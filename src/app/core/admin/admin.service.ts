@@ -3,10 +3,16 @@ import { environment } from '../../../environments/environment';
 import { AuthStore } from '../auth/auth.store';
 import {
   AdminAddGameResponse,
+  AdminActivateRaffleResponse,
+  AdminAddKeysResponse,
   AdminApiError,
   AdminAuditAllResponse,
   AdminAuditOneResponse,
+  AdminCreateRaffleBody,
+  AdminCreateRaffleWithKeysBody,
   AdminProfilesResponse,
+  AdminRaffleListResponse,
+  AdminRaffleResponse,
 } from './admin.types';
 
 @Injectable({ providedIn: 'root' })
@@ -31,7 +37,10 @@ export class AdminService {
 
       try {
         const payload = await response.json();
-        message = payload?.message ?? message;
+
+        if (Array.isArray(payload.message)) {
+          message = payload.message.join(', ');
+        }
       } catch {}
 
       throw {
@@ -78,5 +87,68 @@ export class AdminService {
       : `profile/${profileId}/audit`;
 
     return this.request<AdminAuditOneResponse>(path);
+  }
+
+  // --- Sorteios ---
+
+  async listRaffles(
+    params: { active?: boolean; gameId?: string; limit?: number } = {},
+  ) {
+    const query = new URLSearchParams();
+    if (params.active !== undefined) query.set('active', String(params.active));
+    if (params.gameId) query.set('gameId', params.gameId);
+    if (params.limit) query.set('limit', String(params.limit));
+
+    const qs = query.toString();
+    return this.request<AdminRaffleListResponse>(
+      `raffles${qs ? `?${qs}` : ''}`,
+    );
+  }
+
+  async createRaffle(body: AdminCreateRaffleBody) {
+    return this.request<AdminRaffleResponse>('raffles', {
+      method: 'POST',
+      body: JSON.stringify({
+        ...body,
+        basicProbability: body.basicProbability
+          ? parseInt(String(body.basicProbability))
+          : undefined,
+        ticketPrice: body.ticketPrice
+          ? parseInt(String(body.ticketPrice))
+          : undefined,
+      }),
+    });
+  }
+
+  async createRaffleWithKeys(body: AdminCreateRaffleWithKeysBody) {
+    return this.request<AdminRaffleResponse>('raffles/with-keys', {
+      method: 'POST',
+      body: JSON.stringify({
+        ...body,
+        basicProbability: body.basicProbability
+          ? parseInt(String(body.basicProbability))
+          : undefined,
+        ticketPrice: body.ticketPrice
+          ? parseInt(String(body.ticketPrice))
+          : undefined,
+      }),
+    });
+  }
+
+  async activateRaffle(raffleId: string) {
+    return this.request<AdminActivateRaffleResponse>(
+      `raffles/${raffleId}/activate`,
+      { method: 'PATCH' },
+    );
+  }
+
+  async addKeysToRaffle(
+    raffleId: string,
+    keys: Array<{ key: string; platform: string }>,
+  ) {
+    return this.request<AdminAddKeysResponse>(`raffles/${raffleId}/keys`, {
+      method: 'POST',
+      body: JSON.stringify({ keys }),
+    });
   }
 }
