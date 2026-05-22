@@ -8,19 +8,11 @@
 
       <div class="flex items-center gap-2">
         <!-- Barra de busca desktop — Só exibe se não for página de autenticação -->
-        @if (!isAuthRoute()) {
-        <div class="hidden md:flex items-center gap-4">
-          @if (authStore.profile()) {
-          <div class="flex items-center gap-2">
-            <img src="/animated_z_coin.gif" alt="" class="h-8 w-8" />
-            <div class="flex flex-col leading-none">
-              <strong class="text-3xl text-gray-12 font-display"
-                >{{ authStore.profile()?.zcoinBalance ?? 0 }}</strong
-              >
-            </div>
-          </div>
-          }
 
+        @if (!isAuthRoute()) {
+        <app-z-coin-balance></app-z-coin-balance>
+
+        <div class="hidden md:flex items-center gap-4">
           <div class="w-72">
             <app-search-input
               name="desktopSearchInput"
@@ -52,7 +44,7 @@
 
     <!-- Barra de busca mobile — Só exibe se não for página de autenticação -->
     @if (!isAuthRoute()) {
-    <div class="md:hidden mt-4">
+    <div class="md:hidden mt-4 flex items-center gap-4">
       <app-search-input
         name="mobileSearchInput"
         placeholder="Busque um jogo ou player"

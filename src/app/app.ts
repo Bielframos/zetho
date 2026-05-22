@@ -12,10 +12,17 @@ import { AppSearchInput } from './shared/app/search-input/search-input';
 import { ToasterComponent } from './core/notifications/toaster.component';
 import { environment } from '../environments/environment';
 import { ZCoinsService } from './core/zCoins/zcoins.service';
+import { ZCoinBalance } from './shared/ui/z-coin-balance';
 
 @Component({
   selector: 'app-root',
-  imports: [AppSearchInput, RouterLink, RouterOutlet, ToasterComponent],
+  imports: [
+    AppSearchInput,
+    RouterLink,
+    RouterOutlet,
+    ToasterComponent,
+    ZCoinBalance,
+  ],
   templateUrl: './app.html',
 })
 export class App {
