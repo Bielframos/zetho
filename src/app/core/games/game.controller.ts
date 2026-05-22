@@ -5,6 +5,7 @@ import type { GameMedia, GameHero } from './game.types';
 import { AuthStore } from '../auth/auth.store';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { GameService } from './games.service';
+import { ZCoinsService } from '../zCoins/zcoins.service';
 
 @Injectable({ providedIn: 'root' })
 export class GameController {
@@ -42,6 +43,7 @@ export class GameController {
     private gameService: GameService,
     private zEntryService: ZEntryService,
     private authStore: AuthStore,
+    private zCoinsService: ZCoinsService,
   ) {}
 
   async loadPage(slug: string) {
@@ -109,8 +111,21 @@ export class GameController {
       return;
     }
 
+    let rollbackReward: (() => void) | null = null;
+
     try {
       this.updating.set(true);
+
+      const optimisticReward = this.zCoinsService.previewGameEntryReward({
+        action,
+        value,
+      });
+
+      if (optimisticReward) {
+        rollbackReward = this.zCoinsService.applyOptimisticReward(
+          optimisticReward,
+        );
+      }
 
       const updated = await this.zEntryService.createEntryLog(
         profile.fingerprint,
@@ -125,6 +140,7 @@ export class GameController {
 
       this.zEntry.set(updated);
     } catch (err) {
+      rollbackReward?.();
       console.error('Erro ao atualizar status:', err);
     } finally {
       this.updating.set(false);

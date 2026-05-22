@@ -17,6 +17,7 @@ type UserProfile = {
   socialXbox?: string;
   socialSteam?: string;
   socialPsn?: string;
+  zcoinBalance?: number;
 };
 
 type UserProfileRow = StoredRow<UserProfile>;

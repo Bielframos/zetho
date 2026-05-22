@@ -2,6 +2,7 @@ import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'ui-loading',
+  standalone: true,
   template: `
     <div
       class="relative w-full flex flex-col items-center py-6 gap-4 text-blue-6"

@@ -24,7 +24,7 @@ import { ProfileStore } from '../../../../userProfiles/profile.store';
           >
             {{ tab.label }}
             <span
-              class="px-1 text-gray-11 rounded-lg bg-blue-2 border border-gray-6 min-w-6 text-center"
+              class="px-1 text-gray-11 rounded-lg bg-gray-3 min-w-6 text-center"
             >
               {{ tab.count }}
             </span>

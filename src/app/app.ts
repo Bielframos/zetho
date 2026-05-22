@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, effect, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   NavigationEnd,
@@ -11,6 +11,7 @@ import { AuthStore } from './core/auth/auth.store';
 import { AppSearchInput } from './shared/app/search-input/search-input';
 import { ToasterComponent } from './core/notifications/toaster.component';
 import { environment } from '../environments/environment';
+import { ZCoinsService } from './core/zCoins/zcoins.service';
 
 @Component({
   selector: 'app-root',
@@ -22,11 +23,14 @@ export class App {
   appVersion = environment.appVersion;
   private route = inject(Router);
   private destroyRef = inject(DestroyRef);
+  private zCoinsService = inject(ZCoinsService);
   private lastOnlineRoute = '/';
+  private dailyLoginAttemptedFor = '';
 
   constructor() {
     this.trackLastOnlineRoute();
     this.registerConnectionWatch();
+    this.registerDailyLoginReward();
   }
 
   onSearch(query: string) {
@@ -87,6 +91,26 @@ export class App {
     if (!navigator.onLine) {
       this.goToOfflinePage();
     }
+  }
+
+  private registerDailyLoginReward() {
+    effect(() => {
+      const profile = this.authStore.profile();
+
+      if (!profile?.userId) {
+        this.dailyLoginAttemptedFor = '';
+        return;
+      }
+
+      const dayKey = `${profile.userId}-${new Date().toISOString().slice(0, 10)}`;
+
+      if (this.dailyLoginAttemptedFor === dayKey) {
+        return;
+      }
+
+      this.dailyLoginAttemptedFor = dayKey;
+      void this.zCoinsService.recordDailyLogin();
+    });
   }
 
   private goToOfflinePage() {
