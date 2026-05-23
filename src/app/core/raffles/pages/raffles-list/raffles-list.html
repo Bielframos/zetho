@@ -9,7 +9,7 @@
   <!-- Tab bar -->
   <div class="flex gap-1 mb-6 border-b border-gray-6">
     <button
-      class="px-4 py-2 text-sm transition-colors"
+      class="px-4 py-2 text-sm transition-colors cursor-pointer"
       [class.text-gray-12]="activeTab() === 'active'"
       [class.border-b-2]="activeTab() === 'active'"
       [class.border-blue-9]="activeTab() === 'active'"
@@ -25,7 +25,7 @@
       }
     </button>
     <button
-      class="px-4 py-2 text-sm transition-colors"
+      class="px-4 py-2 text-sm transition-colors cursor-pointer"
       [class.text-gray-12]="activeTab() === 'ended'"
       [class.border-b-2]="activeTab() === 'ended'"
       [class.border-blue-9]="activeTab() === 'ended'"
@@ -33,6 +33,23 @@
       (click)="selectTab('ended')"
     >
       Encerrados
+    </button>
+    <button
+      class="px-4 py-2 text-sm transition-colors cursor-pointer"
+      [class.text-gray-12]="activeTab() === 'my-keys'"
+      [class.border-b-2]="activeTab() === 'my-keys'"
+      [class.border-blue-9]="activeTab() === 'my-keys'"
+      [class.text-gray-10]="activeTab() !== 'my-keys'"
+      (click)="selectTab('my-keys')"
+    >
+      Minhas chaves @if (!loading() && authStore.isAuthenticated() &&
+      myKeysLoaded()) {
+      <span
+        class="ml-1.5 rounded-full bg-blue-3 text-blue-11 text-xs px-2 py-0.5"
+      >
+        {{ myKeys().length }}
+      </span>
+      }
     </button>
   </div>
 
@@ -49,7 +66,68 @@
   >
     {{ error() }}
   </section>
-  } @else { @let raffles = activeTab() === 'active' ? activeRaffles() :
+  } @else if (activeTab() === 'my-keys') { @if (!authStore.isAuthenticated()) {
+  <div class="rounded-2xl bg-gray-2 p-10 text-center text-gray-11">
+    Faça login para ver as chaves que você ganhou.
+  </div>
+  } @else if (myKeysLoading()) {
+  <section class="rounded-2xl bg-gray-2 p-6 flex items-center gap-4">
+    <div
+      class="h-10 w-10 rounded-full border-4 border-blue-4 border-t-blue-9 animate-spin shrink-0"
+    ></div>
+    <span class="text-gray-11">Carregando suas chaves...</span>
+  </section>
+  } @else if (myKeysError()) {
+  <section
+    class="rounded-2xl border border-red-500/30 bg-red-500/8 p-6 text-red-11"
+  >
+    {{ myKeysError() }}
+  </section>
+  } @else if (myKeys().length === 0) {
+  <div class="rounded-2xl bg-gray-2 p-10 text-center text-gray-11">
+    Você ainda não ganhou nenhuma chave.
+  </div>
+  } @else {
+  <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    @for (keyItem of myKeys(); track keyItem.$id) {
+    <li class="rounded-2xl bg-gray-2 p-4 flex flex-col gap-3">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <div class="text-xs uppercase tracking-wide text-gray-10">
+            {{ formatDate(keyItem.wonAt) }}
+          </div>
+          <h3 class="text-gray-12 font-medium mt-1">
+            {{ raffleLabel(keyItem.raffleId) }}
+          </h3>
+        </div>
+        @if (keyItem.platform) {
+        <span class="rounded-full bg-blue-3 text-blue-11 text-xs px-2 py-0.5">
+          {{ keyItem.platform }}
+        </span>
+        }
+      </div>
+
+      <div class="rounded-xl bg-gray-3 border border-gray-6 px-3 py-2">
+        <div class="text-xs text-gray-10">Chave</div>
+        <div class="font-mono text-gray-12 break-all mt-1">
+          {{ keyItem.key }}
+        </div>
+      </div>
+
+      <div class="grid gap-2 text-sm text-gray-10">
+        <div>
+          <span class="text-gray-11">Sorteio:</span>
+          {{ keyItem.raffleId }}
+        </div>
+        <div>
+          <span class="text-gray-11">Jogo:</span>
+          {{ keyItem.gameId }}
+        </div>
+      </div>
+    </li>
+    }
+  </ul>
+  } } @else { @let raffles = activeTab() === 'active' ? activeRaffles() :
   endedRaffles(); @if (raffles.length === 0) {
   <div class="rounded-2xl bg-gray-2 p-10 text-center text-gray-11">
     @if (activeTab() === 'active') { Nenhum sorteio ativo no momento. } @else {

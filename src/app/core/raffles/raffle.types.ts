@@ -59,15 +59,16 @@ export interface RaffleEntriesResponse {
 
 export interface RaffleMyKey {
   $id: string;
-  $createdAt: string;
+  gameId: string;
   raffleId: string;
-  game: string | RaffleGameData;
   key: string;
-  platform: string;
+  platform?: string;
+  wonAt: string;
 }
 
 export interface RaffleMyKeysResponse {
-  items: RaffleMyKey[];
+  total: number;
+  keys: RaffleMyKey[];
 }
 
 export interface RaffleListParams {

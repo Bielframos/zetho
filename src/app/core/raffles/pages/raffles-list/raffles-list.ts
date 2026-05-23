@@ -1,7 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthStore } from '../../../auth/auth.store';
 import { RafflesService } from '../../raffles.service';
-import { RaffleItem } from '../../raffle.types';
+import { RaffleItem, RaffleMyKey } from '../../raffle.types';
 import { SeoService } from '../../../seo/seo.service';
 
 @Component({
@@ -12,12 +13,17 @@ import { SeoService } from '../../../seo/seo.service';
 })
 export class RafflesListPage {
   private rafflesService = inject(RafflesService);
+  authStore = inject(AuthStore);
   private seo = inject(SeoService);
 
-  activeTab = signal<'active' | 'ended'>('active');
+  activeTab = signal<'active' | 'ended' | 'my-keys'>('active');
 
   activeRaffles = signal<RaffleItem[]>([]);
   endedRaffles = signal<RaffleItem[]>([]);
+  myKeys = signal<RaffleMyKey[]>([]);
+  myKeysLoading = signal(false);
+  myKeysLoaded = signal(false);
+  myKeysError = signal<string | null>(null);
 
   loading = signal(true);
   error = signal<string | null>(null);
@@ -52,8 +58,28 @@ export class RafflesListPage {
     }
   }
 
-  selectTab(tab: 'active' | 'ended') {
+  selectTab(tab: 'active' | 'ended' | 'my-keys') {
     this.activeTab.set(tab);
+    if (tab === 'my-keys' && this.authStore.isAuthenticated()) {
+      void this.loadMyKeys();
+    }
+  }
+
+  private async loadMyKeys() {
+    if (this.myKeysLoading() || this.myKeysLoaded()) return;
+
+    this.myKeysLoading.set(true);
+    this.myKeysError.set(null);
+
+    try {
+      const response = await this.rafflesService.getMyKeys();
+      this.myKeys.set(response.keys);
+      this.myKeysLoaded.set(true);
+    } catch {
+      this.myKeysError.set('Não foi possível carregar suas chaves agora.');
+    } finally {
+      this.myKeysLoading.set(false);
+    }
   }
 
   gameName(raffle: RaffleItem): string {
@@ -72,6 +98,13 @@ export class RafflesListPage {
 
   policyLabel(policy: string): string {
     return policy === 'first-come' ? 'Primeiro a chegar' : 'Sorteio aleatório';
+  }
+
+  raffleLabel(raffleId: string): string {
+    const raffle = [...this.activeRaffles(), ...this.endedRaffles()].find(
+      (item) => item.$id === raffleId,
+    );
+    return raffle ? this.gameName(raffle) : raffleId;
   }
 
   formatDate(value: string): string {
