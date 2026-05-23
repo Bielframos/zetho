@@ -49,6 +49,58 @@ export type AdminAuditReport = {
   fixed: boolean;
 };
 
+// --- Sorteios ---
+
+export type AdminRaffleKey = {
+  key: string;
+  platform: string;
+};
+
+export type AdminCreateRaffleBody = {
+  gameId: string;
+  rewardPolicy: 'one_key' | 'all_keys';
+  basicProbability?: number;
+  ticketPrice?: number;
+};
+
+export type AdminCreateRaffleWithKeysBody = AdminCreateRaffleBody & {
+  keys: AdminRaffleKey[];
+};
+
+export type AdminRaffleResponse = {
+  $id: string;
+  game: {
+    $id: string;
+    name: string;
+  };
+  name: string;
+  rewardPolicy: string;
+  basicProbability?: number;
+  ticketPrice?: number;
+  active: boolean;
+  keysCount: number;
+  $createdAt: string;
+  $updatedAt: string;
+  message?: string;
+};
+
+export type AdminRaffleListResponse = {
+  raffles: AdminRaffleResponse[];
+  cursor: string | null;
+  hasMore: boolean;
+};
+
+export type AdminActivateRaffleResponse = {
+  $id: string;
+  active: boolean;
+  message?: string;
+};
+
+export type AdminAddKeysResponse = {
+  message: string;
+  added: number;
+};
+
 export type AdminAuditAllResponse = {
   totalProfiles: number;
   auditedProfiles: number;

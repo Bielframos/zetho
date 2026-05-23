@@ -10,6 +10,7 @@ import { UiGameActions } from './modules/game-actions';
 import { UiGameHeader } from './modules/game-header';
 import { UiGameLobby } from './modules/game-lobby';
 import { UiGameMedias } from './modules/game-medias';
+import { UiGameRaffles } from './modules/game-raffles';
 import { UiGameStats } from './modules/game-stats';
 import { UiZEntryActions } from './modules/z-entry-actions';
 
@@ -25,6 +26,7 @@ import { UiZEntryActions } from './modules/z-entry-actions';
     UiGameLobby,
     UiGameActions,
     UiGameMedias,
+    UiGameRaffles,
   ],
   templateUrl: './game.html',
 })

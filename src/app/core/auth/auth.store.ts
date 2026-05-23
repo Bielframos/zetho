@@ -4,6 +4,10 @@ import { AuthService } from './auth.service';
 import { appwrite } from '../appwrite/appwrite.client';
 import { UserProfileService } from '../userProfiles/userProfile.service';
 import { UserProfileRow } from '../../types';
+import type {
+  InviteBonusResponse,
+  InviteCodeResponse,
+} from '../userProfiles/userProfile.types';
 import { NotificationStore } from '../notifications/notification.store';
 
 const JWT_TTL_MS = 15 * 60 * 1000;
@@ -57,15 +61,14 @@ export class AuthStore {
 
   setZcoinBalance(balance: number) {
     const current = this.profileSignal();
+    if (!current) return;
+    this.profileSignal.set({ ...current, zcoinBalance: balance });
+  }
 
-    if (!current) {
-      return;
-    }
-
-    this.profileSignal.set({
-      ...current,
-      zcoinBalance: balance,
-    });
+  setInviteCode(code: string) {
+    const current = this.profileSignal();
+    if (!current) return;
+    this.profileSignal.set({ ...current, inviteCode: code });
   }
 
   constructor(
@@ -85,6 +88,7 @@ export class AuthStore {
     password: string,
     name: string,
     gamertag: string,
+    inviteCode?: string,
   ) {
     try {
       const { user, profile } = await this.authService.register(
@@ -92,6 +96,7 @@ export class AuthStore {
         password,
         name,
         gamertag,
+        inviteCode,
       );
 
       this.userSignal.set(user);
@@ -371,5 +376,17 @@ export class AuthStore {
     this.jwtExpirationTime.set(null);
     this.jwtRequestInFlight = null;
     sessionStorage.removeItem('user');
+  }
+
+  async getInviteBonus(): Promise<InviteBonusResponse> {
+    return this.authService.getInviteBonus();
+  }
+
+  async generateInviteCode(): Promise<InviteCodeResponse> {
+    const profileId = this.profile()?.$id;
+    if (!profileId) throw new Error('Perfil não encontrado.');
+    const result = await this.authService.generateInviteCode(profileId);
+    this.setInviteCode(result.inviteCode);
+    return result;
   }
 }

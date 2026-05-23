@@ -81,16 +81,16 @@ export class GameController {
     }
   }
 
-  async handleEntry({
-    action,
-    value,
-  }:
-    | { action: 'updateStatus'; value: ZEntryRow['status'] }
-    | { action: 'like'; value: boolean }
-    | { action: 'hype'; value: boolean }) {
+  async handleEntry(
+    payload:
+      | { action: 'updateStatus'; value: ZEntryRow['status'] }
+      | { action: 'like'; value: boolean }
+      | { action: 'hype'; value: boolean },
+  ) {
     const game = this.game();
     const zEntry = this.zEntry();
     const profile = this.authStore.profile();
+    const { action, value } = payload;
 
     if (!game) return;
     if (this.updating()) return;
@@ -111,21 +111,24 @@ export class GameController {
       return;
     }
 
+    const optimisticEntry = this.buildOptimisticEntry(zEntry, payload);
     let rollbackReward: (() => void) | null = null;
+
+    const optimisticReward = this.zCoinsService.previewGameEntryReward({
+      action,
+      value,
+      currentEntry: zEntry,
+    });
+
+    if (optimisticReward) {
+      rollbackReward =
+        this.zCoinsService.applyOptimisticReward(optimisticReward);
+    }
+
+    this.zEntry.set(optimisticEntry);
 
     try {
       this.updating.set(true);
-
-      const optimisticReward = this.zCoinsService.previewGameEntryReward({
-        action,
-        value,
-      });
-
-      if (optimisticReward) {
-        rollbackReward = this.zCoinsService.applyOptimisticReward(
-          optimisticReward,
-        );
-      }
 
       const updated = await this.zEntryService.createEntryLog(
         profile.fingerprint,
@@ -138,12 +141,65 @@ export class GameController {
             : { liked: value },
       );
 
-      this.zEntry.set(updated);
+      this.zEntry.set({
+        ...updated,
+        ...optimisticEntry,
+      });
     } catch (err) {
       rollbackReward?.();
+      this.zEntry.set(zEntry);
       console.error('Erro ao atualizar status:', err);
     } finally {
       this.updating.set(false);
     }
+  }
+
+  private buildOptimisticEntry(
+    current: ZEntryRow | null,
+    payload:
+      | { action: 'updateStatus'; value: ZEntryRow['status'] }
+      | { action: 'like'; value: boolean }
+      | { action: 'hype'; value: boolean },
+  ): ZEntryRow {
+    const next = current
+      ? { ...current }
+      : ({
+          gameId: '',
+          liked: false,
+          hyped: false,
+          status: null,
+          ownerFingerprint: '',
+        } as ZEntryRow);
+
+    if (payload.action === 'like') {
+      next.liked = payload.value;
+      if (payload.value) {
+        next.likeEver = true;
+      }
+      return next;
+    }
+
+    if (payload.action === 'hype') {
+      next.hyped = payload.value;
+      return next;
+    }
+
+    next.status = payload.value;
+
+    const rank = (status: ZEntryRow['status'] | undefined | null) => {
+      if (status === 'completed') return 3;
+      if (status === 'playing') return 2;
+      if (status === 'backlog') return 1;
+      return 0;
+    };
+
+    const currentMaxRank = rank(current?.maxStatusReached ?? current?.status);
+    const nextRank = rank(payload.value);
+
+    if (nextRank > currentMaxRank) {
+      next.maxStatusReached = payload.value;
+    }
+
+    return next;
   }
 }

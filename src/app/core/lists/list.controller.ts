@@ -44,8 +44,6 @@ export class ListController {
     private listService: ListService,
   ) {
     this.slug$.subscribe((slug) => {
-      console.log('Slug changed:', slug);
-
       if (slug) {
         this.reset();
         void this.load({ slug });

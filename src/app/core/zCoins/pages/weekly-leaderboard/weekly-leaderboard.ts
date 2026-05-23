@@ -4,6 +4,7 @@ import { AuthStore } from '../../../auth/auth.store';
 import { SeoService } from '../../../seo/seo.service';
 import { WeeklyZCoinLeaderboardResponse } from '../../../zCoins/zcoins.types';
 import { ZCoinsService } from '../../../zCoins/zcoins.service';
+import { CdkConnectedOverlay } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-weekly-zcoin-leaderboard',
