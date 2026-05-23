@@ -4,6 +4,13 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [1.9.0] - 2026-05-22
+
+### Added
+
+- Introduzidos os sorteios no Zetho para novas formas de participação e premiação.
+- Adicionado o sistema de convites para facilitar a entrada de novos usuários no app.
+
 ## [1.8.0] - 2026-05-22
 
 ### Added
