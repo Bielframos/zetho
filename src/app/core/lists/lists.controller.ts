@@ -168,7 +168,9 @@ export class ListsController {
         ),
       );
 
-      void this.zCoinsService.applyInput('add_game_to_list').catch(() => undefined);
+      void this.zCoinsService
+        .applyInput('add_game_to_list')
+        .catch(() => undefined);
     } catch (e) {
       const error = e as AppwriteException;
       console.error(e);
