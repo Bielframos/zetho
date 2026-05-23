@@ -131,9 +131,7 @@ export class ZCoinsService {
 
     if (params.action === 'like') {
       const likedEver =
-        params.currentEntry?.likedEver ??
-        params.currentEntry?.likeEver ??
-        false;
+        params.currentEntry?.likedEver ?? params.currentEntry?.liked ?? false;
       const nowLiked = Boolean(params.value);
       if (!likedEver && nowLiked) {
         return {
@@ -153,6 +151,7 @@ export class ZCoinsService {
     };
 
     const nextRank = rank(params.value as ZEntryRow['status']);
+
     const previousRank = rank(
       params.currentEntry?.maxStatusReached ?? params.currentEntry?.status,
     );

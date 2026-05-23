@@ -13,12 +13,8 @@ import { ZEntry } from '../../../../zEntries/zEntries.types';
     >
       @for (action of actions; track action.key) {
         <button
-          (click)="
-            controller.handleEntry({
-              action: 'updateStatus',
-              value: action.key,
-            })
-          "
+          (click)="onStatusAction(action.key)"
+          [disabled]="isCoolingDown"
           class="flex flex-col gap-2 items-center justify-center w-full cursor-pointer transition-colors text-sm md:text-md border-gray-6 md:rounded-xl max-md:py-4"
           [ngClass]="[
             action.key === controller.zEntry()?.status
@@ -90,4 +86,20 @@ export class UiZEntryActions {
     playing: 'text-gray-11 hover:text-purple-300 hover:bg-purple-600/10',
     dropped: 'text-gray-11 hover:text-red-300 hover:bg-red-600/10',
   };
+
+  isCoolingDown = false;
+  cooldownDurationMs = 1500;
+
+  onStatusAction(
+    actionKey: Exclude<ZEntry['status'], 'wishlist' | null | undefined>,
+  ) {
+    if (this.isCoolingDown) return;
+
+    this.isCoolingDown = true;
+    this.controller.handleEntry({ action: 'updateStatus', value: actionKey });
+
+    window.setTimeout(() => {
+      this.isCoolingDown = false;
+    }, this.cooldownDurationMs);
+  }
 }
