@@ -32,10 +32,13 @@ export class ZEntriesRepository {
     const data: ZEntry = {
       gameId,
       ownerFingerprint: userFingerprint,
-      status,
       liked,
       hyped,
     };
+
+    if (status !== null) {
+      data.status = status;
+    }
 
     if (current) {
       const {
@@ -51,10 +54,12 @@ export class ZEntriesRepository {
         hyped: _h,
         gameId: _gameId,
         ownerFingerprint: _ownerFingerprint,
+        likedEver: _likedEver,
         likeEver: _likeEver,
         maxStatusReached: _maxStatusReached,
         ...cleanCurrent
       } = current;
+
       Object.assign(data, cleanCurrent);
     }
 

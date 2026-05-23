@@ -127,7 +127,8 @@ export class ZCoinsService {
     }
 
     if (params.action === 'like') {
-      const likedEver = params.currentEntry?.likeEver ?? false;
+      const likedEver =
+        params.currentEntry?.likedEver ?? params.currentEntry?.likeEver ?? false;
       const nowLiked = Boolean(params.value);
       if (!likedEver && nowLiked) {
         return {

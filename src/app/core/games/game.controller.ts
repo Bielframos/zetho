@@ -174,6 +174,7 @@ export class GameController {
     if (payload.action === 'like') {
       next.liked = payload.value;
       if (payload.value) {
+        next.likedEver = true;
         next.likeEver = true;
       }
       return next;
