@@ -12,6 +12,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map, startWith } from 'rxjs/operators';
 import { AuthStore } from '../../../auth/auth.store';
 import { NotificationStore } from '../../../notifications/notification.store';
+import type { InviteBonusResponse } from '../../../userProfiles/userProfile.types';
 import {
   BuyTicketsResponse,
   RaffleEntry,
@@ -47,6 +48,9 @@ export class RaffleDetailPage {
   revealStep = signal(0);
   revealedNumbers = signal<number[]>([]);
   expandedEntryId = signal<string | null>(null);
+  userBonus = signal<InviteBonusResponse | null>(null);
+  inviteCopied = signal(false);
+  generateInviteLoading = signal(false);
 
   private revealDialog =
     viewChild<ElementRef<HTMLDialogElement>>('revealDialog');
@@ -83,12 +87,18 @@ export class RaffleDetailPage {
       this.loading.set(true);
       this.loadError.set(null);
 
-      // Use cached raffle if available, otherwise fetch
       await this.rafflesService.loadRaffleById(raffleId);
       this.raffle.set(this.rafflesService.currentRaffle());
 
       const entriesRes = await this.rafflesService.getEntries(raffleId);
       this.entries.set(entriesRes.entries);
+
+      if (this.authStore.isAuthenticated()) {
+        void this.authStore
+          .getInviteBonus()
+          .then((b) => this.userBonus.set(b))
+          .catch(() => {});
+      }
     } catch {
       this.loadError.set('Não foi possível carregar os dados do sorteio.');
     } finally {
@@ -123,19 +133,32 @@ export class RaffleDetailPage {
     if (this.ticketCountControl.invalid || this.buyLoading()) return;
 
     const count = this.ticketCount() ?? 1;
+    const ticketPrice = this.raffle()?.ticketPrice ?? 0;
+    const bonusPercent = this.userBonus()?.bonusPercent ?? 0;
+    const estimatedCost = Math.floor(
+      count * ticketPrice * (1 - bonusPercent / 100),
+    );
+
+    // Optimistic balance deduction
+    this.authStore.adjustZcoinBalance(-estimatedCost);
 
     try {
       this.buyLoading.set(true);
 
       const result = await this.rafflesService.buyTickets(raffleId, count);
+
+      // Reconcile with actual server balance
+      this.authStore.setZcoinBalance(result.newBalance);
+
       this.drawResult.set(result);
       void this.runRevealSequence(result);
 
-      // Reload entries in background
       const entriesRes = await this.rafflesService.getEntries(raffleId);
       this.entries.set(entriesRes.entries);
       this.ticketCountControl.setValue(1);
     } catch (e: any) {
+      // Revert optimistic deduction
+      this.authStore.adjustZcoinBalance(estimatedCost);
       this.notification.show({
         message: e?.message ?? 'Erro ao comprar tickets.',
         type: 'error',
@@ -149,6 +172,41 @@ export class RaffleDetailPage {
     event.preventDefault();
     if (this.revealStep() >= 4) {
       this.closeReveal();
+    }
+  }
+
+  discountedTotal(): number {
+    const base = (this.ticketCount() ?? 1) * (this.raffle()?.ticketPrice ?? 0);
+    const bonus = this.userBonus()?.bonusPercent ?? 0;
+    return Math.floor(base * (1 - bonus / 100));
+  }
+
+  async copyInviteCode() {
+    const code = this.authStore.profile()?.inviteCode;
+    if (!code) return;
+    try {
+      await navigator.clipboard.writeText(code);
+      this.inviteCopied.set(true);
+      setTimeout(() => this.inviteCopied.set(false), 2000);
+    } catch {
+      this.notification.show({
+        message: 'Não foi possível copiar o código.',
+        type: 'error',
+      });
+    }
+  }
+
+  async generateInviteCode() {
+    this.generateInviteLoading.set(true);
+    try {
+      await this.authStore.generateInviteCode();
+    } catch {
+      this.notification.show({
+        message: 'Erro ao gerar código de convite.',
+        type: 'error',
+      });
+    } finally {
+      this.generateInviteLoading.set(false);
     }
   }
 

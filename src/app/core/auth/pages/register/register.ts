@@ -69,6 +69,9 @@ export class RegisterPage {
       confirmPassword: new FormControl('', {
         validators: [Validators.required],
       }),
+      inviteCode: new FormControl('', {
+        nonNullable: true,
+      }),
     },
     { validators: [this.passwordMatch] },
   );
@@ -82,8 +85,15 @@ export class RegisterPage {
     this.isSubmitting.set(true);
 
     try {
-      const { email, password, name, gamertag } = this.form.getRawValue();
-      await this.authStore.register(email, password, name, gamertag);
+      const { email, password, name, gamertag, inviteCode } =
+        this.form.getRawValue();
+      await this.authStore.register(
+        email,
+        password,
+        name,
+        gamertag,
+        inviteCode || undefined,
+      );
       await this.router.navigate(['/']);
     } catch (e) {
       this.form.setErrors({ submitFailed: true });

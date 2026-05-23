@@ -3,6 +3,10 @@ import { environment } from '../../../environments/environment';
 import { appwrite } from '../appwrite/appwrite.client';
 import { UserProfileRow } from '../userProfiles/userProfile.types';
 import { UserProfileService } from '../userProfiles/userProfile.service';
+import type {
+  InviteBonusResponse,
+  InviteCodeResponse,
+} from '../userProfiles/userProfile.types';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -20,6 +24,7 @@ export class AuthService {
     password: string,
     name: string,
     gamertag: string,
+    inviteCode?: string,
   ) {
     try {
       await appwrite.account.create({
@@ -44,7 +49,10 @@ export class AuthService {
             'Content-Type': 'application/json',
           },
           method: 'POST',
-          body: JSON.stringify({ gamertag }),
+          body: JSON.stringify({
+            gamertag,
+            ...(inviteCode ? { inviteCode } : {}),
+          }),
         },
       );
 
@@ -116,6 +124,35 @@ export class AuthService {
    */
   async updateEmail(newEmail: string, password: string) {
     return await appwrite.account.updateEmail({ email: newEmail, password });
+  }
+
+  async getInviteBonus(): Promise<InviteBonusResponse> {
+    const res = await fetch(
+      new URL('profile/me/bonus', environment.zethoApiEndpoint),
+      {
+        headers: {
+          Authorization: `Bearer ${await this.createJWT()}`,
+          'x-appwrite-session': localStorage.getItem('cookieFallback') ?? '',
+        },
+      },
+    );
+    if (!res.ok) throw new Error('Erro ao buscar bônus de convite.');
+    return res.json() as Promise<InviteBonusResponse>;
+  }
+
+  async generateInviteCode(profileId: string): Promise<InviteCodeResponse> {
+    const res = await fetch(
+      new URL(`profile/${profileId}/invite-code`, environment.zethoApiEndpoint),
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${await this.createJWT()}`,
+          'x-appwrite-session': localStorage.getItem('cookieFallback') ?? '',
+        },
+      },
+    );
+    if (!res.ok) throw new Error('Erro ao gerar código de convite.');
+    return res.json() as Promise<InviteCodeResponse>;
   }
 
   /**

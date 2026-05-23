@@ -15,6 +15,7 @@ import {
 import { Router } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
 import { UiModal } from '../../../../shared/ui/modal/modal';
+import { AppProfileInviteCard } from '../../../profile/pages/profile/modules/profile-invite-card';
 import {
   changedValidator,
   gamertagAsyncValidator,
@@ -30,7 +31,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-account',
   standalone: true,
-  imports: [UiInput, ReactiveFormsModule, UiModal],
+  imports: [UiInput, ReactiveFormsModule, UiModal, AppProfileInviteCard],
   templateUrl: './account.html',
 })
 export class AccountPage {

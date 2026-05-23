@@ -166,16 +166,39 @@
 
       <!-- Total cost -->
       @if (r.ticketPrice) {
-      <div
-        class="flex items-center justify-between border-t border-gray-6 pt-4"
-      >
-        <span class="text-sm text-gray-11">Total</span>
-        <div class="flex items-center gap-1.5">
-          <img src="/z-coin.webp" class="h-5 w-5" alt="Z-Coin" />
-          <span class="text-2xl font-bold text-gray-12 tabular-nums"
-            >{{ (ticketCount() ?? 1) * r.ticketPrice }}</span
-          >
-          <span class="text-sm text-gray-10">Z-Coins</span>
+      <div class="border-t border-gray-6 pt-4">
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-gray-11">Total</span>
+          @if (userBonus()?.bonusPercent) {
+          <div class="text-right">
+            <div class="flex gap-1.5 items-center">
+              <span class="line-through text-gray-10 text-sm tabular-nums"
+                >{{ (ticketCount() ?? 1) * r.ticketPrice }} Z-Coins</span
+              >
+
+              •
+
+              <span class="text-xs text-green-300"
+                >{{ userBonus()!.bonusPercent }}% OFF</span
+              >
+            </div>
+            <div class="flex items-center gap-1.5 justify-end">
+              <img src="/z-coin.webp" class="h-5 w-5" alt="Z-Coin" />
+              <span class="text-2xl font-bold text-green-300 tabular-nums"
+                >{{ discountedTotal() }}</span
+              >
+              <span class="text-sm text-gray-10">Z-Coins</span>
+            </div>
+          </div>
+          } @else {
+          <div class="flex items-center gap-1.5">
+            <img src="/z-coin.webp" class="h-5 w-5" alt="Z-Coin" />
+            <span class="text-2xl font-bold text-gray-12 tabular-nums"
+              >{{ (ticketCount() ?? 1) * r.ticketPrice }}</span
+            >
+            <span class="text-sm text-gray-10">Z-Coins</span>
+          </div>
+          }
         </div>
       </div>
       }
@@ -206,6 +229,60 @@
       }
     </div>
   </div>
+
+  <!-- Invite CTA -->
+  @if (authStore.isAuthenticated()) {
+  <section class="rounded-2xl bg-blue-2 border border-blue-5 p-5 mb-4">
+    <div class="flex items-start gap-3 mb-4">
+      <div
+        class="h-10 w-10 rounded-full bg-blue-3 border border-blue-5 flex items-center justify-center shrink-0"
+      >
+        <i class="ph ph-gift text-blue-9 text-[20px]"></i>
+      </div>
+      <div>
+        <h3 class="font-semibold text-gray-12">
+          Convide amigos e ganhe descontos
+        </h3>
+        <p class="text-sm text-gray-11 mt-0.5">
+          Cada amigo que se cadastrar com seu código te dá bônus de até {{
+          userBonus()?.maxBonusPercent ?? 15 }}% nas compras de tickets.
+        </p>
+      </div>
+    </div>
+
+    @if (authStore.profile()?.inviteCode; as code) {
+    <div class="flex items-center gap-2 bg-gray-3 rounded-xl px-4 py-3">
+      <span class="font-mono text-gray-12 flex-1 tracking-wide"
+        >{{ code }}</span
+      >
+      <button
+        (click)="copyInviteCode()"
+        class="h-9 w-9 rounded-lg bg-gray-4 hover:bg-gray-5 transition-colors flex items-center justify-center shrink-0 cursor-pointer"
+        [attr.title]="inviteCopied() ? 'Copiado!' : 'Copiar código'"
+      >
+        <i
+          [class]="'ph text-[16px] ' + (inviteCopied() ? 'ph-check text-green-400' : 'ph-copy')"
+        ></i>
+      </button>
+    </div>
+    <p class="text-xs text-gray-10 mt-2">
+      Compartilhe este código com seus amigos.
+    </p>
+    } @else {
+    <button
+      (click)="generateInviteCode()"
+      [disabled]="generateInviteLoading()"
+      class="cursor-pointer w-full rounded-xl bg-blue-3 hover:bg-blue-4 transition-colors text-blue-11 text-sm py-2.5 px-4 flex items-center justify-center gap-2 disabled:opacity-50"
+    >
+      @if (generateInviteLoading()) {
+      <i class="ph ph-spinner animate-spin text-[16px]"></i>
+      Gerando... } @else {
+      <i class="ph ph-magic-wand text-[16px]"></i>
+      Gerar meu código de convite }
+    </button>
+    }
+  </section>
+  }
 
   <section class="rounded-2xl bg-gray-2 p-5 mb-4">
     <h2 class="text-lg mb-3">Transparencia do sorteio</h2>
