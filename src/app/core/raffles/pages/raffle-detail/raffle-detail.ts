@@ -210,6 +210,21 @@ export class RaffleDetailPage {
     }
   }
 
+  async copyKey(key: string) {
+    try {
+      await navigator.clipboard.writeText(key);
+      this.notification.show({
+        message: 'Chave copiada para a área de transferência.',
+        type: 'success',
+      });
+    } catch {
+      this.notification.show({
+        message: 'Não foi possível copiar a chave.',
+        type: 'error',
+      });
+    }
+  }
+
   closeReveal() {
     this.revealStep.set(0);
     this.drawResult.set(null);

@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '../../../auth/auth.store';
+import { NotificationStore } from '../../../notifications/notification.store';
 import { RafflesService } from '../../raffles.service';
 import { RaffleItem, RaffleMyKey } from '../../raffle.types';
 import { SeoService } from '../../../seo/seo.service';
@@ -13,6 +14,7 @@ import { SeoService } from '../../../seo/seo.service';
 })
 export class RafflesListPage {
   private rafflesService = inject(RafflesService);
+  private notification = inject(NotificationStore);
   authStore = inject(AuthStore);
   private seo = inject(SeoService);
 
@@ -115,5 +117,20 @@ export class RafflesListPage {
 
   navigateToDetail(raffle: RaffleItem) {
     this.rafflesService.currentRaffle.set(raffle);
+  }
+
+  async copyKey(key: string) {
+    try {
+      await navigator.clipboard.writeText(key);
+      this.notification.show({
+        message: 'Chave copiada para a área de transferência.',
+        type: 'success',
+      });
+    } catch {
+      this.notification.show({
+        message: 'Não foi possível copiar a chave.',
+        type: 'error',
+      });
+    }
   }
 }
