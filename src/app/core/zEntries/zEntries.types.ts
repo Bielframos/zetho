@@ -10,6 +10,8 @@ type ZEntry = {
   replays?: number;
   prevState?: string;
   ownerFingerprint: string;
+  likeEver?: boolean;
+  maxStatusReached?: ZEntry['status'];
 };
 
 type ZEntryRow = StoredRow<ZEntry>;

@@ -6,7 +6,7 @@ import { AuthStore } from '../../core/auth/auth.store';
   standalone: true,
   template: `
     @if (authStore.profile()) {
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1">
         <img src="/animated_z_coin.gif" alt="" class="h-8 w-8" />
         <div class="flex flex-col leading-none">
           <strong class="text-3xl text-gray-12 font-display">{{

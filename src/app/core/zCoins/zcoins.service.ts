@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { AuthStore } from '../auth/auth.store';
 import { NotificationStore } from '../notifications/notification.store';
+import type { ZEntryRow } from '../../types';
 import {
   WeeklyZCoinLeaderboardResponse,
   ZCoinReason,
@@ -11,10 +12,10 @@ import {
 
 const REWARD_TABLE = {
   daily_login: 5,
-  engaged: 5,
-  finished_game: 25,
-  playing_game: 15,
-  add_game_to_library: 10,
+  engaged: 1,
+  finished_game: 6,
+  playing_game: 4,
+  add_game_to_library: 2,
 } as const satisfies Record<ZCoinReason, number>;
 
 @Injectable({ providedIn: 'root' })
@@ -116,17 +117,42 @@ export class ZCoinsService {
       | 'wishlist'
       | null
       | undefined;
+    currentEntry?: ZEntryRow | null;
   }): ZCoinRewardPreview | null {
-    if (params.action === 'like') {
-      if (!params.value) {
-        return null;
-      }
+    if (
+      params.action === 'hype' ||
+      (params.action === 'updateStatus' && params.value === 'wishlist')
+    ) {
+      return null;
+    }
 
-      return {
-        amount: REWARD_TABLE.engaged,
-        reason: 'engaged',
-        label: 'por curtir um jogo',
-      };
+    if (params.action === 'like') {
+      const likedEver = params.currentEntry?.likeEver ?? false;
+      const nowLiked = Boolean(params.value);
+      if (!likedEver && nowLiked) {
+        return {
+          amount: REWARD_TABLE.engaged,
+          reason: 'engaged',
+          label: 'por curtir um jogo',
+        };
+      }
+      return null;
+    }
+
+    const rank = (status: ZEntryRow['status'] | null | undefined) => {
+      if (status === 'completed') return 3;
+      if (status === 'playing') return 2;
+      if (status === 'backlog') return 1;
+      return 0;
+    };
+
+    const nextRank = rank(params.value as ZEntryRow['status']);
+    const previousRank = rank(
+      params.currentEntry?.maxStatusReached ?? params.currentEntry?.status,
+    );
+
+    if (nextRank <= previousRank) {
+      return null;
     }
 
     if (params.value === 'completed') {
