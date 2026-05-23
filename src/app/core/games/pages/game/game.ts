@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
@@ -52,7 +52,11 @@ export class GamePage {
     // Atualiza o estado quando o slug mudar
     effect(() => {
       const slug = this.slug();
-      if (slug) this.controller.loadPage(slug);
+      if (!slug) return;
+
+      untracked(() => {
+        void this.controller.loadPage(slug);
+      });
     });
 
     // Atualiza o título da página quando o jogo carregar

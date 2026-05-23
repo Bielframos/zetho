@@ -4,6 +4,7 @@ import { distinctUntilChanged, filter } from 'rxjs';
 import { CreateListInput, ListService } from '../lists/list.service';
 import { AppError, GameRow, ZereiListRow } from '../../types';
 import { ProfileStore } from '../userProfiles/profile.store';
+import { ZCoinsService } from '../zCoins/zcoins.service';
 
 export type ParsedZereiListRow = ZereiListRow & {
   parsedLatestAdditions?: {
@@ -39,6 +40,7 @@ export class ListsController {
   constructor(
     private listService: ListService,
     private profileStore: ProfileStore,
+    private zCoinsService: ZCoinsService,
   ) {
     this.profileStore.profile$
       .pipe(
@@ -122,6 +124,7 @@ export class ListsController {
       this.awaitingCreation.set(true);
       const newList = await this.listService.createList(input);
       this.lists.update((state) => [this.parseList(newList), ...state]);
+      void this.zCoinsService.applyInput('create_list').catch(() => undefined);
     } catch (e) {
       const error = e as AppwriteException;
       console.error(e);
@@ -164,6 +167,8 @@ export class ListsController {
           item.$id === list.$id ? this.parseList(response.updatedList) : item,
         ),
       );
+
+      void this.zCoinsService.applyInput('add_game_to_list').catch(() => undefined);
     } catch (e) {
       const error = e as AppwriteException;
       console.error(e);

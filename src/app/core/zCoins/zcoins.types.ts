@@ -3,7 +3,9 @@ export type ZCoinReason =
   | 'engaged'
   | 'finished_game'
   | 'playing_game'
-  | 'add_game_to_library';
+  | 'add_game_to_library'
+  | 'create_list'
+  | 'add_game_to_list';
 
 export interface ZCoinTransactionResponse {
   userId: string;

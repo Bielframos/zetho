@@ -12,10 +12,12 @@ import {
 
 const REWARD_TABLE = {
   daily_login: 5,
-  engaged: 1,
   finished_game: 6,
   playing_game: 4,
   add_game_to_library: 2,
+  engaged: 1,
+  create_list: 2,
+  add_game_to_list: 1,
 } as const satisfies Record<ZCoinReason, number>;
 
 @Injectable({ providedIn: 'root' })
@@ -42,6 +44,7 @@ export class ZCoinsService {
       );
 
       this.authStore.setZcoinBalance(result.balance);
+
       this.notification.show({
         message: this.buildGainMessage(result.amount, reason),
         type: 'success',
@@ -128,7 +131,9 @@ export class ZCoinsService {
 
     if (params.action === 'like') {
       const likedEver =
-        params.currentEntry?.likedEver ?? params.currentEntry?.likeEver ?? false;
+        params.currentEntry?.likedEver ??
+        params.currentEntry?.likeEver ??
+        false;
       const nowLiked = Boolean(params.value);
       if (!likedEver && nowLiked) {
         return {
@@ -205,7 +210,13 @@ export class ZCoinsService {
             ? 'por zerar um jogo'
             : reason === 'playing_game'
               ? 'por marcar um jogo como jogando'
-              : 'por adicionar um jogo ao backlog';
+              : reason === 'add_game_to_library'
+                ? 'por adicionar um jogo ao backlog'
+                : reason === 'create_list'
+                  ? 'por criar uma nova lista'
+                  : reason === 'add_game_to_list'
+                    ? 'por adicionar um jogo a uma lista'
+                    : 'por uma atividade';
 
     return `+${amount} zcoins ${suffix}.`;
   }
