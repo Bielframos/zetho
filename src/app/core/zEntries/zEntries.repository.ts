@@ -49,6 +49,8 @@ export class ZEntriesRepository {
         status: _s,
         liked: _l,
         hyped: _h,
+        gameId: _gameId,
+        ownerFingerprint: _ownerFingerprint,
         ...cleanCurrent
       } = current;
       Object.assign(data, cleanCurrent);

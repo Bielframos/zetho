@@ -30,7 +30,7 @@ export class ZEntryService {
       | { liked?: boolean }
       | { hyped?: boolean },
   ) {
-    const ZEntryLog = this.repository.createLog(
+    const ZEntryLog = await this.repository.createLog(
       userFingerprint,
       gameId,
       current,

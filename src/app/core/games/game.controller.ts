@@ -164,11 +164,11 @@ export class GameController {
     const next = current
       ? { ...current }
       : ({
-          gameId: '',
+          gameId: this.game()?.$id ?? '',
           liked: false,
           hyped: false,
           status: null,
-          ownerFingerprint: '',
+          ownerFingerprint: this.authStore.profile()?.fingerprint ?? '',
         } as ZEntryRow);
 
     if (payload.action === 'like') {
