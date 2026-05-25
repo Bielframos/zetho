@@ -1,13 +1,13 @@
-<main class="w-full max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-12">
-  <header class="mb-8 md:mb-10">
+<main class="w-full max-w-5xl mx-auto md:px-4 py-8 md:py-12">
+  <header class="mb-8 md:mb-10 max-md:px-4">
     <h1 class="text-3xl md:text-4xl">Placar semanal</h1>
     <p class="text-gray-11 mt-2">
-      Ranking dos jogadores com mais Z-Coins acumulados nos últimos 7 dias.
+      Ranking dos jogadores com mais Z-Coins acumulados na semana.
     </p>
   </header>
 
   @if (loading()) {
-  <section class="rounded-2xl bg-gray-2 p-6 flex items-center gap-4">
+  <section class="md:rounded-2xl bg-gray-2 p-6 flex items-center gap-4">
     <div
       class="h-12 w-12 rounded-full border-4 border-blue-4 border-t-blue-9 animate-spin"
     ></div>
@@ -20,13 +20,13 @@
   </section>
   } @else if (error()) {
   <section
-    class="rounded-2xl border border-red-500/30 bg-red-500/8 p-6 text-red-11"
+    class="md:rounded-2xl border border-red-500/30 bg-red-500/8 p-6 text-red-11"
   >
     {{ error() }}
   </section>
   } @else if (leaderboard(); as board) {
   <section class="grid gap-4 lg:grid-cols-[320px_1fr]">
-    <article class="rounded-2xl bg-gray-2 p-4 flex flex-col gap-4 h-fit">
+    <article class="md:rounded-2xl bg-gray-2 p-4 flex flex-col gap-4 h-fit">
       <div class="flex items-center gap-3">
         <img
           src="/animated_z_coin.gif"
@@ -50,10 +50,14 @@
           >
         </div>
       </div>
+
+      <div class="rounded-2xl bg-gray-1 p-4 text-sm text-gray-11">
+        {{ resetsInString }}
+      </div>
     </article>
 
     <ol
-      class="flex flex-col divide-y divide-gray-6 bg-gray-2 h-fit rounded-2xl overflow-hidden"
+      class="flex flex-col divide-y divide-gray-6 bg-gray-2 h-fit md:rounded-2xl overflow-hidden"
     >
       @for (leader of board.leaders; track leader.userId) {
       <li

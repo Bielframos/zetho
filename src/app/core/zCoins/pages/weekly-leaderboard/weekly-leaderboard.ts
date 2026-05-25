@@ -4,7 +4,6 @@ import { AuthStore } from '../../../auth/auth.store';
 import { SeoService } from '../../../seo/seo.service';
 import { WeeklyZCoinLeaderboardResponse } from '../../../zCoins/zcoins.types';
 import { ZCoinsService } from '../../../zCoins/zcoins.service';
-import { CdkConnectedOverlay } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-weekly-zcoin-leaderboard',
@@ -72,5 +71,26 @@ export class WeeklyLeaderboardPage {
       dateStyle: 'medium',
       timeStyle: 'short',
     }).format(new Date(value));
+  }
+
+  get resetsInString() {
+    const resetsIn = this.leaderboard()?.resetsIn;
+
+    if (!resetsIn) {
+      return 'Em breve';
+    }
+
+    const now = new Date();
+    const resetDate = new Date(resetsIn);
+    const diffInMs = resetDate.getTime() - now.getTime();
+
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInHours < 24) {
+      return `Reseta em ${diffInHours}h`;
+    }
+
+    return `Reseta em ${diffInDays} dia${diffInDays > 1 ? 's' : ''} e ${diffInHours % 24}h`;
   }
 }

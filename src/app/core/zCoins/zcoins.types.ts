@@ -29,6 +29,7 @@ export interface WeeklyZCoinLeaderboardResponse {
   }>;
   lastSyncAt: string;
   nextSyncAt: string;
+  resetsIn: string;
 }
 
 export interface ZCoinRewardPreview {
