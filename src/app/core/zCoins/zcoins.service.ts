@@ -39,7 +39,7 @@ export class ZCoinsService {
         'zcoins/input',
         {
           method: 'POST',
-          body: JSON.stringify({ userId: profile.userId, reason }),
+          body: JSON.stringify({ reason }),
         },
       );
 
@@ -72,7 +72,7 @@ export class ZCoinsService {
       'zcoins/output',
       {
         method: 'POST',
-        body: JSON.stringify({ userId: profile.userId, reason }),
+        body: JSON.stringify({ reason }),
       },
     );
 
@@ -231,10 +231,6 @@ export class ZCoinsService {
     if (opts.auth !== false) {
       const jwt = await this.authStore.getJwt();
       headers.set('Authorization', `Bearer ${jwt}`);
-      headers.set(
-        'x-appwrite-session',
-        localStorage.getItem('cookieFallback') ?? '',
-      );
     }
 
     const response = await fetch(new URL(path, environment.zethoApiEndpoint), {
