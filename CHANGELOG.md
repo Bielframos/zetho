@@ -4,6 +4,12 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [1.10.0] - 2026-06-13
+
+### Added
+
+- Adicionado estado de carregamento sutil na nota do jogo no card de média geral e melhorias na seção de reviews.
+
 ## [1.9.0] - 2026-05-22
 
 ### Added

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -11,15 +11,19 @@ import { CommonModule } from '@angular/common';
       cursor: pointer;
       font-size: 28px;
     }
+    .star-rating.readonly i {
+      cursor: default;
+    }
   `,
 })
 export class AppStartingRating {
+  @Input() value: number = 0;
+  @Input() readonly: boolean = false;
   @Output() ratingChange = new EventEmitter<number>();
 
-  value: number = 0;
   hoverValue: number | null = null;
 
-  onMouseEnter(event: MouseEvent, index: number) {
+  onMouseMove(event: MouseEvent, index: number) {
     const rect = (event.target as HTMLElement).getBoundingClientRect();
     const x = event.clientX - rect.left;
     const half = rect.width / 2;
@@ -47,7 +51,7 @@ export class AppStartingRating {
     } else if (currentValue >= index + 0.5) {
       return 'ph-fill ph-star-half text-amber-300';
     } else {
-      return 'ph ph-star text-blue-3';
+      return 'ph ph-star text-gray-8';
     }
   }
 }

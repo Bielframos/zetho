@@ -5,6 +5,7 @@
 @import "@fontsource/jersey-10";
 
 @plugin "@tailwindcss/container-queries";
+@plugin "@tailwindcss/typography";
 
 @theme {
   /* Cor primária */

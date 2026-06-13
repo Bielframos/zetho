@@ -13,6 +13,8 @@ import { UiGameMedias } from './modules/game-medias';
 import { UiGameRaffles } from './modules/game-raffles';
 import { UiGameStats } from './modules/game-stats';
 import { UiZEntryActions } from './modules/z-entry-actions';
+import { UiGameRating } from './modules/game-rating';
+import { UiGameReviews } from './modules/game-reviews';
 
 @Component({
   selector: 'app-game',
@@ -27,6 +29,8 @@ import { UiZEntryActions } from './modules/z-entry-actions';
     UiGameActions,
     UiGameMedias,
     UiGameRaffles,
+    UiGameRating,
+    UiGameReviews,
   ],
   templateUrl: './game.html',
 })
@@ -38,6 +42,19 @@ export class GamePage {
   private route = inject(ActivatedRoute);
   controller = inject(GameController);
   authStore = inject(AuthStore);
+
+  activeTab = signal<'lobby' | 'reviews'>('lobby');
+
+  setActiveTab(tab: 'lobby' | 'reviews') {
+    this.activeTab.set(tab);
+  }
+
+  scrollToReviews() {
+    this.setActiveTab('reviews');
+    setTimeout(() => {
+      document.getElementById('tabs-section')?.scrollIntoView({ behavior: 'smooth' });
+    }, 50);
+  }
 
   // Slug vindo da rota
   slug = toSignal(

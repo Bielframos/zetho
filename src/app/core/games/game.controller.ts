@@ -81,6 +81,28 @@ export class GameController {
     }
   }
 
+  async refreshGameRating() {
+    const currentGame = this.game();
+    if (!currentGame) return;
+
+    try {
+      this.updating.set(true);
+      const game = await this.gameService.getGame(currentGame.slug);
+      if (game) {
+        this.game.set({
+          ...game,
+          rawReleaseDate: game.releaseDate,
+          releaseDate: new Date(game.releaseDate).toLocaleDateString('pt-br'),
+        });
+      }
+    } catch (err) {
+      console.error('Erro ao atualizar dados do jogo:', err);
+    } finally {
+      this.updating.set(false);
+    }
+  }
+
+
   async handleEntry(
     payload:
       | { action: 'updateStatus'; value: ZEntryRow['status'] }
