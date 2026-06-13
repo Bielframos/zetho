@@ -30,7 +30,11 @@
   <ui-game-actions [game]="controller.game()"></ui-game-actions>
   }
   <ui-game-header [game]="controller.game()"></ui-game-header>
-  <!-- <ui-game-rating [game]="controller.game()"></ui-game-rating> -->
+  <ui-game-rating
+    [game]="controller.game()"
+    [loading]="controller.loading() || controller.updating()"
+    (viewReviews)="scrollToReviews()"
+  ></ui-game-rating>
 
   @if (controller.game()) {
   <section class="animate-fade-in-slide" style="animation-delay: 400ms">
@@ -81,7 +85,41 @@
     <hr class="border-blue-2 w-full my-10" />
     }
 
-    <ui-game-lobby></ui-game-lobby>
+    <!-- Tabs Navigation -->
+    <div id="tabs-section" class="flex gap-1 mb-8 border-b border-gray-6 max-md:px-4">
+      <button
+        class="px-4 py-2 text-sm transition-colors cursor-pointer border-b-2"
+        [class.border-blue-9]="activeTab() === 'lobby'"
+        [class.text-gray-12]="activeTab() === 'lobby'"
+        [class.border-transparent]="activeTab() !== 'lobby'"
+        [class.text-gray-10]="activeTab() !== 'lobby'"
+        (click)="setActiveTab('lobby')"
+      >
+        Lobby
+      </button>
+      <button
+        class="px-4 py-2 text-sm transition-colors cursor-pointer border-b-2 flex items-center gap-2"
+        [class.border-blue-9]="activeTab() === 'reviews'"
+        [class.text-gray-12]="activeTab() === 'reviews'"
+        [class.border-transparent]="activeTab() !== 'reviews'"
+        [class.text-gray-10]="activeTab() !== 'reviews'"
+        (click)="setActiveTab('reviews')"
+      >
+        Reviews
+        @if (controller.game()?.ratingCount) {
+          <span class="text-xs bg-blue-3 text-blue-11 px-2 py-0.5 rounded-full">
+            {{ controller.game()?.ratingCount }}
+          </span>
+        }
+      </button>
+    </div>
+
+    <!-- Tabs Content -->
+    @if (activeTab() === 'lobby') {
+      <ui-game-lobby class="block animate-fade-in-slide"></ui-game-lobby>
+    } @else if (activeTab() === 'reviews') {
+      <ui-game-reviews class="block animate-fade-in-slide"></ui-game-reviews>
+    }
 
     @if (controller.similarGames(); as similarGames) {
     <hr class="border-blue-2 w-full my-10" />
