@@ -4,7 +4,7 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
-## [1.9.1] - 2026-06-13
+## [1.10.0] - 2026-06-13
 
 ### Added
 
