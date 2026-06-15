@@ -20,7 +20,10 @@
       [value]="value"
       (input)="handleChange($event)"
       (blur)="handleBlur()"
-      class="rounded-xl leading-[24px] h-[40px] px-4 w-full flex-1 py-1 font-light border-gray-6 bg-blue-2 placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11"
+      class="rounded-xl bg-gray-2 leading-[24px] h-[40px] px-4 w-full flex-1 py-1 font-light text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:bg-transparent placeholder:text-gray-10"
+      [ngClass]="{
+        'border border-gray-6': variant === 'secondary'
+      }"
       [class.pl-12]="icon"
     />
   </div>

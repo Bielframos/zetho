@@ -23,6 +23,11 @@
                 "input": "public"
               },
               {
+                "glob": "CHANGELOG.md",
+                "input": ".",
+                "output": "/"
+              },
+              {
                 "glob": "ads.txt",
                 "input": "src/assets",
                 "output": "/"
@@ -35,8 +40,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "2.0MB",
+                  "maximumError": "3.0MB"
                 },
                 {
                   "type": "anyComponentStyle",

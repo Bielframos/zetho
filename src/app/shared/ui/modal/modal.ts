@@ -4,7 +4,6 @@ import {
   effect,
   ElementRef,
   input,
-  inputBinding,
   model,
   output,
   viewChild,
@@ -25,7 +24,7 @@ import { ModalTriggerDirective } from './modal-trigger.directive';
 
     <dialog
       #modal
-      class="self-center mx-auto w-[90%] max-h-[60%] overflow-hidden max-w-lg p-6 rounded-2xl bg-blue-1 text-gray-12"
+      class="self-center mx-auto w-[90%] max-h-[60%] overflow-hidden max-w-lg p-6 rounded-2xl bg-gray-2 text-gray-12"
     >
       <header class="w-full text-start">
         <h5 class="text-2xl">{{ title() }}</h5>
@@ -55,7 +54,7 @@ import { ModalTriggerDirective } from './modal-trigger.directive';
   `,
   styles: `
     dialog::backdrop {
-      background-color: hsla(0 0% 0% / 0.4);
+      background-color: hsla(0 0% 0% / 0.8);
     }
   `,
   imports: [],

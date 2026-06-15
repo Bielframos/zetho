@@ -7,7 +7,10 @@ type Game = {
   coverUrl: string;
   releaseYear: string;
   releaseDate: string;
+  rawReleaseDate?: string;
   summary: string;
+  summaryPt?: string;
+  hypes: number;
   externalReference: number;
   gameType: string | any;
   genres: string | any;
@@ -27,4 +30,26 @@ type GameWithEntry = GameRow & {
   zEntry?: ZEntryRow | null;
 };
 
-export type { Game, GameList, GameRow, GameWithEntry };
+type GameMediaType = 'screenshot' | 'video' | 'art_work';
+
+type GameMedia = {
+  type: GameMediaType;
+  mediaId: string;
+  name: string | null;
+  $id: string;
+  $sequence: number;
+  $createdAt: string;
+  $updatedAt: string;
+  $permissions: string[];
+  game: string;
+  $databaseId: string;
+  $tableId: string;
+  url: string;
+};
+
+type GameHero = {
+  url: string;
+  type: 'screenshot' | 'art_work';
+};
+
+export type { Game, GameList, GameRow, GameWithEntry, GameMedia, GameHero };

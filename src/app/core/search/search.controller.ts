@@ -4,6 +4,12 @@ import { AuthStore } from '../auth/auth.store';
 import { GameService } from '../games/games.service';
 import { UserProfileService } from '../userProfiles/userProfile.service';
 
+export type SearchFilters = {
+  genre?: string;
+  year?: string;
+  view?: 'hyped-upcoming';
+};
+
 type SearchKind = 'games' | 'players';
 
 type SearchState<T> = {
@@ -35,6 +41,7 @@ const DEFAULT_PAGE_SIZE = 12;
 @Injectable({ providedIn: 'root' })
 export class SearchController {
   query = signal('');
+  filters = signal<SearchFilters>({});
 
   private gamesState = signal<SearchState<GameWithEntry>>(
     this.createEmptyState<GameWithEntry>(DEFAULT_PAGE_SIZE),
@@ -80,15 +87,22 @@ export class SearchController {
     private authStore: AuthStore,
   ) {}
 
-  search(query: string, pageSize: number = DEFAULT_PAGE_SIZE) {
+  search(
+    query: string,
+    filters: SearchFilters = {},
+    pageSize: number = DEFAULT_PAGE_SIZE,
+  ) {
     const normalizedQuery = query.trim();
+    const hasFilters = !!filters.genre || !!filters.year;
+    const hasSpecialView = filters.view === 'hyped-upcoming';
 
-    if (!normalizedQuery) {
+    if (!normalizedQuery && !hasFilters && !hasSpecialView) {
       this.reset(pageSize);
       return;
     }
 
     this.query.set(normalizedQuery);
+    this.filters.set(filters);
 
     this.gamesState.set({
       ...this.createEmptyState<GameWithEntry>(pageSize),
@@ -98,15 +112,21 @@ export class SearchController {
 
     this.playersState.set({
       ...this.createEmptyState<UserProfileRow>(pageSize),
-      loading: true,
-      initialized: true,
+      loading: !hasSpecialView,
+      initialized: !hasSpecialView,
     });
+
+    if (hasSpecialView) {
+      void this.loadGamesPage(1);
+      return;
+    }
 
     void Promise.all([this.loadGamesPage(1), this.loadPlayersPage(1)]);
   }
 
   reset(pageSize: number = DEFAULT_PAGE_SIZE) {
     this.query.set('');
+    this.filters.set({});
 
     // Invalidates in-flight requests.
     this.gamesRequestVersion += 1;
@@ -176,7 +196,11 @@ export class SearchController {
       initialized: true,
     }));
 
-    if (!query) {
+    const filters = this.filters();
+    const hasFilters = !!filters.genre || !!filters.year;
+    const isHypedUpcomingView = filters.view === 'hyped-upcoming';
+
+    if (!query && !hasFilters && !isHypedUpcomingView) {
       if (currentVersion === this.gamesRequestVersion) {
         this.gamesState.set(
           this.createEmptyState<GameWithEntry>(this.gamesState().pageSize),
@@ -188,15 +212,23 @@ export class SearchController {
     try {
       const pageSize = this.gamesState().pageSize;
       const offset = (safePage - 1) * pageSize;
-      const response = await this.gameService.searchGame(query, {
-        pageSize,
-        offset,
-        fingerprint: this.authStore.profile()?.fingerprint,
-      });
+      const response = isHypedUpcomingView
+        ? await this.gameService.getUpcomingHypedGames({
+            pageSize,
+            offset,
+            fingerprint: this.authStore.profile()?.fingerprint,
+          })
+        : await this.gameService.searchGame(query, {
+            pageSize,
+            offset,
+            fingerprint: this.authStore.profile()?.fingerprint,
+            filters,
+          });
 
       if (
         currentVersion !== this.gamesRequestVersion ||
-        query !== this.query()
+        query !== this.query() ||
+        filters.view !== this.filters().view
       ) {
         return;
       }
@@ -226,6 +258,13 @@ export class SearchController {
   }
 
   private async loadPlayersPage(pageNumber: number) {
+    if (this.filters().view === 'hyped-upcoming') {
+      this.playersState.set(
+        this.createEmptyState<UserProfileRow>(this.playersState().pageSize),
+      );
+      return;
+    }
+
     const currentVersion = ++this.playersRequestVersion;
     const safePage = Math.max(1, pageNumber);
     const query = this.query();

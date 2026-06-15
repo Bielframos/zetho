@@ -1,7 +1,7 @@
 <div
   cdkDropList
   (cdkDropListDropped)="drop($event)"
-  class="bg-blue-2 p-2 rounded-2xl divide-y divide-gray-6"
+  class="bg-gray-2 p-2 md:rounded-2xl divide-y divide-gray-6"
 >
   @for (item of controller.items(); let idx = $index; track item.$id) {
   <div
@@ -22,7 +22,7 @@
       <ui-game-card [width]="64" [game]="item.game" readonlyMode></ui-game-card>
 
       <span
-        class="font-normal font-mono text-gray-11 px-3 rounded-full bg-blue-1 w-fit border border-gray-6"
+        class="font-normal font-mono text-gray-11 px-3 rounded-full bg-gray-3 w-fit"
       >
         {{idx + 1}}
       </span>

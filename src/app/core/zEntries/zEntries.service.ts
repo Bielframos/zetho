@@ -25,9 +25,12 @@ export class ZEntryService {
     userFingerprint: string,
     gameId: string,
     current: ZEntryRow | null,
-    opts: { status: ZEntryRow['status'] | null } | { liked?: boolean },
+    opts:
+      | { status: ZEntryRow['status'] | null }
+      | { liked?: boolean }
+      | { hyped?: boolean },
   ) {
-    const ZEntryLog = this.repository.createLog(
+    const ZEntryLog = await this.repository.createLog(
       userFingerprint,
       gameId,
       current,
@@ -35,8 +38,11 @@ export class ZEntryService {
     );
 
     try {
+      const analyticsAction =
+        'status' in opts ? 'status' : 'hyped' in opts ? 'hyped' : 'liked';
+
       logEvent(this.analytics, 'user_game_entry_interaction', {
-        action: 'status' in opts ? 'status' : 'liked',
+        action: analyticsAction,
         game_id: gameId,
       });
     } catch (e) {

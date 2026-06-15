@@ -1,16 +1,20 @@
-import { Component, effect, inject, OnDestroy } from '@angular/core';
+import { Component, effect, inject, signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
-import { UiGameHeader } from './modules/game-header';
-import { UiGameStats } from './modules/game-stats';
-import { UiZEntryActions } from './modules/z-entry-actions';
-import { UiGameLobby } from './modules/game-lobby';
-import { UiGameActions } from './modules/game-actions';
 import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
-import { GameController } from '../../game.controller';
 import { AuthStore } from '../../../auth/auth.store';
 import { SeoService } from '../../../seo/seo.service';
+import { GameController } from '../../game.controller';
+import { UiGameActions } from './modules/game-actions';
+import { UiGameHeader } from './modules/game-header';
+import { UiGameLobby } from './modules/game-lobby';
+import { UiGameMedias } from './modules/game-medias';
+import { UiGameRaffles } from './modules/game-raffles';
+import { UiGameStats } from './modules/game-stats';
+import { UiZEntryActions } from './modules/z-entry-actions';
+import { UiGameRating } from './modules/game-rating';
+import { UiGameReviews } from './modules/game-reviews';
 
 @Component({
   selector: 'app-game',
@@ -23,6 +27,10 @@ import { SeoService } from '../../../seo/seo.service';
     UiGameStats,
     UiGameLobby,
     UiGameActions,
+    UiGameMedias,
+    UiGameRaffles,
+    UiGameRating,
+    UiGameReviews,
   ],
   templateUrl: './game.html',
 })
@@ -34,6 +42,19 @@ export class GamePage {
   private route = inject(ActivatedRoute);
   controller = inject(GameController);
   authStore = inject(AuthStore);
+
+  activeTab = signal<'lobby' | 'reviews'>('lobby');
+
+  setActiveTab(tab: 'lobby' | 'reviews') {
+    this.activeTab.set(tab);
+  }
+
+  scrollToReviews() {
+    this.setActiveTab('reviews');
+    setTimeout(() => {
+      document.getElementById('tabs-section')?.scrollIntoView({ behavior: 'smooth' });
+    }, 50);
+  }
 
   // Slug vindo da rota
   slug = toSignal(
@@ -48,7 +69,11 @@ export class GamePage {
     // Atualiza o estado quando o slug mudar
     effect(() => {
       const slug = this.slug();
-      if (slug) this.controller.loadPage(slug);
+      if (!slug) return;
+
+      untracked(() => {
+        void this.controller.loadPage(slug);
+      });
     });
 
     // Atualiza o título da página quando o jogo carregar
@@ -72,8 +97,11 @@ export class GamePage {
 
       const genres = Array.isArray(game.genres)
         ? game.genres
-            .map((genre: { name?: string }) => genre?.name)
-            .filter(Boolean)
+            .map((genre: { name?: string } | string) => {
+              if (typeof genre === 'string') return null;
+              return genre?.name;
+            })
+            .filter((genreName): genreName is string => !!genreName)
         : [];
 
       const developers = Array.isArray(game.involvedCompanies)

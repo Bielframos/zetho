@@ -14,7 +14,7 @@ import {
       #origin
       #trigger="ngMenuTrigger"
       [menu]="formatMenu()"
-      class="ui-action-btn border-transparent absolute right-2 top-2 focus:ring-2 ring-blue-3 outline-none"
+      class="p-2 rounded-full hover:bg-gray-3 cursor-pointer border-transparent absolute right-2 top-2 focus:ring-2 ring-blue-3 outline-none"
       data-size="icon"
     >
       <i class="ph ph-dots-three-vertical text-[16px]"></i>

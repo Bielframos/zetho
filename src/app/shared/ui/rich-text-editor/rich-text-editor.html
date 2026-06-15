@@ -1,0 +1,103 @@
+<div class="tiptap-editor-container" *ngIf="editor">
+  <div class="tiptap-toolbar">
+    <button
+      type="button"
+      (click)="toggleBold()"
+      [class.active]="editor.isActive('bold')"
+      title="Negrito"
+    >
+      <i class="ph ph-text-b"></i>
+    </button>
+    <button
+      type="button"
+      (click)="toggleItalic()"
+      [class.active]="editor.isActive('italic')"
+      title="Itálico"
+    >
+      <i class="ph ph-text-italic"></i>
+    </button>
+    <button
+      type="button"
+      (click)="toggleStrike()"
+      [class.active]="editor.isActive('strike')"
+      title="Tachado"
+    >
+      <i class="ph ph-text-strikethrough"></i>
+    </button>
+
+    <div class="w-[1px] h-6 bg-gray-6 mx-1 self-center"></div>
+
+    <button
+      type="button"
+      (click)="toggleBulletList()"
+      [class.active]="editor.isActive('bulletList')"
+      title="Lista com Marcadores"
+    >
+      <i class="ph ph-list-bullets"></i>
+    </button>
+    <button
+      type="button"
+      (click)="toggleOrderedList()"
+      [class.active]="editor.isActive('orderedList')"
+      title="Lista Numerada"
+    >
+      <i class="ph ph-list-numbers"></i>
+    </button>
+    <button
+      type="button"
+      (click)="toggleBlockquote()"
+      [class.active]="editor.isActive('blockquote')"
+      title="Citação"
+    >
+      <i class="ph ph-quotes"></i>
+    </button>
+    <button
+      type="button"
+      (click)="toggleHeading(1)"
+      [class.active]="editor.isActive('heading', { level: 1 })"
+      title="Título 1"
+    >
+      <b class="text-sm">H1</b>
+    </button>
+    <button
+      type="button"
+      (click)="toggleHeading(2)"
+      [class.active]="editor.isActive('heading', { level: 2 })"
+      title="Título 2"
+    >
+      <b class="text-sm">H2</b>
+    </button>
+    <button
+      type="button"
+      (click)="toggleHeading(3)"
+      [class.active]="editor.isActive('heading', { level: 3 })"
+      title="Título 3"
+    >
+      <b class="text-sm">H3</b>
+    </button>
+
+    <div class="w-[1px] h-6 bg-gray-6 mx-1 self-center"></div>
+
+    <button
+      type="button"
+      (click)="undo()"
+      [disabled]="!editor.can().undo()"
+      title="Desfazer"
+    >
+      <i class="ph ph-arrow-counter-clockwise"></i>
+    </button>
+    <button
+      type="button"
+      (click)="redo()"
+      [disabled]="!editor.can().redo()"
+      title="Refazer"
+    >
+      <i class="ph ph-arrow-clockwise"></i>
+    </button>
+  </div>
+
+  <tiptap-editor
+    class="tiptap-content"
+    [editor]="editor"
+  ></tiptap-editor>
+</div>

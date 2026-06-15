@@ -1,7 +1,79 @@
 <main class="w-full mb-10 max-w-5xl mx-auto px-4 max-md:mt-6 mt-10 md:px-10">
-  @if (!normalizedQuery()) {
-  <header class="my-auto flex justify-between mb-6">
-    <div class="">
+  <header
+    class="text-gray-11 font-light mb-4 flex justify-between gap-4 items-center"
+  >
+    <h2>
+      @if (isHypedUpcomingView()) { Jogos mais hypados ainda não lançados }
+      @else if (normalizedQuery()) { Buscando por
+      <span class="font-normal text-gray-12">"{{ normalizedQuery() }}"</span>
+      } @else if (hasActiveFilters()) { Navegando por filtros } @else { Explore
+      por filtros }
+    </h2>
+
+    <div class="flex p-1 rounded-full bg-blue-2">
+      <button
+        class="px-2 py-1 rounded-full hover:bg-blue-3 cursor-pointer transition-colors"
+        [ngClass]="{'bg-blue-4 hover:bg-blue-5 text-white': searchType() === 'games'}"
+        (click)="setSearchType('games')"
+      >
+        Jogos
+      </button>
+      <button
+        class="px-2 py-1 rounded-full hover:bg-blue-3 cursor-pointer transition-colors"
+        [disabled]="isHypedUpcomingView()"
+        [ngClass]="{'bg-blue-4 hover:bg-blue-5 text-white': searchType() === 'players'}"
+        (click)="setSearchType('players')"
+      >
+        Perfis
+      </button>
+    </div>
+  </header>
+
+  @if (searchType() === 'games') {
+  <div class="flex flex-wrap items-center gap-2 mb-6">
+    <div class="relative">
+      <select
+        class="bg-blue-2 text-gray-12 text-sm rounded-xl px-3 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors hover:bg-blue-3 appearance-none w-64"
+        [value]="genre()"
+        (change)="onFilterChange('genre', $any($event.target).value)"
+      >
+        <option value="">Todos os gêneros</option>
+        @for (g of genres(); track g.slug) {
+        <option [value]="g.slug">{{ g.label }}</option>
+        }
+      </select>
+
+      <i class="ph ph-caret-down absolute z-10 right-2 top-1.5"></i>
+    </div>
+
+    <div class="relative">
+      <select
+        class="relative bg-blue-2 text-gray-12 text-sm rounded-xl px-3 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors hover:bg-blue-3 appearance-none w-64"
+        [value]="year()"
+        (change)="onFilterChange('year', $any($event.target).value)"
+      >
+        <option value="">Todos os anos</option>
+        @for (y of years; track y) {
+        <option [value]="y">{{ y }}</option>
+        }
+      </select>
+
+      <i class="ph ph-caret-down absolute z-10 right-2 top-1.5"></i>
+    </div>
+
+    @if (hasActiveFilters()) {
+    <button
+      class="ui-action-btn hover:bg-red-400/25 hover:text-white"
+      (click)="clearFilters()"
+    >
+      <i class="ph ph-x"></i>
+      Limpar filtros
+    </button>
+    }
+  </div>
+  } @if (!normalizedQuery() && !hasActiveFilters() && !isHypedUpcomingView()) {
+  <header class="my-auto flex flex-wrap gap-6 justify-between mb-6">
+    <div>
       <h1 class="text-3xl">Buscando um jogo?</h1>
 
       <p class="max-w-md mt-2 text-gray-11">
@@ -27,50 +99,18 @@
     }
   </ul>
   } @else if (!canSearch()) {
-  <header class="text-gray-11 font-light mb-4">
-    <h2>
-      Buscando por
-      <span class="font-normal text-gray-12">"{{ normalizedQuery() }}"</span>
-    </h2>
-  </header>
-
   <p class="text-gray-11">
     Digite pelo menos {{ minSearchLength }} caracteres para iniciar a busca.
   </p>
-  } @else if (activeSearch(); as search) {
-  <header
-    class="text-gray-11 font-light mb-6 flex justify-between gap-4 items-center"
-  >
-    <h2>
-      Buscando por
-      <span class="font-normal text-gray-12">"{{ normalizedQuery() }}"</span>
-    </h2>
-
-    <div class="flex p-1 rounded-full bg-blue-2">
-      <button
-        class="px-2 py-1 rounded-full hover:bg-blue-3 cursor-pointer transition-colors"
-        [ngClass]="{'bg-blue-4 hover:bg-blue-5 text-white': searchType() === 'games'}"
-        (click)="setSearchType('games')"
-      >
-        Jogos
-      </button>
-      <button
-        class="px-2 py-1 rounded-full hover:bg-blue-3 cursor-pointer transition-colors"
-        [ngClass]="{'bg-blue-4 hover:bg-blue-5 text-white': searchType() === 'players'}"
-        (click)="setSearchType('players')"
-      >
-        Perfis
-      </button>
-    </div>
-  </header>
-
-  @if (search.loading()) {
+  } @else if (activeSearch(); as search) { @if (search.loading()) {
   <ui-loading></ui-loading>
   } @else if (search.total() === 0) {
   <p>
-    @if (searchType() === 'games') { Nenhum jogo encontrado para "{{
-    normalizedQuery() }}". } @else { Nenhum perfil encontrado para "{{
-    normalizedQuery() }}". }
+    @if (isHypedUpcomingView()) { Nenhum jogo hypado e ainda não lançado foi
+    encontrado. } @else if (searchType() === 'games') { Nenhum jogo
+    encontrado@if (normalizedQuery()) { para "{{ normalizedQuery() }}"}. } @else
+    { Nenhum perfil encontrado@if (normalizedQuery()) { para "{{
+    normalizedQuery() }}"}. }
   </p>
   } @else { @if (searchType() === 'games') {
   <ul

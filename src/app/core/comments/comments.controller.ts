@@ -3,6 +3,7 @@ import { AuthStore } from '../auth/auth.store';
 import { CommentService } from './comments.service';
 import { GameStore } from '../games/game.store';
 import { CommentRow } from '../../types';
+import { ZCoinsService } from '../zCoins/zcoins.service';
 
 @Injectable({ providedIn: 'root' })
 export class CommentsController {
@@ -32,6 +33,7 @@ export class CommentsController {
     private authStore: AuthStore,
     private gameStore: GameStore,
     private commentService: CommentService,
+    private zCoinsService: ZCoinsService,
   ) {
     effect(() => {
       const gameId = this.gameStore.currentGame()?.$id;
@@ -143,6 +145,8 @@ export class CommentsController {
     });
 
     if (!newComment) return;
+
+    void this.zCoinsService.applyInput('engaged').catch(() => undefined);
 
     if (!parentId) {
       this.rootComments.update((list) => [newComment, ...list]);

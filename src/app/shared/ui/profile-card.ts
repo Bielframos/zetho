@@ -9,7 +9,7 @@ import { appwrite } from '../../core/appwrite/appwrite.client';
   template: `
     <a
       [routerLink]="['/player', profile().gamertag]"
-      class="group flex items-center gap-3 rounded-2xl bg-blue-2 px-3 py-3 hover:bg-blue-3 transition-colors"
+      class="group flex items-center gap-3 md:rounded-2xl bg-gray-2 px-3 py-3 hover:bg-blue-3 transition-colors"
     >
       <img
         [src]="playerAvatar(profile())"

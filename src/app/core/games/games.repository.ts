@@ -1,78 +1,34 @@
 import { Injectable } from '@angular/core';
 import { appwrite, Query } from '../appwrite/appwrite.client';
 import { GameRow } from './game.types';
-import slugify from 'slugify';
-import { normalize } from '../search/search.helpers';
+import { StoredRow } from '../appwrite/appwrite.types';
 
 const DATABASE_ID = 'app';
 const GAMES_TABLE_ID = 'games';
+const GENRES_TABLE_ID = 'genres';
+
+type GenreCache = {
+  name: string;
+  slug: string;
+  namePt?: string | null;
+};
+
+type GenreCacheRow = StoredRow<GenreCache>;
 
 @Injectable({ providedIn: 'root' })
 export class GameRepository {
   constructor() {}
 
-  async findExactBySlug(query: string) {
-    return await appwrite.databases.listRows<GameRow>({
+  async findAllGenres() {
+    return await appwrite.databases.listRows<GenreCacheRow>({
       databaseId: DATABASE_ID,
-      tableId: GAMES_TABLE_ID,
+      tableId: GENRES_TABLE_ID,
       queries: [
-        Query.equal('slug', slugify(normalize(query))),
-        Query.select(['$id', 'name', 'slug', 'coverUrl', 'releaseYear']),
-        Query.limit(1),
+        Query.select(['$id', 'name', 'namePt', 'slug']),
+        Query.orderAsc('name'),
+        Query.limit(5000),
       ],
     });
-  }
-
-  async findByKeywords(
-    keywords: string[],
-    opts: { pageSize: number; offset: number; excludeSlug?: string } = {
-      pageSize: 12,
-      offset: 0,
-    },
-  ) {
-    let limit = opts.pageSize;
-
-    let queries: string[] = [
-      Query.select(['$id', 'name', 'slug', 'coverUrl', 'releaseYear']),
-      Query.limit(limit),
-      Query.offset(opts.offset),
-    ];
-
-    const containsQueries = keywords.map((k) => Query.contains('name', k));
-
-    if (opts.excludeSlug) {
-      queries.unshift(
-        Query.and([
-          ...containsQueries,
-          Query.notEqual('slug', normalize(opts.excludeSlug)),
-        ]),
-      );
-      limit = limit - 1;
-    } else {
-      queries.unshift(...containsQueries);
-    }
-
-    return await appwrite.databases.listRows<GameRow>({
-      databaseId: DATABASE_ID,
-      tableId: GAMES_TABLE_ID,
-      queries,
-    });
-  }
-
-  async findBySlug(slug: string, fields: string[]): Promise<GameRow | null> {
-    const result = await appwrite.databases.listRows<GameRow>({
-      databaseId: DATABASE_ID,
-      tableId: GAMES_TABLE_ID,
-      queries: [
-        Query.equal('slug', slug),
-        Query.limit(1),
-        Query.select(fields),
-      ],
-    });
-
-    if (result.total < 1) return null;
-
-    return result.rows[0];
   }
 
   async findByIds(

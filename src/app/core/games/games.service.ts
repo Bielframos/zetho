@@ -1,17 +1,30 @@
 import { inject, Injectable } from '@angular/core';
 import type { GameRow, ZEntryRow } from '../../types';
-import type { GameWithEntry } from './game.types';
+import type { GameWithEntry, GameMedia, GameHero } from './game.types';
+import type { SearchFilters } from '../search/search.controller';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { GameStore } from './game.store';
 import { GameRepository } from './games.repository';
-import { rankAndMerge } from './games.utils';
-import { extractKeywords } from '../search/search.helpers';
+import { GenresCacheService } from './genres-cache.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
-  private repository = inject(GameRepository);
   private zEntryService = inject(ZEntryService);
   private gameStore = inject(GameStore);
+  private genresCache = inject(GenresCacheService);
+  private repository = inject(GameRepository);
+
+  private appendGenres(game: GameRow): GameRow {
+    return {
+      ...game,
+      genres: this.genresCache.normalizeGameGenres(game.genres),
+    };
+  }
+
+  private appendGenresList(games: GameRow[]): GameRow[] {
+    return games.map((game) => this.appendGenres(game));
+  }
 
   private async appendZEntries(
     games: GameRow[],
@@ -36,30 +49,85 @@ export class GameService {
     return rows;
   }
 
+  private buildSearchParams(
+    params: Record<string, string | number | undefined>,
+  ) {
+    const searchParams = new URLSearchParams();
+
+    for (const [key, value] of Object.entries(params)) {
+      if (value === undefined || value === null || value === '') continue;
+      searchParams.append(key, String(value));
+    }
+
+    return searchParams;
+  }
+
+  private async fetchSearchApi<T>(
+    path: string,
+    params: Record<string, string | number | undefined>,
+  ) {
+    const queryString = this.buildSearchParams(params).toString();
+    const url = new URL(
+      `${path}${queryString ? `?${queryString}` : ''}`,
+      environment.zethoApiEndpoint,
+    );
+    const response = await fetch(url.toString());
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    return (await response.json()) as T;
+  }
+
   async searchGame(
     query: string,
-    opts: { pageSize?: number; offset?: number; fingerprint?: string },
+    opts: {
+      pageSize?: number;
+      offset?: number;
+      fingerprint?: string;
+      filters?: SearchFilters;
+    },
   ) {
     const pageSize = opts?.pageSize ?? 12;
     const offset = opts?.offset ?? 0;
+    const filters = opts?.filters;
 
-    const keywords = extractKeywords(query);
+    await this.genresCache.ensureLoaded();
 
-    const exact =
-      offset === 0 ? await this.repository.findExactBySlug(query) : null;
+    const parsedGenreId = filters?.genre
+      ? (this.genresCache.getGenreIdFromSlug(filters.genre) ?? undefined)
+      : undefined;
 
-    const matches = await this.repository.findByKeywords(keywords, {
+    if (filters?.genre && !parsedGenreId) {
+      return { total: 0, rows: [] };
+    }
+
+    const page = Math.max(1, Math.floor(offset / pageSize) + 1);
+
+    const response = await this.fetchSearchApi<{
+      total: number;
+      page: number;
+      pageCount: number;
+      pageSize: number;
+      results: GameRow[];
+    }>('games/search', {
+      q: query || undefined,
+      genre: parsedGenreId,
+      year: filters?.year,
+      page,
       pageSize,
-      offset,
-      excludeSlug: exact?.rows[0]?.slug,
+      fingerprint: opts?.fingerprint,
     });
 
-    const result = rankAndMerge(exact, matches, query, keywords);
-    const rows = await this.appendZEntries(result.rows, opts?.fingerprint);
+    const rows = await this.appendZEntries(response.results, opts?.fingerprint);
 
     return {
-      ...result,
+      total: response.total,
       rows,
+      page: response.page,
+      pageCount: response.pageCount,
+      pageSize: response.pageSize,
     };
   }
 
@@ -74,15 +142,15 @@ export class GameService {
   ) {
     if (!ids.length) return [];
 
+    const shouldAttachGenres = !opts?.summarized;
+
+    if (shouldAttachGenres) {
+      await this.genresCache.ensureLoaded();
+    }
+
     const fields = opts?.summarized
       ? ['\$id', 'name', 'slug', 'releaseYear', 'coverUrl']
-      : [
-          '*',
-          'genres.name',
-          'genres.slug',
-          'involvedCompanies.name',
-          'involvedCompanies.slug',
-        ];
+      : ['*', 'involvedCompanies.name', 'involvedCompanies.slug'];
 
     const games = await this.repository.findByIds(ids, {
       fields,
@@ -90,24 +158,87 @@ export class GameService {
       offset: opts?.offset,
     });
 
-    return this.appendZEntries(games, opts?.fingerprint);
+    const rows = shouldAttachGenres ? this.appendGenresList(games) : games;
+
+    return this.appendZEntries(rows, opts?.fingerprint);
+  }
+
+  async getUpcomingHypedGames(opts?: {
+    pageSize?: number;
+    offset?: number;
+    fingerprint?: string;
+  }) {
+    const pageSize = opts?.pageSize ?? 12;
+    const page = Math.max(1, Math.floor((opts?.offset ?? 0) / pageSize) + 1);
+
+    const response = await this.fetchSearchApi<{
+      total: number;
+      page: number;
+      pageCount: number;
+      pageSize: number;
+      results: GameRow[];
+    }>('games/hyped-upcoming', {
+      page,
+      pageSize,
+      fingerprint: opts?.fingerprint,
+    });
+
+    const rows = await this.appendZEntries(response.results, opts?.fingerprint);
+
+    return {
+      total: response.total,
+      rows,
+    };
+  }
+
+  private async getGameFromApi(slug: string): Promise<GameRow | null> {
+    const response = await fetch(
+      new URL(
+        `games/${slug}?select=*,involvedCompanies.name,involvedCompanies.slug,zStats.*`,
+        environment.zethoApiEndpoint,
+      ),
+    );
+    if (!response.ok) {
+      if (response.status === 404) return null;
+      throw new Error(`API error: ${response.status}`);
+    }
+    return (await response.json()) as GameRow;
+  }
+
+  async getGameMedias(slug: string): Promise<GameMedia[]> {
+    try {
+      const response = await fetch(
+        new URL(`games/${slug}/medias`, environment.zethoApiEndpoint),
+      );
+      if (!response.ok) return [];
+      return (await response.json()) as GameMedia[];
+    } catch {
+      return [];
+    }
+  }
+
+  async getGameHero(slug: string): Promise<GameHero | null> {
+    try {
+      const response = await fetch(
+        new URL(`games/${slug}/hero`, environment.zethoApiEndpoint),
+      );
+      if (!response.ok) return null;
+      return (await response.json()) as GameHero;
+    } catch {
+      return null;
+    }
   }
 
   async getGame(slug: string) {
-    let fields = [
-      '*',
-      'genres.name',
-      'genres.slug',
-      'involvedCompanies.name',
-      'involvedCompanies.slug',
-      'zStats.*',
-    ];
+    await this.genresCache.ensureLoaded();
 
-    const game = await this.repository.findBySlug(slug, fields);
+    const game = await this.getGameFromApi(slug);
 
-    this.gameStore.setGame(game);
+    const result = game ? this.appendGenres(game) : null;
 
-    return game;
+    this.gameStore.setGame(result);
+
+    return result;
   }
 
   async loadGamePage(
@@ -121,10 +252,14 @@ export class GameService {
       game: GameRow;
       zEntry: ZEntryRow | null;
       similarGames: GameRow[];
+      medias: GameMedia[];
+      heroImage: GameHero | null;
     } = {
       game: null as any,
       zEntry: null,
       similarGames: [],
+      medias: [],
+      heroImage: null,
     };
 
     const game = await this.getGame(slug);
@@ -133,27 +268,37 @@ export class GameService {
 
     result.game = {
       ...game,
+      rawReleaseDate: game.releaseDate,
       releaseDate: new Date(game.releaseDate).toLocaleDateString('pt-br'),
     };
 
-    if (context.userId && context.fingerprint) {
-      try {
-        result.zEntry = await this.zEntryService.getEntry(
-          context.fingerprint,
-          game.$id,
-        );
-      } catch {
-        result.zEntry = null;
-      }
-    }
+    const zEntryPromise =
+      context.userId && context.fingerprint
+        ? this.zEntryService
+            .getEntry(context.fingerprint, game.$id)
+            .catch(() => null)
+        : Promise.resolve(null);
 
-    if (game.similarGames?.length > 0) {
-      result.similarGames = await this.getGames(game.similarGames, {
-        summarized: true,
-        pageSize: 6,
-        fingerprint: context.fingerprint,
-      });
-    }
+    const similarGamesPromise =
+      game.similarGames?.length > 0
+        ? this.getGames(game.similarGames, {
+            summarized: true,
+            pageSize: 6,
+            fingerprint: context.fingerprint,
+          })
+        : Promise.resolve([]);
+
+    const [zEntry, similarGames, medias, heroImage] = await Promise.all([
+      zEntryPromise,
+      similarGamesPromise,
+      this.getGameMedias(slug),
+      this.getGameHero(slug),
+    ]);
+
+    result.zEntry = zEntry;
+    result.similarGames = similarGames;
+    result.medias = medias;
+    result.heroImage = heroImage;
 
     return result;
   }

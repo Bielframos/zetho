@@ -1,10 +1,10 @@
-<div class="star-rating">
+<div class="star-rating" [class.readonly]="readonly">
   @for(star of [0,1,2,3,4]; track $index; let i = $index) {
   <i
     class="{{ getStarClass(i) }}"
-    (mouseenter)="onMouseEnter($event, i)"
-    (mouseleave)="onMouseLeave()"
-    (click)="onClick()"
+    (mousemove)="!readonly && onMouseMove($event, i)"
+    (mouseleave)="!readonly && onMouseLeave()"
+    (click)="!readonly && onClick()"
   ></i>
   }
 </div>

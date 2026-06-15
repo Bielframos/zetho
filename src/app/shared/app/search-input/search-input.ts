@@ -12,6 +12,7 @@ import { UiInput } from '../../ui/input/input';
 export class AppSearchInput {
   placeholder = input<string>('');
   readonly search = output<string>();
+  readonly focusSearch = output<void>();
   searchControl = new FormControl('');
 
   constructor() {
@@ -22,5 +23,9 @@ export class AppSearchInput {
         distinctUntilChanged(),
       )
       .subscribe((value) => this.search.emit(value ?? ''));
+  }
+
+  onFocusSearch() {
+    this.focusSearch.emit();
   }
 }

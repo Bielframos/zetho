@@ -4,7 +4,13 @@ import { AuthService } from './auth.service';
 import { appwrite } from '../appwrite/appwrite.client';
 import { UserProfileService } from '../userProfiles/userProfile.service';
 import { UserProfileRow } from '../../types';
+import type {
+  InviteBonusResponse,
+  InviteCodeResponse,
+} from '../userProfiles/userProfile.types';
 import { NotificationStore } from '../notifications/notification.store';
+
+const JWT_TTL_MS = 15 * 60 * 1000;
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore {
@@ -14,11 +20,16 @@ export class AuthStore {
   private profileSignal = signal<UserProfileRow | null>(null);
   private loadingSignal = signal(false);
   private cachedJwt = signal<string | null>(null);
-  private jwtExpirationTime = signal(0);
+  private jwtExpirationTime = signal<number | null>(null);
+  private jwtRequestInFlight: Promise<string> | null = null;
 
   readonly user = computed(() => this.userSignal());
   readonly profile = computed(() => this.profileSignal());
   readonly isAuthenticated = computed(() => this.user() !== null);
+  readonly isAdmin = computed(() => {
+    const labels = this.user()?.labels ?? [];
+    return labels.includes('admim') || labels.includes('admin');
+  });
 
   readonly loading = computed(() => this.loadingSignal());
 
@@ -34,6 +45,31 @@ export class AuthStore {
 
     return this.profile()?.avatarUrl!;
   });
+
+  adjustZcoinBalance(delta: number) {
+    const current = this.profileSignal();
+
+    if (!current) {
+      return;
+    }
+
+    this.profileSignal.set({
+      ...current,
+      zcoinBalance: Number(current.zcoinBalance ?? 0) + delta,
+    });
+  }
+
+  setZcoinBalance(balance: number) {
+    const current = this.profileSignal();
+    if (!current) return;
+    this.profileSignal.set({ ...current, zcoinBalance: balance });
+  }
+
+  setInviteCode(code: string) {
+    const current = this.profileSignal();
+    if (!current) return;
+    this.profileSignal.set({ ...current, inviteCode: code });
+  }
 
   constructor(
     private authService: AuthService,
@@ -52,6 +88,7 @@ export class AuthStore {
     password: string,
     name: string,
     gamertag: string,
+    inviteCode?: string,
   ) {
     try {
       const { user, profile } = await this.authService.register(
@@ -59,6 +96,7 @@ export class AuthStore {
         password,
         name,
         gamertag,
+        inviteCode,
       );
 
       this.userSignal.set(user);
@@ -100,6 +138,7 @@ export class AuthStore {
       this.profileSignal.set(profile);
 
       sessionStorage.setItem('user', JSON.stringify(user));
+      await this.getJwt();
     } catch (e) {
       this.clear();
     } finally {
@@ -120,6 +159,7 @@ export class AuthStore {
       this.userSignal.set(user);
       this.profileSignal.set(profile);
       sessionStorage.setItem('user', JSON.stringify(user));
+      await this.getJwt(true);
     } catch (e) {
       this.clear();
     }
@@ -133,7 +173,9 @@ export class AuthStore {
   async login(email: string, password: string) {
     try {
       const session = await this.authService.login(email, password);
-      if (session) await this.refresh();
+      if (session) {
+        await this.refresh();
+      }
     } catch (e) {
       this.clear();
       throw e;
@@ -153,22 +195,39 @@ export class AuthStore {
   /**
    * Método para obter um JWT válido do usuário logado
    */
-  async getJwt() {
+  async getJwt(forceRefresh = false): Promise<string> {
     const currentTime = Date.now();
+    const currentJwt = this.cachedJwt();
+    const expiresAt = this.jwtExpirationTime();
 
-    if (this.cachedJwt && currentTime - this.jwtExpirationTime() < 840000) {
-      return this.cachedJwt;
+    if (
+      !forceRefresh &&
+      currentJwt &&
+      expiresAt !== null &&
+      currentTime < expiresAt
+    ) {
+      return currentJwt;
+    }
+
+    if (this.jwtRequestInFlight) {
+      return this.jwtRequestInFlight;
     }
 
     try {
-      const response = await this.authService.createJWT();
-      this.cachedJwt.set(response);
-      this.jwtExpirationTime.set(Date.now());
+      this.jwtRequestInFlight = this.authService.createJWT();
+      const token = await this.jwtRequestInFlight;
 
-      return this.cachedJwt;
+      this.cachedJwt.set(token);
+      this.jwtExpirationTime.set(Date.now() + JWT_TTL_MS);
+
+      return token;
     } catch (e) {
       console.error('Erro ao gerar JWT do Appwrite', e);
+      this.cachedJwt.set(null);
+      this.jwtExpirationTime.set(null);
       throw e;
+    } finally {
+      this.jwtRequestInFlight = null;
     }
   }
 
@@ -313,6 +372,21 @@ export class AuthStore {
   clear() {
     this.userSignal.set(null);
     this.profileSignal.set(null);
+    this.cachedJwt.set(null);
+    this.jwtExpirationTime.set(null);
+    this.jwtRequestInFlight = null;
     sessionStorage.removeItem('user');
+  }
+
+  async getInviteBonus(): Promise<InviteBonusResponse> {
+    return this.authService.getInviteBonus();
+  }
+
+  async generateInviteCode(): Promise<InviteCodeResponse> {
+    const profileId = this.profile()?.$id;
+    if (!profileId) throw new Error('Perfil não encontrado.');
+    const result = await this.authService.generateInviteCode(profileId);
+    this.setInviteCode(result.inviteCode);
+    return result;
   }
 }

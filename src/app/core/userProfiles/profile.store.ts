@@ -4,6 +4,7 @@ import type { ProfileWithConnection, UserProfileRow } from '../../types';
 import { appwrite } from '../appwrite/appwrite.client';
 import { AuthStore } from '../auth/auth.store';
 import { ConnectionsService } from '../connections/connections.service';
+import type { ConnectionRow } from '../connections/connections.types';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileStore {
@@ -11,31 +12,41 @@ export class ProfileStore {
     private authStore: AuthStore,
     private connectionsService: ConnectionsService,
   ) {
-    // Sempre que o perfil atual ou o perfil do usuário logado mudarem, verificamos a conexão entre eles
+    // Sempre que o perfil atual ou o perfil do usuário logado mudarem, verificamos a conexão entre eles.
+    // _connection é um sinal separado para evitar que a atualização da conexão re-dispare o effect.
     effect(() => {
       const myProfile = this.authStore.profile();
       const currentProfile = this._current();
 
+      this._connection.set(undefined);
+
       if (myProfile && currentProfile && myProfile.$id !== currentProfile.$id) {
+        const targetProfileId = currentProfile.$id;
+
         this.connectionsService
-          .getConnection(currentProfile.$id, myProfile.$id)
+          .getConnection(targetProfileId, myProfile.$id)
           .then((connection) => {
-            this._current.update((profile) => {
-              if (!profile) return profile;
-              return { ...profile, connection };
-            });
+            // Ignora resultado se o perfil foi trocado enquanto a requisição estava em andamento
+            if (this._current()?.$id === targetProfileId) {
+              this._connection.set(connection);
+            }
           });
       }
     });
   }
 
   private _loading = signal(false);
-  private _current = signal<UserProfileRow | ProfileWithConnection | null>(
-    null,
-  );
+  private _current = signal<UserProfileRow | null>(null);
+  private _connection = signal<ConnectionRow | null | undefined>(undefined);
 
   readonly isLoading = computed(() => this._loading());
-  readonly current = computed(() => this._current());
+  readonly current = computed<UserProfileRow | ProfileWithConnection | null>(() => {
+    const profile = this._current();
+    const connection = this._connection();
+    if (!profile) return null;
+    if (connection === undefined) return profile;
+    return { ...profile, connection };
+  });
   readonly profile$ = toObservable(this.current);
 
   readonly avatarUrl = computed(() => {
@@ -55,10 +66,13 @@ export class ProfileStore {
     () => this.authStore.profile()?.$id === this._current()?.$id,
   );
 
-  set = this._current.set;
+  set = (profile: UserProfileRow | null) => {
+    this._connection.set(undefined);
+    this._current.set(profile);
+  };
 
   async followOrUnfollow() {
-    const target = this.current()?.$id;
+    const target = this._current()?.$id;
     const follower = this.authStore.profile()?.$id;
 
     if (!target || !follower) {
@@ -70,5 +84,12 @@ export class ProfileStore {
     }
 
     await this.connectionsService.followOrUnfollow(target, follower);
+
+    // Atualiza o estado da conexão após seguir/deixar de seguir
+    const connection = await this.connectionsService.getConnection(
+      target,
+      follower,
+    );
+    this._connection.set(connection);
   }
 }

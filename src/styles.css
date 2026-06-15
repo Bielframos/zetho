@@ -5,6 +5,7 @@
 @import "@fontsource/jersey-10";
 
 @plugin "@tailwindcss/container-queries";
+@plugin "@tailwindcss/typography";
 
 @theme {
   /* Cor primária */
@@ -35,8 +36,10 @@
   --color-gray-11: #b0b4ba;
   --color-gray-12: #edeef0;
 
+  /* Fontes */
   --font-display: "Jersey 10", system-ui;
 
+  /* Animações */
   --animate-fade-in-slide: fade-in-slide 0.4s ease-out backwards;
 
   @keyframes fade-in-slide {
@@ -49,26 +52,40 @@
       transform: translateY(0px);
     }
   }
+
+  --animate-pop-in: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+
+  @keyframes pop-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 }
 
 @layer base {
+  html,
+  body {
+    height: 100%;
+    min-height: 100dvh;
+    background: var(--color-gray-1);
+    color: var(--color-gray-12);
+    font-family: "Readex Pro Variable", sans-serif;
+  }
+
+  /* Ícones */
   .ph,
   .ph-fill {
     font-size: 20px;
   }
 
-  html,
-  body {
-    height: 100%;
-    min-height: 100dvh;
-    background: var(--color-blue-1);
-    color: var(--color-gray-12);
-    font-family: "Readex Pro Variable", sans-serif;
-  }
-
   /* NG Menu */
   [ngMenu] {
-    @apply w-60 bg-blue-2 border border-gray-6 p-1 rounded-lg drop-shadow-2xl;
+    @apply w-60 bg-gray-3 p-1 rounded-lg drop-shadow-2xl;
   }
 
   [ngMenu][data-visible="false"] {
@@ -76,32 +93,123 @@
   }
 
   [ngMenuItem] {
-    @apply flex gap-2 px-2 py-1 hover:bg-blue-2 cursor-pointer transition-colors outline-none focus:bg-blue-3 rounded-md text-gray-11;
+    @apply flex gap-2 px-2 py-1 hover:bg-gray-4 cursor-pointer transition-colors outline-none focus:bg-gray-4 rounded-md text-gray-11;
   }
+}
+
+/* Transicao de paginas (Angular Router + View Transitions API) */
+@supports (view-transition-name: route-scope) {
+  .route-transition-scope {
+    view-transition-name: route-scope;
+    contain: layout;
+  }
+
+  ::view-transition-group(route-scope) {
+    animation-duration: 320ms;
+    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  ::view-transition-old(route-scope) {
+    animation: page-out 320ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+
+  ::view-transition-new(route-scope) {
+    animation: page-in 320ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.995);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes page-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.995);
+  }
+}
+
+.enter-animation {
+  animation: slide-fade 1s;
+}
+
+@keyframes slide-fade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(route-scope),
+  ::view-transition-old(route-scope),
+  ::view-transition-new(route-scope) {
+    animation: none !important;
+  }
+}
+
+.admin-table-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-blue-7) var(--color-blue-2);
+}
+
+.admin-table-scrollbar::-webkit-scrollbar {
+  height: 10px;
+}
+
+.admin-table-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-blue-2);
+  border-radius: 9999px;
+}
+
+.admin-table-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, var(--color-blue-6), var(--color-blue-8));
+  border-radius: 9999px;
+}
+
+.admin-table-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, var(--color-blue-7), var(--color-blue-9));
 }
 
 /* Componentes */
 @layer components {
   /* Link */
   .ui-link {
-    @apply px-4 py-1 border border-transparent leading-[24px] bg-blue-2 inline-flex gap-2 items-center justify-center rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
+    @apply px-4 py-1 border border-transparent leading-[24px] bg-gray-2 inline-flex gap-2 items-center justify-center rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
   }
 
   /* Botões */
   .ui-primary-btn {
-    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center rounded-lg text-gray-12 bg-blue-9 hover:bg-blue-10 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:border-gray-3 disabled:text-gray-10;
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center rounded-lg text-gray-12 bg-blue-9 hover:bg-blue-10 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
   }
 
   .ui-secondary-btn {
-    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-blue-2 rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:border-gray-3 disabled:text-gray-10;
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-gray-3 rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
   }
 
   .ui-destructive-btn {
-    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-blue-2 rounded-lg text-red-300 hover:bg-red-600 hover:border-red-400 hover:text-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 ease-in-out;
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-gray-3 rounded-lg text-red-300 hover:bg-red-600 hover:border-red-400 hover:text-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 ease-in-out;
   }
 
   .ui-action-btn {
-    @apply px-2 py-0.5 rounded-full text-gray-11 gap-1 bg-blue-2 text-sm hover:bg-blue-3 flex items-center cursor-pointer transition-colors;
+    @apply px-2 py-0.5 rounded-full text-gray-11 gap-1 bg-gray-3 text-sm hover:bg-gray-4 flex items-center cursor-pointer transition-colors;
   }
 
   .ui-action-btn[data-size="icon"] {
@@ -111,6 +219,10 @@
   /* Variação de tamanho para botões e links */
   [data-size="icon"] {
     @apply w-[34px] h-[34px] rounded-full p-0 flex items-center justify-center;
+  }
+
+  [data-size="sm"] {
+    @apply px-3 py-1 text-sm;
   }
 
   /* Background pattern */

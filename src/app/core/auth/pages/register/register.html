@@ -1,21 +1,40 @@
 <main
-  class="mx-auto md:grid grid-cols-[320px_1fr] gap-10 w-full max-w-4xl py-10 lg:py-24 px-6 h-full place-content-center">
+  class="mx-auto md:grid grid-cols-[320px_1fr] gap-10 w-full max-w-4xl py-10 lg:py-24 px-6 h-full place-content-center"
+>
   <header class="max-md:mb-10">
     <h1 class="text-3xl">Crie sua conta</h1>
-    <p class="text-gray-11 font-light mt-2">Já possui uma conta? <a routerLink="/entrar"
-        class="text-blue-9 hover:underline cursor-pointer">Entrar</a>
+    <p class="text-gray-11 font-light mt-2">
+      Já possui uma conta?
+      <a routerLink="/entrar" class="text-blue-9 hover:underline cursor-pointer"
+        >Entrar</a
+      >
     </p>
   </header>
 
   <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
-    <ui-input label="Nome" type="text" name="name" placeholder="Gabriel França" formControlName="name" required />
+    <ui-input
+      label="Nome"
+      type="text"
+      name="name"
+      placeholder="Gabriel França"
+      formControlName="name"
+      variant="secondary"
+      required
+    />
     @if (form.controls.name.errors?.['invalidName']) {
     <small class="text-red px-4 text-red-300 -mt-2">O nome é inválido</small>
     }
 
     <div class="relative">
-      <ui-input label="Gamertag" type="text" placeholder="Bielframos" name="gamertag" formControlName="gamertag"
-        required />
+      <ui-input
+        label="Gamertag"
+        type="text"
+        placeholder="Bielframos"
+        name="gamertag"
+        formControlName="gamertag"
+        variant="secondary"
+        required
+      />
 
       <div class="absolute right-2 bottom-1">
         @if(gamertag.pending) {
@@ -28,24 +47,61 @@
       </div>
 
       @if (form.controls.gamertag.errors?.['invalidGamertagFormat']) {
-      <small class="text-red px-4 text-red-300">Use apenas letras, números e _</small>
+      <small class="text-red px-4 text-red-300"
+        >Use apenas letras, números e _</small
+      >
       }
     </div>
-    <ui-input label="E-mail" type="email" placeholder="bielframos@zetho.app" name="email" formControlName="email"
-      required />
-    <ui-input label="Senha" type="password" placeholder="Sua senha" name="password" formControlName="password"
-      required />
-    <ui-input label="Confirme a senha" type="password" placeholder="Confirme sua senha" name="confirmPassword"
-      formControlName="confirmPassword" required />
+    <ui-input
+      label="E-mail"
+      type="email"
+      placeholder="bielframos@zetho.app"
+      name="email"
+      formControlName="email"
+      variant="secondary"
+      required
+    />
+    <ui-input
+      label="Senha"
+      type="password"
+      placeholder="Sua senha"
+      name="password"
+      formControlName="password"
+      variant="secondary"
+      required
+    />
+    <ui-input
+      label="Confirme a senha"
+      type="password"
+      placeholder="Confirme sua senha"
+      name="confirmPassword"
+      variant="secondary"
+      formControlName="confirmPassword"
+      required
+    />
     @if (form.errors?.['passwordsMismatch']) {
-    <small class="text-red px-4 text-red-300 -mt-2">As senhas precisam ser iguais</small>
+    <small class="text-red px-4 text-red-300 -mt-2"
+      >As senhas precisam ser iguais</small
+    >
     }
 
-    <button type="submit" class="ui-primary-btn mt-4" [disabled]="form.invalid || isSubmitting()">
+    <ui-input
+      label="Código de convite (opcional)"
+      type="text"
+      placeholder="Ex: abc123"
+      name="inviteCode"
+      formControlName="inviteCode"
+      variant="secondary"
+    />
+
+    <button
+      type="submit"
+      class="ui-primary-btn mt-4"
+      [disabled]="form.invalid || isSubmitting()"
+    >
       @if (isSubmitting()) {
       <i class="ph ph-spinner animate-spin"></i>
-      }
-      Registrar
+      } Registrar
     </button>
   </form>
 </main>

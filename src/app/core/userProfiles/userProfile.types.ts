@@ -17,6 +17,8 @@ type UserProfile = {
   socialXbox?: string;
   socialSteam?: string;
   socialPsn?: string;
+  zcoinBalance?: number;
+  inviteCode?: string;
 };
 
 type UserProfileRow = StoredRow<UserProfile>;
@@ -26,9 +28,27 @@ type ProfileWithConnection = UserProfileRow & {
   connection: ConnectionRow | null;
 };
 
+type InviteBonusResponse = {
+  period: {
+    start: string;
+    endExclusive: string;
+  };
+  invitedUsersCount: number;
+  eligibleInvites: number;
+  bonusPercent: number;
+  maxBonusPercent: number;
+};
+
+type InviteCodeResponse = {
+  profileId: string;
+  inviteCode: string;
+};
+
 export type {
   UserProfile,
   UserProfileRow,
   UserProfileList,
   ProfileWithConnection,
+  InviteBonusResponse,
+  InviteCodeResponse,
 };

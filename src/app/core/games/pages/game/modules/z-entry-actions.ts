@@ -9,16 +9,12 @@ import { ZEntry } from '../../../../zEntries/zEntries.types';
   imports: [NgClass],
   template: `
     <div
-      class="grid grid-cols-4 md:grid-cols-2 auto-rows-auto md:h-full gap-1 max-md:border-t bg-blue-2 border-gray-6 md:p-2 md:rounded-2xl overflow-hidden fixed md:relative bottom-0 left-0 w-full z-999 animate-fade-in-slide"
+      class="grid grid-cols-4 md:grid-cols-2 auto-rows-auto md:h-full gap-1 bg-gray-2 md:p-2 md:rounded-2xl w-full animate-fade-in-slide mb-4"
     >
       @for (action of actions; track action.key) {
         <button
-          (click)="
-            controller.handleEntry({
-              action: 'updateStatus',
-              value: action.key,
-            })
-          "
+          (click)="onStatusAction(action.key)"
+          [disabled]="isCoolingDown"
           class="flex flex-col gap-2 items-center justify-center w-full cursor-pointer transition-colors text-sm md:text-md border-gray-6 md:rounded-xl max-md:py-4"
           [ngClass]="[
             action.key === controller.zEntry()?.status
@@ -70,7 +66,7 @@ export class UiZEntryActions {
     icon?: string;
   }[] = [
     { key: 'completed', label: 'Zerei' },
-    { key: 'backlog', label: 'Backlog', icon: 'ph-fill ph-books' },
+    { key: 'backlog', label: 'Biblioteca', icon: 'ph-fill ph-books' },
     { key: 'playing', label: 'Jogando', icon: 'ph-fill ph-game-controller' },
     { key: 'dropped', label: 'Dropei', icon: 'ph-fill ph-x-circle' },
   ];
@@ -90,4 +86,20 @@ export class UiZEntryActions {
     playing: 'text-gray-11 hover:text-purple-300 hover:bg-purple-600/10',
     dropped: 'text-gray-11 hover:text-red-300 hover:bg-red-600/10',
   };
+
+  isCoolingDown = false;
+  cooldownDurationMs = 1500;
+
+  onStatusAction(
+    actionKey: Exclude<ZEntry['status'], 'wishlist' | null | undefined>,
+  ) {
+    if (this.isCoolingDown) return;
+
+    this.isCoolingDown = true;
+    this.controller.handleEntry({ action: 'updateStatus', value: actionKey });
+
+    window.setTimeout(() => {
+      this.isCoolingDown = false;
+    }, this.cooldownDurationMs);
+  }
 }

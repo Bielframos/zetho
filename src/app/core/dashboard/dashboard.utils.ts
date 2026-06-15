@@ -1,7 +1,7 @@
 export const DASHBOARD_ENTRIES = [
   {
     key: 'totalsBacklog',
-    label: 'Backlog',
+    label: 'Biblioteca',
     icon: 'ph-fill ph-books text-[28px]',
     classes: 'max-md:border-b max-md:border-r',
     tab: 'backlog',

@@ -1,4 +1,5 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, input, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { UiGameCard } from '../../../../../shared/ui/game-card/game-card';
 import { UiSkeleton } from '../../../../../shared/ui/skeleton';
 import { GameRow } from '../../../game.types';
@@ -7,7 +8,7 @@ import { GameRow } from '../../../game.types';
   selector: 'ui-game-header',
   standalone: true,
   template: `
-    <header class="p-6 bg-blue-2 rounded-2xl sm:flex gap-10">
+    <header class="p-6 max-md:py-10 md:rounded-2xl sm:flex gap-10">
       <div class="mx-auto w-fit">
         <ui-game-card
           [game]="game()!"
@@ -24,7 +25,7 @@ import { GameRow } from '../../../game.types';
 
           <div class="flex gap-4 max-sm:justify-center">
             <!-- Nome dos desenvolvedores -->
-            <div class="border-r pr-4 border-blue-6">
+            <div class="border-r pr-4 border-gray-6">
               <span class="text-sm font-light text-gray-11"
                 >Desenvolvido por</span
               >
@@ -41,25 +42,68 @@ import { GameRow } from '../../../game.types';
 
             <!-- Data de lançamento -->
             <div>
-              <span class="text-sm font-light text-gray-11">Lançado em</span>
+              <span class="text-sm font-light text-gray-11">{{
+                releaseLabel()
+              }}</span>
               <br />
-              <span>{{ game()?.releaseDate }}</span>
+              <span>{{ releaseValue() }}</span>
             </div>
           </div>
 
-          <p class="font-light">{{ game()?.summary }}</p>
+          <div>
+            <p class="font-light">
+              {{ game()?.summaryPt ? game()?.summaryPt : game()?.summary }}
+            </p>
+
+            @if (game()?.summaryPt) {
+              <button
+                (click)="toggleSummary()"
+                class="text-xs border border-dashed border-gray-6 rounded-full w-fit px-2 py-0.5 hover:bg-gray-2 cursor-pointer mt-2"
+              >
+                {{
+                  showOriginalSummary()
+                    ? 'Esconder resumo original'
+                    : 'Mostrar resumo original'
+                }}
+              </button>
+
+              <div
+                class="overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out"
+                [class.max-h-0]="!showOriginalSummary()"
+                [class.max-h-[800px]]="showOriginalSummary()"
+                [class.opacity-0]="!showOriginalSummary()"
+                [class.opacity-100]="showOriginalSummary()"
+              >
+                <p class="font-light mt-2 text-sm">
+                  {{ game()?.summary }}
+                </p>
+              </div>
+            }
+          </div>
 
           <!-- Genêros do game -->
-          <div>
-            <span class="text-sm font-light text-gray-11">Gêneros</span> <br />
-            @for (genre of game()?.genres; track $index) {
-              <span
-                >{{ genre.name }}
-                @if ($index < game()?.genres.length - 1) {
+          <div class="flex gap-4 max-sm:flex-col max-sm:items-center">
+            <div class="border-r pr-4 border-gray-6">
+              <span class="text-sm font-light text-gray-11">Gêneros</span>
+              <br />
+              @for (genre of game()?.genres; track $index) {
+                <a
+                  [routerLink]="['/buscar']"
+                  [queryParams]="{ genre: genre.slug }"
+                  class="hover:text-blue-11 transition-colors"
+                  >{{ genre.name }}</a
+                >
+                @if ($index < (game()?.genres?.length ?? 0) - 1) {
                   <span>, </span>
                 }
-              </span>
-            }
+              }
+            </div>
+
+            <div>
+              <span class="text-sm font-light text-gray-11">ID do jogo</span>
+              <br />
+              <span>{{ game()?.$id }}</span>
+            </div>
           </div>
         } @else {
           <ui-skeleton [height]="40" [width]="70"></ui-skeleton>
@@ -77,8 +121,49 @@ import { GameRow } from '../../../game.types';
       </div>
     </header>
   `,
-  imports: [UiGameCard, UiSkeleton],
+  imports: [UiGameCard, UiSkeleton, RouterLink],
 })
 export class UiGameHeader {
   game = input<GameRow | null>();
+
+  showOriginalSummary = signal(false);
+  toggleSummary = () => this.showOriginalSummary.update((value) => !value);
+
+  releaseLabel = computed(() => {
+    const game = this.game();
+    const releaseDate = game?.releaseDate;
+    const releaseYear = game?.releaseYear;
+
+    if (!releaseDate || !releaseYear) {
+      return 'Data de lançamento';
+    }
+
+    const rawReleaseDate = game?.rawReleaseDate;
+
+    if (rawReleaseDate) {
+      const release = new Date(rawReleaseDate);
+      if (!Number.isNaN(release.getTime())) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        return release.getTime() > today.getTime()
+          ? 'Data de lançamento:'
+          : 'Lançado em';
+      }
+    }
+
+    return 'Lançado em';
+  });
+
+  releaseValue = computed(() => {
+    const game = this.game();
+    const releaseDate = game?.releaseDate;
+    const releaseYear = game?.releaseYear;
+
+    if (!releaseDate || !releaseYear) {
+      return 'A definir';
+    }
+
+    return releaseDate;
+  });
 }
