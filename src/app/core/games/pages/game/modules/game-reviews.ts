@@ -33,7 +33,7 @@ import { AppStartingRating } from '../../../../../shared/ui/star-rating/star-rat
           </div>
         </div>
 
-        @if (authStore.isAuthenticated()) {
+        @if (authStore.isAuthenticated() && !gameController.isUpcomingRelease()) {
           <button
             class="ui-primary-btn"
             (click)="toggleForm()"
@@ -157,6 +157,15 @@ import { AppStartingRating } from '../../../../../shared/ui/star-rating/star-rat
                   </div>
                   <span class="text-xs text-gray-10">{{ mine.$createdAt | date:'dd/MM/yyyy' }}</span>
                 </div>
+                <div class="ml-auto flex items-center gap-2 text-sm text-gray-11">
+                  <button class="hover:text-blue-9 transition-colors" (click)="voteReview(mine, 'up')">
+                    <i class="ph ph-caret-up text-lg"></i>
+                  </button>
+                  <span class="min-w-4 text-center font-medium">{{ mine.voteCount || 0 }}</span>
+                  <button class="hover:text-blue-9 transition-colors" (click)="voteReview(mine, 'down')">
+                    <i class="ph ph-caret-down text-lg"></i>
+                  </button>
+                </div>
               </footer>
             </div>
           }
@@ -203,6 +212,15 @@ import { AppStartingRating } from '../../../../../shared/ui/star-rating/star-rat
                     <span class="text-xs text-gray-10">{{ review.$createdAt | date:'dd/MM/yyyy' }}</span>
                   </div>
                 </a>
+                <div class="ml-auto flex items-center gap-2 text-sm text-gray-11">
+                  <button class="hover:text-blue-9 transition-colors" (click)="voteReview(review, 'up')">
+                    <i class="ph ph-caret-up text-lg"></i>
+                  </button>
+                  <span class="min-w-4 text-center font-medium">{{ review.voteCount || 0 }}</span>
+                  <button class="hover:text-blue-9 transition-colors" (click)="voteReview(review, 'down')">
+                    <i class="ph ph-caret-down text-lg"></i>
+                  </button>
+                </div>
               </footer>
             </div>
           }
@@ -431,5 +449,24 @@ export class UiGameReviews implements OnInit {
 
   trackByReviewId(index: number, item: RatingRow) {
     return item.$id;
+  }
+
+  async voteReview(review: RatingRow, operation: 'up' | 'down') {
+    if (!this.authStore.isAuthenticated()) {
+      alert('Você precisa estar logado para votar.');
+      return;
+    }
+
+    try {
+      const res = await this.ratingsService.voteRating(review.$id, operation);
+      
+      if (this.myRating() && this.myRating()?.$id === review.$id) {
+        this.myRating.update(r => r ? { ...r, voteCount: res.newVoteCount } : null);
+      } else {
+        this.ratings.update(list => list.map(r => r.$id === review.$id ? { ...r, voteCount: res.newVoteCount } : r));
+      }
+    } catch (err) {
+      console.error('Failed to vote', err);
+    }
   }
 }
