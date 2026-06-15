@@ -1611,6 +1611,73 @@
           "size": 8000,
           "default": null,
           "encrypt": false
+        },
+        {
+          "key": "voteCount",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 0,
+          "min": -9223372036854775807,
+          "max": 9223372036854775807
+        },
+        {
+          "key": "votes",
+          "type": "relationship",
+          "required": false,
+          "array": false,
+          "relatedTable": "rating_votes",
+          "relationType": "manyToOne",
+          "twoWay": true,
+          "twoWayKey": "rating",
+          "onDelete": "cascade",
+          "side": "child"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "$id": "rating_votes",
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"any\")",
+        "update(\"users\")",
+        "delete(\"users\")"
+      ],
+      "databaseId": "app",
+      "name": "Rating Votes",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "type",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["up", "down"]
+        },
+        {
+          "key": "rating",
+          "type": "relationship",
+          "required": false,
+          "array": false,
+          "relatedTable": "ratings",
+          "relationType": "manyToOne",
+          "twoWay": true,
+          "twoWayKey": "votes",
+          "onDelete": "cascade",
+          "side": "parent"
+        },
+        {
+          "key": "userId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 48,
+          "default": null,
+          "encrypt": false
         }
       ],
       "indexes": []

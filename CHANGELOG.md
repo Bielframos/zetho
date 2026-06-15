@@ -4,6 +4,14 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [1.11.0] - 2026-06-15
+
+### Added
+
+- Nova seção de Destaques da Comunidade no dashboard mesclando os comentários e avaliações recentes.
+- Tempo relativo nas publicações (ex: "5 minutos atrás").
+- Ajuste e correção de bug onde a foto e nome do autor não apareciam em comentários recentes.
+
 ## [1.10.0] - 2026-06-13
 
 ### Added

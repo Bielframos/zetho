@@ -1,5 +1,5 @@
 <div class="md:px-4 py-10 w-full max-w-5xl mx-auto">
-  <header class="mb-14">
+  <header class="mb-4">
     <div class="mb-6 flex gap-4 items-baseline flex-wrap max-md:px-4">
       <h1 class="text-3xl max-w-xl">Olá, {{ profile?.gamertag }}!</h1>
       <a
@@ -61,13 +61,119 @@
     </div>
   </header>
 
-  <a href="https://ga.zetho.app" target="_blank" class="block">
-    <img
-      src="/gazetho-banner-small.webp"
-      alt="Banner de divulgação do Gazetho"
-      class="w-full md:rounded-2xl mb-14"
-    />
+  <a
+    href="https://ga.zetho.app"
+    target="_blank"
+    class="block bg-gray-2 text-blue-11 p-4 rounded-xl text-center mb-14 font-medium hover:bg-blue-4 transition-colors"
+  >
+    Leia as últimas notícias e artigos no Gazetho!
   </a>
+
+  <section class="mb-14 max-md:px-4">
+    <header class="mb-6 flex gap-4 items-baseline flex-wrap">
+      <h2 class="text-2xl">Destaques da Comunidade</h2>
+      <span class="text-gray-11 text-sm"
+        >Comentários e reviews mais votados recentemente</span
+      >
+    </header>
+
+    @if (loadingHighlights()) {
+    <ui-loading></ui-loading>
+    } @else if (highlights().length > 0) {
+    <div class="flex flex-col divide-y divide-gray-6">
+      @for (item of highlights(); track item.$id) {
+      <div class="flex flex-col gap-3 py-4">
+        <header class="flex items-center gap-3">
+          @if (item.userProfile?.avatarUrl) {
+          <img
+            [src]="item.userProfile?.avatarUrl"
+            alt="Avatar"
+            class="h-8 w-8 rounded-full object-cover"
+          />
+          } @else {
+          <div
+            class="h-8 w-8 rounded-full bg-blue-9 text-white flex items-center justify-center font-bold text-xs"
+          >
+            {{ (item.userProfile?.gamertag || 'Z')[0] | uppercase }}
+          </div>
+          }
+          <div class="flex flex-col">
+            <a
+              [routerLink]="['/player', item.userProfile?.gamertag]"
+              class="font-medium text-gray-12 hover:underline"
+              >{{ item.userProfile?.gamertag || 'Jogador' }}</a
+            >
+            <span class="text-xs text-gray-10"
+              >{{ item.$createdAt | relativeTime }}</span
+            >
+          </div>
+          <div class="ml-auto flex items-center gap-2">
+            @if (item._highlightType === 'rating') {
+              <span class="text-xs bg-amber-300/10 text-amber-300 px-2 py-0.5 rounded-full font-medium">Review</span>
+              <div class="flex items-center gap-1 text-amber-300">
+                <i class="ph-fill ph-star"></i>
+                <span class="font-bold text-gray-12 ml-1"
+                  >{{ item.rating?.toFixed(1) }}</span
+                >
+              </div>
+            } @else {
+              <span class="text-xs bg-blue-3 text-blue-11 px-2 py-0.5 rounded-full font-medium">Comentário</span>
+            }
+          </div>
+        </header>
+
+        @if (item.content) {
+        <div
+          class="prose prose-invert prose-sm prose-gray max-w-none prose-p:font-light line-clamp-3"
+          [innerHTML]="item.content"
+        ></div>
+
+        @if (item.game) {
+        <a
+          [routerLink]="['/jogo', item.game.slug]"
+          class="flex items-center gap-3 hover:bg-gray-3 p-2 rounded-lg transition-colors border border-gray-6"
+        >
+          @if (item.game.coverUrl) {
+          <img
+            [src]="item.game.coverUrl"
+            class="w-10 h-14 object-cover rounded"
+            alt="Cover"
+          />
+          }
+          <span class="font-medium text-gray-12 hover:underline"
+            >{{ item.game.name }}</span
+          >
+        </a>
+        } }
+
+        <footer class="flex items-center gap-2 text-sm text-gray-11 mt-2">
+          <i class="ph ph-arrow-up text-lg text-blue-9"></i>
+          <span class="font-medium">{{ item.voteCount || 0 }} votos</span>
+        </footer>
+      </div>
+      }
+    </div>
+    } @else {
+    <p class="text-gray-11">Nenhum destaque encontrado no momento.</p>
+    }
+
+    @if (hasMoreHighlights()) {
+    <div class="mt-4 flex justify-center">
+      <button
+        (click)="loadMoreHighlights()"
+        [disabled]="loadingMoreHighlights()"
+        class="bg-gray-3 hover:bg-gray-4 text-gray-12 font-medium px-6 py-2.5 rounded-full transition-colors disabled:opacity-50 flex items-center gap-2"
+      >
+        @if (loadingMoreHighlights()) {
+          <ui-loading class="w-4 h-4"></ui-loading>
+          Carregando...
+        } @else {
+          Ver mais
+        }
+      </button>
+    </div>
+    }
+  </section>
 
   <header class="mb-6 flex gap-4 items-baseline flex-wrap max-md:px-4">
     <h2 class="text-2xl">Minhas listas</h2>

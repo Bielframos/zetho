@@ -15,6 +15,7 @@ export interface RatingRow {
     gamertag: string;
     avatarUrl: string | null;
   } | null;
+  voteCount?: number;
 }
 
 export interface RatingsListResponse {
@@ -107,5 +108,22 @@ export class RatingsService {
     if (!response.ok) {
       throw new Error(`Failed to delete rating: ${response.statusText}`);
     }
+  }
+
+  async voteRating(ratingId: string, operation: 'up' | 'down'): Promise<{ success: boolean; delta: number; operation: 'up'|'down'; newVoteCount: number }> {
+    const url = new URL(`ratings/vote/${ratingId}`, environment.zethoApiEndpoint);
+    const headers = await this.getAuthHeaders();
+    const response = await fetch(url.toString(), {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ operation }),
+    });
+
+    if (!response.ok) {
+      const errBody = await response.json().catch(() => ({}));
+      throw new Error(errBody.message || `Failed to vote on rating: ${response.statusText}`);
+    }
+
+    return await response.json();
   }
 }
