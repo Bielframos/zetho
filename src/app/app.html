@@ -1,18 +1,327 @@
-<div class="flex flex-col min-h-dvh pb-16">
-  <!-- Navbar -->
-  <nav class="w-full px-4 md:px-10 pt-4 relative z-10">
-    <div class="flex gap-4 justify-between items-center">
+@if (usesAppShell()) {
+<div class="min-h-dvh bg-gray-1 text-gray-12 lg:px-4">
+  <div
+    class="mx-auto grid min-h-dvh w-full max-w-[1180px] grid-cols-1 lg:grid-cols-[15rem_minmax(0,1fr)_18rem]"
+  >
+    <aside
+      class="sticky top-0 hidden h-dvh border-r border-gray-4 px-4 py-4 lg:block"
+    >
+      <a routerLink="/dashboard" class="inline-flex">
+        <h3 class="font-display text-[32px] leading-none px-4">zetho</h3>
+      </a>
+
+      <nav class="mt-8 flex flex-col gap-1">
+        <a
+          routerLink="/dashboard"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-house"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a
+          routerLink="/zcoins/leaderboard/weekly"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-ranking"></i>
+          <!-- <img src="/animated_z_coin.gif" alt="" class="h-5 w-5 rounded-full" /> -->
+          <span>Placar semanal</span>
+        </a>
+
+        <a
+          routerLink="/sorteios"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-gift"></i>
+          <span>Sorteios</span>
+        </a>
+
+        <a
+          [routerLink]="profileRoute()"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-user-circle"></i>
+          <span>Meu perfil</span>
+        </a>
+
+        <a
+          routerLink="/minha-conta"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-gear"></i>
+          <span>Minha conta</span>
+        </a>
+
+        @if (authStore.isAdmin()) {
+        <a
+          routerLink="/admin"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-shield-star"></i>
+          <span>Admin</span>
+        </a>
+        }
+      </nav>
+    </aside>
+
+    <main class="min-w-0 border-gray-4 lg:border-x">
+      <app-search-input
+        name="desktopShellSearchInput"
+        placeholder="Busque um jogo ou player"
+        (search)="onSearch($event)"
+        (focusSearch)="onSearchInputFocus()"
+      />
+
+      <header
+        class="sticky top-0 z-20 border-b border-gray-4 bg-gray-1/95 px-4 py-3 backdrop-blur lg:hidden"
+      >
+        <div class="flex items-center justify-between gap-3">
+          <a routerLink="/dashboard">
+            <h3 class="font-display text-[38px] leading-none">zetho</h3>
+          </a>
+
+          <a
+            [routerLink]="profileRoute()"
+            class="shrink-0 overflow-hidden rounded-full bg-blue-12"
+          >
+            <img
+              [src]="authStore.avatarUrl()"
+              alt="{{`Avatar do ${authStore.user()?.name}`}}"
+              class="h-[34px] w-[34px] object-cover"
+            />
+          </a>
+        </div>
+
+        <div class="mt-3">
+          <app-search-input
+            name="mobileShellSearchInput"
+            placeholder="Busque um jogo ou player"
+            (search)="onSearch($event)"
+            (focusSearch)="onSearchInputFocus()"
+          />
+        </div>
+      </header>
+
+      <div class="route-transition-scope min-h-dvh">
+        <router-outlet />
+      </div>
+    </main>
+
+    <aside
+      class="sticky top-0 hidden h-dvh overflow-y-auto border-l border-gray-4 px-4 py-5 lg:block"
+    >
+      @if (isProfileRoute() && profileSidebarProfile; as profile) {
+      <div class="rounded-lg border border-gray-6">
+        @if (!profileStore.itsMe()) { @if (profile && 'connection' in profile &&
+        profile.connection) {
+        <button
+          class="flex items-center gap-2 justify-center w-full px-4 py-2 hover:bg-gray-3 transition-colors border-b border-gray-6"
+          (click)="profileStore.followOrUnfollow()"
+        >
+          <i class="ph ph-user-minus text-[16px]"></i>
+          deixar de seguir
+        </button>
+        } @else {
+        <button
+          class="flex items-center gap-2 justify-center w-full px-4 py-2 hover:bg-gray-3 transition-colors border-b border-gray-6"
+          (click)="profileStore.followOrUnfollow()"
+        >
+          <i class="ph ph-user-plus text-[16px]"></i>
+          seguir
+        </button>
+        }}
+
+        <header class="flex items-center gap-3 px-4 py-4">
+          <img
+            [src]="profileStore.avatarUrl()"
+            alt="{{`Avatar do ${profile.gamertag}`}}"
+            class="h-12 w-12 rounded-full bg-blue-12 object-cover"
+          />
+
+          <div class="min-w-0">
+            <p class="truncate font-semibold text-gray-12">
+              {{ profileStore.itsMe() ? authStore.user()?.name :
+              profile.gamertag }}
+            </p>
+            <p class="truncate text-sm text-gray-11">@{{ profile.gamertag }}</p>
+          </div>
+        </header>
+
+        @if (profile.bio; as bio) {
+        <div class="border-t border-gray-6 px-4 py-3">
+          <p class="text-sm text-gray-11">{{ bio }}</p>
+        </div>
+        } @if (profileStore.itsMe()) {
+        <div class="border-t border-gray-6 py-3">
+          <app-z-coin-balance></app-z-coin-balance>
+        </div>
+        } @if (profileSidebarHasSocialNicks) {
+        <div class="flex flex-wrap gap-2 border-t border-gray-6 px-4 py-3">
+          @if (profile.socialSteam) {
+          <button
+            class="rounded-lg border border-gray-6 px-2 py-0.5 text-sm text-gray-11 transition-colors hover:bg-blue-3 hover:text-gray-12"
+            (click)="copyProfileSocial('socialSteam')"
+          >
+            Steam
+          </button>
+          } @if (profile.socialXbox) {
+          <button
+            class="rounded-lg border border-gray-6 px-2 py-0.5 text-sm text-gray-11 transition-colors hover:bg-blue-3 hover:text-gray-12"
+            (click)="copyProfileSocial('socialXbox')"
+          >
+            Xbox
+          </button>
+          } @if (profile.socialPsn) {
+          <button
+            class="rounded-lg border border-gray-6 px-2 py-0.5 text-sm text-gray-11 transition-colors hover:bg-blue-3 hover:text-gray-12"
+            (click)="copyProfileSocial('socialPsn')"
+          >
+            Playstation
+          </button>
+          }
+        </div>
+        }
+
+        <ul class="flex flex-col gap-1 border-t border-gray-6 px-2 py-3">
+          @for (tab of profileTabs; track tab.key) {
+          <li
+            class="group"
+            [attr.data-active]="profileLayoutStore.currentTab() === tab.key"
+          >
+            <a
+              [routerLink]="tab.key === 'games' ? ['/player', profile.gamertag] : tab.key"
+              class="flex w-full gap-2 rounded-lg py-2 pl-2 pr-4 text-sm transition-colors hover:bg-blue-4 hover:text-white group-data-[active=true]:bg-blue-3 group-data-[active=true]:hover:bg-blue-4"
+            >
+              <i class="ph {{ tab.icon }}"></i>
+              {{ tab.label }}
+            </a>
+          </li>
+          }
+        </ul>
+
+        <div class="py-2">
+          <ng-container
+            *ngComponentOutlet="profileLayoutStore.sidebarComponent()"
+          ></ng-container>
+        </div>
+      </div>
+      } @else {
+      <div class="rounded-lg border border-gray-6">
+        <div class="flex items-center gap-3 px-4 mt-4">
+          <a
+            [routerLink]="profileRoute()"
+            class="overflow-hidden rounded-full bg-blue-12"
+          >
+            <img
+              [src]="authStore.avatarUrl()"
+              alt="{{`Avatar do ${authStore.user()?.name}`}}"
+              class="h-12 w-12 object-cover"
+            />
+          </a>
+
+          <div class="min-w-0">
+            <p class="truncate font-semibold text-gray-12">
+              {{ authStore.user()?.name }}
+            </p>
+            <p class="truncate text-sm text-gray-11">
+              @{{ authStore.profile()?.gamertag }}
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-4 border-t border-gray-6 py-3">
+          <app-z-coin-balance></app-z-coin-balance>
+        </div>
+      </div>
+      }
+
+      <nav class="mt-4 flex flex-col gap-1">
+        <a
+          routerLink="/changelog"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-list-checks"></i>
+          <span>Changelog</span>
+        </a>
+      </nav>
+
+      <p class="mt-6 px-3 text-xs text-gray-10">v{{ appVersion }}</p>
+    </aside>
+  </div>
+
+  <nav
+    class="fixed inset-x-0 bottom-0 z-30 border-t border-gray-4 bg-gray-1/95 px-2 py-2 backdrop-blur lg:hidden"
+  >
+    <div class="mx-auto grid max-w-md grid-cols-5 gap-1">
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="bg-gray-3 text-gray-12"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        aria-label="Dashboard"
+      >
+        <i class="ph ph-house"></i>
+      </a>
+
+      <a
+        routerLink="/zcoins/leaderboard/weekly"
+        routerLinkActive="bg-gray-3 text-gray-12"
+        class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        aria-label="Placar semanal"
+      >
+        <img src="/animated_z_coin.gif" alt="" class="h-6 w-6 rounded-full" />
+      </a>
+
+      <a
+        routerLink="/sorteios"
+        routerLinkActive="bg-gray-3 text-gray-12"
+        class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        aria-label="Sorteios"
+      >
+        <i class="ph ph-gift"></i>
+      </a>
+
+      <a
+        [routerLink]="profileRoute()"
+        routerLinkActive="bg-gray-3 text-gray-12"
+        class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        aria-label="Meu perfil"
+      >
+        <i class="ph ph-user-circle"></i>
+      </a>
+
+      <a
+        routerLink="/minha-conta"
+        routerLinkActive="bg-gray-3 text-gray-12"
+        class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        aria-label="Minha conta"
+      >
+        <i class="ph ph-gear"></i>
+      </a>
+    </div>
+  </nav>
+</div>
+} @else {
+<div class="flex min-h-dvh flex-col">
+  <nav class="relative z-10 w-full px-4 pt-4 md:px-10">
+    <div class="flex items-center justify-between gap-4">
       <a [routerLink]="authStore.isAuthenticated() ? '/dashboard' : '/'">
-        <h3 class="font-display text-[40px] leading-0">zetho</h3>
+        <h3 class="font-display text-[40px] leading-none">zetho</h3>
       </a>
 
       <div class="flex items-center gap-4">
-        <!-- Barra de busca desktop — Só exibe se não for página de autenticação -->
-
-        @if (!isAuthRoute()) {
+        @if (!isAuthRoute() && !isOfflineRoute()) {
         <app-z-coin-balance></app-z-coin-balance>
 
-        <div class="hidden md:flex items-center gap-4">
+        <div class="hidden items-center gap-4 md:flex">
           <div class="w-72">
             <app-search-input
               name="desktopSearchInput"
@@ -24,8 +333,8 @@
         </div>
         } @if (authStore.user()) {
         <a
-          [routerLink]="['/player', authStore.profile()?.gamertag]"
-          class="rounded-full overflow-hidden bg-blue-12"
+          [routerLink]="profileRoute()"
+          class="overflow-hidden rounded-full bg-blue-12"
         >
           <img
             [src]="authStore.avatarUrl()"
@@ -35,16 +344,15 @@
         </a>
         } @else {
         <a routerLink="/registrar" class="ui-link">Criar conta</a>
-        <a routerLink="/entrar" class="ui-link bg-blue-9" data-size="icon"
-          ><i class="ph ph-sign-in"> </i
-        ></a>
+        <a routerLink="/entrar" class="ui-link bg-blue-9" data-size="icon">
+          <i class="ph ph-sign-in"></i>
+        </a>
         }
       </div>
     </div>
 
-    <!-- Barra de busca mobile — Só exibe se não for página de autenticação -->
-    @if (!isAuthRoute()) {
-    <div class="md:hidden mt-4">
+    @if (!isAuthRoute() && !isOfflineRoute()) {
+    <div class="mt-4 md:hidden">
       <app-search-input
         name="mobileSearchInput"
         placeholder="Busque um jogo ou player"
@@ -55,86 +363,47 @@
     }
   </nav>
 
-  <!-- Roteamento dinâmico -->
-  <div class="flex flex-col flex-1 min-h-fit route-transition-scope">
+  <div class="route-transition-scope flex min-h-fit flex-1 flex-col">
     <router-outlet />
   </div>
 
-  @if (!isOfflineRoute() && authStore.isAuthenticated()) {
-  <nav
-    class="fixed bottom-4 left-1/2 z-30 -translate-x-1/2 w-full md:max-w-fit max-sm:px-4"
-  >
-    <div
-      class="flex items-center md:gap-2 max-sm:border border-gray-6 md:rounded-xl bg-gray-2 backdrop-blur px-2 py-2 md:py-1 shadow-xl shadow-black/10 max-sm:overflow-x-auto max-sm:w-full max-sm:rounded-lg"
-    >
-      <a
-        routerLink="/dashboard"
-        class="rounded-md px-3 py-1 text-sm text-gray-11 hover:text-gray-12 hover:bg-gray-3 transition-colors whitespace-nowrap"
-      >
-        Dashboard
-      </a>
-
-      <a
-        routerLink="/zcoins/leaderboard/weekly"
-        class="flex items-center gap-2 rounded-md px-4 py-1 text-sm text-gray-11 hover:text-gray-12 shadow-sm hover:bg-gray-3 transition-colors whitespace-nowrap"
-      >
-        <img src="/animated_z_coin.gif" alt="" class="h-5 w-5 rounded-full" />
-        Placar semanal
-      </a>
-
-      <a
-        routerLink="/sorteios"
-        class="flex items-center gap-2 rounded-md px-4 py-1 text-sm text-gray-11 hover:text-gray-12 shadow-sm hover:bg-gray-3 transition-colors whitespace-nowrap"
-      >
-        <i class="ph ph-gift"></i>
-        Sorteios
-      </a>
-
-      <a
-        [routerLink]="['/player', authStore.profile()?.gamertag]"
-        class="rounded-md px-3 py-1 text-sm text-gray-11 hover:text-gray-12 hover:bg-gray-3 transition-colors whitespace-nowrap"
-      >
-        Meu perfil
-      </a>
-    </div>
-  </nav>
-  } @if (!isOfflineRoute()) {
-
-  <!-- Footer do app -->
+  @if (!isOfflineRoute()) {
   <footer
-    class="w-full flex justify-between items-center border-t border-gray-2 px-6 md:px-10 py-4 z-20"
+    class="z-20 flex w-full items-center justify-between border-t border-gray-2 px-6 py-4 md:px-10"
   >
     <div>
-      <h6 class="text-4xl font-display">Zetho</h6>
+      <h6 class="font-display text-4xl">Zetho</h6>
 
-      <small class="text-gray-11"
-        >Powered by
-        <a href="https://www.igdb.com/" class="font-semibold">IGDB</a></small
-      >
+      <small class="text-gray-11">
+        Powered by
+        <a href="https://www.igdb.com/" class="font-semibold">IGDB</a>
+      </small>
     </div>
 
     <div
-      class="text-sm text-gray-11 flex items-center gap-3 flex-wrap justify-end"
+      class="flex flex-wrap items-center justify-end gap-3 text-sm text-gray-11"
     >
       <span>v{{ appVersion }}</span>
 
-      •
+      <span>•</span>
 
       <a
         routerLink="/changelog"
-        class="text-sm hover:underline hover:text-blue-9"
-        >Changelog</a
+        class="text-sm hover:text-blue-9 hover:underline"
       >
+        Changelog
+      </a>
 
-      @if (authStore.isAdmin()) { •
-      <a routerLink="/admin" class="text-sm hover:underline hover:text-blue-9"
-        >Admin</a
-      >
+      @if (authStore.isAdmin()) {
+      <span>•</span>
+      <a routerLink="/admin" class="text-sm hover:text-blue-9 hover:underline">
+        Admin
+      </a>
       }
     </div>
   </footer>
   }
 </div>
+}
 
-<!-- Toaster global -->
 <app-toaster></app-toaster>
