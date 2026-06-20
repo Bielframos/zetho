@@ -1,6 +1,13 @@
-<ui-input
-  icon="magnifying-glass"
-  [placeholder]="placeholder()"
-  [formControl]="searchControl"
-  (focusin)="onFocusSearch()"
-/>
+<div
+  class="sticky top-0 border-b border-gray-6 w-full bg-gray-1/50 backdrop-blur-lg z-10"
+>
+  <i
+    class="ph ph-magnifying-glass text-gray-11 absolute left-4 top-1/2 -translate-y-1/2"
+  ></i>
+  <input
+    class="w-full placeholder:text-gray-11 py-4 pl-12 px-4 focus-within:outline-none"
+    [placeholder]="placeholder()"
+    [formControl]="searchControl"
+    (focusin)="onFocusSearch()"
+  />
+</div>

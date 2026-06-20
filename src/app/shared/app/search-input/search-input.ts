@@ -10,6 +10,7 @@ import { UiInput } from '../../ui/input/input';
   imports: [UiInput, ReactiveFormsModule],
 })
 export class AppSearchInput {
+  variant: 'primary' | 'secondary' = 'primary';
   placeholder = input<string>('');
   readonly search = output<string>();
   readonly focusSearch = output<void>();
