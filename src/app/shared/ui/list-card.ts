@@ -10,14 +10,14 @@ import { ParsedZereiListRow } from '../../core/lists/lists.controller';
     <li>
       <a
         [routerLink]="['/player', ownerGamertag(), 'listas', list().slug]"
-        class="flex flex-row items-end gap-6 p-4 bg-gray-2 md:rounded-2xl hover:bg-blue-3 transition-colors"
+        class="flex flex-row items-end gap-6 hover:bg-gray-3 transition-colors"
       >
         <div class="flex -space-x-14">
           @for (lastAddition of list().parsedLatestAdditions; track $index) {
             <img
               [src]="lastAddition.gameCoverUrl"
               [alt]="lastAddition.gameName + ' cover'"
-              class="w-24 h-auto rounded-xl drop-shadow-lg drop-shadow-blue-2"
+              class="w-24 h-auto drop-shadow-lg drop-shadow-blue-2"
             />
           } @empty {
             <a
@@ -29,7 +29,7 @@ import { ParsedZereiListRow } from '../../core/lists/lists.controller';
           }
         </div>
 
-        <div class="flex flex-1 max-md:w-full gap-4 items-center">
+        <div class="flex flex-1 max-md:w-full gap-4 items-center py-4">
           <div class="flex-1">
             <span>{{ list().title }}</span>
             <br />
