@@ -1,9 +1,7 @@
 @if (controller.initialLoading()) {
 <ui-loading></ui-loading>
 } @else if (controller.entries(); as games) {
-<ul
-  class="grid grid-cols-3 md:grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-2"
->
+<ul class="grid grid-cols-4 gap-px">
   @for (entry of controller.entries(); track entry.$id) {
   <li class="flex flex-col">
     <ui-game-card [game]="entry.game"></ui-game-card>
@@ -22,8 +20,11 @@
   }
 </ul>
 @if (controller.hasMore()) {
-<footer class="w-full flex justify-center mt-10">
-  <button class="ui-primary-btn" (click)="controller.loadEntries()">
+<footer class="w-full flex justify-center border-y border-gray-6">
+  <button
+    class="cursor-pointer hover:bg-gray-3 px-4 py-2 w-full"
+    (click)="controller.loadEntries()"
+  >
     Carregar mais
   </button>
 </footer>
