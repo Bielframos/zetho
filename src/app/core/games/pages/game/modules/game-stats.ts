@@ -8,9 +8,7 @@ import { ZStatsRow } from '../../../../zStats/zStats.types';
   template: `
     <div class="@container">
       @if (isUpcomingRelease()) {
-        <div
-          class="@md:grid grid-cols-2 overflow-hidden md:rounded-2xl p-2 bg-gray-2 h-full"
-        >
+        <div class="@md:grid h-full grid-cols-2">
           @for (item of upcomingEntries; track item.key) {
             <div
               class="{{
@@ -42,7 +40,7 @@ import { ZStatsRow } from '../../../../zStats/zStats.types';
         </div>
       } @else {
         <div
-          class="flex flex-col @md:grid max-md:divide-y divide-gray-6 grid-cols-2 overflow-hidden md:rounded-2xl p-2 bg-gray-2 h-full"
+          class="flex h-full flex-col divide-gray-6 border-y-8 border-gray-6 @md:grid @md:grid-cols-2 @md:divide-y-0"
         >
           <!-- Zerado -->
           <div

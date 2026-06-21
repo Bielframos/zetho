@@ -1,4 +1,11 @@
-import { Component, effect, inject, signal, untracked, OnInit } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  signal,
+  untracked,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -21,33 +28,39 @@ import { AppStartingRating } from '../../../../../shared/ui/star-rating/star-rat
     AppStartingRating,
   ],
   template: `
-    <article class="flex flex-col gap-6 max-md:px-4">
-      <header class="flex gap-4 items-center justify-between">
-        <div class="flex gap-4 items-center">
-          <div class="h-10 w-10 flex items-center justify-center rounded-full bg-blue-3">
-            <i class="ph ph-star-half text-blue-9 text-[24px]"></i>
-          </div>
-          <div>
-            <h3 class="text-blue-12 text-2xl">Críticas e Avaliações</h3>
-            <small class="text-gray-11">Veja o que outros jogadores acharam e deixe sua opinião estruturada</small>
-          </div>
+    <article>
+      <header class="flex items-center gap-3 px-4 py-4 border-b border-gray-6">
+        <div
+          class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6"
+        >
+          <i class="ph ph-star-half text-[24px] text-blue-11"></i>
+        </div>
+        <div>
+          <h3 class="text-2xl">Reviews</h3>
         </div>
 
-        @if (authStore.isAuthenticated() && !gameController.isUpcomingRelease()) {
-          <button
-            class="ui-primary-btn"
-            (click)="toggleForm()"
-          >
-            {{ showForm() ? 'Voltar para críticas' : (myRating() ? 'Editar minha crítica' : 'Escrever crítica') }}
+        @if (
+          authStore.isAuthenticated() && !gameController.isUpcomingRelease()
+        ) {
+          <button class="ui-primary-btn ml-auto" (click)="toggleForm()">
+            {{
+              showForm()
+                ? 'Voltar para críticas'
+                : myRating()
+                  ? 'Editar minha crítica'
+                  : 'Escrever crítica'
+            }}
           </button>
         }
       </header>
 
       <!-- Formulário de Crítica (Tiptap + Stars) -->
       @if (showForm()) {
-        <div class="flex flex-col gap-4 py-2">
+        <div class="flex flex-col gap-4 p-4">
           <div class="flex flex-col gap-2">
-            <span class="text-sm text-gray-11">Sua Nota (0.5 a 5 estrelas):</span>
+            <span class="text-sm text-gray-11"
+              >Sua Nota (0.5 a 5 estrelas):</span
+            >
             <app-star-rating
               [value]="editRating()"
               (ratingChange)="onRatingChange($event)"
@@ -55,22 +68,25 @@ import { AppStartingRating } from '../../../../../shared/ui/star-rating/star-rat
           </div>
 
           <div class="flex flex-col gap-2">
-            <span class="text-sm text-gray-11">Título ou Resumo Rápido (máx. 255 caracteres):</span>
+            <span class="text-sm text-gray-11"
+              >Título ou Resumo Rápido (máx. 255 caracteres):</span
+            >
             <input
               type="text"
               placeholder="Ex: Obra de arte indiscutível!, Bom mas com bugs..."
               maxlength="255"
-              class="rounded-xl px-4 py-2 font-light bg-gray-3 border border-gray-6 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-all duration-200"
+              class="border-y border-gray-6 bg-transparent px-4 py-2 font-light text-gray-12 outline-none transition-all duration-200 focus:ring-2 focus:ring-blue-6 md:border"
               [(ngModel)]="editTitle"
             />
           </div>
 
           <div class="flex flex-col gap-2">
             <div class="flex justify-between items-center">
-              <span class="text-sm text-gray-11">Crítica Detalhada (Rich Text):</span>
+              <span class="text-sm text-gray-11">Sua crítica:</span>
               @if (editContent().length > 100) {
                 <small class="text-green-400">
-                  <i class="ph ph-sparkle"></i> Crítica qualificada (+5 Z-Coins!)
+                  <i class="ph ph-sparkle"></i> Crítica qualificada (+5
+                  Z-Coins!)
                 </small>
               }
             </div>
@@ -82,7 +98,7 @@ import { AppStartingRating } from '../../../../../shared/ui/star-rating/star-rat
             ></app-rich-text-editor>
           </div>
 
-          <div class="flex justify-between items-center mt-2">
+          <div class="flex justify-between items-center">
             <div>
               @if (myRating()) {
                 <button
@@ -119,129 +135,185 @@ import { AppStartingRating } from '../../../../../shared/ui/star-rating/star-rat
         <!-- Feed de Avaliações -->
         <div class="flex flex-col gap-6 divide-y divide-gray-6">
           @if (loading() && ratings().length === 0 && !myRating()) {
-            <div class="py-10 flex flex-col items-center justify-center text-gray-11">
-              <i class="ph ph-spinner animate-spin text-4xl mb-2 text-blue-9"></i>
+            <div
+              class="py-10 flex flex-col items-center justify-center text-gray-11"
+            >
+              <i
+                class="ph ph-spinner animate-spin text-4xl mb-2 text-blue-9"
+              ></i>
               <p>Carregando avaliações...</p>
             </div>
           } @else {
             <!-- Minha própria avaliação em destaque -->
-          @if (myRating(); as mine) {
-            <div class="pt-6 first:pt-0 flex flex-col gap-3">
-              <div class="flex items-center gap-2">
-                <div class="flex text-amber-300">
-                  @for (star of getStarsArray(mine.rating); track $index) {
-                    <i class="ph-fill ph-star"></i>
-                  }
-                  @if (mine.rating % 1 !== 0) {
-                    <i class="ph-fill ph-star-half"></i>
-                  }
-                </div>
-                <span class="font-bold text-gray-12">{{ mine.rating.toFixed(1) }}</span>
-              </div>
-              @if (mine.title) {
-                <h4 class="font-medium text-lg text-gray-12">"{{ mine.title }}"</h4>
-              }
-              @if (mine.content) {
-                <div class="prose prose-invert prose-gray max-w-none prose-p:font-light" [innerHTML]="mine.content"></div>
-              }
-              <footer class="flex gap-3 items-center mt-2 pt-4">
-                <img
-                  [src]="getAvatar(mine.profile)"
-                  alt="Avatar"
-                  class="h-8 w-8 rounded-full object-cover"
-                />
-                <div class="flex flex-col">
-                  <div class="flex gap-2 items-center">
-                    <span class="text-gray-12 font-medium text-base">{{ mine.profile?.gamertag || 'Você' }}</span>
-                    <span class="text-[10px] bg-blue-9 text-white px-1.5 py-0.5 rounded-full font-medium">Sua Crítica</span>
+            @if (myRating(); as mine) {
+              <div class="flex flex-col gap-3 p-4">
+                <div class="flex items-center gap-2">
+                  <div class="flex text-amber-300">
+                    @for (star of getStarsArray(mine.rating); track $index) {
+                      <i class="ph-fill ph-star"></i>
+                    }
+                    @if (mine.rating % 1 !== 0) {
+                      <i class="ph-fill ph-star-half"></i>
+                    }
                   </div>
-                  <span class="text-xs text-gray-10">{{ mine.$createdAt | date:'dd/MM/yyyy' }}</span>
+                  <span class="font-bold text-gray-12">{{
+                    mine.rating.toFixed(1)
+                  }}</span>
                 </div>
-                <div class="ml-auto flex items-center gap-2 text-sm text-gray-11">
-                  <button class="hover:text-blue-9 transition-colors" (click)="voteReview(mine, 'up')">
-                    <i class="ph ph-caret-up text-lg"></i>
-                  </button>
-                  <span class="min-w-4 text-center font-medium">{{ mine.voteCount || 0 }}</span>
-                  <button class="hover:text-blue-9 transition-colors" (click)="voteReview(mine, 'down')">
-                    <i class="ph ph-caret-down text-lg"></i>
-                  </button>
-                </div>
-              </footer>
-            </div>
-          }
-
-          <!-- Outras avaliações -->
-          @if (ratings().length === 0 && !myRating()) {
-            <div class="py-10 text-center rounded-2xl text-gray-11 border border-dashed border-gray-6">
-              <i class="ph ph-medal text-4xl mb-2 text-gray-9"></i>
-              <p>Nenhuma review publicada para este jogo ainda.</p>
-              @if (authStore.isAuthenticated()) {
-                <p class="text-sm mt-1">Seja o primeiro a escrever uma review e ganhe Z-Coins!</p>
-              }
-            </div>
-          }
-
-          @for (review of ratings(); track review.$id) {
-            <div class="pt-6 first:pt-0 flex flex-col gap-3">
-              <div class="flex items-center gap-2">
-                <div class="flex text-amber-300">
-                  @for (star of getStarsArray(review.rating); track $index) {
-                    <i class="ph-fill ph-star"></i>
-                  }
-                  @if (review.rating % 1 !== 0) {
-                    <i class="ph-fill ph-star-half"></i>
-                  }
-                </div>
-                <span class="font-bold text-gray-12">{{ review.rating.toFixed(1) }}</span>
-              </div>
-              @if (review.title) {
-                <h4 class="font-medium text-lg text-gray-12">"{{ review.title }}"</h4>
-              }
-              @if (review.content) {
-                <div class="prose prose-invert prose-gray max-w-none prose-p:font-light" [innerHTML]="review.content"></div>
-              }
-              <footer class="flex gap-3 items-center mt-2 pt-4">
-                <a class="flex items-center gap-3" [routerLink]="['/player', review.profile?.gamertag]">
+                @if (mine.title) {
+                  <h4 class="font-medium text-lg text-gray-12">
+                    "{{ mine.title }}"
+                  </h4>
+                }
+                @if (mine.content) {
+                  <div
+                    class="prose prose-invert prose-gray max-w-none prose-p:font-light"
+                    [innerHTML]="mine.content"
+                  ></div>
+                }
+                <footer class="flex gap-3 items-center">
                   <img
-                    [src]="getAvatar(review.profile)"
+                    [src]="getAvatar(mine.profile)"
                     alt="Avatar"
                     class="h-8 w-8 rounded-full object-cover"
                   />
                   <div class="flex flex-col">
-                    <span class="text-gray-12 font-medium text-base hover:underline">{{ review.profile?.gamertag || 'Jogador Zetho' }}</span>
-                    <span class="text-xs text-gray-10">{{ review.$createdAt | date:'dd/MM/yyyy' }}</span>
+                    <div class="flex gap-2 items-center">
+                      <span class="text-gray-12 font-medium text-base">{{
+                        mine.profile?.gamertag || 'Você'
+                      }}</span>
+                      <span
+                        class="text-[10px] bg-blue-9 text-white px-1.5 py-0.5 rounded-full font-medium"
+                        >Sua Crítica</span
+                      >
+                    </div>
+                    <span class="text-xs text-gray-10">{{
+                      mine.$createdAt | date: 'dd/MM/yyyy'
+                    }}</span>
                   </div>
-                </a>
-                <div class="ml-auto flex items-center gap-2 text-sm text-gray-11">
-                  <button class="hover:text-blue-9 transition-colors" (click)="voteReview(review, 'up')">
-                    <i class="ph ph-caret-up text-lg"></i>
-                  </button>
-                  <span class="min-w-4 text-center font-medium">{{ review.voteCount || 0 }}</span>
-                  <button class="hover:text-blue-9 transition-colors" (click)="voteReview(review, 'down')">
-                    <i class="ph ph-caret-down text-lg"></i>
-                  </button>
-                </div>
-              </footer>
-            </div>
-          }
+                  <div
+                    class="ml-auto flex items-center gap-2 text-sm text-gray-11"
+                  >
+                    <button
+                      class="hover:text-blue-9 transition-colors"
+                      (click)="voteReview(mine, 'up')"
+                    >
+                      <i class="ph ph-caret-up text-lg"></i>
+                    </button>
+                    <span class="min-w-4 text-center font-medium">{{
+                      mine.voteCount || 0
+                    }}</span>
+                    <button
+                      class="hover:text-blue-9 transition-colors"
+                      (click)="voteReview(mine, 'down')"
+                    >
+                      <i class="ph ph-caret-down text-lg"></i>
+                    </button>
+                  </div>
+                </footer>
+              </div>
+            }
 
-          @if (hasMore()) {
-            <footer class="w-full flex justify-center pt-6">
-              <button class="ui-primary-btn" (click)="loadMore()">
-                @if (loading()) {
-                  <i class="ph ph-spinner animate-spin"></i>
+            <!-- Outras avaliações -->
+            @if (ratings().length === 0 && !myRating()) {
+              <div
+                class="border border-dashed border-gray-6 py-10 text-center text-gray-11 m-4"
+              >
+                <i class="ph ph-medal text-4xl mb-2 text-gray-9"></i>
+                <p>Nenhuma review publicada para este jogo ainda.</p>
+                @if (authStore.isAuthenticated()) {
+                  <p class="text-sm mt-1">
+                    Seja o primeiro a escrever uma review e ganhe Z-Coins!
+                  </p>
                 }
-                Carregar mais críticas
-              </button>
-            </footer>
-          }
+              </div>
+            }
+
+            @for (review of ratings(); track review.$id) {
+              <div class="flex flex-col gap-3 p-4">
+                <div class="flex items-center gap-2">
+                  <div class="flex text-amber-300">
+                    @for (star of getStarsArray(review.rating); track $index) {
+                      <i class="ph-fill ph-star"></i>
+                    }
+                    @if (review.rating % 1 !== 0) {
+                      <i class="ph-fill ph-star-half"></i>
+                    }
+                  </div>
+                  <span class="font-bold text-gray-12">{{
+                    review.rating.toFixed(1)
+                  }}</span>
+                </div>
+                @if (review.title) {
+                  <h4 class="font-medium text-lg text-gray-12">
+                    "{{ review.title }}"
+                  </h4>
+                }
+                @if (review.content) {
+                  <div
+                    class="prose prose-invert prose-gray max-w-none prose-p:font-light"
+                    [innerHTML]="review.content"
+                  ></div>
+                }
+                <footer class="flex gap-3 items-center">
+                  <a
+                    class="flex items-center gap-3"
+                    [routerLink]="['/player', review.profile?.gamertag]"
+                  >
+                    <img
+                      [src]="getAvatar(review.profile)"
+                      alt="Avatar"
+                      class="h-8 w-8 rounded-full object-cover"
+                    />
+                    <div class="flex flex-col">
+                      <span
+                        class="text-gray-12 font-medium text-base hover:underline"
+                        >{{ review.profile?.gamertag || 'Jogador Zetho' }}</span
+                      >
+                      <span class="text-xs text-gray-10">{{
+                        review.$createdAt | date: 'dd/MM/yyyy'
+                      }}</span>
+                    </div>
+                  </a>
+                  <div
+                    class="ml-auto flex items-center gap-2 text-sm text-gray-11"
+                  >
+                    <button
+                      class="hover:text-blue-9 transition-colors"
+                      (click)="voteReview(review, 'up')"
+                    >
+                      <i class="ph ph-caret-up text-lg"></i>
+                    </button>
+                    <span class="min-w-4 text-center font-medium">{{
+                      review.voteCount || 0
+                    }}</span>
+                    <button
+                      class="hover:text-blue-9 transition-colors"
+                      (click)="voteReview(review, 'down')"
+                    >
+                      <i class="ph ph-caret-down text-lg"></i>
+                    </button>
+                  </div>
+                </footer>
+              </div>
+            }
+
+            @if (hasMore()) {
+              <footer class="w-full flex justify-center pt-6">
+                <button class="ui-primary-btn" (click)="loadMore()">
+                  @if (loading()) {
+                    <i class="ph ph-spinner animate-spin"></i>
+                  }
+                  Carregar mais críticas
+                </button>
+              </footer>
+            }
           }
         </div>
       }
     </article>
   `,
-  styles: `
-  `
+  styles: ``,
 })
 export class UiGameReviews implements OnInit {
   ratingsService = inject(RatingsService);
@@ -300,10 +372,16 @@ export class UiGameReviews implements OnInit {
 
     this.loading.set(true);
     try {
-      const res = await this.ratingsService.getRatings(game.$id, this.page(), 8);
+      const res = await this.ratingsService.getRatings(
+        game.$id,
+        this.page(),
+        8,
+      );
       // Filtrar minha própria avaliação da listagem geral
-      const otherReviews = res.items.filter(r => r.ownerFingerprint !== this.myRating()?.ownerFingerprint);
-      this.ratings.update(prev => [...prev, ...otherReviews]);
+      const otherReviews = res.items.filter(
+        (r) => r.ownerFingerprint !== this.myRating()?.ownerFingerprint,
+      );
+      this.ratings.update((prev) => [...prev, ...otherReviews]);
       this.totalPages.set(res.totalPages);
     } catch (err) {
       console.error('Erro ao buscar avaliações:', err);
@@ -322,7 +400,7 @@ export class UiGameReviews implements OnInit {
 
       // Remover minha avaliação do feed principal se ela já estiver lá
       if (mine) {
-        this.ratings.update(list => list.filter(r => r.$id !== mine.$id));
+        this.ratings.update((list) => list.filter((r) => r.$id !== mine.$id));
       }
     } catch (err) {
       console.error('Erro ao buscar minha avaliação:', err);
@@ -330,7 +408,7 @@ export class UiGameReviews implements OnInit {
   }
 
   toggleForm() {
-    this.showForm.update(val => !val);
+    this.showForm.update((val) => !val);
     if (this.showForm()) {
       const mine = this.myRating();
       if (mine) {
@@ -381,7 +459,7 @@ export class UiGameReviews implements OnInit {
       this.myRating.set(updated);
       this.showForm.set(false);
       this.clearEditFields();
-      
+
       // Recarregar feed para sincronizar
       this.ratings.set([]);
       this.page.set(1);
@@ -422,7 +500,7 @@ export class UiGameReviews implements OnInit {
 
   loadMore() {
     if (this.page() < this.totalPages()) {
-      this.page.update(p => p + 1);
+      this.page.update((p) => p + 1);
       void this.loadPage();
     }
   }
@@ -459,11 +537,17 @@ export class UiGameReviews implements OnInit {
 
     try {
       const res = await this.ratingsService.voteRating(review.$id, operation);
-      
+
       if (this.myRating() && this.myRating()?.$id === review.$id) {
-        this.myRating.update(r => r ? { ...r, voteCount: res.newVoteCount } : null);
+        this.myRating.update((r) =>
+          r ? { ...r, voteCount: res.newVoteCount } : null,
+        );
       } else {
-        this.ratings.update(list => list.map(r => r.$id === review.$id ? { ...r, voteCount: res.newVoteCount } : r));
+        this.ratings.update((list) =>
+          list.map((r) =>
+            r.$id === review.$id ? { ...r, voteCount: res.newVoteCount } : r,
+          ),
+        );
       }
     } catch (err) {
       console.error('Failed to vote', err);

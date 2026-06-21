@@ -8,8 +8,8 @@ import { GameRow } from '../../../game.types';
   selector: 'ui-game-header',
   standalone: true,
   template: `
-    <header class="p-6 max-md:py-10 md:rounded-2xl sm:flex gap-10">
-      <div class="mx-auto w-fit">
+    <header class="flex flex-col items-center text-center pt-8 md:pt-10">
+      <div class="mx-auto w-fit shadow-2xl shadow-gray-1/40">
         <ui-game-card
           [game]="game()!"
           [width]="240"
@@ -18,47 +18,51 @@ import { GameRow } from '../../../game.types';
       </div>
 
       <div
-        class="flex flex-1 flex-col gap-4 max-sm:mt-6 max-sm:text-center max-sm:items-center justify-center"
+        class="mt-6 flex w-full max-w-3xl flex-col items-center justify-center gap-6"
       >
         @if (game()) {
-          <h1 class="text-4xl">{{ game()?.name }}</h1>
+          <h1 class="text-4xl leading-tight md:text-5xl">{{ game()?.name }}</h1>
 
-          <div class="flex gap-4 max-sm:justify-center">
+          <div
+            class="grid w-full divide-y divide-gray-6 border-y border-gray-6 text-left sm:grid-cols-2 sm:divide-x sm:divide-y-0 sm:text-center"
+          >
             <!-- Nome dos desenvolvedores -->
-            <div class="border-r pr-4 border-gray-6">
-              <span class="text-sm font-light text-gray-11"
+            <div class="px-4 py-3">
+              <span class="text-xs font-light uppercase text-gray-11"
                 >Desenvolvido por</span
               >
               <br />
-              @for (company of game()?.involvedCompanies; track $index) {
-                <span
-                  >{{ company.name }}
+              <span class="text-sm text-gray-12">
+                @for (company of game()?.involvedCompanies; track $index) {
+                  {{ company.name }}
                   @if ($index < game()?.involvedCompanies.length - 1) {
                     <span>, </span>
                   }
-                </span>
-              }
+                } @empty {
+                  Não informado
+                }
+              </span>
             </div>
 
             <!-- Data de lançamento -->
-            <div>
-              <span class="text-sm font-light text-gray-11">{{
+            <div class="px-4 py-3">
+              <span class="text-xs font-light uppercase text-gray-11">{{
                 releaseLabel()
               }}</span>
               <br />
-              <span>{{ releaseValue() }}</span>
+              <span class="text-sm text-gray-12">{{ releaseValue() }}</span>
             </div>
           </div>
 
-          <div>
-            <p class="font-light">
+          <div class="px-4">
+            <p class="font-light leading-7 text-gray-12">
               {{ game()?.summaryPt ? game()?.summaryPt : game()?.summary }}
             </p>
 
             @if (game()?.summaryPt) {
               <button
                 (click)="toggleSummary()"
-                class="text-xs border border-dashed border-gray-6 rounded-full w-fit px-2 py-0.5 hover:bg-gray-2 cursor-pointer mt-2"
+                class="mt-3 w-fit cursor-pointer rounded-lg border border-dashed border-gray-6 px-2 py-0.5 text-xs text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
               >
                 {{
                   showOriginalSummary()
@@ -74,7 +78,9 @@ import { GameRow } from '../../../game.types';
                 [class.opacity-0]="!showOriginalSummary()"
                 [class.opacity-100]="showOriginalSummary()"
               >
-                <p class="font-light mt-2 text-sm">
+                <p
+                  class="mt-3 border-t border-gray-6 pt-3 text-sm font-light leading-6 text-gray-11"
+                >
                   {{ game()?.summary }}
                 </p>
               </div>
@@ -82,27 +88,38 @@ import { GameRow } from '../../../game.types';
           </div>
 
           <!-- Genêros do game -->
-          <div class="flex gap-4 max-sm:flex-col max-sm:items-center">
-            <div class="border-r pr-4 border-gray-6">
-              <span class="text-sm font-light text-gray-11">Gêneros</span>
+          <div
+            class="grid w-full divide-y divide-gray-6 border-t border-gray-6 text-left sm:grid-cols-2 sm:divide-x sm:divide-y-0 sm:text-center"
+          >
+            <div class="px-4 py-3">
+              <span class="text-xs font-light uppercase text-gray-11"
+                >Gêneros</span
+              >
               <br />
-              @for (genre of game()?.genres; track $index) {
-                <a
-                  [routerLink]="['/buscar']"
-                  [queryParams]="{ genre: genre.slug }"
-                  class="hover:text-blue-11 transition-colors"
-                  >{{ genre.name }}</a
-                >
-                @if ($index < (game()?.genres?.length ?? 0) - 1) {
-                  <span>, </span>
+              <span class="text-sm text-gray-12">
+                @for (genre of game()?.genres; track $index) {
+                  <a
+                    [routerLink]="['/buscar']"
+                    [queryParams]="{ genre: genre.slug }"
+                    class="transition-colors hover:text-blue-11"
+                    >{{ genre.name }}</a
+                  >
+                  @if ($index < (game()?.genres?.length ?? 0) - 1) {
+                    <span>, </span>
+                  }
+                } @empty {
+                  Não informado
                 }
-              }
+              </span>
             </div>
 
-            <div>
-              <span class="text-sm font-light text-gray-11">ID do jogo</span>
-              <br />
-              <span>{{ game()?.$id }}</span>
+            <div
+              class="px-4 py-3 flex flex-col items-center justify-center gap-1"
+            >
+              <span class="text-xs font-light uppercase text-gray-11"
+                >ID do jogo</span
+              >
+              <span class="text-sm text-gray-12">{{ game()?.$id }}</span>
             </div>
           </div>
         } @else {

@@ -14,23 +14,22 @@ import type { GameMedia } from '../../../game.types';
   selector: 'ui-game-medias',
   standalone: true,
   template: `
-    <article class="max-md:px-4">
-      <header class="flex gap-4 items-center mb-6">
+    <article>
+      <header class="flex items-center gap-3 px-4 py-4 border-b border-gray-6">
         <div
-          class="h-10 w-10 flex items-center justify-center rounded-full bg-blue-3"
+          class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6"
         >
-          <i class="ph ph-film-strip text-blue-9 text-[24px]"></i>
+          <i class="ph ph-film-strip text-[24px] text-blue-11"></i>
         </div>
         <div>
-          <h3 class="text-blue-12 text-2xl">Mídias</h3>
-          <small class="text-gray-11">Trailers e screenshots do jogo</small>
+          <h3 class="text-2xl">Mídias</h3>
         </div>
       </header>
 
       <!-- Grid: vídeo + coluna lateral -->
-      <div class="grid grid-cols-[70%_1fr] gap-2 max-md:grid-cols-1">
+      <div class="grid grid-cols-[70%_1fr] gap-1 max-md:grid-cols-1">
         <!-- Coluna esquerda: trailer -->
-        <div class="aspect-video overflow-hidden rounded-xl bg-blue-2">
+        <div class="aspect-video overflow-hidden bg-gray-1">
           @if (primaryVideo()) {
             <iframe
               class="w-full h-full"
@@ -50,10 +49,10 @@ import type { GameMedia } from '../../../game.types';
         </div>
 
         <!-- Coluna direita: 2 screenshots + botão galeria -->
-        <div class="flex flex-col gap-2 max-md:hidden relative">
+        <div class="flex flex-col gap-1 max-md:hidden relative">
           @for (screenshot of sideScreenshots(); track screenshot.$id) {
             <div
-              class="flex-1 overflow-hidden rounded-xl bg-blue-2 cursor-pointer group"
+              class="group flex-1 cursor-pointer overflow-hidden bg-gray-1"
               (click)="openGallery(screenshots().indexOf(screenshot))"
             >
               <img
@@ -66,7 +65,7 @@ import type { GameMedia } from '../../../game.types';
 
           <!-- Botão abrir galeria -->
           <button
-            class="absolute bottom-1 right-1 rounded-xl bg-blue-3 hover:bg-blue-4 items-center transition-colors flex w-fit px-4 py-2 gap-2 text-gray-11 hover:text-gray-12 cursor-pointer"
+            class="absolute bottom-1 right-1 flex w-fit cursor-pointer items-center gap-2 rounded-lg border border-gray-6 bg-gray-1/90 px-4 py-2 text-gray-11 backdrop-blur transition-colors hover:bg-gray-3 hover:text-gray-12"
             (click)="openGallery(0)"
             aria-label="Abrir galeria de imagens"
           >
@@ -84,7 +83,7 @@ import type { GameMedia } from '../../../game.types';
 
       <!-- Botão galeria no mobile (fora do grid) -->
       <button
-        class="md:hidden mt-2 w-full rounded-xl bg-blue-3 hover:bg-blue-4 transition-colors flex items-center justify-center gap-3 py-4 text-gray-11 hover:text-gray-12"
+        class="mt-2 flex w-full items-center justify-center gap-3 border-y border-gray-6 py-4 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12 md:hidden"
         (click)="openGallery(0)"
         aria-label="Abrir galeria de imagens"
       >
@@ -128,7 +127,7 @@ import type { GameMedia } from '../../../game.types';
       >
         @if (currentScreenshot()) {
           <img
-            class="max-h-[80vh] max-w-full object-contain rounded-lg"
+            class="max-h-[80vh] max-w-full object-contain"
             [src]="currentScreenshot()!.url"
             [alt]="currentScreenshot()!.name || 'Screenshot'"
           />

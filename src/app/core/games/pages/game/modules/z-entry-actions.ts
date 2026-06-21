@@ -9,13 +9,13 @@ import { ZEntry } from '../../../../zEntries/zEntries.types';
   imports: [NgClass],
   template: `
     <div
-      class="grid grid-cols-4 md:grid-cols-2 auto-rows-auto md:h-full gap-1 bg-gray-2 md:p-2 md:rounded-2xl w-full animate-fade-in-slide mb-4"
+      class="grid w-full auto-rows-auto divide-x grid-cols-4 divide-gray-6 animate-fade-in-slide md:h-full"
     >
       @for (action of actions; track action.key) {
         <button
           (click)="onStatusAction(action.key)"
           [disabled]="isCoolingDown"
-          class="flex flex-col gap-2 items-center justify-center w-full cursor-pointer transition-colors text-sm md:text-md border-gray-6 md:rounded-xl max-md:py-4"
+          class="flex w-full cursor-pointer flex-col items-center justify-center gap-2 px-2 py-4 text-sm transition-colors md:text-md"
           [ngClass]="[
             action.key === controller.zEntry()?.status
               ? activeClasses[action.key]

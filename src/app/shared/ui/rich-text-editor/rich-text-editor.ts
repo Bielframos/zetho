@@ -25,7 +25,7 @@ import { TiptapEditorDirective } from 'ngx-tiptap';
     .tiptap-editor-container {
       border: 1px solid var(--color-gray-6);
       background-color: var(--color-gray-2);
-      border-radius: 12px;
+
       overflow: hidden;
       display: flex;
       flex-direction: column;
