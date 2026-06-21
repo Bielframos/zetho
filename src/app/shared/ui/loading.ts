@@ -5,12 +5,20 @@ import { Component, input } from '@angular/core';
   standalone: true,
   template: `
     <div
-      class="relative w-full flex flex-col items-center py-6 gap-4 text-blue-6"
-      animate.enter="enter-animation"
+      class="relative flex items-center gap-3 text-gray-11"
+      [class.w-full]="!inline()"
+      [class.flex-col]="!inline()"
+      [class.justify-center]="!inline()"
+      [class.py-6]="!inline()"
+      [class.py-0]="inline()"
+      [class.text-xs]="size() === 'sm'"
+      [class.text-sm]="size() === 'md'"
+      [class.text-base]="size() === 'lg'"
+      [attr.animate.enter]="inline() ? null : 'enter-animation'"
     >
       <svg
-        width="48"
-        height="48"
+        [attr.width]="iconSize()"
+        [attr.height]="iconSize()"
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +31,7 @@ import { Component, input } from '@angular/core';
       </svg>
 
       @if (fallback()) {
-      <span class="text-gray-12">{{ fallback() }}</span>
+      <span class="text-gray-11">{{ fallback() }}</span>
       }
     </div>
   `,
@@ -47,4 +55,17 @@ import { Component, input } from '@angular/core';
 })
 export class UiLoading {
   fallback = input<string>();
+  inline = input(false);
+  size = input<'sm' | 'md' | 'lg'>('lg');
+
+  iconSize() {
+    switch (this.size()) {
+      case 'sm':
+        return 16;
+      case 'md':
+        return 24;
+      default:
+        return 48;
+    }
+  }
 }

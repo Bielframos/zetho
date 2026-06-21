@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { AdminService } from '../../admin.service';
+import { UiLoading } from '../../../../shared/ui/loading';
 import {
   AdminApiError,
   AdminAuditAllResponse,
@@ -10,6 +11,7 @@ import {
 @Component({
   selector: 'app-admin-profiles-page',
   standalone: true,
+  imports: [UiLoading],
   templateUrl: './admin-profiles.html',
 })
 export class AdminProfilesPage {

@@ -1,5 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { UiLoading } from '../../../../shared/ui/loading';
 
 type ChangelogSection = {
   title: string;
@@ -16,7 +17,7 @@ type ChangelogRelease = {
 @Component({
   selector: 'app-changelog-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, UiLoading],
   template: `
     <main class="w-full max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-12">
       <header class="mb-8 md:mb-10">
@@ -28,7 +29,7 @@ type ChangelogRelease = {
 
       @if (loading()) {
         <section class="bg-gray-2 rounded-2xl p-6">
-          <p class="text-gray-11">Carregando changelog...</p>
+          <ui-loading fallback="Carregando changelog..."></ui-loading>
         </section>
       } @else if (error()) {
         <section class="bg-red-900/15 border border-red-700/30 rounded-2xl p-6">

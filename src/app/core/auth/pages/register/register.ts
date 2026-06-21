@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
+import { UiLoading } from '../../../../shared/ui/loading';
 import { AuthStore } from '../../auth.store';
 import { UserProfileService } from '../../../userProfiles/userProfile.service';
 import {
@@ -19,7 +20,7 @@ import {
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [UiInput, ReactiveFormsModule, RouterLink],
+  imports: [UiInput, ReactiveFormsModule, RouterLink, UiLoading],
   templateUrl: './register.html',
   host: {
     class: 'h-full',

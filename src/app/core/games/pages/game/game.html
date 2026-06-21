@@ -45,7 +45,7 @@
     <ui-z-entry-actions></ui-z-entry-actions>
     } @else if (controller.game() && authStore.isAuthenticated()) {
     <div
-      class="flex w-full flex-col items-center p-6 text-center animate-fade-in-slide"
+      class="flex w-full flex-col items-center p-6 text-center animate-fade-in-slide border-b border-gray-6"
     >
       <i class="ph ph-calendar-plus text-[40px] mb-2"></i>
       <h3 class="mb-1 text-lg">Jogo ainda não lançado</h3>
@@ -56,7 +56,7 @@
     </div>
     } @else {
     <div
-      class="flex w-full flex-col items-center p-6 text-center animate-fade-in-slide"
+      class="flex w-full flex-col items-center p-6 text-center animate-fade-in-slide border-b border-gray-6"
     >
       <i class="ph ph-game-controller text-[40px] mb-2"></i>
       <h3 class="mb-1 text-lg">Acompanhar seus jogos</h3>
@@ -75,6 +75,8 @@
       [gameHypes]="controller.game()?.hypes"
       [isUpcomingRelease]="controller.isUpcomingRelease()"
     ></ui-game-stats>
+
+    <hr class="border-4 border-gray-6" />
 
     <ui-game-raffles></ui-game-raffles>
 

@@ -40,7 +40,7 @@ import { ZStatsRow } from '../../../../zStats/zStats.types';
         </div>
       } @else {
         <div
-          class="flex h-full flex-col divide-gray-6 border-y-8 border-gray-6 @md:grid @md:grid-cols-2 @md:divide-y-0"
+          class="flex h-full flex-col divide-gray-6 border-gray-6 @md:grid @md:grid-cols-2 @md:divide-y-0"
         >
           <!-- Zerado -->
           <div

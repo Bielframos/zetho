@@ -5,11 +5,12 @@ import { appwrite } from '../../../core/appwrite/appwrite.client';
 import { CommentsController } from '../../../core/comments/comments.controller';
 import { CommentRow, UserProfileRow } from '../../../types';
 import { RouterLink } from '@angular/router';
+import { UiLoading } from '../../ui/loading';
 
 @Component({
   selector: 'app-comment-item',
   templateUrl: './comment-item.html',
-  imports: [FormsModule, NgClass, RouterLink],
+  imports: [FormsModule, NgClass, RouterLink, UiLoading],
 })
 export class AppCommentItem {
   controller = inject(CommentsController);

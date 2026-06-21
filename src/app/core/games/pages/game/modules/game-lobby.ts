@@ -1,12 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AppCommentItem } from '../../../../../shared/app/comment-item/comment-item';
+import { UiLoading } from '../../../../../shared/ui/loading';
 import { CommentsController } from '../../../../comments/comments.controller';
 
 @Component({
   selector: 'ui-game-lobby',
   standalone: true,
-  imports: [AppCommentItem, ReactiveFormsModule],
+  imports: [AppCommentItem, ReactiveFormsModule, UiLoading],
   template: `
     <article class="flex flex-col">
       <header class="flex items-center gap-3 px-4 py-4 border-b border-gray-6">
@@ -47,7 +48,7 @@ import { CommentsController } from '../../../../comments/comments.controller';
             [disabled]="comment.invalid || isLoading()"
           >
             @if (isLoading()) {
-              <i class="ph ph-spinner animate-spin"></i>
+              <ui-loading [inline]="true" size="sm"></ui-loading>
             }
             Comentar
           </button>

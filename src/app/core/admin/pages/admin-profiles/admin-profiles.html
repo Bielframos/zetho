@@ -94,7 +94,9 @@
         <tbody>
           @if (listLoading()) {
           <tr>
-            <td colspan="8" class="py-4 text-gray-11">Carregando perfis...</td>
+            <td colspan="8" class="py-4">
+              <ui-loading fallback="Carregando perfis..."></ui-loading>
+            </td>
           </tr>
           } @else { @for (profile of profiles(); track profile.$id) {
           <tr class="border-b border-gray-6/60">

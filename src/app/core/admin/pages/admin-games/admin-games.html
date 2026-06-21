@@ -25,7 +25,9 @@
     </div>
 
     <button class="ui-primary-btn w-fit" type="submit" [disabled]="loading()">
-      @if (loading()) { Cadastrando... } @else { Cadastrar jogo }
+      @if (loading()) {
+      <ui-loading [inline]="true" size="sm" fallback="Cadastrando..."></ui-loading>
+      } @else { Cadastrar jogo }
     </button>
   </form>
 

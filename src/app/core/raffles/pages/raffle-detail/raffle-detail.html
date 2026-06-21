@@ -9,10 +9,7 @@
 
   @if (loading()) {
   <section class="md:rounded-2xl bg-gray-2 p-6 flex items-center gap-4">
-    <div
-      class="h-10 w-10 rounded-full border-4 border-blue-4 border-t-blue-9 animate-spin shrink-0"
-    ></div>
-    <span class="text-gray-11">Carregando sorteio...</span>
+    <ui-loading [inline]="true" fallback="Carregando sorteio..."></ui-loading>
   </section>
   } @else if (loadError()) {
   <section
@@ -209,7 +206,7 @@
         [disabled]="buyLoading()"
       >
         @if (buyLoading()) {
-        <i class="ph ph-spinner animate-spin"></i>
+        <ui-loading [inline]="true" size="sm" fallback="Comprar"></ui-loading>
         } @else { Comprar }
       </button>
       } @else if (!r.active) {
@@ -277,8 +274,8 @@
       class="cursor-pointer w-full rounded-xl bg-blue-3 hover:bg-blue-4 transition-colors text-blue-11 text-sm py-2.5 px-4 flex items-center justify-center gap-2 disabled:opacity-50"
     >
       @if (generateInviteLoading()) {
-      <i class="ph ph-spinner animate-spin text-[16px]"></i>
-      Gerando... } @else {
+      <ui-loading [inline]="true" size="sm" fallback="Gerando..."></ui-loading>
+      } @else {
       <i class="ph ph-magic-wand text-[16px]"></i>
       Gerar meu código de convite }
     </button>

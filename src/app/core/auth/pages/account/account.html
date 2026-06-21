@@ -120,7 +120,7 @@
 
         <div class="absolute right-2 bottom-1">
           @if(gamertag.pending) {
-          <i class="ph ph-spinner animate-spin text-md text-gray-6"></i>
+          <ui-loading [inline]="true" size="sm"></ui-loading>
           } @else if(gamertag.errors?.['gamertagTaken'] && gamertag.dirty) {
           <i class="ph ph-x-circle text-md text-red-600"></i>
           } @else if(gamertag.valid && gamertag.dirty) {

@@ -99,8 +99,7 @@
   <!-- Loader enquanto carrega respostas -->
   @if (isLoadingReplies()) {
   <div class="flex text-sm text-gray-11 gap-2 items-center mt-2">
-    <i class="ph ph-spinner animate-spin"></i>
-    Carregando respostas...
+    <ui-loading [inline]="true" size="sm" fallback="Carregando respostas..."></ui-loading>
   </div>
   }
 

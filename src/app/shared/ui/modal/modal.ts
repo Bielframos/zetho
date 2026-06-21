@@ -9,6 +9,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { ModalTriggerDirective } from './modal-trigger.directive';
+import { UiLoading } from '../loading';
 
 @Component({
   selector: 'ui-modal',
@@ -44,7 +45,7 @@ import { ModalTriggerDirective } from './modal-trigger.directive';
           (click)="handleSubmit()"
         >
           @if (loading()) {
-            <i class="ph ph-spinner animate-spin"></i>
+            <ui-loading [inline]="true" size="sm"></ui-loading>
           } @else {
             {{ actionLabel() }}
           }
@@ -57,7 +58,7 @@ import { ModalTriggerDirective } from './modal-trigger.directive';
       background-color: hsla(0 0% 0% / 0.8);
     }
   `,
-  imports: [],
+  imports: [UiLoading],
 })
 export class UiModal {
   isOpen = model<boolean | null>(null);

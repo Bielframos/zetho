@@ -2,11 +2,12 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
+import { UiLoading } from '../../../../shared/ui/loading';
 import { AuthStore } from '../../auth.store';
 
 @Component({
   selector: 'app-login-page',
-  imports: [UiInput, FormsModule, RouterLink],
+  imports: [UiInput, FormsModule, RouterLink, UiLoading],
   templateUrl: './login.html',
   host: {
     class: 'h-full',

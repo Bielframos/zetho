@@ -16,6 +16,7 @@ import { GameController } from '../../../game.controller';
 import { RatingsService, RatingRow } from '../../../../ratings/ratings.service';
 import { RichTextEditorComponent } from '../../../../../shared/ui/rich-text-editor/rich-text-editor';
 import { AppStartingRating } from '../../../../../shared/ui/star-rating/star-rating';
+import { UiLoading } from '../../../../../shared/ui/loading';
 
 @Component({
   selector: 'ui-game-reviews',
@@ -26,6 +27,7 @@ import { AppStartingRating } from '../../../../../shared/ui/star-rating/star-rat
     RouterLink,
     RichTextEditorComponent,
     AppStartingRating,
+    UiLoading,
   ],
   template: `
     <article>
@@ -124,7 +126,7 @@ import { AppStartingRating } from '../../../../../shared/ui/star-rating/star-rat
                 (click)="submitReview()"
               >
                 @if (submitting()) {
-                  <i class="ph ph-spinner animate-spin"></i>
+                  <ui-loading [inline]="true" size="sm"></ui-loading>
                 }
                 Publicar Crítica
               </button>
@@ -135,14 +137,7 @@ import { AppStartingRating } from '../../../../../shared/ui/star-rating/star-rat
         <!-- Feed de Avaliações -->
         <div class="flex flex-col gap-6 divide-y divide-gray-6">
           @if (loading() && ratings().length === 0 && !myRating()) {
-            <div
-              class="py-10 flex flex-col items-center justify-center text-gray-11"
-            >
-              <i
-                class="ph ph-spinner animate-spin text-4xl mb-2 text-blue-9"
-              ></i>
-              <p>Carregando avaliações...</p>
-            </div>
+            <ui-loading fallback="Carregando avaliações..."></ui-loading>
           } @else {
             <!-- Minha própria avaliação em destaque -->
             @if (myRating(); as mine) {
@@ -300,12 +295,12 @@ import { AppStartingRating } from '../../../../../shared/ui/star-rating/star-rat
 
             @if (hasMore()) {
               <footer class="w-full flex justify-center pt-6">
-                <button class="ui-primary-btn" (click)="loadMore()">
-                  @if (loading()) {
-                    <i class="ph ph-spinner animate-spin"></i>
-                  }
-                  Carregar mais críticas
-                </button>
+              <button class="ui-primary-btn" (click)="loadMore()">
+                @if (loading()) {
+                  <ui-loading [inline]="true" size="sm"></ui-loading>
+                }
+                Carregar mais críticas
+              </button>
               </footer>
             }
           }

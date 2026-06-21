@@ -1,10 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { AuthStore } from '../../../../auth/auth.store';
 import { NotificationStore } from '../../../../notifications/notification.store';
+import { UiLoading } from '../../../../../shared/ui/loading';
 
 @Component({
   selector: 'app-profile-invite-card',
   standalone: true,
+  imports: [UiLoading],
   template: `
     <section class="rounded-2xl bg-gray-2 p-4 mb-4">
       @if (authStore.profile()?.inviteCode; as code) {
@@ -40,7 +42,7 @@ import { NotificationStore } from '../../../../notifications/notification.store'
           class="w-full rounded-xl bg-gray-4 hover:bg-gray-5 transition-colors text-gray-12 text-sm py-2.5 px-4 flex items-center justify-center gap-2 disabled:opacity-50"
         >
           @if (generatingCode()) {
-            <i class="ph ph-spinner animate-spin text-[16px]"></i>
+            <ui-loading [inline]="true" size="sm"></ui-loading>
             Gerando código...
           } @else {
             <i class="ph ph-magic-wand text-[16px]"></i>

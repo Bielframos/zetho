@@ -102,7 +102,7 @@
           [disabled]="createLoading()"
         >
           @if (createLoading()) {
-          <i class="ph ph-spinner animate-spin"></i>
+          <ui-loading [inline]="true" size="sm" fallback="Criar sorteio"></ui-loading>
           } @else { Criar sorteio }
         </button>
         <button
@@ -145,7 +145,7 @@
         [disabled]="listLoading()"
       >
         @if (listLoading()) {
-        <i class="ph ph-spinner animate-spin"></i>
+        <ui-loading [inline]="true" size="sm" fallback="Atualizar"></ui-loading>
         } @else {
         <i class="ph ph-arrows-clockwise mr-1"></i>
         Atualizar }
@@ -161,11 +161,8 @@
     } @if (listError()) {
     <p class="mt-4 text-red-300 text-sm">{{ listError() }}</p>
     } @else if (listLoading() && raffles().length === 0) {
-    <div class="mt-4 flex items-center gap-3 text-gray-11">
-      <div
-        class="h-6 w-6 rounded-full border-2 border-blue-4 border-t-blue-9 animate-spin"
-      ></div>
-      Carregando...
+    <div class="mt-4">
+      <ui-loading fallback="Carregando..."></ui-loading>
     </div>
     } @else if (raffles().length === 0) {
     <p class="mt-4 text-gray-11 text-sm">Nenhum sorteio cadastrado.</p>
@@ -212,7 +209,7 @@
               [disabled]="activatingId() === raffle.$id"
             >
               @if (activatingId() === raffle.$id) {
-              <i class="ph ph-spinner animate-spin"></i>
+              <ui-loading [inline]="true" size="sm" fallback="Ativar"></ui-loading>
               } @else { Ativar }
             </button>
             }
@@ -257,7 +254,7 @@
               [disabled]="addKeysLoading()"
             >
               @if (addKeysLoading()) {
-              <i class="ph ph-spinner animate-spin"></i>
+              <ui-loading [inline]="true" size="sm" fallback="Salvar chaves"></ui-loading>
               } @else { Salvar chaves }
             </button>
             <button

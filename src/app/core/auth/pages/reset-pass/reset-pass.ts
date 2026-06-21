@@ -2,12 +2,13 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
+import { UiLoading } from '../../../../shared/ui/loading';
 import { AuthService } from '../../auth.service';
 
 @Component({
   selector: 'app-reset-pass-page',
   standalone: true,
-  imports: [UiInput, FormsModule, RouterLink],
+  imports: [UiInput, FormsModule, RouterLink, UiLoading],
   templateUrl: './reset-pass.html',
   host: {
     class: 'h-full',

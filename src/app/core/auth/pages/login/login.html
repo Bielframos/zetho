@@ -45,7 +45,7 @@
 
     <button type="submit" class="ui-primary-btn mt-4" [disabled]="isLoading()">
       @if (isLoading()) {
-      <i class="ph ph-spinner animate-spin"></i>
+      <ui-loading [inline]="true" size="sm"></ui-loading>
       } Entrar
     </button>
   </form>

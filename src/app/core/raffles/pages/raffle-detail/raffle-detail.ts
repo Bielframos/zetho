@@ -12,6 +12,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map, startWith } from 'rxjs/operators';
 import { AuthStore } from '../../../auth/auth.store';
 import { NotificationStore } from '../../../notifications/notification.store';
+import { UiLoading } from '../../../../shared/ui/loading';
 import type { InviteBonusResponse } from '../../../userProfiles/userProfile.types';
 import {
   BuyTicketsResponse,
@@ -23,7 +24,7 @@ import { RafflesService } from '../../raffles.service';
 @Component({
   selector: 'app-raffle-detail-page',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, UiLoading],
   templateUrl: './raffle-detail.html',
 })
 export class RaffleDetailPage {

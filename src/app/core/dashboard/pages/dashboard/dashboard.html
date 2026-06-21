@@ -92,7 +92,7 @@
         class="bg-gray-3 hover:bg-gray-4 text-gray-12 font-medium px-6 py-2.5 rounded-full transition-colors disabled:opacity-50 flex items-center gap-2"
       >
         @if (loadingMoreHighlights()) {
-        <ui-loading class="w-4 h-4"></ui-loading>
+        <ui-loading [inline]="true" size="sm"></ui-loading>
         Carregando... } @else { Ver mais }
       </button>
     </div>
