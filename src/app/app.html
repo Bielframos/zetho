@@ -196,7 +196,7 @@
             [attr.data-active]="profileLayoutStore.currentTab() === tab.key"
           >
             <a
-              [routerLink]="tab.key === 'games' ? ['/player', profile.gamertag] : tab.key"
+              [routerLink]="tab.key === 'games' ? ['/player', profile.gamertag] : ['/player', profile.gamertag, tab.key]"
               class="flex w-full gap-2 rounded-lg py-2 pl-2 pr-4 text-sm transition-colors hover:bg-blue-4 hover:text-white group-data-[active=true]:bg-blue-3 group-data-[active=true]:hover:bg-blue-4"
             >
               <i class="ph {{ tab.icon }}"></i>
