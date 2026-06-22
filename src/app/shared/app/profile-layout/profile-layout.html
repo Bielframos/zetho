@@ -1,4 +1,4 @@
-<aside class="h-fit flex-1 bg-gray-2 p-2 md:max-w-xs md:rounded-2xl lg:hidden">
+<aside class="h-fit flex-1 border-y border-gray-6 lg:hidden">
   <header
     class="flex flex-col items-center w-full gap-2 px-2 pb-6 border-b border-gray-6"
   >
@@ -116,15 +116,15 @@
     }
   </header>
 
-  <ul class="flex md:flex-col p-2 space-y-1 overflow-x-auto">
+  <ul class="flex md:flex-col px-2 overflow-x-auto border-b border-gray-6">
     @for (tab of tabs(); track tab.key) {
     <li
       class="group flex-1"
       [attr.data-active]="layoutStore.currentTab() === tab.key"
     >
       <a
-        [routerLink]="tab.key === 'games' ? ['/player', profile?.gamertag] : tab.key"
-        class="flex gap-2 w-full whitespace-nowrap max-md:justify-center pl-2 pr-4 py-2 rounded-lg hover:bg-blue-4 hover:text-white group-data-[active=true]:bg-blue-3 group-data-[active=true]:hover:bg-blue-4 transition-colors"
+        [routerLink]="tab.key === 'games' ? ['/player', profile?.gamertag] : ['/player', profile?.gamertag, tab.key]"
+        class="flex gap-2 w-full whitespace-nowrap max-md:justify-center px-3 py-3 border-b-2 border-transparent hover:text-blue-11 group-data-[active=true]:border-blue-9 group-data-[active=true]:text-gray-12 transition-colors"
       >
         <i class="ph {{ tab.icon }}"></i>
         {{ tab.label }}

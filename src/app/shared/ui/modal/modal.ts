@@ -25,11 +25,11 @@ import { UiLoading } from '../loading';
 
     <dialog
       #modal
-      class="self-center mx-auto w-[90%] max-h-[60%] overflow-hidden max-w-lg p-6 rounded-2xl bg-gray-2 text-gray-12"
+      class="self-center mx-auto w-[90%] max-h-[70%] overflow-hidden max-w-lg p-6 rounded-lg bg-gray-1 text-gray-12 border border-gray-6"
     >
       <header class="w-full text-start">
         <h5 class="text-2xl">{{ title() }}</h5>
-        <p>{{ description() }}</p>
+        <p class="text-gray-11">{{ description() }}</p>
       </header>
 
       <ng-content></ng-content>
