@@ -1,6 +1,6 @@
 .cdk-drag-preview {
-  background-color: var(--color-gray-2);
-  border-radius: 12px;
+  background-color: var(--color-gray-1);
+  border-radius: 8px;
   rotate: -1.8deg;
   border: 2px dashed var(--color-gray-6);
 }

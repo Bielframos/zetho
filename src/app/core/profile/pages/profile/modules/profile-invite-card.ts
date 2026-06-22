@@ -8,17 +8,18 @@ import { UiLoading } from '../../../../../shared/ui/loading';
   standalone: true,
   imports: [UiLoading],
   template: `
-    <section class="rounded-2xl bg-gray-2 p-4 mb-4">
+    <section class="border-t border-gray-6 p-4">
       @if (authStore.profile()?.inviteCode; as code) {
         <div
-          class="flex items-center gap-2 border border-gray-6 rounded-xl px-3 py-2"
+          class="flex items-center gap-2 border border-gray-6 rounded-lg px-3 py-2"
         >
           <span class="font-mono text-gray-12 flex-1 text-sm tracking-wide">{{
             code
           }}</span>
           <button
             (click)="copyInviteCode(code)"
-            class="h-9 w-9 rounded-lg bg-gray-4 hover:bg-gray-5 transition-colors flex items-center justify-center text-gray-12 shrink-0"
+            class="ui-ghost-btn shrink-0"
+            data-size="icon"
             [attr.title]="inviteCopied() ? 'Copiado!' : 'Copiar código'"
           >
             <i
@@ -39,7 +40,7 @@ import { UiLoading } from '../../../../../shared/ui/loading';
         <button
           (click)="generateCode()"
           [disabled]="generatingCode()"
-          class="w-full rounded-xl bg-gray-4 hover:bg-gray-5 transition-colors text-gray-12 text-sm py-2.5 px-4 flex items-center justify-center gap-2 disabled:opacity-50"
+          class="ui-secondary-btn w-full disabled:opacity-50"
         >
           @if (generatingCode()) {
             <ui-loading [inline]="true" size="sm"></ui-loading>
