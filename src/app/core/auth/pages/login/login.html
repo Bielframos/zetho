@@ -7,7 +7,7 @@
       Ainda não possui uma?
       <a
         routerLink="/registrar"
-        class="text-blue-9 hover:underline cursor-pointer"
+        class="text-blue-11 hover:text-blue-9 hover:underline cursor-pointer"
         >Registrar</a
       >
     </p>
@@ -34,13 +34,13 @@
     />
     <a
       routerLink="/recuperar-senha"
-      class="text-gray-11 hover:text-blue-12 hover:underline text-sm -mt-2 self-end"
+      class="text-blue-11 hover:text-blue-9 hover:underline text-sm -mt-2 self-end"
     >
       Esqueceu sua senha?
     </a>
 
     @if (result().message) {
-    <small class="text-red-300"> {{ result().message }} </small>
+    <small class="rounded-lg border border-red-700/40 bg-red-900/20 p-3 text-red-300"> {{ result().message }} </small>
     }
 
     <button type="submit" class="ui-primary-btn mt-4" [disabled]="isLoading()">

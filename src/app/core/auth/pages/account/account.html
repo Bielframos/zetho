@@ -1,5 +1,5 @@
-<main class="mx-auto max-w-2xl my-6 md:px-4">
-  <div class="p-4 md:rounded-2xl bg-gray-2">
+<main class="mx-auto">
+  <section class="border-b border-gray-6 p-4">
     <header class="flex gap-4 justify-between items-center">
       <h1 class="text-2xl">{{authStore.user()?.name}}</h1>
 
@@ -10,7 +10,7 @@
 
     @if (!authStore.user()?.emailVerification) {
     <div
-      class="overflow-hidden rounded-b-2xl mt-6 p-4 flex flex-col border-t-4 border-amber-400 border border-x-gray-6 border-b-gray-6"
+      class="mt-6 p-4 flex flex-col border border-amber-400/40 bg-amber-400/10"
     >
       <h4 class="font-medium text-lg mb-2 w-full">E-mail não verificado</h4>
       <span class="text-gray-11"
@@ -36,9 +36,9 @@
       </div>
     </div>
     }
-  </div>
+  </section>
 
-  <div class="flex items-center flex-col p-6 md:rounded-2xl bg-gray-2 my-4">
+  <section class="flex items-center flex-col p-6 border-b border-gray-6">
     <button
       class="group relative cursor-pointer w-40 h-40 rounded-full border border-gray-6 overflow-hidden"
       (click)="profilePicInput.click()"
@@ -48,7 +48,7 @@
       }
 
       <div
-        class="absolute inset-0 bg-gray-2 hidden group-hover:flex items-center justify-center"
+        class="absolute inset-0 bg-gray-1/90 hidden group-hover:flex items-center justify-center"
       >
         <i class="ph ph-upload-simple text-white text-3xl"></i>
       </div>
@@ -71,16 +71,16 @@
       (change)="onSelectProfilePic($event)"
       accept="image/*"
     />
-  </div>
+  </section>
 
   <app-profile-invite-card></app-profile-invite-card>
 
-  <header class="my-6 max-md:px-4">
+  <header class="p-4 border-t-8 border-b border-gray-6">
     <h2 class="text-2xl">Meus dados</h2>
   </header>
 
-  <div class="p-4 md:rounded-2xl bg-gray-2 mb-6">
-    <div class="flex flex-col gap-2.5 w-full mt-4 md:rounded-2xl">
+  <section class="p-4 mb-6 divide-y divide-gray-6">
+    <div class="flex flex-col gap-2.5 w-full pb-8">
       <ui-input
         type="text"
         label="Nome"
@@ -104,9 +104,7 @@
       </button>
     </div>
 
-    <hr class="w-full border-gray-6 my-10" />
-
-    <div class="flex flex-col gap-2.5 w-full">
+    <div class="flex flex-col gap-2.5 w-full py-8">
       <div class="relative">
         <ui-input
           label="Gamertag"
@@ -148,9 +146,7 @@
       </div>
     </div>
 
-    <hr class="w-full border-gray-6 my-10" />
-
-    <div>
+    <div class="py-8">
       <label [for]="bio" class="text-sm text-gray-12 px-4 text-start"
         >Bio</label
       >
@@ -159,7 +155,7 @@
         name="bio"
         id="bio"
         placeholder="Diga algo sobre você…"
-        class="mt-1.5 rounded-lg px-4 w-full py-2 font-light border border-gray-6 placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:bg-transparent min-h-[64px] max-h-[160px]"
+        class="mt-1.5 rounded-lg px-4 w-full py-2 font-light border border-gray-6 bg-transparent placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:bg-transparent min-h-[64px] max-h-[160px]"
         [formControl]="bio"
         maxlength="128"
         required
@@ -188,11 +184,9 @@
       </div>
     </div>
 
-    <hr class="w-full border-gray-6 my-10" />
-
     <form
       [formGroup]="social"
-      class="flex flex-col gap-2 text-gray-11"
+      class="flex flex-col gap-2 text-gray-11 py-8"
       (submit)="updateSocial()"
     >
       <h4 class="text-sm text-gray-12 text-start">Social</h4>
@@ -276,9 +270,7 @@
       </button>
     </form>
 
-    <hr class="w-full border-gray-6 my-10" />
-
-    <div class="flex flex-col gap-2.5 w-full">
+    <div class="flex flex-col gap-2.5 w-full pt-8">
       <div>
         <ui-input
           type="email"
@@ -306,15 +298,13 @@
         Alterar e-mail
       </button>
     </div>
-  </div>
+  </section>
 
-  <header class="mb-6 max-md:px-4">
+  <header class="p-4 border-t-8 border-b border-gray-6">
     <h2 class="text-2xl">Zona de risco</h2>
   </header>
 
-  <div
-    class="bg-gray-2 overflow-hidden rounded-b-2xl mt-6 p-4 flex flex-col border-t-4 border-red-400"
-  >
+  <section class="p-4 flex flex-col bg-red-950/10">
     <h4 class="font-medium text-lg mb-2 w-full">Excluir minha conta</h4>
     <span class="text-gray-11">
       Ao excluir sua conta todos os seus dados e registros serão perdidos.
@@ -328,7 +318,7 @@
         Excluir minha conta
       </button>
     </div>
-  </div>
+  </section>
 </main>
 
 <!-- Caixa de dialógo primária da página -->
@@ -350,9 +340,7 @@
       required
     ></ui-input>
     } @else {
-    <div
-      class="overflow-hidden rounded-b-lg mt-6 p-4 border border-t-4 border-amber-400 border-x-gray-6 border-b-gray-6"
-    >
+    <div class="mt-6 p-4 border border-amber-400/40 bg-amber-400/10">
       <p>
         Sua conta será <strong>permanentemente excluída</strong>. todos os seus
         dados e conquistas no Zetho serão perdidos sem possibilidade de
@@ -365,25 +353,25 @@
         Seus registros atuais:
       </p>
       <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <li class="flex items-center gap-2 p-2 rounded-xl bg-gray-3">
+        <li class="flex items-center gap-2 p-2 rounded-lg border border-gray-6">
           <span class="font-bold text-blue-9"
             >{{ authStore.profile()?.totalsCompleted }}</span
           >
           <span>Jogos zerados</span>
         </li>
-        <li class="flex items-center gap-2 p-2 rounded-xl bg-gray-3">
+        <li class="flex items-center gap-2 p-2 rounded-lg border border-gray-6">
           <span class="font-bold text-purple-400"
             >{{ authStore.profile()?.totalsPlaying }}</span
           >
           <span>Jogando</span>
         </li>
-        <li class="flex items-center gap-2 p-2 rounded-xl bg-gray-3">
+        <li class="flex items-center gap-2 p-2 rounded-lg border border-gray-6">
           <span class="font-bold text-green-400"
             >{{ authStore.profile()?.totalsBacklog }}</span
           >
           <span>Na backlog</span>
         </li>
-        <li class="flex items-center gap-2 p-2 rounded-xl bg-gray-3">
+        <li class="flex items-center gap-2 p-2 rounded-lg border border-gray-6">
           <span class="font-bold text-red-400"
             >{{ authStore.profile()?.totalsDropped }}</span
           >

@@ -4,10 +4,10 @@
     <div class="flex flex-col items-center col-span-2">
         <i class="ph ph-smiley-x-eyes text-[56px] text-red-300 mb-4"></i>
         <h1
-            class="text-center text-4xl md:text-5xl text-transparent bg-clip-text bg-linear-to-r to-red-300 from-red-400 max-w-xl font-bold pb-6">
+            class="text-center text-3xl md:text-4xl max-w-xl pb-6">
             Ops, ocorreu um erro
         </h1>
-        <p class="text-xl text-center max-w-md mt-2">
+        <p class="text-gray-11 text-center max-w-md mt-2">
             {{ error }}
         </p>
 
@@ -17,10 +17,10 @@
     <div class="flex flex-col items-center col-span-2">
         <i class="ph ph-shield-check text-[56px] text-green-300 mb-4"></i>
         <h1
-            class="text-center text-4xl md:text-5xl text-transparent bg-clip-text bg-linear-to-r to-green-300 from-green-400 max-w-xl font-bold pb-6">
+            class="text-center text-3xl md:text-4xl max-w-xl pb-6">
             Senha redefinida
         </h1>
-        <p class="text-xl text-center max-w-md mt-2">
+        <p class="text-gray-11 text-center max-w-md mt-2">
             Retorne para a página de login e acessua sua conta com a nova senha.
         </p>
 
@@ -32,9 +32,9 @@
     </header>
     <form #form="ngForm" (ngSubmit)="resetPassword(form)" class="flex flex-col gap-4">
         <ui-input type="password" label="Nova senha" placeholder="Sua nova senha" name="newPassword"
-            [(ngModel)]="newPassword" required />
+            [(ngModel)]="newPassword" variant="secondary" required />
         <ui-input type="password" label="Confirme a nova senha" placeholder="Confirmação da nova senha"
-            name="confirmNewPassword" [(ngModel)]="confirmNewPassword" required />
+            name="confirmNewPassword" [(ngModel)]="confirmNewPassword" variant="secondary" required />
 
         @if (resetResult().message) {
         <small [class.text-red-300]="resetResult().error" [class.text-green-300]="resetResult().success">
