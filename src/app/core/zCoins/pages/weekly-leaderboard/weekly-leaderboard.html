@@ -1,9 +1,19 @@
 <main class="w-full">
-  <header class="px-4 py-4 border-b border-gray-6">
-    <h1 class="text-3xl md:text-4xl">Placar semanal</h1>
-    <p class="text-gray-11 mt-2">
-      Ranking dos jogadores com mais Z-Coins acumulados na semana.
-    </p>
+  <header class="px-4 py-8 md:py-10 border-b border-gray-6">
+    <div class="flex items-center gap-3">
+      <div
+        class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6"
+      >
+        <i class="ph ph-ranking text-[24px] text-blue-11"></i>
+      </div>
+
+      <div>
+        <h1 class="text-3xl md:text-4xl">Placar semanal</h1>
+        <p class="text-gray-11 mt-2">
+          Ranking dos jogadores com mais Z-Coins acumulados na semana.
+        </p>
+      </div>
+    </div>
   </header>
 
   @if (loading()) {
@@ -32,16 +42,16 @@
         </div>
       </div>
 
-      <div class="rounded-2xl bg-gray-1 p-4 text-sm text-gray-11">
+      <div class="border border-gray-6 rounded-lg p-3 text-sm text-gray-11">
         {{ resetsInString }}
       </div>
     </article>
 
-    <ol class="flex flex-col divide-y divide-gray-6 bg-gray-2 h-fit">
+    <ol class="flex flex-col divide-y divide-gray-6 h-fit">
       @for (leader of board.leaders; track leader.userId) {
       <li
         class="p-4 flex items-center gap-4"
-        [class.bg-blue-2]="isCurrentUser(leader.userId)"
+        [class.bg-blue-3]="isCurrentUser(leader.userId)"
       >
         <div
           class="w-12 h-12 shrink-0 rounded-full text-blue-12 bg-blue-4 flex items-center justify-center font-display text-xl overflow-hidden"
