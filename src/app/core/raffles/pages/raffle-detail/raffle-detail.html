@@ -1,81 +1,80 @@
-<main class="w-full max-w-4xl mx-auto md:px-4 py-8 md:py-12">
-  <a
-    routerLink="/sorteios"
-    class="flex items-center gap-1 text-sm text-gray-10 hover:text-gray-12 mb-6 transition-colors max-md:ml-4"
-  >
-    <i class="ph ph-arrow-left"></i>
-    Voltar para sorteios
-  </a>
+<main class="w-full max-w-5xl mx-auto">
+  <header class="px-4 py-4">
+    <a
+      routerLink="/sorteios"
+      class="inline-flex items-center gap-2 text-sm text-gray-10 transition-colors hover:text-blue-11"
+    >
+      <i class="ph ph-arrow-left"></i>
+      Voltar para sorteios
+    </a>
+  </header>
 
   @if (loading()) {
-  <section class="md:rounded-2xl bg-gray-2 p-6 flex items-center gap-4">
+  <section class="border-t-8 border-b border-gray-6 px-4 py-8">
     <ui-loading [inline]="true" fallback="Carregando sorteio..."></ui-loading>
   </section>
   } @else if (loadError()) {
   <section
-    class="md:rounded-2xl border border-red-500/30 bg-red-500/8 p-6 text-red-11"
+    class="border-t-8 border-b border-red-700/40 bg-red-900/20 px-4 py-4 text-red-200"
   >
     {{ loadError() }}
   </section>
   } @else if (raffle(); as r) {
-
-  <div class="grid lg:grid-cols-[1fr_280px] gap-5 items-start mb-4">
-    <!-- Main card -->
-    <div
-      class="flex bg-gray-2 md:rounded-2xl overflow-hidden h-full p-4 items-center"
+  <section
+    class="grid gap-px border-t-8 border-b-8 border-gray-6 lg:grid-cols-[minmax(0,1fr)_20rem]"
+  >
+    <article
+      class="flex flex-col items-center justify-center border-r border-gray-6"
     >
       @if (gameCover(); as cover) {
-      <img
-        [src]="cover"
-        [alt]="gameName()"
-        class="max-md:h-40 h-64 object-contain bg-gray-1 rounded-xl"
-      />
+      <img [src]="cover" [alt]="gameName()" class="w-40 object-cover" />
       } @else {
-      <div class="max-md:h-40 h-64 bg-gray-1 flex items-center justify-center">
-        <i class="ph ph-game-controller text-[48px] text-gray-8"></i>
-      </div>
+      <i class="ph ph-game-controller text-[48px] text-gray-8"></i>
       }
 
-      <div class="p-5 flex flex-col gap-4 self-center">
-        @if (r.active) {
-        <span
-          class="shrink-0 rounded-full bg-green-900/40 border border-green-700/40 text-green-300 text-xs px-3 py-1 w-fit"
-        >
-          Ativo
-        </span>
-        } @else {
-        <span
-          class="shrink-0 rounded-full bg-gray-3 text-gray-10 text-xs px-3 py-1 w-fit"
-        >
-          Encerrado
-        </span>
-        }
+      <div
+        class="flex flex-col items-center justify-center gap-0.5 text-center mt-6"
+      >
+        <div class="flex flex-col items-center gap-0.5">
+          <span
+            class="rounded-full px-2 py-0.5 text-xs"
+            [class.border]="r.active"
+            [class.border-green-700/40]="r.active"
+            [class.bg-green-900/40]="r.active"
+            [class.text-green-300]="r.active"
+            [class.bg-gray-3]="!r.active"
+            [class.text-gray-10]="!r.active"
+          >
+            {{ r.active ? 'Ativo' : 'Encerrado' }}
+          </span>
 
-        <div class="flex items-start justify-between gap-3">
           @if (gameSlug(); as slug) {
           <a
             [routerLink]="['/jogo', slug]"
-            class="text-2xl font-medium hover:text-blue-9 transition-colors leading-tight"
+            class="block text-3xl leading-tight text-gray-12 transition-colors hover:text-blue-11 md:text-4xl"
           >
             {{ gameName() }}
           </a>
           } @else {
-          <h1 class="text-2xl font-medium leading-tight">{{ gameName() }}</h1>
+          <h1 class="text-3xl leading-tight text-gray-12 md:text-4xl">
+            {{ gameName() }}
+          </h1>
           }
         </div>
 
-        <div class="flex items-center gap-4 flex-wrap text-sm text-gray-10">
-          @if (r.availableKeysCount > 0) {
+        <div
+          class="flex flex-wrap items-center justify-center gap-2 text-sm text-gray-12"
+        >
           <span>
             {{ r.availableKeysCount }} chave{{ r.availableKeysCount !== 1 ? 's'
-            : '' }} disponíve{{ r.availableKeysCount !== 1 ? 'is' : 'l' }}
+            : '' }}
           </span>
-          } @if (r.availableKeyPlatforms && r.availableKeyPlatforms.length > 0)
-          {
-          <span class="flex items-center gap-2">
+
+          @if (r.availableKeyPlatforms && r.availableKeyPlatforms.length > 0) {
+          <div class="flex flex-wrap items-center justify-center gap-1.5">
             @for (platform of r.availableKeyPlatforms; track platform) {
             <span
-              class="h-6 w-6 rounded-full bg-gray-3 border border-gray-6 flex items-center justify-center text-gray-12"
+              class="flex h-7 w-7 items-center justify-center rounded-full border border-gray-6 bg-gray-3 text-gray-12"
               [attr.title]="platform"
             >
               @if (platform === 'steam') {
@@ -115,177 +114,202 @@
                 />
               </svg>
               } @else {
-              <i class="ph ph-game-controller text-[14px]"></i>
+              <i class="ph ph-game-controller text-[16px]"></i>
               }
             </span>
             }
-          </span>
-          }
-        </div>
-      </div>
-    </div>
-
-    <!-- Participate widget -->
-    <div
-      class="md:rounded-2xl bg-gray-2 p-5 flex flex-col gap-5 lg:sticky lg:top-6 text-center"
-    >
-      @if (r.active && authStore.isAuthenticated()) {
-      <p class="text-base font-semibold text-gray-12">Participar do sorteio</p>
-
-      <!-- Ticket stepper -->
-      <div class="flex flex-col gap-2">
-        <label class="text-sm text-gray-11">Quantidade de tickets</label>
-        <div class="flex items-center justify-between gap-3">
-          <button
-            (click)="decrementTickets()"
-            class="h-10 w-10 rounded-xl bg-gray-3 hover:bg-gray-4 active:scale-95 transition-all flex items-center justify-center text-gray-12"
-          >
-            <i class="ph ph-minus text-sm"></i>
-          </button>
-          <span class="text-4xl font-bold text-gray-12 tabular-nums"
-            >{{ ticketCount() }}</span
-          >
-          <button
-            (click)="incrementTickets()"
-            class="h-10 w-10 rounded-xl bg-gray-3 hover:bg-gray-4 active:scale-95 transition-all flex items-center justify-center text-gray-12"
-          >
-            <i class="ph ph-plus text-sm"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Probability -->
-      @if (r.basicProbability) {
-      <div class="text-center text-sm text-gray-11">
-        Sua chance de ganhar {{ winChance() }}
-      </div>
-      }
-
-      <!-- Total cost -->
-      @if (r.ticketPrice) {
-      <div class="border-t border-gray-6 pt-4">
-        <div class="flex items-center justify-between">
-          <span class="text-sm text-gray-11">Total</span>
-          @if (userBonus()?.bonusPercent) {
-          <div class="text-right">
-            <div class="flex gap-1.5 items-center">
-              <span class="line-through text-gray-10 text-sm tabular-nums"
-                >{{ (ticketCount() ?? 1) * r.ticketPrice }} Z-Coins</span
-              >
-
-              •
-
-              <span class="text-xs text-green-300"
-                >{{ userBonus()!.bonusPercent }}% OFF</span
-              >
-            </div>
-            <div class="flex items-center gap-1.5 justify-end">
-              <img src="/z-coin.webp" class="h-5 w-5" alt="Z-Coin" />
-              <span class="text-2xl font-bold text-green-300 tabular-nums"
-                >{{ discountedTotal() }}</span
-              >
-              <span class="text-sm text-gray-10">Z-Coins</span>
-            </div>
           </div>
           } @else {
-          <div class="flex items-center gap-1.5">
-            <img src="/z-coin.webp" class="h-5 w-5" alt="Z-Coin" />
-            <span class="text-2xl font-bold text-gray-12 tabular-nums"
-              >{{ (ticketCount() ?? 1) * r.ticketPrice }}</span
-            >
-            <span class="text-sm text-gray-10">Z-Coins</span>
-          </div>
+          <span class="text-gray-11">Plataforma não informada</span>
           }
         </div>
       </div>
-      }
+    </article>
 
-      <button
-        class="ui-primary-btn w-full"
-        (click)="buyTickets()"
-        [disabled]="buyLoading()"
-      >
-        @if (buyLoading()) {
-        <ui-loading [inline]="true" size="sm" fallback="Comprar"></ui-loading>
-        } @else { Comprar }
-      </button>
+    <aside class="bg-gray-1 p-4 md:p-6 lg:sticky lg:top-0">
+      @if (r.active && authStore.isAuthenticated()) {
+      <div class="flex flex-col gap-5">
+        <header>
+          <h2 class="text-lg">Participar do sorteio</h2>
+          <p class="mt-1 text-sm font-light text-gray-11">
+            Escolha de 1 a 10 tickets para participar agora.
+          </p>
+        </header>
+
+        <div class="border-y border-gray-6 py-4">
+          <label class="text-xs font-light uppercase text-gray-11">
+            Quantidade de tickets
+          </label>
+          <div class="mt-3 flex items-center justify-between gap-3">
+            <button
+              (click)="decrementTickets()"
+              class="ui-ghost-btn"
+              data-size="icon"
+              type="button"
+              aria-label="Diminuir tickets"
+            >
+              <i class="ph ph-minus text-sm"></i>
+            </button>
+            <span class="text-5xl leading-none tabular-nums text-gray-12">
+              {{ ticketCount() }}
+            </span>
+            <button
+              (click)="incrementTickets()"
+              class="ui-ghost-btn"
+              data-size="icon"
+              type="button"
+              aria-label="Aumentar tickets"
+            >
+              <i class="ph ph-plus text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        @if (r.basicProbability) {
+        <p class="text-sm text-gray-11">
+          Sua chance de ganhar {{ winChance() }}
+        </p>
+        } @if (r.ticketPrice) {
+        <div class="border-b border-gray-6 pb-4">
+          <div class="flex items-start justify-between gap-3">
+            <span class="text-sm text-gray-11">Total</span>
+            @if (userBonus()?.bonusPercent) {
+            <div class="text-right">
+              <div class="flex items-center justify-end gap-1.5 text-sm">
+                <span class="tabular-nums text-gray-10 line-through">
+                  {{ (ticketCount() ?? 1) * r.ticketPrice }} Z-Coins
+                </span>
+                <span class="text-green-300">
+                  {{ userBonus()!.bonusPercent }}% OFF
+                </span>
+              </div>
+              <div class="mt-1 flex items-center justify-end gap-1.5">
+                <img src="/z-coin.webp" class="h-5 w-5" alt="Z-Coin" />
+                <span class="text-2xl tabular-nums text-green-300">
+                  {{ discountedTotal() }}
+                </span>
+                <span class="text-sm text-gray-10">Z-Coins</span>
+              </div>
+            </div>
+            } @else {
+            <div class="flex items-center gap-1.5">
+              <img src="/z-coin.webp" class="h-5 w-5" alt="Z-Coin" />
+              <span class="text-2xl tabular-nums text-gray-12">
+                {{ (ticketCount() ?? 1) * r.ticketPrice }}
+              </span>
+              <span class="text-sm text-gray-10">Z-Coins</span>
+            </div>
+            }
+          </div>
+        </div>
+        }
+
+        <button
+          class="ui-primary-btn w-full"
+          (click)="buyTickets()"
+          [disabled]="buyLoading()"
+        >
+          @if (buyLoading()) {
+          <ui-loading [inline]="true" size="sm" fallback="Comprar"></ui-loading>
+          } @else { Comprar }
+        </button>
+      </div>
       } @else if (!r.active) {
-      <div class="flex flex-col items-center text-center gap-3 py-4">
-        <i class="ph ph-lock-simple text-[36px] text-gray-8"></i>
-        <p class="text-gray-11 text-sm">Este sorteio foi encerrado.</p>
+      <div class="flex flex-col items-center py-8 text-center">
+        <i class="ph ph-lock-simple text-[40px] text-blue-11"></i>
+        <h2 class="mt-3 text-lg">Sorteio encerrado</h2>
+        <p class="mt-2 text-sm font-light text-gray-11">
+          Este sorteio não está mais aceitando novas entradas.
+        </p>
       </div>
       } @else {
-      <div class="flex flex-col gap-4 py-2">
-        <p class="text-gray-11 text-sm text-center">
-          Faça login para participar deste sorteio.
+      <div class="flex flex-col items-center py-8 text-center">
+        <i class="ph ph-user-circle text-[40px] text-blue-11"></i>
+        <h2 class="mt-3 text-lg">Entre para participar</h2>
+        <p class="mt-2 text-sm font-light text-gray-11">
+          Faça login para comprar tickets deste sorteio.
         </p>
-        <a routerLink="/entrar" class="ui-primary-btn text-center">
-          Entrar na conta
-        </a>
+        <a routerLink="/entrar" class="ui-primary-btn mt-4">Entrar na conta</a>
       </div>
       }
-    </div>
-  </div>
+    </aside>
+  </section>
 
-  <!-- Invite CTA -->
   @if (authStore.isAuthenticated()) {
-  <section
-    class="md:rounded-2xl bg-blue-2 max-md:border-y md:border border-blue-5 p-5 mb-4"
-  >
-    <div class="flex items-start gap-3 mb-4">
+  <section class="border-b-8 border-gray-6">
+    <header class="flex items-center gap-3 border-b border-gray-6 px-4 py-4">
       <div
-        class="h-10 w-10 rounded-full bg-blue-3 border border-blue-5 flex items-center justify-center shrink-0"
+        class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6"
       >
-        <i class="ph ph-gift text-blue-9 text-[20px]"></i>
+        <i class="ph ph-gift text-[24px] text-blue-11"></i>
       </div>
       <div>
-        <h3 class="font-semibold text-gray-12">
-          Convide amigos e ganhe descontos
-        </h3>
-        <p class="text-sm text-gray-11 mt-0.5">
-          Cada amigo que se cadastrar com seu código te dá bônus de até {{
-          userBonus()?.maxBonusPercent ?? 15 }}% nas compras de tickets.
+        <h2 class="text-2xl">Convites</h2>
+        <p class="text-sm font-light text-gray-11">
+          Convide amigos e ganhe descontos nos tickets.
         </p>
       </div>
-    </div>
+    </header>
 
-    @if (authStore.profile()?.inviteCode; as code) {
-    <div class="flex items-center gap-2 bg-gray-3 rounded-xl px-4 py-3">
-      <span class="font-mono text-gray-12 flex-1 tracking-wide"
-        >{{ code }}</span
-      >
-      <button
-        (click)="copyInviteCode()"
-        class="h-9 w-9 rounded-lg bg-gray-4 hover:bg-gray-5 transition-colors flex items-center justify-center shrink-0 cursor-pointer"
-        [attr.title]="inviteCopied() ? 'Copiado!' : 'Copiar código'"
-      >
-        <i
-          [class]="'ph text-[16px] ' + (inviteCopied() ? 'ph-check text-green-400' : 'ph-copy')"
-        ></i>
-      </button>
-    </div>
-    <p class="text-xs text-gray-10 mt-2">
-      Compartilhe este código com seus amigos.
-    </p>
-    } @else {
-    <button
-      (click)="generateInviteCode()"
-      [disabled]="generateInviteLoading()"
-      class="cursor-pointer w-full rounded-xl bg-blue-3 hover:bg-blue-4 transition-colors text-blue-11 text-sm py-2.5 px-4 flex items-center justify-center gap-2 disabled:opacity-50"
-    >
-      @if (generateInviteLoading()) {
-      <ui-loading [inline]="true" size="sm" fallback="Gerando..."></ui-loading>
+    <div class="px-4 py-4">
+      <p class="text-sm text-gray-11">
+        Cada amigo que se cadastrar com seu código te dá bônus de até {{
+        userBonus()?.maxBonusPercent ?? 15 }}% nas compras de tickets.
+      </p>
+
+      @if (authStore.profile()?.inviteCode; as code) {
+      <div class="mt-4 flex items-center gap-2 border-y border-gray-6 py-3">
+        <span class="flex-1 font-mono tracking-wide text-gray-12"
+          >{{ code }}</span
+        >
+        <button
+          (click)="copyInviteCode()"
+          class="ui-ghost-btn"
+          data-size="icon"
+          type="button"
+          [attr.aria-label]="inviteCopied() ? 'Código copiado' : 'Copiar código'"
+          [attr.title]="inviteCopied() ? 'Copiado!' : 'Copiar código'"
+        >
+          <i
+            [class]="'ph text-[16px] ' + (inviteCopied() ? 'ph-check text-green-400' : 'ph-copy')"
+          ></i>
+        </button>
+      </div>
+      <p class="mt-2 text-xs text-gray-10">
+        Compartilhe este código com seus amigos.
+      </p>
       } @else {
-      <i class="ph ph-magic-wand text-[16px]"></i>
-      Gerar meu código de convite }
-    </button>
-    }
+      <button
+        (click)="generateInviteCode()"
+        [disabled]="generateInviteLoading()"
+        class="ui-secondary-btn mt-4"
+      >
+        @if (generateInviteLoading()) {
+        <ui-loading
+          [inline]="true"
+          size="sm"
+          fallback="Gerando..."
+        ></ui-loading>
+        } @else {
+        <i class="ph ph-magic-wand text-[16px]"></i>
+        Gerar meu código de convite }
+      </button>
+      }
+    </div>
   </section>
   }
 
-  <section class="md:rounded-2xl bg-gray-2 p-5 mb-4">
-    <h2 class="text-lg mb-3">Transparência do sorteio</h2>
-    <ul class="text-sm text-gray-11 space-y-2 list-disc pl-5">
+  <section class="border-b-8 border-gray-6">
+    <header class="flex items-center gap-3 border-b border-gray-6 px-4 py-4">
+      <div
+        class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6"
+      >
+        <i class="ph ph-shield-check text-[24px] text-blue-11"></i>
+      </div>
+      <h2 class="text-2xl">Transparência</h2>
+    </header>
+
+    <ul class="space-y-3 px-4 py-4 text-sm font-light leading-6 text-gray-11">
       <li>
         Compre tickets e descubra na hora se ganhou ou não. O resultado é gerado
         de forma aleatória e transparente.
@@ -298,84 +322,91 @@
     </ul>
   </section>
 
-  <!-- User entries -->
   @if (authStore.isAuthenticated()) {
-  <section class="md:rounded-2xl bg-gray-2 p-5">
-    <h2 class="text-lg mb-4">Suas entradas</h2>
+  <section>
+    <header class="flex items-center gap-3 border-b border-gray-6 px-4 py-4">
+      <div
+        class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6"
+      >
+        <i class="ph ph-ticket text-[24px] text-blue-11"></i>
+      </div>
+      <h2 class="text-2xl">Suas entradas</h2>
+    </header>
 
     @if (entries().length === 0) {
-    <p class="text-gray-11 text-sm">Você ainda não participou deste sorteio.</p>
+    <div class="border-b border-dashed border-gray-6 px-4 py-10 text-center">
+      <p class="text-sm text-gray-11">
+        Você ainda não participou deste sorteio.
+      </p>
+    </div>
     } @else {
     <ul class="flex flex-col divide-y divide-gray-6">
       @for (entry of entries(); track entry.$id) {
-      <li>
+      <li class="px-4">
         <button
-          class="w-full py-3 flex items-center gap-4 text-left"
+          class="flex w-full items-center gap-4 py-4 text-left"
           (click)="toggleEntry(entry.$id)"
         >
-          <div class="flex-1 text-sm">
-            <div class="flex items-center gap-2 flex-wrap">
+          <div class="min-w-0 flex-1 text-sm">
+            <div class="flex flex-wrap items-center gap-2">
               <span class="text-gray-11"
                 >{{ formatDate(entry.$createdAt) }}</span
               >
               <span class="text-gray-10">·</span>
-              <span
-                >{{ entry.ticketCount }} ticket{{ entry.ticketCount > 1 ? 's' :
-                '' }}</span
-              >
+              <span class="text-gray-12">
+                {{ entry.ticketCount }} ticket{{ entry.ticketCount > 1 ? 's' :
+                '' }}
+              </span>
             </div>
           </div>
 
           @if (entry.won) {
           <span
-            class="rounded-full bg-green-900/40 border border-green-700/40 text-green-300 text-xs px-2 py-0.5 flex items-center gap-1 shrink-0"
+            class="shrink-0 rounded-full border border-green-700/40 bg-green-900/40 px-2 py-0.5 text-xs text-green-300"
           >
-            <i class="ph ph-trophy text-[14px]"></i>
-            Ganhou!
+            Ganhou
           </span>
           } @else {
-          <span class="text-gray-10 text-xs shrink-0">Não ganhou</span>
+          <span class="shrink-0 text-xs text-gray-10">Não ganhou</span>
           } @if (entry.luckyNumbers?.length || entry.drawNumber !== undefined) {
           <i
-            class="ph ph-caret-down text-gray-10 text-sm shrink-0 transition-transform duration-200"
+            class="ph ph-caret-down shrink-0 text-sm text-gray-10 transition-transform duration-200"
             [class.rotate-180]="expandedEntryId() === entry.$id"
           ></i>
           }
         </button>
 
         @if (expandedEntryId() === entry.$id) {
-        <div class="pb-4 space-y-4 animate-fade-in-slide">
+        <div class="space-y-4 pb-4 animate-fade-in-slide">
           @if (entry.luckyNumbers?.length) {
           <div>
-            <p class="text-xs text-gray-10 uppercase tracking-wider mb-2">
-              Números da sorte
-            </p>
+            <p class="mb-2 text-xs uppercase text-gray-10">Números da sorte</p>
             <div class="flex flex-wrap gap-1.5">
               @for (n of entry.luckyNumbers!; track n) {
               <span
-                [class]="'h-8 w-8 rounded-full border text-xs font-bold flex items-center justify-center ' + (entry.won && n === entry.drawNumber ? 'bg-green-900/40 border-green-700/40 text-green-300' : 'bg-blue-3 border-blue-5 text-blue-11')"
-                >{{ n }}</span
+                [class]="'flex h-8 w-8 items-center justify-center rounded-full border text-xs font-bold ' + (entry.won && n === entry.drawNumber ? 'bg-green-900/40 border-green-700/40 text-green-300' : 'bg-blue-3 border-blue-5 text-blue-11')"
               >
+                {{ n }}
+              </span>
               }
             </div>
           </div>
           } @if (entry.drawNumber !== undefined) {
           <div>
-            <p class="text-xs text-gray-10 uppercase tracking-wider mb-1">
-              Número sorteado
-            </p>
-            <span class="text-2xl font-bold tabular-nums font-display"
-              >{{ entry.drawNumber }}</span
-            >
+            <p class="mb-1 text-xs uppercase text-gray-10">Número sorteado</p>
+            <span class="font-display text-2xl tabular-nums">
+              {{ entry.drawNumber }}
+            </span>
           </div>
           } @if (entry.won && entry.key) {
-          <div class="bg-gray-3 border border-gray-6 rounded-xl p-3">
-            <div class="flex items-start justify-between gap-3 mb-2">
-              <p class="text-xs text-gray-10 uppercase tracking-wider">
+          <div class="border-y border-gray-6 py-3">
+            <div class="mb-2 flex items-start justify-between gap-3">
+              <p class="text-xs uppercase text-gray-10">
                 Sua chave{{ entry.platform ? ' — ' + entry.platform : '' }}
               </p>
               <button
-                class="h-9 w-9 rounded-lg bg-gray-4 hover:bg-gray-5 transition-colors flex items-center justify-center text-gray-12"
+                class="ui-ghost-btn"
+                data-size="icon"
                 (click)="copyKey(entry.key)"
                 type="button"
                 aria-label="Copiar chave"
@@ -383,9 +414,9 @@
                 <i class="ph ph-copy text-[16px]"></i>
               </button>
             </div>
-            <code class="font-mono text-sm text-gray-12 break-all select-all"
-              >{{ entry.key }}</code
-            >
+            <code class="break-all font-mono text-sm text-gray-12 select-all">
+              {{ entry.key }}
+            </code>
           </div>
           }
         </div>
@@ -398,77 +429,68 @@
   } }
 </main>
 
-<!-- Buy result ceremony overlay -->
 <dialog
   #revealDialog
-  class="m-0 p-0 w-screen h-screen max-w-none max-h-none border-none bg-transparent backdrop:bg-black/80 backdrop:backdrop-blur-sm"
+  class="m-0 h-screen max-h-none w-screen max-w-none border-none bg-transparent p-0 backdrop:bg-black/80 backdrop:backdrop-blur-sm"
   (cancel)="onDialogCancel($event)"
 >
   @if (drawResult(); as result) {
   <div
-    class="flex items-center justify-center w-full h-full p-4"
+    class="flex h-full w-full items-center justify-center p-4"
     (click)="revealStep() >= 4 ? closeReveal() : null"
   >
     <div
-      class="bg-gray-2 border border-gray-6 rounded-3xl p-8 w-full max-w-sm text-center animate-fade-in-slide"
+      class="w-full max-w-sm border border-gray-6 bg-gray-1 p-6 text-center animate-fade-in-slide"
       (click)="$event.stopPropagation()"
     >
-      <!-- Header: always visible -->
       <div class="mb-5">
         <div
-          class="h-14 w-14 rounded-full bg-blue-3 border border-blue-5 flex items-center justify-center mx-auto mb-4"
+          class="mx-auto mb-4 flex h-14 w-14 items-center justify-center border border-gray-6"
         >
-          <i class="ph ph-ticket text-blue-9 text-[28px]"></i>
+          <i class="ph ph-ticket text-[28px] text-blue-11"></i>
         </div>
-        <h2 class="text-xl font-semibold text-gray-12">Resultado do sorteio</h2>
+        <h2 class="text-xl text-gray-12">Resultado do sorteio</h2>
         <p
-          class="text-gray-11 text-sm mt-2 transition-opacity duration-300"
+          class="mt-2 text-sm text-gray-11 transition-opacity duration-300"
           [style.opacity]="revealStep() === 1 ? '1' : '0'"
         >
           Revelando seus números...
         </p>
       </div>
 
-      <!-- Lucky numbers: all slots always in DOM to prevent height jumps -->
       <div class="mb-5">
-        <p class="text-xs text-gray-10 uppercase tracking-wider mb-3">
-          Seus números da sorte
-        </p>
-        <div class="flex flex-wrap gap-2 justify-center">
+        <p class="mb-3 text-xs uppercase text-gray-10">Seus números da sorte</p>
+        <div class="flex flex-wrap justify-center gap-2">
           @for (_ of result.luckyNumbers; track $index; let i = $index) {
           <span
-            class="h-10 w-10 rounded-full border flex items-center justify-center transition-colors duration-300"
+            class="flex h-10 w-10 items-center justify-center rounded-full border transition-colors duration-300"
             [class.bg-blue-3]="i < revealedNumbers().length"
             [class.border-blue-5]="i < revealedNumbers().length"
             [class.bg-gray-3]="i >= revealedNumbers().length"
             [class.border-gray-5]="i >= revealedNumbers().length"
           >
             @if (i < revealedNumbers().length) {
-            <span class="font-bold text-blue-11 text-sm animate-pop-in"
-              >{{ revealedNumbers()[i] }}</span
-            >
+            <span class="text-sm font-bold text-blue-11 animate-pop-in">
+              {{ revealedNumbers()[i] }}
+            </span>
             } @else {
-            <i class="ph ph-question text-gray-7 text-[14px]"></i>
+            <i class="ph ph-question text-[14px] text-gray-7"></i>
             }
           </span>
           }
         </div>
       </div>
 
-      <!-- Draw number: always in DOM, fades in at step 3 -->
       <div
         class="mb-5 transition-opacity duration-500"
         [style.opacity]="revealStep() >= 3 ? '1' : '0'"
       >
-        <p class="text-xs text-gray-10 uppercase tracking-wider mb-2">
-          Número sorteado
-        </p>
-        <span class="text-5xl font-bold text-gray-12 tabular-nums font-display"
-          >{{ result.drawNumber }}</span
-        >
+        <p class="mb-2 text-xs uppercase text-gray-10">Número sorteado</p>
+        <span class="font-display text-5xl tabular-nums text-gray-12">
+          {{ result.drawNumber }}
+        </span>
       </div>
 
-      <!-- Result: always in DOM, fades in at step 4 -->
       <div
         class="mb-5 transition-opacity duration-500"
         [style.opacity]="revealStep() >= 4 ? '1' : '0'"
@@ -476,15 +498,16 @@
         @if (result.won) {
         <div class="space-y-3">
           <i class="ph-fill ph-trophy text-[56px] text-yellow-400"></i>
-          <h3 class="text-2xl font-bold text-gray-12">Você ganhou! 🎉</h3>
+          <h3 class="text-2xl text-gray-12">Você ganhou</h3>
           @if (result.wonKey) {
-          <div class="bg-gray-3 border border-gray-6 rounded-xl p-4 text-left">
-            <div class="flex items-start justify-between gap-3 mb-2">
-              <p class="text-xs text-gray-10 uppercase tracking-wider">
+          <div class="border-y border-gray-6 py-3 text-left">
+            <div class="mb-2 flex items-start justify-between gap-3">
+              <p class="text-xs uppercase text-gray-10">
                 Sua chave — {{ result.wonKey.platform }}
               </p>
               <button
-                class="h-9 w-9 rounded-lg bg-gray-4 hover:bg-gray-5 transition-colors flex items-center justify-center text-gray-12"
+                class="ui-ghost-btn"
+                data-size="icon"
                 (click)="copyKey(result.wonKey.key)"
                 type="button"
                 aria-label="Copiar chave"
@@ -492,24 +515,23 @@
                 <i class="ph ph-copy text-[16px]"></i>
               </button>
             </div>
-            <code class="font-mono text-base text-gray-12 break-all select-all"
-              >{{ result.wonKey.key }}</code
-            >
+            <code class="break-all font-mono text-base text-gray-12 select-all">
+              {{ result.wonKey.key }}
+            </code>
           </div>
           }
         </div>
         } @else {
         <div class="space-y-2">
           <i class="ph ph-smiley-sad text-[56px] text-gray-8"></i>
-          <h3 class="text-xl font-semibold text-gray-12">Não foi dessa vez</h3>
-          <p class="text-gray-11 text-sm">
-            Seu número não foi o sorteado. Continue tentando!
+          <h3 class="text-xl text-gray-12">Não foi dessa vez</h3>
+          <p class="text-sm text-gray-11">
+            Seu número não foi o sorteado. Continue tentando.
           </p>
         </div>
         }
       </div>
 
-      <!-- Close button: always in DOM, activates at step 4 -->
       <button
         (click)="closeReveal()"
         [disabled]="revealStep() < 4"
