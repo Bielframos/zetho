@@ -1,6 +1,6 @@
-<div class="flex flex-col gap-6">
+<div class="divide-y-8 divide-gray-6">
   <!-- Create raffle section -->
-  <div class="bg-gray-2 rounded-2xl p-4 md:p-6">
+  <section class="p-4 md:p-6">
     <header class="pb-4 border-b border-gray-6">
       <h2 class="text-xl md:text-2xl">Sorteios</h2>
       <p class="text-gray-11">Crie sorteios e gerencie chaves de jogos.</p>
@@ -46,7 +46,7 @@
           <select
             id="rewardPolicy"
             [formControl]="raffleForm.controls.rewardPolicy"
-            class="rounded-xl bg-gray-3 px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors"
+            class="rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors"
           >
             <option value="one_key">Primeiro a chegar</option>
             <option value="all_keys">Até esgotarem as chaves</option>
@@ -90,7 +90,7 @@
           [formControl]="raffleForm.controls.keysText"
           placeholder="XXXX-YYYY-ZZZZ,steam&#10;AAAA-BBBB-CCCC,playstation"
           rows="5"
-          class="rounded-xl bg-gray-3 px-3 py-2.5 text-gray-12 font-mono text-sm outline-none focus:ring-2 focus:ring-blue-6 transition-colors resize-y"
+          class="rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 font-mono text-sm outline-none focus:ring-2 focus:ring-blue-6 transition-colors resize-y"
         ></textarea>
       </div>
       }
@@ -133,10 +133,10 @@
       }
     </form>
     }
-  </div>
+  </section>
 
   <!-- Raffles list -->
-  <div class="bg-gray-2 rounded-2xl p-4 md:p-6">
+  <section class="p-4 md:p-6">
     <div class="flex items-center justify-between pb-4 border-b border-gray-6">
       <h3 class="text-lg">Sorteios cadastrados</h3>
       <button
@@ -167,7 +167,7 @@
     } @else if (raffles().length === 0) {
     <p class="mt-4 text-gray-11 text-sm">Nenhum sorteio cadastrado.</p>
     } @else {
-    <ul class="mt-4 flex flex-col gap-3 divide-y divide-gray-6">
+    <ul class="mt-4 flex flex-col divide-y divide-gray-6">
       @for (raffle of raffles(); track raffle.$id) {
       <li class="p-4 flex flex-col gap-3">
         <div class="flex items-start justify-between gap-3 flex-wrap">
@@ -233,7 +233,7 @@
               Chaves
               <span class="text-gray-10 font-normal">
                 — uma por linha:
-                <code class="bg-gray-2 px-1 rounded text-xs"
+                <code class="border border-gray-6 px-1 rounded text-xs"
                   >CHAVE,plataforma</code
                 >
               </span>
@@ -243,7 +243,7 @@
               (input)="addKeysText.set($any($event.target).value)"
               placeholder="XXXX-YYYY-ZZZZ,steam&#10;AAAA-BBBB-CCCC,playstation"
               rows="4"
-              class="rounded-xl bg-gray-3 px-3 py-2.5 text-gray-12 font-mono text-sm outline-none focus:ring-2 focus:ring-blue-6 transition-colors resize-y"
+              class="rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 font-mono text-sm outline-none focus:ring-2 focus:ring-blue-6 transition-colors resize-y"
             ></textarea>
           </div>
 
@@ -277,5 +277,5 @@
       }
     </ul>
     }
-  </div>
+  </section>
 </div>
