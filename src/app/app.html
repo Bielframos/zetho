@@ -41,15 +41,6 @@
         </a>
 
         <a
-          [routerLink]="profileRoute()"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-user-circle"></i>
-          <span>Meu perfil</span>
-        </a>
-
-        <a
           routerLink="/minha-conta"
           routerLinkActive="bg-gray-3 text-gray-12"
           class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
@@ -74,40 +65,11 @@
     <main class="min-w-0 border-gray-4 lg:border-x">
       <app-search-input
         name="desktopShellSearchInput"
+        class="hidden lg:block"
         placeholder="Busque um jogo ou player"
         (search)="onSearch($event)"
         (focusSearch)="onSearchInputFocus()"
       />
-
-      <header
-        class="sticky top-0 z-20 border-b border-gray-4 bg-gray-1/95 px-4 py-3 backdrop-blur lg:hidden"
-      >
-        <div class="flex items-center justify-between gap-3">
-          <a routerLink="/dashboard">
-            <h3 class="font-display text-[38px] leading-none">zetho</h3>
-          </a>
-
-          <a
-            [routerLink]="profileRoute()"
-            class="shrink-0 overflow-hidden rounded-full bg-blue-12"
-          >
-            <img
-              [src]="authStore.avatarUrl()"
-              alt="{{`Avatar do ${authStore.user()?.name}`}}"
-              class="h-[34px] w-[34px] object-cover"
-            />
-          </a>
-        </div>
-
-        <div class="mt-3">
-          <app-search-input
-            name="mobileShellSearchInput"
-            placeholder="Busque um jogo ou player"
-            (search)="onSearch($event)"
-            (focusSearch)="onSearchInputFocus()"
-          />
-        </div>
-      </header>
 
       <div class="route-transition-scope min-h-dvh">
         <router-outlet />
@@ -260,7 +222,11 @@
   <nav
     class="fixed inset-x-0 bottom-0 z-30 border-t border-gray-4 bg-gray-1/95 px-2 py-2 backdrop-blur lg:hidden"
   >
-    <div class="mx-auto grid max-w-md grid-cols-5 gap-1">
+    <div
+      class="mx-auto grid max-w-md gap-1"
+      [class.grid-cols-5]="!authStore.isAdmin()"
+      [class.grid-cols-6]="authStore.isAdmin()"
+    >
       <a
         routerLink="/dashboard"
         routerLinkActive="bg-gray-3 text-gray-12"
@@ -272,12 +238,21 @@
       </a>
 
       <a
+        routerLink="/buscar"
+        routerLinkActive="bg-gray-3 text-gray-12"
+        class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        aria-label="Buscar jogos"
+      >
+        <i class="ph ph-magnifying-glass"></i>
+      </a>
+
+      <a
         routerLink="/zcoins/leaderboard/weekly"
         routerLinkActive="bg-gray-3 text-gray-12"
         class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
         aria-label="Placar semanal"
       >
-        <img src="/animated_z_coin.gif" alt="" class="h-6 w-6 rounded-full" />
+        <i class="ph ph-ranking"></i>
       </a>
 
       <a
@@ -290,15 +265,6 @@
       </a>
 
       <a
-        [routerLink]="profileRoute()"
-        routerLinkActive="bg-gray-3 text-gray-12"
-        class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        aria-label="Meu perfil"
-      >
-        <i class="ph ph-user-circle"></i>
-      </a>
-
-      <a
         routerLink="/minha-conta"
         routerLinkActive="bg-gray-3 text-gray-12"
         class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
@@ -306,6 +272,17 @@
       >
         <i class="ph ph-gear"></i>
       </a>
+
+      @if (authStore.isAdmin()) {
+      <a
+        routerLink="/admin"
+        routerLinkActive="bg-gray-3 text-gray-12"
+        class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        aria-label="Admin"
+      >
+        <i class="ph ph-shield-star"></i>
+      </a>
+      }
     </div>
   </nav>
 </div>

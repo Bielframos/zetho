@@ -1,6 +1,21 @@
 <main class="w-full mx-auto">
+  <div class="border-b border-gray-6 lg:hidden">
+    <label class="relative block">
+      <span class="sr-only">Buscar jogos</span>
+      <i
+        class="ph ph-magnifying-glass pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-11"
+      ></i>
+      <input
+        type="search"
+        class="w-full bg-gray-2 px-4 py-3 pl-11 text-gray-12 placeholder:text-gray-11 focus:outline-none"
+        placeholder="Busque jogos por nome"
+        [formControl]="mobileSearchControl"
+      />
+    </label>
+  </div>
+
   <header
-    class="text-gray-11 font-light flex justify-between gap-4 items-center border-b border-gray-6 p-4"
+    class="text-gray-11 font-light flex flex-wrap justify-between gap-4 items-center border-b border-gray-6 p-4"
   >
     <h2 class="text-2xl text-gray-12">
       @if (isHypedUpcomingView()) { Jogos mais hypados ainda não lançados }
@@ -31,9 +46,9 @@
 
   @if (searchType() === 'games') {
   <div class="flex flex-wrap items-center gap-2 border-b border-gray-6 p-4">
-    <div class="relative">
+    <div class="relative w-full sm:w-auto">
       <select
-        class="bg-transparent border border-gray-6 text-gray-12 text-sm rounded-lg px-3 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors hover:bg-gray-3 appearance-none w-64"
+        class="bg-transparent border border-gray-6 text-gray-12 text-sm rounded-lg px-3 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors hover:bg-gray-3 appearance-none w-full sm:w-64"
         [value]="genre()"
         (change)="onFilterChange('genre', $any($event.target).value)"
       >
@@ -46,9 +61,9 @@
       <i class="ph ph-caret-down absolute z-10 right-2 top-1.5"></i>
     </div>
 
-    <div class="relative">
+    <div class="relative w-full sm:w-auto">
       <select
-        class="relative bg-transparent border border-gray-6 text-gray-12 text-sm rounded-lg px-3 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors hover:bg-gray-3 appearance-none w-64"
+        class="relative bg-transparent border border-gray-6 text-gray-12 text-sm rounded-lg px-3 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors hover:bg-gray-3 appearance-none w-full sm:w-64"
         [value]="year()"
         (change)="onFilterChange('year', $any($event.target).value)"
       >
@@ -92,7 +107,7 @@
     </span>
   </header>
 
-  <ul class="grid grid-cols-4 gap-px">
+  <ul class="grid grid-cols-2 gap-px sm:grid-cols-3 lg:grid-cols-4">
     @for (game of popularGames(); track game.$id) {
     <li class="flex flex-col">
       <ui-game-card [game]="game"></ui-game-card>
@@ -114,7 +129,7 @@
     normalizedQuery() }}"}. }
   </p>
   } @else { @if (searchType() === 'games') {
-  <ul class="grid grid-cols-4 gap-px">
+  <ul class="grid grid-cols-2 gap-px sm:grid-cols-3 lg:grid-cols-4">
     @for (game of gameResults(); track game.$id) {
     <li class="flex flex-col">
       <ui-game-card
