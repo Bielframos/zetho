@@ -1,4 +1,4 @@
-<div class="divide-y-8 divide-gray-6">
+<div class="divide-y divide-gray-6">
   <!-- Create raffle section -->
   <section class="p-4 md:p-6">
     <header class="pb-4 border-b border-gray-6">
@@ -102,7 +102,11 @@
           [disabled]="createLoading()"
         >
           @if (createLoading()) {
-          <ui-loading [inline]="true" size="sm" fallback="Criar sorteio"></ui-loading>
+          <ui-loading
+            [inline]="true"
+            size="sm"
+            fallback="Criar sorteio"
+          ></ui-loading>
           } @else { Criar sorteio }
         </button>
         <button
@@ -209,7 +213,11 @@
               [disabled]="activatingId() === raffle.$id"
             >
               @if (activatingId() === raffle.$id) {
-              <ui-loading [inline]="true" size="sm" fallback="Ativar"></ui-loading>
+              <ui-loading
+                [inline]="true"
+                size="sm"
+                fallback="Ativar"
+              ></ui-loading>
               } @else { Ativar }
             </button>
             }
@@ -254,7 +262,11 @@
               [disabled]="addKeysLoading()"
             >
               @if (addKeysLoading()) {
-              <ui-loading [inline]="true" size="sm" fallback="Salvar chaves"></ui-loading>
+              <ui-loading
+                [inline]="true"
+                size="sm"
+                fallback="Salvar chaves"
+              ></ui-loading>
               } @else { Salvar chaves }
             </button>
             <button
