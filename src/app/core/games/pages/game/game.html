@@ -32,12 +32,6 @@
     <ui-game-header [game]="controller.game()"></ui-game-header>
   </div>
 
-  <ui-game-rating
-    [game]="controller.game()"
-    [loading]="controller.loading() || controller.updating()"
-    (viewReviews)="scrollToReviews()"
-  ></ui-game-rating>
-
   @if (controller.game()) {
   <section class="animate-fade-in-slide" style="animation-delay: 400ms">
     @if ( controller.game() && authStore.isAuthenticated() &&
@@ -70,13 +64,19 @@
     </div>
     }
 
+    <ui-game-rating
+      [game]="controller.game()"
+      [loading]="controller.loading() || controller.updating()"
+      (viewReviews)="scrollToReviews()"
+    ></ui-game-rating>
+
     <ui-game-stats
       [stats]="controller.game()?.zStats"
       [gameHypes]="controller.game()?.hypes"
       [isUpcomingRelease]="controller.isUpcomingRelease()"
     ></ui-game-stats>
 
-    <hr class="border-4 border-gray-6" />
+    <div class="h-2 bg-gray-6" aria-hidden="true"></div>
 
     <ui-game-raffles></ui-game-raffles>
 
