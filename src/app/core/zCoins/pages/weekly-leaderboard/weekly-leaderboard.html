@@ -27,7 +27,7 @@
   <section class="px-4 py-4 border">{{ error() }}</section>
   } @else if (leaderboard(); as board) {
   <section class="divide-y divide-gray-6">
-    <article class="px-4 py-4 flex flex-row justify-between">
+    <article class="px-4 py-4 flex flex-row justify-between items-center">
       <div class="flex items-center gap-3">
         <img
           src="/animated_z_coin.gif"
@@ -42,9 +42,7 @@
         </div>
       </div>
 
-      <div class="border border-gray-6 rounded-lg p-3 text-sm text-gray-11">
-        {{ resetsInString }}
-      </div>
+      <div class="text-xs text-gray-11">{{ resetsInString }}</div>
     </article>
 
     <ol class="flex flex-col divide-y divide-gray-6 h-fit">
