@@ -4,16 +4,16 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
-## [1.12.0] - 2026-06-23
+## [1.11.0] - 2026-06-23
 
 ### Changed
 
 - Interface renovada e modernizada com foco em melhor visualização e acessibilidade para visitantes.
 - Redesign completo das páginas de login e registro, com visual atrativo e focado nos benefícios do uso do aplicativo.
-- Suporte a "Public App Shell": visitantes não autenticados agora podem explorar o app e navegar pela plataforma antes de criar uma conta.
+- Suporte expandido para acesso público: visitantes não autenticados agora podem explorar o app e navegar pela plataforma antes de criar uma conta.
 - Melhorias na página de busca, perfil, tela inicial e layout geral para uma experiência fluida e aprimorada.
 
-## [1.11.0] - 2026-06-15
+## [1.10.0] - 2026-06-15
 
 ### Added
 
@@ -21,7 +21,7 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 - Tempo relativo nas publicações (ex: "5 minutos atrás").
 - Ajuste e correção de bug onde a foto e nome do autor não apareciam em comentários recentes.
 
-## [1.10.0] - 2026-06-13
+## [1.9.1] - 2026-06-13
 
 ### Added
 
