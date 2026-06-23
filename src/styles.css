@@ -204,6 +204,10 @@
     @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-gray-3 rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
   }
 
+  .ui-ghost-btn {
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center rounded-lg text-gray-11 hover:bg-blue-3/70 hover:backdrop-blur-lg hover:text-blue-9 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
+  }
+
   .ui-destructive-btn {
     @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-gray-3 rounded-lg text-red-300 hover:bg-red-600 hover:border-red-400 hover:text-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 ease-in-out;
   }
@@ -218,7 +222,7 @@
 
   /* Variação de tamanho para botões e links */
   [data-size="icon"] {
-    @apply w-[34px] h-[34px] rounded-full p-0 flex items-center justify-center;
+    @apply w-[34px] h-[34px] p-0 flex items-center justify-center;
   }
 
   [data-size="sm"] {

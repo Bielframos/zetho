@@ -10,19 +10,21 @@ import { RaffleItem } from '../../../../raffles/raffle.types';
   imports: [RouterLink],
   template: `
     @if (raffles().length > 0) {
-      <section class="max-md:px-4">
-        <ul class="flex flex-col gap-3">
+      <section>
+        <ul
+          class="flex flex-col divide-y-8 divide-gray-6 border-b-8 border-gray-6"
+        >
           @for (raffle of raffles(); track raffle.$id) {
             <li>
               <a
                 [routerLink]="['/sorteios', raffle.$id]"
                 (click)="selectRaffle(raffle)"
-                class="flex items-center gap-4 rounded-2xl bg-gray-2 p-4 hover:bg-gray-3 transition-colors"
+                class="flex items-center gap-4 p-4 transition-colors hover:bg-gray-3"
               >
                 <div
-                  class="h-11 w-11 flex items-center justify-center rounded-full bg-blue-2 shrink-0"
+                  class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6"
                 >
-                  <i class="ph ph-ticket text-blue-9 text-[22px]"></i>
+                  <i class="ph ph-ticket text-[22px] text-blue-11"></i>
                 </div>
 
                 <div class="flex-1 min-w-0">
@@ -74,7 +76,6 @@ import { RaffleItem } from '../../../../raffles/raffle.types';
           }
         </ul>
       </section>
-      <hr class="border-blue-2 w-full my-10 max-md:mx-4 max-md:w-auto" />
     }
   `,
 })

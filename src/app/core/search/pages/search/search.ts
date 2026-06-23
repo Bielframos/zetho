@@ -1,6 +1,9 @@
 import { NgClass } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { UiProfileCard } from '../../../../shared/ui/profile-card';
@@ -9,6 +12,7 @@ import { GenresCacheService } from '../../../games/genres-cache.service';
 import { SeoService } from '../../../seo/seo.service';
 import { ZStatsService } from '../../../zStats/zStats.service';
 import { SearchController } from '../../search.controller';
+import { AuthStore } from '../../../auth/auth.store';
 
 function buildYearOptions(): string[] {
   const currentYear = new Date().getFullYear();
@@ -22,16 +26,18 @@ function buildYearOptions(): string[] {
 @Component({
   selector: 'app-search-page',
   standalone: true,
-  imports: [UiGameCard, UiLoading, NgClass, UiProfileCard],
+  imports: [UiGameCard, UiLoading, NgClass, UiProfileCard, ReactiveFormsModule],
   templateUrl: './search.html',
 })
 export class SearchPage {
+  readonly authStore = inject(AuthStore);
   readonly minSearchLength = 3;
   readonly years = buildYearOptions();
 
   private searchController = inject(SearchController);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
   private zStatsService = inject(ZStatsService);
   private seo = inject(SeoService);
   private genresCache = inject(GenresCacheService);
@@ -44,6 +50,7 @@ export class SearchPage {
   view = signal<string>('');
   searchType = signal<'games' | 'players'>('games');
   popularGames = signal<GameRow[]>([]);
+  mobileSearchControl = new FormControl('', { nonNullable: true });
 
   normalizedQuery = computed(() => this.query().trim());
 
@@ -75,6 +82,14 @@ export class SearchPage {
       robots: 'noindex,follow',
       ogType: 'website',
     });
+
+    this.mobileSearchControl.valueChanges
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((value) => this.onMobileSearchChange(value));
   }
 
   async ngOnInit() {
@@ -95,6 +110,7 @@ export class SearchPage {
       this.genre.set(params['genre'] ?? '');
       this.year.set(params['year'] ?? '');
       this.view.set(params['view'] ?? '');
+      this.mobileSearchControl.setValue(this.query(), { emitEvent: false });
 
       if (this.isHypedUpcomingView()) {
         this.searchType.set('games');
@@ -153,5 +169,18 @@ export class SearchPage {
     if (view) params['view'] = view;
 
     this.router.navigate(['/buscar'], { queryParams: params });
+  }
+
+  private onMobileSearchChange(value: string) {
+    const q = value.trim();
+
+    if (q.length > 0 && q.length < this.minSearchLength) {
+      return;
+    }
+
+    this.router.navigate(['/buscar'], {
+      queryParams: { q: q || null },
+      queryParamsHandling: 'merge',
+    });
   }
 }

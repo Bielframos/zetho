@@ -3,23 +3,23 @@
   <header class="max-md:mb-10">
     <h1 class="text-3xl">Recupere sua senha</h1>
     <p class="text-gray-11 font-light mt-2">Lembrou da senha? <a routerLink="/entrar"
-        class="text-blue-9 hover:underline cursor-pointer">Entrar</a>
+        class="text-blue-11 hover:text-blue-9 hover:underline cursor-pointer">Entrar</a>
     </p>
   </header>
 
   <form #form="ngForm" (ngSubmit)="createRecovery(form)" class="flex flex-col gap-4">
     <ui-input type="email" label="E-mail" placeholder="bielframos@zetho.app" name="email" [(ngModel)]="email"
-      required />
+      variant="secondary" required />
 
     @if (result().message) {
-    <small [class.text-red-300]="result().error" [class.text-green-300]="result().success">
+    <small class="rounded-lg border p-3" [class.border-red-700]="result().error" [class.bg-red-900]="result().error" [class.text-red-300]="result().error" [class.border-green-700]="result().success" [class.bg-green-900]="result().success" [class.text-green-300]="result().success">
       {{ result().message }}
     </small>
     }
 
     <button type="submit" class="ui-primary-btn mt-4" [disabled]="isLoading()">
       @if (isLoading()) {
-      <i class="ph ph-spinner animate-spin"></i>
+      <ui-loading [inline]="true" size="sm"></ui-loading>
       }
       Recuperar senha
     </button>

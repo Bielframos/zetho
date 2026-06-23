@@ -2,12 +2,14 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthStore } from '../../../auth/auth.store';
 import { SeoService } from '../../../seo/seo.service';
+import { UiLoading } from '../../../../shared/ui/loading';
 import { WeeklyZCoinLeaderboardResponse } from '../../../zCoins/zcoins.types';
 import { ZCoinsService } from '../../../zCoins/zcoins.service';
 
 @Component({
   selector: 'app-weekly-zcoin-leaderboard',
   standalone: true,
+  imports: [UiLoading],
   templateUrl: './weekly-leaderboard.html',
 })
 export class WeeklyLeaderboardPage {

@@ -58,7 +58,7 @@
     <!-- botão para expandir respostas -->
     @if (comment().replyCount && comment().replyCount! > 0) {
     <button
-      class="px-2 py-0.5 bg-blue-2 flex items-center gap-1 border text-gray-11 hover:text-gray-12 cursor-pointer border-gray-6 text-sm hover:bg-blue-3 rounded-full"
+      class="ui-action-btn border border-gray-6"
       (click)="loadReplies.emit()"
     >
       <i class="ph ph-chats text-[16px]"></i>
@@ -76,7 +76,7 @@
   @if (showReplyBox) {
   <div class="w-full flex flex-col items-end mt-4">
     <textarea
-      class="rounded-lg px-4 w-full py-2 font-light border-gray-6 bg-blue-2 placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11 min-h-[64px] max-h-[160px]"
+      class="rounded-lg px-4 w-full py-2 font-light border border-gray-6 bg-transparent placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11 min-h-[64px] max-h-[160px]"
       placeholder="Diga alguma coisa..."
       [(ngModel)]="replyContent"
     ></textarea>
@@ -99,8 +99,7 @@
   <!-- Loader enquanto carrega respostas -->
   @if (isLoadingReplies()) {
   <div class="flex text-sm text-gray-11 gap-2 items-center mt-2">
-    <i class="ph ph-spinner animate-spin"></i>
-    Carregando respostas...
+    <ui-loading [inline]="true" size="sm" fallback="Carregando respostas..."></ui-loading>
   </div>
   }
 

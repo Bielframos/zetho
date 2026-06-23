@@ -14,6 +14,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
+import { UiLoading } from '../../../../shared/ui/loading';
 import { UiModal } from '../../../../shared/ui/modal/modal';
 import { AppProfileInviteCard } from '../../../profile/pages/profile/modules/profile-invite-card';
 import {
@@ -31,7 +32,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-account',
   standalone: true,
-  imports: [UiInput, ReactiveFormsModule, UiModal, AppProfileInviteCard],
+  imports: [UiInput, ReactiveFormsModule, UiModal, AppProfileInviteCard, UiLoading],
   templateUrl: './account.html',
 })
 export class AccountPage {

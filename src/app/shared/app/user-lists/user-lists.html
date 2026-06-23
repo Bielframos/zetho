@@ -1,10 +1,8 @@
-<ol class="grid gap-2" [class.md:grid-cols-2]="!disableGrid()">
+<ol class="grid divide-y divide-gray-6" [class.md:grid-cols-2]="!disableGrid()">
   @for (list of lists(); track $index) {
   <ui-list-card [ownerGamertag]="ownerGamertag()" [list]="list"></ui-list-card>
   } @empty { @if (fromMe()) {
-  <li
-    class="p-10 mt-4 col-span-2 flex flex-col items-center text-center border border-dashed border-gray-6 rounded-2xl"
-  >
+  <li class="p-10 col-span-2 flex flex-col items-center text-center border border-dashed border-gray-6">
     <i class="ph ph-list text-[32px] mb-2"></i>
     <h1 class="text-center text-2xl max-w-xl">Crie a sua primeira lista</h1>
     <p class="text-center max-w-md mt-2 mb-6 text-gray-11">
@@ -15,7 +13,7 @@
   </li>
   } @else {
   <li
-    class="p-6 text-center border border-dashed border-gray-6 rounded-2xl text-gray-11"
+    class="p-6 text-center border border-dashed border-gray-6 text-gray-11"
   >
     Nenhuma lista pública encontrada.
   </li>

@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { UiInput } from '../../../../shared/ui/input/input';
+import { UiLoading } from '../../../../shared/ui/loading';
 import { AdminService } from '../../admin.service';
 import { AdminApiError, AdminRaffleResponse } from '../../admin.types';
 
@@ -19,7 +20,7 @@ interface ParsedKey {
 @Component({
   selector: 'app-admin-raffles-page',
   standalone: true,
-  imports: [ReactiveFormsModule, UiInput],
+  imports: [ReactiveFormsModule, UiInput, UiLoading],
   templateUrl: './admin-raffles.html',
 })
 export class AdminRafflesPage {

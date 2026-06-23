@@ -1,5 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { UiLoading } from '../../../../shared/ui/loading';
 
 type ChangelogSection = {
   title: string;
@@ -16,10 +17,10 @@ type ChangelogRelease = {
 @Component({
   selector: 'app-changelog-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, UiLoading],
   template: `
-    <main class="w-full max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-12">
-      <header class="mb-8 md:mb-10">
+    <main class="w-full max-w-5xl mx-auto">
+      <header class="border-b border-gray-6 p-4">
         <h1 class="text-3xl md:text-4xl">Changelog</h1>
         <p class="text-gray-11 mt-2">
           Histórico de mudanças do Zetho, organizado por versão.
@@ -27,29 +28,29 @@ type ChangelogRelease = {
       </header>
 
       @if (loading()) {
-        <section class="bg-gray-2 rounded-2xl p-6">
-          <p class="text-gray-11">Carregando changelog...</p>
+        <section class="p-6">
+          <ui-loading fallback="Carregando changelog..."></ui-loading>
         </section>
       } @else if (error()) {
-        <section class="bg-red-900/15 border border-red-700/30 rounded-2xl p-6">
+        <section class="border border-red-700/30 bg-red-900/15 p-6">
           <p class="text-red-300">{{ error() }}</p>
           <a routerLink="/" class="ui-link mt-3 inline-flex"
             >Voltar para início</a
           >
         </section>
       } @else if (!releases().length) {
-        <section class="bg-gray-2 rounded-2xl p-6">
+        <section class="border border-dashed border-gray-6 p-6">
           <p class="text-gray-11">Nenhuma versão encontrada no changelog.</p>
         </section>
       } @else {
-        <section class="grid gap-4 md:gap-6">
+        <section class="divide-y divide-gray-6">
           @for (release of releases(); track release.version) {
             <article
-              class="rounded-2xl p-5 md:p-6 changelog-card"
+              class="p-5 md:p-6"
               [class]="
                 release.isCurrent
-                  ? 'rounded-2xl p-5 md:p-6 changelog-card changelog-card-current'
-                  : 'rounded-2xl p-5 md:p-6 changelog-card'
+                  ? 'p-5 md:p-6 bg-blue-3/25'
+                  : 'p-5 md:p-6'
               "
             >
               <header
@@ -58,7 +59,7 @@ type ChangelogRelease = {
                 <div class="flex items-center gap-2 flex-wrap">
                   <h2 class="text-2xl leading-none">v{{ release.version }}</h2>
                   @if (release.isCurrent) {
-                    <span class="current-badge">Atual</span>
+                    <span class="rounded-full bg-blue-3 text-blue-11 text-xs px-2 py-0.5">Atual</span>
                   }
                 </div>
 
@@ -93,38 +94,6 @@ type ChangelogRelease = {
     :host {
       display: block;
       min-height: 100%;
-    }
-
-    .changelog-card {
-      background: linear-gradient(
-        135deg,
-        var(--color-gray-2),
-        var(--color-gray-3)
-      );
-    }
-
-    .changelog-card-current {
-      background: linear-gradient(
-        135deg,
-        var(--color-blue-2),
-        var(--color-blue-3)
-      );
-      border-color: var(--color-blue-8);
-      box-shadow: 0 0 0 1px
-        color-mix(in oklab, var(--color-blue-8), transparent 70%);
-    }
-
-    .current-badge {
-      border: 1px solid
-        color-mix(in oklab, var(--color-blue-9), transparent 45%);
-      background: color-mix(in oklab, var(--color-blue-8), transparent 80%);
-      color: var(--color-blue-12);
-      padding: 0.1rem 0.55rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-      font-weight: 700;
     }
 
     .changelog-item {

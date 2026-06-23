@@ -10,28 +10,27 @@ import { ParsedZereiListRow } from '../../core/lists/lists.controller';
     <li>
       <a
         [routerLink]="['/player', ownerGamertag(), 'listas', list().slug]"
-        class="flex flex-row items-end gap-6 p-4 bg-gray-2 md:rounded-2xl hover:bg-blue-3 transition-colors"
+        class="flex flex-row items-end gap-6 px-4 hover:bg-gray-3 transition-colors"
       >
         <div class="flex -space-x-14">
           @for (lastAddition of list().parsedLatestAdditions; track $index) {
             <img
               [src]="lastAddition.gameCoverUrl"
               [alt]="lastAddition.gameName + ' cover'"
-              class="w-24 h-auto rounded-xl drop-shadow-lg drop-shadow-blue-2"
+              class="w-24 h-auto drop-shadow-lg"
             />
           } @empty {
-            <a
-              routerLink="/buscar"
+            <div
               class="background-pattern w-24 aspect-3/4 rounded-lg border border-dashed border-gray-6 flex items-center justify-center"
             >
               <i class="ph ph-plus-circle text-[24px]"></i>
-            </a>
+            </div>
           }
         </div>
 
-        <div class="flex flex-1 max-md:w-full gap-4 items-center">
-          <div class="flex-1">
-            <span>{{ list().title }}</span>
+        <div class="flex flex-1 max-md:w-full gap-4 items-center py-4">
+          <div class="flex-1 min-w-0">
+            <span class="block truncate text-gray-12">{{ list().title }}</span>
             <br />
             @if (list().itemCount === 0) {
               <span class="text-gray-11 font-light">Essa lista está vazia</span>

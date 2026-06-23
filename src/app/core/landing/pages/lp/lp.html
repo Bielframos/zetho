@@ -1,165 +1,177 @@
-<main
-  class="flex flex-col w-full max-w-5xl justify-center mx-auto px-6 md:px-10 md:pb-10"
->
-  <section id="hero" class="flex flex-col items-center mt-6 md:mt-24">
-    <h1
-      class="text-center text-5xl text-transparent bg-clip-text bg-linear-to-r to-blue-12 from-blue-11 max-w-xl font-bold md:leading-relaxed"
+<main class="min-h-dvh overflow-hidden bg-gray-1 text-gray-12">
+  <section id="hero" class="relative mx-auto w-full px-4">
+    <div
+      class="pointer-events-none absolute inset-x-0 top-0 z-0 h-[560px] bg-[radial-gradient(circle_at_20%_10%,rgba(62,99,221,0.32),transparent_32%),radial-gradient(circle_at_85%_18%,rgba(247,209,84,0.16),transparent_28%),linear-gradient(180deg,rgba(29,46,97,0.32),transparent_72%)]"
+      aria-hidden="true"
+    ></div>
+
+    <div
+      class="grid md:grid-cols-[1fr_480px] gap-10 w-full max-w-6xl mx-auto items-end py-10 md:py-24"
     >
-      Zere. Registre. Evolua.
-    </h1>
-    <p class="text-xl text-center max-w-md mt-6">
-      Guarde seu histórico de jogos, descubra novas experiências e
-      <span class="underline underline-offset-4 decoration-blue-9"
-        >veja sua evolução como gamer,</span
-      >
-      tudo em um só lugar.
-    </p>
+      <div class="relative z-10 flex flex-col items-start">
+        <a routerLink="/" class="mb-10 inline-flex items-center gap-3">
+          <span class="font-display text-[48px] leading-none text-gray-12"
+            >zetho</span
+          >
+        </a>
 
-    <div class="flex gap-6 flex-wrap mt-10">
-      <a routerLink="/registrar" class="ui-primary-btn">Criar conta</a>
-      <a routerLink="/entrar" class="ui-link"
-        ><i class="ph ph-sign-in"></i> Entrar</a
-      >
-    </div>
-
-    <article class="mt-16 flex flex-col items-center">
-      <div class="flex gap-4 items-center mb-10">
-        <div class="w-16 h-px bg-blue-6"></div>
-        <h4
-          class="uppercase text-sm text-blue-12 bg-blue-2 px-2 py-1 rounded-lg border border-gray-6"
+        <p
+          class="mb-4 inline-flex items-center gap-2 rounded-full border border-gray-6 bg-gray-2/80 px-3 py-1 text-sm text-gray-11"
         >
-          Jogos em alta
-        </h4>
-        <div class="w-16 h-px bg-blue-6"></div>
+          <i class="ph-fill ph-sparkle text-[#f7d154]"></i>
+          <span class="text-xs md:text-md"
+            >Seu histórico gamer com cara de perfil, não de planilha</span
+          >
+        </p>
+
+        <h1 class="max-w-3xl text-5xl leading-[0.95]">
+          Transforme seus jogos zerados em uma história para mostrar.
+        </h1>
+
+        <p class="mt-6 max-w-xl text-lg font-light leading-8 text-gray-11">
+          Monte sua coleção, acompanhe backlog, reviews, listas e conquistas,
+          descubra o que a comunidade está jogando e mantenha seu perfil sempre
+          pronto para compartilhar.
+        </p>
+
+        <div class="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+          <a
+            routerLink="/registrar"
+            class="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-blue-9 px-5 text-base font-medium text-white transition-colors hover:bg-blue-10 focus:outline-none focus:ring-2 focus:ring-blue-6"
+          >
+            Criar meu perfil
+            <i class="ph ph-arrow-right"></i>
+          </a>
+          <a
+            routerLink="/entrar"
+            class="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-gray-6 bg-gray-2/80 px-5 text-base text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6"
+          >
+            <i class="ph ph-sign-in"></i>
+            Entrar
+          </a>
+        </div>
+
+        <div
+          class="mt-10 grid w-full max-w-xl grid-cols-3 divide-x divide-gray-6 border-y border-gray-6"
+        >
+          <div class="py-4 pr-3">
+            <strong class="block text-2xl">+39k</strong>
+            <span class="text-xs text-gray-11">jogos na base</span>
+          </div>
+          <div class="px-3 py-4">
+            <strong class="block text-2xl"
+              >{{ platformStats()?.zEntryCount ?? '...' }}</strong
+            >
+            <span class="text-xs text-gray-11">registros criados</span>
+          </div>
+          <div class="py-4 pl-3">
+            <strong class="block text-2xl"
+              >{{ platformStats()?.profileCount ?? '...' }}</strong
+            >
+            <span class="text-xs text-gray-11">perfis gamers</span>
+          </div>
+        </div>
       </div>
 
-      @if (trendingGames().length === 0) {
-      <div class="w-full h-[232px] flex items-center justify-center">
-        <ui-loading></ui-loading>
-      </div>
-      } @else {
-      <ul class="flex flex-wrap justify-center gap-2 md:gap-4">
-        @for (game of trendingGames(); track game.$id) {
-        <li class="flex flex-col w-24 md:w-40">
-          <ui-game-card [game]="game"></ui-game-card>
-        </li>
-        }
-      </ul>
-      }
-    </article>
+      <aside class="relative z-10">
+        <div
+          class="relative overflow-hidden border border-gray-6 bg-gray-2/85 shadow-2xl shadow-blue-950/30 backdrop-blur"
+        >
+          <div
+            class="p-4 border-b border-gray-6 flex items-center justify-between"
+          >
+            <div>
+              <p class="text-xs uppercase tracking-wide text-gray-10">
+                Em alta agora
+              </p>
+              <h2 class="text-xl">Descubra seu próximo jogo</h2>
+            </div>
+            <span
+              class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#f7d154] text-gray-1"
+            >
+              <i class="ph-fill ph-fire"></i>
+            </span>
+          </div>
+
+          @if (trendingGames().length === 0) {
+          <div class="flex h-[360px] items-center justify-center">
+            <ui-loading></ui-loading>
+          </div>
+          } @else {
+          <ul class="grid grid-cols-3 gap-px">
+            @for (game of trendingGames().slice(0, 6); track game.$id) {
+            <li class="min-w-0">
+              <ui-game-card [game]="game"></ui-game-card>
+            </li>
+            }
+          </ul>
+          }
+
+          <div
+            class="grid grid-cols-3 divide-x border-t border-gray-6 divide-gray-5 text-center text-xs"
+          >
+            <div class="px-2 py-3">
+              <i class="ph-fill ph-books text-green-300"></i>
+              <span class="mt-1 block text-gray-11">Backlog</span>
+            </div>
+            <div class="px-2 py-3">
+              <i class="ph-fill ph-star text-[#f7d154]"></i>
+              <span class="mt-1 block text-gray-11">Reviews</span>
+            </div>
+            <div class="px-2 py-3">
+              <i class="ph-fill ph-users-three text-blue-11"></i>
+              <span class="mt-1 block text-gray-11">Comunidade</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
   </section>
 
-  <!-- Estatísticas da plataforma -->
-  <section id="our-numbers">
-    <hr class="max-w-sm mx-auto border-blue-6 my-24" />
-
-    <div class="flex flex-col md:flex-row gap-4">
-      <div class="p-6 flex gap-4 items-center flex-1 bg-blue-2 rounded-2xl">
-        <i class="ph-fill ph-game-controller text-[32px] text-blue-9"></i>
-        <div>
-          <span class="text-3xl font-bold align-middle">+39k</span> <br />
-          <span class="text-gray-11">Jogos registrados</span>
-        </div>
-      </div>
-
-      <div class="p-6 flex gap-4 items-center flex-1 bg-blue-2 rounded-2xl">
-        <svg
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          class="text-blue-9"
-        >
-          <path
-            d="M18.3125 11.0996H1.3418L14.0645 23.8223C13.3937 23.9386 12.704 24 12 24C5.37258 24 0 18.6274 0 12C0 6.80406 3.30252 2.37992 7.92285 0.710938L18.3125 11.0996ZM12 0C18.6274 0 24 5.37258 24 12C24 17.1965 20.6963 21.6195 16.0752 23.2881L5.6875 12.9004H22.6582L9.93457 0.176758C10.6056 0.0603575 11.2957 0 12 0Z"
-            fill="currentcolor"
-          />
-        </svg>
-        <div>
-          <span class="text-3xl font-bold"
-            >{{platformStats()?.zEntryCount}}</span
-          >
-          <br />
-          <span class="text-gray-11">Registros criados</span>
-        </div>
-      </div>
-
-      <div class="p-6 flex gap-4 items-center flex-1 bg-blue-2 rounded-2xl">
-        <i class="ph-fill ph-user text-[32px] text-blue-9"></i>
-        <div>
-          <span class="text-3xl font-bold"
-            >{{platformStats()?.profileCount}}</span
-          >
-          <br />
-          <span class="text-gray-11">Gamers</span>
-        </div>
-      </div>
+  <section class="border-y border-gray-6 bg-gray-2/55">
+    <div
+      class="mx-auto grid w-full max-w-6xl gap-0 px-5 md:grid-cols-3 md:px-10"
+    >
+      <article class="border-gray-6 py-8 md:border-r md:pr-8">
+        <i class="ph-fill ph-game-controller text-3xl text-blue-11"></i>
+        <h3 class="mt-4 text-xl">Coleção viva</h3>
+        <p class="mt-2 text-sm leading-6 text-gray-11">
+          Marque o que zerou, está jogando, dropou ou deixou para depois.
+        </p>
+      </article>
+      <article class="border-gray-6 py-8 md:border-r md:px-8">
+        <i class="ph-fill ph-list-star text-3xl text-[#f7d154]"></i>
+        <h3 class="mt-4 text-xl">Listas com personalidade</h3>
+        <p class="mt-2 text-sm leading-6 text-gray-11">
+          Organize recomendações, favoritos e planos para jogar com contexto.
+        </p>
+      </article>
+      <article class="py-8 md:pl-8">
+        <i class="ph-fill ph-ranking text-3xl text-green-300"></i>
+        <h3 class="mt-4 text-xl">Evolução visível</h3>
+        <p class="mt-2 text-sm leading-6 text-gray-11">
+          Acompanhe estatísticas, Z-Coins e sinais da comunidade em um perfil
+          compartilhável.
+        </p>
+      </article>
     </div>
   </section>
 
-  <!-- Sobre o Zetho
-  <section class="p-10 bg-blue-2 rounded-2xl">
-    <h3 class="text-3xl">O que é o Zetho?</h3>
-    <div class="flex gap-10 flex-wrap mt-10">
-      <div class="flex-1 min-w-60">
-        <p>
-          O Zetho nasceu de uma necessidade muito pessoal. Eu sempre gostei de
-          registrar os jogos que finalizei, acompanhar meu progresso e revisitar
-          minhas próprias memórias gamer. Mas, por muito tempo, usei planilhas,
-          listas soltas e apps que não conversavam com o que eu realmente
-          queria.
+  <section class="mx-auto w-full max-w-6xl px-5 py-14 md:px-10">
+    <div
+      class="flex flex-col items-start justify-between gap-6 pb-8 md:flex-row md:items-end"
+    >
+      <div>
+        <p class="text-sm uppercase tracking-wide text-blue-11">
+          Comece em minutos
         </p>
-
-        <br />
-
-        <p>
-          Com o tempo, percebi que esse hábito era importante pra mim — não só
-          para lembrar o que joguei, mas para ver minha evolução como jogador,
-          revisitar histórias que marcaram minha vida e até descobrir padrões no
-          meu próprio gosto.
-        </p>
-
-        <br />
-
-        <p>
-          Então pensei:
-          <span class="text-blue-12"
-            >"Por que não criar minha própria solução?"</span
-          >
-          Algo simples, bonita, prática e feita do jeito que eu, como gamer,
-          sempre quis.
-        </p>
+        <h2 class="mt-2 max-w-2xl text-3xl">
+          O perfil que acompanha seu ritmo de jogo.
+        </h2>
       </div>
-
-      <div class="flex-1 min-w-60">
-        <p>
-          O Zetho é uma plataforma feita de gamer para gamers, criada para quem
-          ama registrar jogos, acompanhar seu progresso e construir um histórico
-          que faça sentido.
-        </p>
-
-        <br />
-
-        <h6 class="text-xl mb-2">Aqui, você pode:</h6>
-
-        <ul class="list-disc">
-          <li>Organizar seus jogos de um jeito intuitivo</li>
-          <li>Registrar o que está jogando, no backlog ou zerou</li>
-        </ul>
-
-        <br />
-
-        <p>
-          E, acima de tudo, celebrar suas próprias conquistas. O objetivo é
-          simples: tornar sua jornada gamer mais organizada, significativa e
-          divertida.
-        </p>
-      </div>
+      <a routerLink="/registrar" class="ui-primary-btn">
+        Criar conta gratuita
+      </a>
     </div>
-
-    <div class="flex justify-end font-mono mt-6">
-      <span class="text-gray-11 mr-2">—</span> Gabriel França
-    </div>
-  </section> -->
+  </section>
 </main>

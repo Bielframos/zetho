@@ -1,88 +1,11 @@
-<div class="md:px-4 py-10 w-full max-w-5xl mx-auto">
-  <header class="mb-4">
-    <div class="mb-6 flex gap-4 items-baseline flex-wrap max-md:px-4">
-      <h1 class="text-3xl max-w-xl">Olá, {{ profile?.gamertag }}!</h1>
-      <a
-        [routerLink]="['/player', profile?.gamertag]"
-        class="text-blue-11 hover:underline hover:text-blue-9"
-        >Ir para o meu perfil
-      </a>
-    </div>
-
-    <div class="@container">
-      <div class="grid grid-cols-2 md:flex bg-gray-2 md:rounded-2xl p-2 md:p-1">
-        <!-- Zerado -->
-        <a
-          [routerLink]="['/player', profile?.gamertag]"
-          [queryParams]="{t: 'completed'}"
-          class="py-4 flex flex-1 items-center gap-4 hover:bg-blue-2 hover:text-blue-9 px-6 transition-colors md:rounded-xl col-span-2 max-md:justify-center max-md:border-b border-gray-6"
-        >
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M14.7695 1.84668H18.4619V3.69238H20.3076V5.53809H22.1543V9.23047H24V14.7695H22.1543V18.4619H20.3076V20.3076H18.4619V22.1543H14.7695V24H9.23047V22.1543H5.53809V20.3076H3.69238V18.4619H1.8457V14.7695H0V9.23047H1.8457V5.53809H3.69238V3.69238H5.53809V1.84668H9.23047V0H14.7695V1.84668ZM5.53809 4.61523V8.30762H12.9229V10.1543H11.0771V12H9.23047V13.8457H7.38477V15.6924H5.53809V19.3848H18.4619V15.6924H12.9229V13.8457H14.7695V12H16.6152V10.1543H18.4619V4.61523H5.53809Z"
-              fill="currentColor"
-            />
-          </svg>
-
-          <div>
-            <span class="text-2xl mt-2"
-              >{{ profile?.totalsCompleted| shortNumber }}</span
-            >
-            <br class="max-md:hidden" />
-            <span class="max-md:ml-4">Zerados</span>
-          </div>
-        </a>
-
-        <!-- Demais categorias -->
-        @for (item of entries; track $index) {
-        <a
-          [routerLink]="['/player', profile?.gamertag]"
-          [queryParams]="{t: item.tab}"
-          class="{{ item.classes }} py-4 flex items-center gap-4 hover:bg-blue-2 hover:text-blue-9 px-6 transition-colors md:rounded-xl flex-1 border-gray-6"
-        >
-          <i class="{{ item.icon }}"></i>
-          <div>
-            <span class="text-2xl"
-              >{{ profile?.[item.key] | shortNumber }}</span
-            >
-            <br />
-            <span>{{ item.label }}</span>
-          </div>
-        </a>
-
-        }
-      </div>
-    </div>
-  </header>
-
-  <a
-    href="https://ga.zetho.app"
-    target="_blank"
-    class="block bg-gray-2 text-blue-11 p-4 rounded-xl text-center mb-14 font-medium hover:bg-blue-4 transition-colors"
-  >
-    Leia as últimas notícias e artigos no Gazetho!
-  </a>
-
-  <section class="mb-14 max-md:px-4">
-    <header class="mb-6 flex gap-4 items-baseline flex-wrap">
-      <h2 class="text-2xl">Destaques da Comunidade</h2>
-      <span class="text-gray-11 text-sm"
-        >Comentários e reviews mais votados recentemente</span
-      >
-    </header>
-
+<div class="w-full max-w-5xl mx-auto">
+  <section>
     @if (loadingHighlights()) {
     <ui-loading></ui-loading>
     } @else if (highlights().length > 0) {
     <div class="flex flex-col divide-y divide-gray-6">
       @for (item of highlights(); track item.$id) {
-      <div class="flex flex-col gap-3 py-4">
+      <div class="flex flex-col gap-3 p-4">
         <header class="flex items-center gap-3">
           @if (item.userProfile?.avatarUrl) {
           <img
@@ -109,15 +32,21 @@
           </div>
           <div class="ml-auto flex items-center gap-2">
             @if (item._highlightType === 'rating') {
-              <span class="text-xs bg-amber-300/10 text-amber-300 px-2 py-0.5 rounded-full font-medium">Review</span>
-              <div class="flex items-center gap-1 text-amber-300">
-                <i class="ph-fill ph-star"></i>
-                <span class="font-bold text-gray-12 ml-1"
-                  >{{ item.rating?.toFixed(1) }}</span
-                >
-              </div>
+            <span
+              class="text-xs bg-amber-300/10 text-amber-300 px-2 py-0.5 rounded-full font-medium"
+              >Review</span
+            >
+            <div class="flex items-center gap-1 text-amber-300">
+              <i class="ph-fill ph-star"></i>
+              <span class="font-bold text-gray-12 ml-1"
+                >{{ item.rating?.toFixed(1) }}</span
+              >
+            </div>
             } @else {
-              <span class="text-xs bg-blue-3 text-blue-11 px-2 py-0.5 rounded-full font-medium">Comentário</span>
+            <span
+              class="text-xs bg-blue-3 text-blue-11 px-2 py-0.5 rounded-full font-medium"
+              >Comentário</span
+            >
             }
           </div>
         </header>
@@ -155,9 +84,7 @@
     </div>
     } @else {
     <p class="text-gray-11">Nenhum destaque encontrado no momento.</p>
-    }
-
-    @if (hasMoreHighlights()) {
+    } @if (hasMoreHighlights()) {
     <div class="mt-4 flex justify-center">
       <button
         (click)="loadMoreHighlights()"
@@ -165,17 +92,16 @@
         class="bg-gray-3 hover:bg-gray-4 text-gray-12 font-medium px-6 py-2.5 rounded-full transition-colors disabled:opacity-50 flex items-center gap-2"
       >
         @if (loadingMoreHighlights()) {
-          <ui-loading class="w-4 h-4"></ui-loading>
-          Carregando...
-        } @else {
-          Ver mais
-        }
+        <ui-loading [inline]="true" size="sm"></ui-loading>
+        Carregando... } @else { Ver mais }
       </button>
     </div>
     }
   </section>
 
-  <header class="mb-6 flex gap-4 items-baseline flex-wrap max-md:px-4">
+  <header
+    class="flex gap-4 items-baseline flex-wrap max-md:px-4 border-t-8 border-b border-gray-6 p-4"
+  >
     <h2 class="text-2xl">Minhas listas</h2>
 
     <a
@@ -185,11 +111,17 @@
     </a>
   </header>
 
-  <app-user-lists [lists]="controller.lists()" [fromMe]="true">
+  <app-user-lists
+    [lists]="controller.lists()"
+    [fromMe]="true"
+    [disableGrid]="true"
+  >
   </app-user-lists>
 
-  <section class="mt-14 max-md:px-4">
-    <header class="mb-6 flex gap-4 items-baseline flex-wrap">
+  <section>
+    <header
+      class="flex gap-4 items-baseline flex-wrap border-t-8 border-b border-gray-6 p-4"
+    >
       <h2 class="text-2xl">Mais aguardados</h2>
 
       <a
@@ -205,7 +137,7 @@
     <ui-loading></ui-loading>
     } @else if (upcomingHypedGames().length > 0) {
     <ul
-      class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-2 md:gap-4"
+      class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-px"
     >
       @for (game of upcomingHypedGames(); track game.$id) {
       <li class="flex flex-col">

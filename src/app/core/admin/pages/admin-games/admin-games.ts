@@ -3,11 +3,12 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AdminService } from '../../admin.service';
 import { AdminAddGameResponse, AdminApiError } from '../../admin.types';
 import { UiInput } from '../../../../shared/ui/input/input';
+import { UiLoading } from '../../../../shared/ui/loading';
 
 @Component({
   selector: 'app-admin-games-page',
   standalone: true,
-  imports: [ReactiveFormsModule, UiInput],
+  imports: [ReactiveFormsModule, UiInput, UiLoading],
   templateUrl: './admin-games.html',
 })
 export class AdminGamesPage {

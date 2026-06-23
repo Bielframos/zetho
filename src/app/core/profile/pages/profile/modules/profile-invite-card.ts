@@ -1,22 +1,25 @@
 import { Component, inject, signal } from '@angular/core';
 import { AuthStore } from '../../../../auth/auth.store';
 import { NotificationStore } from '../../../../notifications/notification.store';
+import { UiLoading } from '../../../../../shared/ui/loading';
 
 @Component({
   selector: 'app-profile-invite-card',
   standalone: true,
+  imports: [UiLoading],
   template: `
-    <section class="rounded-2xl bg-gray-2 p-4 mb-4">
+    <section class="p-4">
       @if (authStore.profile()?.inviteCode; as code) {
         <div
-          class="flex items-center gap-2 border border-gray-6 rounded-xl px-3 py-2"
+          class="flex items-center gap-2 border border-gray-6 rounded-lg px-3 py-2"
         >
           <span class="font-mono text-gray-12 flex-1 text-sm tracking-wide">{{
             code
           }}</span>
           <button
             (click)="copyInviteCode(code)"
-            class="h-9 w-9 rounded-lg bg-gray-4 hover:bg-gray-5 transition-colors flex items-center justify-center text-gray-12 shrink-0"
+            class="ui-ghost-btn shrink-0"
+            data-size="icon"
             [attr.title]="inviteCopied() ? 'Copiado!' : 'Copiar código'"
           >
             <i
@@ -37,10 +40,10 @@ import { NotificationStore } from '../../../../notifications/notification.store'
         <button
           (click)="generateCode()"
           [disabled]="generatingCode()"
-          class="w-full rounded-xl bg-gray-4 hover:bg-gray-5 transition-colors text-gray-12 text-sm py-2.5 px-4 flex items-center justify-center gap-2 disabled:opacity-50"
+          class="ui-secondary-btn w-full disabled:opacity-50"
         >
           @if (generatingCode()) {
-            <i class="ph ph-spinner animate-spin text-[16px]"></i>
+            <ui-loading [inline]="true" size="sm"></ui-loading>
             Gerando código...
           } @else {
             <i class="ph ph-magic-wand text-[16px]"></i>

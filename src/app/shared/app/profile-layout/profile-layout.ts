@@ -7,6 +7,7 @@ import { ProfileLayoutStore } from './profile-layout.store';
 import { NotificationStore } from '../../../core/notifications/notification.store';
 import { UserProfileRow } from '../../../types';
 import { SeoService } from '../../../core/seo/seo.service';
+import { AuthStore } from '../../../core/auth/auth.store';
 
 @Component({
   selector: 'app-profile-layout',
@@ -17,6 +18,7 @@ import { SeoService } from '../../../core/seo/seo.service';
 export class AppProfileLayout {
   private seo = inject(SeoService);
   private notification = inject(NotificationStore);
+  authStore = inject(AuthStore);
 
   profileStore = inject(ProfileStore);
   layoutStore = inject(ProfileLayoutStore);

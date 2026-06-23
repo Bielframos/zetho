@@ -1,32 +1,32 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AppCommentItem } from '../../../../../shared/app/comment-item/comment-item';
+import { UiLoading } from '../../../../../shared/ui/loading';
 import { CommentsController } from '../../../../comments/comments.controller';
 
 @Component({
   selector: 'ui-game-lobby',
   standalone: true,
-  imports: [AppCommentItem, ReactiveFormsModule],
+  imports: [AppCommentItem, ReactiveFormsModule, UiLoading],
   template: `
-    <article class="flex flex-col gap-4 max-md:px-4">
-      <header class="flex gap-4 items-center">
+    <article class="flex flex-col">
+      <header class="flex items-center gap-3 px-4 py-4 border-b border-gray-6">
         <div
-          class="h-10 w-10 flex items-center justify-center rounded-full bg-blue-3"
+          class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6"
         >
-          <i class="ph ph-users-three text-blue-9 text-[24px]"></i>
+          <i class="ph ph-users-three text-[24px] text-blue-11"></i>
         </div>
         <div>
-          <h3 class="text-blue-12 text-2xl">Lobby</h3>
-          <small class="text-gray-11">Troque ideias com outros jogadores</small>
+          <h3 class="text-2xl">Lobby</h3>
         </div>
       </header>
 
-      <div>
+      <div class="p-4">
         <textarea
           name="comment"
           id="comment"
           placeholder="Diga algo sobre este jogo…"
-          class="rounded-xl px-4 w-full py-2 font-light bg-gray-2 placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11 min-h-[64px] max-h-[160px]"
+          class="max-h-[160px] min-h-[64px] w-full border-y border-gray-6 bg-transparent px-4 py-2 font-light text-gray-12 outline-none transition-colors duration-200 ease-in-out placeholder:text-gray-10 focus:ring-2 focus:ring-blue-6 disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11 md:border"
           [formControl]="comment"
           required
         ></textarea>
@@ -48,22 +48,24 @@ import { CommentsController } from '../../../../comments/comments.controller';
             [disabled]="comment.invalid || isLoading()"
           >
             @if (isLoading()) {
-              <i class="ph ph-spinner animate-spin"></i>
+              <ui-loading [inline]="true" size="sm"></ui-loading>
             }
             Comentar
           </button>
         </div>
       </div>
 
-      @for (comment of controller.rootComments(); track comment.$id) {
-        <app-comment-item
-          [comment]="comment"
-          [replies]="controller.childComments()[comment.$id]?.comments || []"
-          [isLoadingReplies]="controller.loadingReplies()[comment.$id]"
-          (loadReplies)="controller.loadReplies(comment.$id)"
-          (reply)="controller.addComment($event, comment.$id, 1)"
-        />
-      }
+      <div class="px-4">
+        @for (comment of controller.rootComments(); track comment.$id) {
+          <app-comment-item
+            [comment]="comment"
+            [replies]="controller.childComments()[comment.$id]?.comments || []"
+            [isLoadingReplies]="controller.loadingReplies()[comment.$id]"
+            (loadReplies)="controller.loadReplies(comment.$id)"
+            (reply)="controller.addComment($event, comment.$id, 1)"
+          />
+        }
+      </div>
 
       @if (controller.hasMore()) {
         <footer class="w-full flex justify-center">

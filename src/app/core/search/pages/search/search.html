@@ -1,8 +1,26 @@
-<main class="w-full mb-10 max-w-5xl mx-auto px-4 max-md:mt-6 mt-10 md:px-10">
+<main
+  class="mx-auto w-full max-w-3xl border-gray-6"
+  [class.md:border-x]="!authStore.isAuthenticated()"
+>
+  <div class="border-b border-gray-6 lg:hidden">
+    <label class="relative block">
+      <span class="sr-only">Buscar jogos</span>
+      <i
+        class="ph ph-magnifying-glass pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-11"
+      ></i>
+      <input
+        type="search"
+        class="w-full bg-gray-2 px-4 py-3 pl-11 text-gray-12 placeholder:text-gray-11 focus:outline-none"
+        placeholder="Busque jogos por nome"
+        [formControl]="mobileSearchControl"
+      />
+    </label>
+  </div>
+
   <header
-    class="text-gray-11 font-light mb-4 flex justify-between gap-4 items-center"
+    class="text-gray-11 font-light flex flex-wrap justify-between gap-4 items-center border-b border-gray-6 p-4"
   >
-    <h2>
+    <h2 class="text-2xl text-gray-12">
       @if (isHypedUpcomingView()) { Jogos mais hypados ainda não lançados }
       @else if (normalizedQuery()) { Buscando por
       <span class="font-normal text-gray-12">"{{ normalizedQuery() }}"</span>
@@ -10,18 +28,18 @@
       por filtros }
     </h2>
 
-    <div class="flex p-1 rounded-full bg-blue-2">
+    <div class="flex p-1 rounded-lg border border-gray-6">
       <button
-        class="px-2 py-1 rounded-full hover:bg-blue-3 cursor-pointer transition-colors"
-        [ngClass]="{'bg-blue-4 hover:bg-blue-5 text-white': searchType() === 'games'}"
+        class="px-2 py-1 rounded-md hover:bg-gray-3 cursor-pointer transition-colors"
+        [ngClass]="{'bg-blue-9 hover:bg-blue-10 text-white': searchType() === 'games'}"
         (click)="setSearchType('games')"
       >
         Jogos
       </button>
       <button
-        class="px-2 py-1 rounded-full hover:bg-blue-3 cursor-pointer transition-colors"
+        class="px-2 py-1 rounded-md hover:bg-gray-3 cursor-pointer transition-colors disabled:text-gray-10 disabled:pointer-events-none"
         [disabled]="isHypedUpcomingView()"
-        [ngClass]="{'bg-blue-4 hover:bg-blue-5 text-white': searchType() === 'players'}"
+        [ngClass]="{'bg-blue-9 hover:bg-blue-10 text-white': searchType() === 'players'}"
         (click)="setSearchType('players')"
       >
         Perfis
@@ -30,10 +48,10 @@
   </header>
 
   @if (searchType() === 'games') {
-  <div class="flex flex-wrap items-center gap-2 mb-6">
-    <div class="relative">
+  <div class="flex flex-wrap items-center gap-2 border-b border-gray-6 p-4">
+    <div class="relative w-full sm:w-auto">
       <select
-        class="bg-blue-2 text-gray-12 text-sm rounded-xl px-3 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors hover:bg-blue-3 appearance-none w-64"
+        class="bg-transparent border border-gray-6 text-gray-12 text-sm rounded-lg px-3 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors hover:bg-gray-3 appearance-none w-full sm:w-64"
         [value]="genre()"
         (change)="onFilterChange('genre', $any($event.target).value)"
       >
@@ -46,9 +64,9 @@
       <i class="ph ph-caret-down absolute z-10 right-2 top-1.5"></i>
     </div>
 
-    <div class="relative">
+    <div class="relative w-full sm:w-auto">
       <select
-        class="relative bg-blue-2 text-gray-12 text-sm rounded-xl px-3 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors hover:bg-blue-3 appearance-none w-64"
+        class="relative bg-transparent border border-gray-6 text-gray-12 text-sm rounded-lg px-3 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors hover:bg-gray-3 appearance-none w-full sm:w-64"
         [value]="year()"
         (change)="onFilterChange('year', $any($event.target).value)"
       >
@@ -63,16 +81,19 @@
 
     @if (hasActiveFilters()) {
     <button
-      class="ui-action-btn hover:bg-red-400/25 hover:text-white"
+      class="ui-ghost-btn"
+      data-size="icon"
       (click)="clearFilters()"
+      aria-label="Limpar filtros"
     >
       <i class="ph ph-x"></i>
-      Limpar filtros
     </button>
     }
   </div>
   } @if (!normalizedQuery() && !hasActiveFilters() && !isHypedUpcomingView()) {
-  <header class="my-auto flex flex-wrap gap-6 justify-between mb-6">
+  <header
+    class="my-auto flex flex-wrap gap-6 justify-between border-b border-gray-6 p-4"
+  >
     <div>
       <h1 class="text-3xl">Buscando um jogo?</h1>
 
@@ -83,15 +104,13 @@
     </div>
 
     <span
-      class="uppercase text-sm text-blue-12 bg-blue-2 px-2 py-1 rounded-lg border border-gray-6 w-fit h-fit self-end"
+      class="uppercase text-sm text-blue-11 bg-blue-3 px-2 py-1 rounded-full border border-gray-6 w-fit h-fit self-end"
     >
       Jogos em alta
     </span>
   </header>
 
-  <ul
-    class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-2 md:gap-4"
-  >
+  <ul class="grid grid-cols-2 gap-px sm:grid-cols-3 lg:grid-cols-4">
     @for (game of popularGames(); track game.$id) {
     <li class="flex flex-col">
       <ui-game-card [game]="game"></ui-game-card>
@@ -99,13 +118,13 @@
     }
   </ul>
   } @else if (!canSearch()) {
-  <p class="text-gray-11">
+  <p class="text-gray-11 p-4">
     Digite pelo menos {{ minSearchLength }} caracteres para iniciar a busca.
   </p>
   } @else if (activeSearch(); as search) { @if (search.loading()) {
   <ui-loading></ui-loading>
   } @else if (search.total() === 0) {
-  <p>
+  <p class="p-4 text-gray-11">
     @if (isHypedUpcomingView()) { Nenhum jogo hypado e ainda não lançado foi
     encontrado. } @else if (searchType() === 'games') { Nenhum jogo
     encontrado@if (normalizedQuery()) { para "{{ normalizedQuery() }}"}. } @else
@@ -113,9 +132,7 @@
     normalizedQuery() }}"}. }
   </p>
   } @else { @if (searchType() === 'games') {
-  <ul
-    class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-2 md:gap-4"
-  >
+  <ul class="grid grid-cols-2 gap-px sm:grid-cols-3 lg:grid-cols-4">
     @for (game of gameResults(); track game.$id) {
     <li class="flex flex-col">
       <ui-game-card
@@ -126,7 +143,7 @@
     }
   </ul>
   } @else {
-  <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+  <ul class="divide-y divide-gray-6">
     @for (player of playerResults(); track player.$id) {
     <li>
       <ui-profile-card [profile]="player"></ui-profile-card>
@@ -135,7 +152,9 @@
   </ul>
   }
 
-  <nav class="flex my-10 w-full justify-center gap-4 items-center">
+  <nav
+    class="flex py-4 border-t border-gray-6 w-full justify-center gap-4 items-center"
+  >
     <button
       (click)="search.prevPage()"
       [disabled]="search.page() <= 1"

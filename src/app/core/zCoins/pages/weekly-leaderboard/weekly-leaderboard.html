@@ -1,32 +1,33 @@
-<main class="w-full max-w-5xl mx-auto md:px-4 py-8 md:py-12">
-  <header class="mb-8 md:mb-10 max-md:px-4">
-    <h1 class="text-3xl md:text-4xl">Placar semanal</h1>
-    <p class="text-gray-11 mt-2">
-      Ranking dos jogadores com mais Z-Coins acumulados na semana.
-    </p>
+<main class="w-full">
+  <header class="px-4 py-8 md:py-10 border-b border-gray-6">
+    <div class="flex items-center gap-3">
+      <div
+        class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6"
+      >
+        <i class="ph ph-ranking text-[24px] text-blue-11"></i>
+      </div>
+
+      <div>
+        <h1 class="text-3xl md:text-4xl">Placar semanal</h1>
+        <p class="text-gray-11 mt-2">
+          Ranking dos jogadores com mais Z-Coins acumulados na semana.
+        </p>
+      </div>
+    </div>
   </header>
 
   @if (loading()) {
-  <section class="md:rounded-2xl bg-gray-2 p-6 flex items-center gap-4">
-    <div
-      class="h-12 w-12 rounded-full border-4 border-blue-4 border-t-blue-9 animate-spin"
-    ></div>
-    <div>
-      <div class="text-lg font-medium">Carregando placar...</div>
-      <div class="text-sm text-gray-11">
-        Buscando os dados mais recentes das Z-Coins.
-      </div>
+  <section class="p-6">
+    <ui-loading fallback="Carregando placar..."></ui-loading>
+    <div class="text-center text-sm text-gray-11 -mt-2">
+      Buscando os dados mais recentes das Z-Coins.
     </div>
   </section>
   } @else if (error()) {
-  <section
-    class="md:rounded-2xl border border-red-500/30 bg-red-500/8 p-6 text-red-11"
-  >
-    {{ error() }}
-  </section>
+  <section class="px-4 py-4 border">{{ error() }}</section>
   } @else if (leaderboard(); as board) {
-  <section class="grid gap-4 lg:grid-cols-[320px_1fr]">
-    <article class="md:rounded-2xl bg-gray-2 p-4 flex flex-col gap-4 h-fit">
+  <section class="divide-y divide-gray-6">
+    <article class="px-4 py-4 flex flex-row justify-between items-center">
       <div class="flex items-center gap-3">
         <img
           src="/animated_z_coin.gif"
@@ -41,28 +42,14 @@
         </div>
       </div>
 
-      <div class="rounded-2xl bg-gray-1 p-4 text-sm text-gray-11">
-        O placar semanal é atualizado a cada 15 minutos.
-        <div class="mt-3 flex flex-col gap-1 text-gray-10">
-          <span>Próxima sincronização</span>
-          <strong class="text-gray-12"
-            >{{ formatDate(board.nextSyncAt) }}</strong
-          >
-        </div>
-      </div>
-
-      <div class="rounded-2xl bg-gray-1 p-4 text-sm text-gray-11">
-        {{ resetsInString }}
-      </div>
+      <div class="text-xs text-gray-11">{{ resetsInString }}</div>
     </article>
 
-    <ol
-      class="flex flex-col divide-y divide-gray-6 bg-gray-2 h-fit md:rounded-2xl overflow-hidden"
-    >
+    <ol class="flex flex-col divide-y divide-gray-6 h-fit">
       @for (leader of board.leaders; track leader.userId) {
       <li
         class="p-4 flex items-center gap-4"
-        [class.bg-blue-2]="isCurrentUser(leader.userId)"
+        [class.bg-blue-3]="isCurrentUser(leader.userId)"
       >
         <div
           class="w-12 h-12 shrink-0 rounded-full text-blue-12 bg-blue-4 flex items-center justify-center font-display text-xl overflow-hidden"
@@ -107,6 +94,10 @@
       </li>
       }
     </ol>
+
+    <footer class="p-4 text-sm text-gray-11 text-center">
+      <span>Próxima sincronização {{ formatDate(board.nextSyncAt) }}</span>
+    </footer>
   </section>
   }
 </main>

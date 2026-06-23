@@ -9,6 +9,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { ModalTriggerDirective } from './modal-trigger.directive';
+import { UiLoading } from '../loading';
 
 @Component({
   selector: 'ui-modal',
@@ -24,11 +25,11 @@ import { ModalTriggerDirective } from './modal-trigger.directive';
 
     <dialog
       #modal
-      class="self-center mx-auto w-[90%] max-h-[60%] overflow-hidden max-w-lg p-6 rounded-2xl bg-gray-2 text-gray-12"
+      class="self-center mx-auto w-[90%] max-h-[70%] overflow-hidden max-w-lg p-6 rounded-lg bg-gray-1 text-gray-12 border border-gray-6"
     >
       <header class="w-full text-start">
         <h5 class="text-2xl">{{ title() }}</h5>
-        <p>{{ description() }}</p>
+        <p class="text-gray-11">{{ description() }}</p>
       </header>
 
       <ng-content></ng-content>
@@ -44,7 +45,7 @@ import { ModalTriggerDirective } from './modal-trigger.directive';
           (click)="handleSubmit()"
         >
           @if (loading()) {
-            <i class="ph ph-spinner animate-spin"></i>
+            <ui-loading [inline]="true" size="sm"></ui-loading>
           } @else {
             {{ actionLabel() }}
           }
@@ -57,7 +58,7 @@ import { ModalTriggerDirective } from './modal-trigger.directive';
       background-color: hsla(0 0% 0% / 0.8);
     }
   `,
-  imports: [],
+  imports: [UiLoading],
 })
 export class UiModal {
   isOpen = model<boolean | null>(null);

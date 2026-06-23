@@ -1,16 +1,14 @@
 @if (controller.initialLoading()) {
 <ui-loading></ui-loading>
 } @else if (controller.entries(); as games) {
-<ul
-  class="grid grid-cols-3 md:grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-2"
->
+<ul class="grid grid-cols-4 gap-px">
   @for (entry of controller.entries(); track entry.$id) {
   <li class="flex flex-col">
     <ui-game-card [game]="entry.game"></ui-game-card>
   </li>
   } @empty {
   <li
-    class="p-10 flex flex-col items-center justify-center text-center border-2 border-gray-6 border-dashed rounded-2xl col-span-10 aspect-square"
+    class="p-10 flex flex-col items-center justify-center text-center border-2 border-gray-6 border-dashed col-span-10 aspect-square"
   >
     <i class="ph ph-game-controller text-[32px] mb-2"></i>
     <h1 class="text-center text-2xl max-w-xl">Sem registros</h1>
@@ -22,20 +20,21 @@
   }
 </ul>
 @if (controller.hasMore()) {
-<footer class="w-full flex justify-center mt-10">
-  <button class="ui-primary-btn" (click)="controller.loadEntries()">
+<footer class="w-full flex justify-center border-y border-gray-6">
+  <button
+    class="cursor-pointer hover:bg-gray-3 px-4 py-2 w-full"
+    (click)="controller.loadEntries()"
+  >
     Carregar mais
   </button>
 </footer>
 } } @else {
-<div class="flex flex-col items-center max-md:p-10 h-full justify-center">
+<div class="flex flex-col items-center max-md:p-10 h-full justify-center border border-dashed border-gray-6 p-10 text-center">
   <i class="ph-fill ph-game-controller text-[56px] text-blue-11 mb-4"></i>
-  <h1
-    class="text-center text-4xl md:text-5xl text-transparent bg-clip-text bg-linear-to-r to-blue-12 from-blue-11 max-w-xl font-bold pb-6"
-  >
+  <h1 class="text-center text-2xl max-w-xl pb-4">
     Cada jogo tem uma história, comece a sua.
   </h1>
-  <p class="text-xl text-center max-w-md mt-2">
+  <p class="text-gray-11 text-center max-w-md mt-2">
     Busque por um jogo
     <span class="underline underline-offset-4 decoration-blue-9"
       >e crie um registro</span

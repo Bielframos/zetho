@@ -1,12 +1,12 @@
-<div class="space-y-4">
-  <header class="bg-gray-2 rounded-2xl p-4 md:p-6">
+<div class="divide-y divide-gray-6">
+  <header class="p-4 md:p-6">
     <h2 class="text-xl md:text-2xl">Perfis</h2>
     <p class="text-gray-11">
       Listagem administrativa de perfis com ações em lote e por perfil.
     </p>
   </header>
 
-  <section class="bg-gray-2 rounded-2xl p-4 md:p-6">
+  <section class="p-4 md:p-6">
     <h3 class="text-lg">Ações em lote</h3>
     <p class="text-sm text-gray-11 mt-1">Executa ações para todos os perfis.</p>
 
@@ -29,7 +29,7 @@
     </div>
 
     @if (batchActionResult(); as batchResult) {
-    <div class="mt-4 rounded-lg p-3 bg-blue-1">
+    <div class="mt-4 rounded-lg border border-gray-6 p-3 bg-blue-1">
       <p class="text-sm text-gray-11">
         Auditados: {{batchResult.auditedProfiles}} | Divergentes:
         {{batchResult.mismatchedProfiles}} | Corrigidos:
@@ -45,7 +45,7 @@
     }
   </section>
 
-  <section class="bg-gray-2 rounded-2xl p-4 md:p-6">
+  <section class="p-4 md:p-6">
     <div class="flex flex-wrap items-center justify-between gap-3">
       <h3 class="text-lg">Lista de perfis</h3>
       <div class="flex items-center gap-2">
@@ -94,7 +94,9 @@
         <tbody>
           @if (listLoading()) {
           <tr>
-            <td colspan="8" class="py-4 text-gray-11">Carregando perfis...</td>
+            <td colspan="8" class="py-4">
+              <ui-loading fallback="Carregando perfis..."></ui-loading>
+            </td>
           </tr>
           } @else { @for (profile of profiles(); track profile.$id) {
           <tr class="border-b border-gray-6/60">

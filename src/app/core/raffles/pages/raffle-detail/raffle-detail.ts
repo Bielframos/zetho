@@ -12,6 +12,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map, startWith } from 'rxjs/operators';
 import { AuthStore } from '../../../auth/auth.store';
 import { NotificationStore } from '../../../notifications/notification.store';
+import { UiLoading } from '../../../../shared/ui/loading';
 import type { InviteBonusResponse } from '../../../userProfiles/userProfile.types';
 import {
   BuyTicketsResponse,
@@ -23,7 +24,7 @@ import { RafflesService } from '../../raffles.service';
 @Component({
   selector: 'app-raffle-detail-page',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, UiLoading],
   templateUrl: './raffle-detail.html',
 })
 export class RaffleDetailPage {
@@ -90,10 +91,10 @@ export class RaffleDetailPage {
       await this.rafflesService.loadRaffleById(raffleId);
       this.raffle.set(this.rafflesService.currentRaffle());
 
-      const entriesRes = await this.rafflesService.getEntries(raffleId);
-      this.entries.set(entriesRes.entries);
-
       if (this.authStore.isAuthenticated()) {
+        const entriesRes = await this.rafflesService.getEntries(raffleId);
+        this.entries.set(entriesRes.entries);
+
         void this.authStore
           .getInviteBonus()
           .then((b) => this.userBonus.set(b))
@@ -128,6 +129,14 @@ export class RaffleDetailPage {
   async buyTickets() {
     const raffleId = this.raffleId();
     if (!raffleId) return;
+
+    if (!this.authStore.isAuthenticated()) {
+      this.notification.show({
+        message: 'Entre na sua conta para participar do sorteio.',
+        type: 'info',
+      });
+      return;
+    }
 
     this.ticketCountControl.markAsTouched();
     if (this.ticketCountControl.invalid || this.buyLoading()) return;
