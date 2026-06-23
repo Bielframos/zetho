@@ -15,6 +15,7 @@ import { UiGameStats } from './modules/game-stats';
 import { UiZEntryActions } from './modules/z-entry-actions';
 import { UiGameRating } from './modules/game-rating';
 import { UiGameReviews } from './modules/game-reviews';
+import { UiLoading } from '../../../../shared/ui/loading';
 
 @Component({
   selector: 'app-game',
@@ -31,6 +32,7 @@ import { UiGameReviews } from './modules/game-reviews';
     UiGameRaffles,
     UiGameRating,
     UiGameReviews,
+    UiLoading,
   ],
   templateUrl: './game.html',
 })
@@ -52,7 +54,9 @@ export class GamePage {
   scrollToReviews() {
     this.setActiveTab('reviews');
     setTimeout(() => {
-      document.getElementById('tabs-section')?.scrollIntoView({ behavior: 'smooth' });
+      document
+        .getElementById('tabs-section')
+        ?.scrollIntoView({ behavior: 'smooth' });
     }, 50);
   }
 

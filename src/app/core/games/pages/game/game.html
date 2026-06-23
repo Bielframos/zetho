@@ -1,4 +1,7 @@
-<main class="isolate relative min-h-dvh w-full">
+<main
+  class="isolate relative mx-auto min-h-dvh w-full max-w-3xl border-gray-6"
+  [class.md:border-x]="!authStore.isAuthenticated()"
+>
   <!-- Hero background -->
   @if (controller.heroImage()) {
   <div
@@ -25,21 +28,28 @@
   }
 
   <div class="relative z-0">
-    @if (authStore.isAuthenticated()) {
+    @if (authStore.isAuthenticated() && controller.game()) {
     <ui-game-actions [game]="controller.game()"></ui-game-actions>
     }
 
     <ui-game-header [game]="controller.game()"></ui-game-header>
   </div>
 
-  @if (controller.game()) {
+  @if (!controller.game()) {
+  <div class="border-y border-gray-6">
+    <ui-loading
+      fallback="Carregando informações do jogo..."
+      variant="subtle"
+    ></ui-loading>
+  </div>
+  } @else {
   <section class="animate-fade-in-slide" style="animation-delay: 400ms">
     @if ( controller.game() && authStore.isAuthenticated() &&
     !controller.isUpcomingRelease() ) {
     <ui-z-entry-actions></ui-z-entry-actions>
     } @else if (controller.game() && authStore.isAuthenticated()) {
     <div
-      class="flex w-full flex-col items-center p-6 text-center animate-fade-in-slide border-b border-gray-6"
+      class="flex w-full flex-col items-center p-6 text-center animate-fade-in-slide border-t-8 border-b border-gray-6"
     >
       <i class="ph ph-calendar-plus text-[40px] mb-2"></i>
       <h3 class="mb-1 text-lg">Jogo ainda não lançado</h3>
@@ -50,7 +60,7 @@
     </div>
     } @else {
     <div
-      class="flex w-full flex-col items-center p-6 text-center animate-fade-in-slide border-b border-gray-6"
+      class="flex w-full flex-col items-center p-6 text-center animate-fade-in-slide border-t-8 border-b border-gray-6"
     >
       <i class="ph ph-game-controller text-[40px] mb-2"></i>
       <h3 class="mb-1 text-lg">Acompanhar seus jogos</h3>
@@ -121,10 +131,19 @@
     } @else if (activeTab() === 'reviews') {
     <ui-game-reviews class="block animate-fade-in-slide"></ui-game-reviews>
     } @if (controller.similarGames(); as similarGames) {
-    <hr class="border-4 border-gray-6" />
-    <h3 class="my-4 text-center text-gray-11">Talvez você goste</h3>
-    <hr class="border border-gray-6" />
-    <ul class="grid grid-cols-3 gap-1">
+    <header
+      class="flex items-center gap-3 px-4 py-4 border-t-8 border-b border-gray-6"
+    >
+      <div
+        class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6"
+      >
+        <i class="ph ph-game-controller text-[24px] text-blue-11"></i>
+      </div>
+      <div>
+        <h3 class="text-2xl">Talvez você goste</h3>
+      </div>
+    </header>
+    <ul class="grid grid-cols-3 gap-px">
       @for (game of similarGames; track $index) {
       <li>
         <ui-game-card

@@ -1,21 +1,23 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UiGameCard } from '../../../../../shared/ui/game-card/game-card';
-import { UiSkeleton } from '../../../../../shared/ui/skeleton';
 import { GameRow } from '../../../game.types';
+import { GameStore } from '../../../game.store';
 
 @Component({
   selector: 'ui-game-header',
   standalone: true,
   template: `
     <header class="flex flex-col items-center text-center pt-8 md:pt-10">
-      <div class="mx-auto w-fit shadow-2xl shadow-gray-1/40">
-        <ui-game-card
-          [game]="game()!"
-          [width]="240"
-          readonlyMode
-        ></ui-game-card>
-      </div>
+      @if (displayGame()) {
+        <div class="mx-auto w-fit shadow-2xl shadow-gray-1/40">
+          <ui-game-card
+            [game]="displayGame()!"
+            [width]="240"
+            readonlyMode
+          ></ui-game-card>
+        </div>
+      }
 
       <div
         class="mt-6 flex w-full max-w-3xl flex-col items-center justify-center gap-2 max-md:border-b-8 border-gray-6"
@@ -136,26 +138,17 @@ import { GameRow } from '../../../game.types';
               </div>
             </div>
           </div>
-        } @else {
-          <ui-skeleton [height]="40" [width]="70"></ui-skeleton>
-          <ui-skeleton [height]="40" [width]="20"></ui-skeleton>
-
-          <div class="flex flex-col gap-1 w-full max-sm:items-center">
-            <ui-skeleton [height]="16" [width]="60"></ui-skeleton>
-            <ui-skeleton [height]="16" [width]="70"></ui-skeleton>
-            <ui-skeleton [height]="16" [width]="60"></ui-skeleton>
-            <ui-skeleton [height]="16" [width]="55"></ui-skeleton>
-          </div>
-
-          <ui-skeleton [height]="40" [width]="20"></ui-skeleton>
         }
       </div>
     </header>
   `,
-  imports: [UiGameCard, UiSkeleton, RouterLink],
+  imports: [UiGameCard, RouterLink],
 })
 export class UiGameHeader {
+  private gameStore = inject(GameStore);
+
   game = input<GameRow | null>();
+  displayGame = computed(() => this.game() ?? this.gameStore.currentGame());
 
   showGameInfo = signal(false);
   showOriginalSummary = signal(false);

@@ -55,15 +55,17 @@ import { CommentsController } from '../../../../comments/comments.controller';
         </div>
       </div>
 
-      @for (comment of controller.rootComments(); track comment.$id) {
-        <app-comment-item
-          [comment]="comment"
-          [replies]="controller.childComments()[comment.$id]?.comments || []"
-          [isLoadingReplies]="controller.loadingReplies()[comment.$id]"
-          (loadReplies)="controller.loadReplies(comment.$id)"
-          (reply)="controller.addComment($event, comment.$id, 1)"
-        />
-      }
+      <div class="px-4">
+        @for (comment of controller.rootComments(); track comment.$id) {
+          <app-comment-item
+            [comment]="comment"
+            [replies]="controller.childComments()[comment.$id]?.comments || []"
+            [isLoadingReplies]="controller.loadingReplies()[comment.$id]"
+            (loadReplies)="controller.loadReplies(comment.$id)"
+            (reply)="controller.addComment($event, comment.$id, 1)"
+          />
+        }
+      </div>
 
       @if (controller.hasMore()) {
         <footer class="w-full flex justify-center">
