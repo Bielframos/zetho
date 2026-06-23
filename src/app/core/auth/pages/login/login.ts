@@ -10,7 +10,7 @@ import { AuthStore } from '../../auth.store';
   imports: [UiInput, FormsModule, RouterLink, UiLoading],
   templateUrl: './login.html',
   host: {
-    class: 'h-full',
+    class: 'flex min-h-full w-full',
   },
 })
 export class LoginPage {

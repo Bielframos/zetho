@@ -23,7 +23,7 @@ import {
   imports: [UiInput, ReactiveFormsModule, RouterLink, UiLoading],
   templateUrl: './register.html',
   host: {
-    class: 'h-full',
+    class: 'flex min-h-full w-full',
   },
 })
 export class RegisterPage {
