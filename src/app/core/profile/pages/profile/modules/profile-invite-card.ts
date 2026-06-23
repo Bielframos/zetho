@@ -8,7 +8,7 @@ import { UiLoading } from '../../../../../shared/ui/loading';
   standalone: true,
   imports: [UiLoading],
   template: `
-    <section class="border-t border-gray-6 p-4">
+    <section class="p-4">
       @if (authStore.profile()?.inviteCode; as code) {
         <div
           class="flex items-center gap-2 border border-gray-6 rounded-lg px-3 py-2"
