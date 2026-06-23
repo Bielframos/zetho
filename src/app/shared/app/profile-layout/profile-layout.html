@@ -12,7 +12,7 @@
         <i class="ph ph-gear text-[16px]"></i>
       </a>
     </div>
-    } @else {
+    } @else if (authStore.isAuthenticated()) {
     <div class="flex justify-end w-full pt-2">
       @if (profileStore.current()) { @if (this.profile && 'connection' in
       this.profile && this.profile.connection) {

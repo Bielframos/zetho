@@ -78,7 +78,15 @@ export class App {
   }
 
   usesAppShell() {
+    return this.usesAuthenticatedAppShell() || this.usesPublicAppShell();
+  }
+
+  usesAuthenticatedAppShell() {
     return this.authStore.isAuthenticated() && !this.isAppShellExcludedRoute();
+  }
+
+  usesPublicAppShell() {
+    return !this.authStore.isAuthenticated() && !this.isAppShellExcludedRoute();
   }
 
   isAuthRoute() {
@@ -134,7 +142,6 @@ export class App {
       '/recuperar-senha',
       '/redefinir-senha',
       '/verificacao',
-      '/sem-conexao',
     ];
 
     return (

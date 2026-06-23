@@ -11,6 +11,7 @@
       </a>
 
       <nav class="mt-8 flex flex-col gap-1">
+        @if (authStore.user()) {
         <a
           routerLink="/dashboard"
           routerLinkActive="bg-gray-3 text-gray-12"
@@ -20,6 +21,15 @@
           <i class="ph ph-house"></i>
           <span>Dashboard</span>
         </a>
+        } @else {
+        <a
+          routerLink="/"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-house"></i>
+          <span>Início</span>
+        </a>
+        }
 
         <a
           routerLink="/zcoins/leaderboard/weekly"
@@ -40,6 +50,7 @@
           <span>Sorteios</span>
         </a>
 
+        @if (authStore.user()) {
         <a
           [routerLink]="profileRoute()"
           routerLinkActive="bg-gray-3 text-gray-12"
@@ -48,8 +59,15 @@
           <i class="ph ph-user-circle"></i>
           <span>Meu perfil</span>
         </a>
-
-        @if (authStore.isAdmin()) {
+        } @else {
+        <a
+          routerLink="/entrar"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-sign-in"></i>
+          <span>Entrar</span>
+        </a>
+        } @if (authStore.isAdmin()) {
         <a
           routerLink="/admin"
           routerLinkActive="bg-gray-3 text-gray-12"
@@ -66,6 +84,7 @@
       <app-search-input
         name="desktopShellSearchInput"
         class="hidden lg:block"
+        variant="appShell"
         placeholder="Busque um jogo ou player"
         (search)="onSearch($event)"
         (focusSearch)="onSearchInputFocus()"
@@ -83,8 +102,8 @@
     >
       @if (isProfileRoute() && profileSidebarProfile; as profile) {
       <div class="rounded-lg border border-gray-6">
-        @if (!profileStore.itsMe()) { @if (profile && 'connection' in profile &&
-        profile.connection) {
+        @if (authStore.isAuthenticated() && !profileStore.itsMe()) { @if
+        (profile && 'connection' in profile && profile.connection) {
         <button
           class="flex items-center gap-2 justify-center w-full px-4 py-2 hover:bg-gray-3 transition-colors border-b border-gray-6"
           (click)="profileStore.followOrUnfollow()"
@@ -176,7 +195,7 @@
           ></ng-container>
         </div>
       </div>
-      } @else {
+      } @else if (authStore.user()) {
       <div class="rounded-lg border border-gray-6">
         <div class="flex items-center gap-3 px-4 mt-4">
           <a
@@ -204,9 +223,30 @@
           <app-z-coin-balance></app-z-coin-balance>
         </div>
       </div>
+      } @else {
+      <div class="rounded-lg border border-gray-6 p-4">
+        <p class="text-sm text-gray-11">
+          Entre para montar seu perfil, seguir jogadores e salvar jogos na sua
+          coleção.
+        </p>
+        <div class="mt-4 flex flex-col gap-2">
+          <a routerLink="/registrar" class="ui-primary-btn">Criar conta</a>
+          <a routerLink="/entrar" class="ui-secondary-btn">Entrar</a>
+        </div>
+      </div>
       }
 
       <nav class="mt-4 flex flex-col gap-1">
+        @if (authStore.user()) {
+        <a
+          routerLink="/minha-conta"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-gear"></i>
+          <span>Minha conta</span>
+        </a>
+        }
         <a
           routerLink="/changelog"
           routerLinkActive="bg-gray-3 text-gray-12"
@@ -229,6 +269,7 @@
       [class.grid-cols-5]="!authStore.isAdmin()"
       [class.grid-cols-6]="authStore.isAdmin()"
     >
+      @if (authStore.user()) {
       <a
         routerLink="/dashboard"
         routerLinkActive="bg-gray-3 text-gray-12"
@@ -238,6 +279,15 @@
       >
         <i class="ph ph-house"></i>
       </a>
+      } @else {
+      <a
+        routerLink="/"
+        class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        aria-label="Início"
+      >
+        <i class="ph ph-house"></i>
+      </a>
+      }
 
       <a
         routerLink="/buscar"
@@ -266,6 +316,7 @@
         <i class="ph ph-gift"></i>
       </a>
 
+      @if (authStore.user()) {
       <a
         [routerLink]="profileRoute()"
         routerLinkActive="bg-gray-3 text-gray-12"
@@ -274,8 +325,15 @@
       >
         <i class="ph ph-user-circle"></i>
       </a>
-
-      @if (authStore.isAdmin()) {
+      } @else {
+      <a
+        routerLink="/entrar"
+        class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        aria-label="Entrar"
+      >
+        <i class="ph ph-sign-in"></i>
+      </a>
+      } @if (authStore.isAdmin()) {
       <a
         routerLink="/admin"
         routerLinkActive="bg-gray-3 text-gray-12"
@@ -290,17 +348,17 @@
 </div>
 } @else {
 <div class="flex min-h-dvh flex-col">
-  <nav class="relative z-10 w-full px-4 pt-4 md:px-10">
+  <nav class="relative z-10 w-full py-2 px-4 md:px-10 border-b border-gray-6">
     <div class="flex items-center justify-between gap-4">
       <a [routerLink]="authStore.isAuthenticated() ? '/dashboard' : '/'">
         <h3 class="font-display text-[40px] leading-none">zetho</h3>
       </a>
 
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
         @if (!isAuthRoute() && !isOfflineRoute()) {
         <app-z-coin-balance></app-z-coin-balance>
 
-        <div class="hidden items-center gap-4 md:flex">
+        <div class="hidden items-center gap-2 md:flex">
           <div class="w-72">
             <app-search-input
               name="desktopSearchInput"
@@ -323,7 +381,11 @@
         </a>
         } @else {
         <a routerLink="/registrar" class="ui-link">Criar conta</a>
-        <a routerLink="/entrar" class="ui-link bg-blue-9" data-size="icon">
+        <a
+          routerLink="/entrar"
+          class="ui-link bg-blue-9 text-white"
+          data-size="icon"
+        >
           <i class="ph ph-sign-in"></i>
         </a>
         }
@@ -342,13 +404,13 @@
     }
   </nav>
 
-  <div class="route-transition-scope flex min-h-fit flex-1 flex-col">
+  <div class="route-transition-scope flex min-h-0 flex-1 flex-col">
     <router-outlet />
   </div>
 
   @if (!isOfflineRoute()) {
   <footer
-    class="z-20 flex w-full items-center justify-between border-t border-gray-2 px-6 py-4 md:px-10"
+    class="z-20 flex w-full items-center justify-between border-t border-gray-6 px-6 py-4 md:px-10"
   >
     <div>
       <h6 class="font-display text-4xl">Zetho</h6>
