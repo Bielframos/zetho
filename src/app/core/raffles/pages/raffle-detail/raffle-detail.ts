@@ -91,10 +91,10 @@ export class RaffleDetailPage {
       await this.rafflesService.loadRaffleById(raffleId);
       this.raffle.set(this.rafflesService.currentRaffle());
 
-      const entriesRes = await this.rafflesService.getEntries(raffleId);
-      this.entries.set(entriesRes.entries);
-
       if (this.authStore.isAuthenticated()) {
+        const entriesRes = await this.rafflesService.getEntries(raffleId);
+        this.entries.set(entriesRes.entries);
+
         void this.authStore
           .getInviteBonus()
           .then((b) => this.userBonus.set(b))
@@ -129,6 +129,14 @@ export class RaffleDetailPage {
   async buyTickets() {
     const raffleId = this.raffleId();
     if (!raffleId) return;
+
+    if (!this.authStore.isAuthenticated()) {
+      this.notification.show({
+        message: 'Entre na sua conta para participar do sorteio.',
+        type: 'info',
+      });
+      return;
+    }
 
     this.ticketCountControl.markAsTouched();
     if (this.ticketCountControl.invalid || this.buyLoading()) return;

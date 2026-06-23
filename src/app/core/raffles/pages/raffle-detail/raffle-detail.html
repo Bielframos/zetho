@@ -10,21 +10,21 @@
   </header>
 
   @if (loading()) {
-  <section class="border-t-8 border-b border-gray-6 px-4 py-8">
+  <section class="border-t border-b border-gray-6 px-4 py-8">
     <ui-loading [inline]="true" fallback="Carregando sorteio..."></ui-loading>
   </section>
   } @else if (loadError()) {
   <section
-    class="border-t-8 border-b border-red-700/40 bg-red-900/20 px-4 py-4 text-red-200"
+    class="border-t border-b border-red-700/40 bg-red-900/20 px-4 py-4 text-red-200"
   >
     {{ loadError() }}
   </section>
   } @else if (raffle(); as r) {
   <section
-    class="grid gap-px border-t-8 border-b-8 border-gray-6 lg:grid-cols-[minmax(0,1fr)_20rem]"
+    class="grid gap-px border-t border-b-8 border-gray-6 lg:grid-cols-[minmax(0,1fr)_20rem]"
   >
     <article
-      class="flex flex-col items-center justify-center border-r border-gray-6"
+      class="flex flex-col items-center justify-center border-r border-gray-6 py-6"
     >
       @if (gameCover(); as cover) {
       <img [src]="cover" [alt]="gameName()" class="w-40 object-cover" />
@@ -126,7 +126,7 @@
       </div>
     </article>
 
-    <aside class="bg-gray-1 p-4 md:p-6 lg:sticky lg:top-0">
+    <aside class="bg-gray-1 p-4 md:p-6 lg:sticky lg:top-0 flex">
       @if (r.active && authStore.isAuthenticated()) {
       <div class="flex flex-col gap-5">
         <header>
@@ -215,7 +215,7 @@
         </button>
       </div>
       } @else if (!r.active) {
-      <div class="flex flex-col items-center py-8 text-center">
+      <div class="flex flex-col my-auto items-center py-8 text-center">
         <i class="ph ph-lock-simple text-[40px] text-blue-11"></i>
         <h2 class="mt-3 text-lg">Sorteio encerrado</h2>
         <p class="mt-2 text-sm font-light text-gray-11">
@@ -223,7 +223,7 @@
         </p>
       </div>
       } @else {
-      <div class="flex flex-col items-center py-8 text-center">
+      <div class="flex flex-col my-auto items-center py-8 text-center">
         <i class="ph ph-user-circle text-[40px] text-blue-11"></i>
         <h2 class="mt-3 text-lg">Entre para participar</h2>
         <p class="mt-2 text-sm font-light text-gray-11">
