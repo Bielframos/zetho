@@ -5,7 +5,7 @@ import { ZStatsRepository } from './zStats.repository';
 export class ZStatsService {
   private readonly zStatsRepository = inject(ZStatsRepository);
 
-  getTrendingGames(params: { total: number } = { total: 5 }) {
+  getTrendingGames(params: { total: number } = { total: 6 }) {
     return this.zStatsRepository.listTrendingGames(params);
   }
 }

@@ -12,6 +12,7 @@ import { GenresCacheService } from '../../../games/genres-cache.service';
 import { SeoService } from '../../../seo/seo.service';
 import { ZStatsService } from '../../../zStats/zStats.service';
 import { SearchController } from '../../search.controller';
+import { AuthStore } from '../../../auth/auth.store';
 
 function buildYearOptions(): string[] {
   const currentYear = new Date().getFullYear();
@@ -29,6 +30,7 @@ function buildYearOptions(): string[] {
   templateUrl: './search.html',
 })
 export class SearchPage {
+  readonly authStore = inject(AuthStore);
   readonly minSearchLength = 3;
   readonly years = buildYearOptions();
 

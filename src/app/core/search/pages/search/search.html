@@ -1,4 +1,7 @@
-<main class="w-full mx-auto">
+<main
+  class="mx-auto w-full max-w-3xl border-gray-6"
+  [class.md:border-x]="!authStore.isAuthenticated()"
+>
   <div class="border-b border-gray-6 lg:hidden">
     <label class="relative block">
       <span class="sr-only">Buscar jogos</span>
@@ -89,7 +92,7 @@
   </div>
   } @if (!normalizedQuery() && !hasActiveFilters() && !isHypedUpcomingView()) {
   <header
-    class="my-auto flex flex-wrap gap-6 justify-between border-b border-gray-6 p-4 mb-6"
+    class="my-auto flex flex-wrap gap-6 justify-between border-b border-gray-6 p-4"
   >
     <div>
       <h1 class="text-3xl">Buscando um jogo?</h1>
