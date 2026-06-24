@@ -4,7 +4,7 @@
     class="mx-auto grid min-h-dvh w-full max-w-[1180px] grid-cols-1 lg:grid-cols-[15rem_minmax(0,1fr)_18rem]"
   >
     <aside
-      class="sticky top-0 hidden h-dvh border-r border-gray-4 px-4 py-4 lg:block"
+      class="sticky top-0 hidden h-dvh overflow-y-auto discreet-scrollbar border-r border-gray-4 px-4 py-4 lg:block"
     >
       <a routerLink="/dashboard" class="inline-flex">
         <h3 class="font-display text-[32px] leading-none px-4">zetho</h3>
@@ -98,7 +98,7 @@
     </main>
 
     <aside
-      class="sticky top-0 hidden h-dvh overflow-y-auto border-l border-gray-4 px-4 py-5 lg:block"
+      class="sticky top-0 hidden h-dvh overflow-y-auto discreet-scrollbar border-l border-gray-4 px-4 py-5 lg:block"
     >
       @if (isProfileRoute() && profileSidebarProfile; as profile) {
       <div class="rounded-lg border border-gray-6">
