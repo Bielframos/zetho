@@ -188,6 +188,29 @@
   background: linear-gradient(90deg, var(--color-blue-7), var(--color-blue-9));
 }
 
+.discreet-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gray-6) transparent;
+}
+
+.discreet-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.discreet-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.discreet-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-gray-6);
+  border-radius: 9999px;
+}
+
+.discreet-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-8);
+}
+
 /* Componentes */
 @layer components {
   /* Link */
