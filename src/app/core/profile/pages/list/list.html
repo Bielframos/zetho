@@ -3,10 +3,42 @@
     <div>
       <h3 class="text-2xl max-w-xl">{{controller.list()?.title}}</h3>
       <p class="text-gray-11">{{controller.list()?.description}}</p>
+      @if (socialState()) {
+      <div class="mt-2 flex items-center gap-4 text-sm text-gray-11">
+        <span>{{ controller.list()?.itemCount || 0 }} jogos</span>
+        <span>{{ socialState()?.likeCount || 0 }} curtidas</span>
+        <span>{{ socialState()?.saveCount || 0 }} salvos</span>
+      </div>
+      }
     </div>
-    @if (itsMe()) {
-    <app-list-menu></app-list-menu>
-    }
+    <div class="flex items-start gap-2">
+      @if (!itsMe()) {
+      <button
+        type="button"
+        class="h-9 w-9 rounded-full border border-gray-6 hover:bg-gray-3"
+        [class.text-red-9]="socialState()?.likedByMe"
+        (click)="toggleLike()"
+        aria-label="Curtir lista"
+      >
+        <i
+          [class]="socialState()?.likedByMe ? 'ph-fill ph-heart' : 'ph ph-heart'"
+        ></i>
+      </button>
+      <button
+        type="button"
+        class="h-9 w-9 rounded-full border border-gray-6 hover:bg-gray-3"
+        [class.text-blue-9]="socialState()?.savedByMe"
+        (click)="toggleSave()"
+        aria-label="Salvar lista"
+      >
+        <i
+          [class]="socialState()?.savedByMe ? 'ph-fill ph-bookmark-simple' : 'ph ph-bookmark-simple'"
+        ></i>
+      </button>
+      } @else {
+      <app-list-menu></app-list-menu>
+      }
+    </div>
   </header>
   @if (controller.loading()) {
   <ui-loading></ui-loading>

@@ -1,0 +1,223 @@
+<div class="divide-y divide-gray-6">
+  <header class="p-4 md:p-6">
+    <h2 class="text-xl md:text-2xl">Temas</h2>
+    <p class="text-gray-11">Crie temas para compra e uso nos perfis.</p>
+  </header>
+
+  <section class="p-4 md:p-6">
+    @if (successMessage) {
+    <div
+      class="mb-4 p-3 rounded-lg border border-green-700/40 bg-green-900/20 text-green-200 text-sm"
+    >
+      {{ successMessage }}
+    </div>
+    } @if (errorMessage) {
+    <div
+      class="mb-4 p-3 rounded-lg border border-red-700/40 bg-red-900/20 text-red-200 text-sm"
+    >
+      {{ errorMessage }}
+    </div>
+    }
+
+    <form
+      [formGroup]="themeForm"
+      (ngSubmit)="onSubmit()"
+      class="flex flex-col gap-6"
+    >
+      <section class="flex flex-col gap-4">
+        <div>
+          <h3 class="text-lg">Dados do tema</h3>
+          <p class="text-sm text-gray-11 mt-1">
+            Defina identificação, tipo e custo em Z-Coins.
+          </p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <ui-input
+              label="Nome do tema"
+              id="themeName"
+              type="text"
+              placeholder="Ex.: Cyberpunk 2077"
+              variant="secondary"
+              [formControl]="themeForm.controls.name"
+            />
+            @if (themeForm.controls.name.touched &&
+            themeForm.controls.name.invalid) {
+            <small class="text-red-300 px-4">Informe o nome do tema.</small>
+            }
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label for="themeType" class="text-sm text-gray-11 px-1">
+              Tipo de tema
+            </label>
+            <select
+              id="themeType"
+              formControlName="type"
+              class="rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors"
+            >
+              <option value="game">Jogo</option>
+              <option value="color">Cor base</option>
+            </select>
+          </div>
+
+          <div>
+            <ui-input
+              label="Preço (Z-Coins)"
+              id="themePrice"
+              type="number"
+              placeholder="100"
+              variant="secondary"
+              [formControl]="themeForm.controls.price"
+            />
+            @if (themeForm.controls.price.touched &&
+            themeForm.controls.price.invalid) {
+            <small class="text-red-300 px-4">Informe um preço válido.</small>
+            }
+          </div>
+        </div>
+      </section>
+
+      <section class="border-t border-gray-6 pt-6 flex flex-col gap-4">
+        <div>
+          <h3 class="text-lg">Imagem de fundo</h3>
+          <p class="text-sm text-gray-11 mt-1">
+            Imagem exibida na área visual do tema.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-[minmax(0,1fr)_192px] gap-4 items-start">
+          <label
+            for="themeImage"
+            class="flex min-h-28 cursor-pointer flex-col justify-center gap-2 rounded-lg border border-dashed border-gray-6 px-4 py-5 transition-colors hover:bg-gray-2"
+          >
+            <span class="flex items-center gap-2 text-gray-12">
+              <i class="ph ph-upload-simple text-lg"></i>
+              Selecionar imagem
+            </span>
+            <span class="text-sm text-gray-11">
+              PNG, JPG ou WEBP para o background do tema.
+            </span>
+            <input
+              id="themeImage"
+              type="file"
+              accept="image/*"
+              (change)="onFileSelected($event)"
+              class="sr-only"
+            />
+          </label>
+
+          <div
+            class="h-28 rounded-lg border border-gray-6 bg-gray-2 overflow-hidden flex items-center justify-center"
+          >
+            @if (imagePreview) {
+            <img
+              [src]="imagePreview"
+              alt="Preview"
+              class="w-full h-full object-cover"
+            />
+            } @else {
+            <span class="text-sm text-gray-11">Sem imagem</span>
+            }
+          </div>
+        </div>
+      </section>
+
+      <section class="border-t border-gray-6 pt-6 flex flex-col gap-4">
+        <div>
+          <h3 class="text-lg">Paleta de cores</h3>
+          <p class="text-sm text-gray-11 mt-1">
+            Configure as cores usadas na composição do perfil.
+          </p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <label class="flex flex-col gap-2">
+            <span class="text-sm text-gray-11 px-1">Fundo destaque</span>
+            <div class="flex items-center gap-3">
+              <input
+                type="color"
+                formControlName="backgroundColor"
+                class="h-10 w-10 rounded border border-gray-6 bg-transparent p-1"
+              />
+              <input
+                type="text"
+                formControlName="backgroundColor"
+                placeholder="#000000"
+                class="min-w-0 flex-1 rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors"
+              />
+            </div>
+          </label>
+
+          <label class="flex flex-col gap-2">
+            <span class="text-sm text-gray-11 px-1">Primária</span>
+            <div class="flex items-center gap-3">
+              <input
+                type="color"
+                formControlName="primaryColor"
+                class="h-10 w-10 rounded border border-gray-6 bg-transparent p-1"
+              />
+              <input
+                type="text"
+                formControlName="primaryColor"
+                placeholder="#ffffff"
+                class="min-w-0 flex-1 rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors"
+              />
+            </div>
+          </label>
+
+          <label class="flex flex-col gap-2">
+            <span class="text-sm text-gray-11 px-1">Secundária</span>
+            <div class="flex items-center gap-3">
+              <input
+                type="color"
+                formControlName="secondaryColor"
+                class="h-10 w-10 rounded border border-gray-6 bg-transparent p-1"
+              />
+              <input
+                type="text"
+                formControlName="secondaryColor"
+                placeholder="#ffffff"
+                class="min-w-0 flex-1 rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors"
+              />
+            </div>
+          </label>
+
+          <label class="flex flex-col gap-2">
+            <span class="text-sm text-gray-11 px-1">Terciária</span>
+            <div class="flex items-center gap-3">
+              <input
+                type="color"
+                formControlName="tertiaryColor"
+                class="h-10 w-10 rounded border border-gray-6 bg-transparent p-1"
+              />
+              <input
+                type="text"
+                formControlName="tertiaryColor"
+                placeholder="#ffffff"
+                class="min-w-0 flex-1 rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors"
+              />
+            </div>
+          </label>
+        </div>
+      </section>
+
+      <div class="border-t border-gray-6 pt-6 flex items-center gap-3">
+        <button
+          type="submit"
+          class="ui-primary-btn"
+          [disabled]="isSubmitting || themeForm.invalid"
+        >
+          @if (isSubmitting) {
+          <ui-loading
+            [inline]="true"
+            size="sm"
+            fallback="Criando tema"
+          ></ui-loading>
+          } @else { Criar tema }
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

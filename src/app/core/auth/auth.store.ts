@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { AppwriteException, Models } from 'appwrite';
 import { AuthService } from './auth.service';
 import { appwrite } from '../appwrite/appwrite.client';
@@ -9,6 +9,7 @@ import type {
   InviteCodeResponse,
 } from '../userProfiles/userProfile.types';
 import { NotificationStore } from '../notifications/notification.store';
+import { ProfileTheme } from '../themes/themes.types';
 
 const JWT_TTL_MS = 15 * 60 * 1000;
 
@@ -18,6 +19,7 @@ export class AuthStore {
 
   private userSignal = signal<Models.User<Models.Preferences> | null>(null);
   private profileSignal = signal<UserProfileRow | null>(null);
+  private activeThemeSignal = signal<ProfileTheme | null>(null);
   private loadingSignal = signal(false);
   private cachedJwt = signal<string | null>(null);
   private jwtExpirationTime = signal<number | null>(null);
@@ -25,6 +27,7 @@ export class AuthStore {
 
   readonly user = computed(() => this.userSignal());
   readonly profile = computed(() => this.profileSignal());
+  readonly activeTheme = computed(() => this.activeThemeSignal());
   readonly isAuthenticated = computed(() => this.user() !== null);
   readonly isAdmin = computed(() => {
     const labels = this.user()?.labels ?? [];
@@ -71,10 +74,40 @@ export class AuthStore {
     this.profileSignal.set({ ...current, inviteCode: code });
   }
 
+  addUnlockedTheme(themeId: string) {
+    const current = this.profileSignal();
+    if (!current) return;
+
+    const unlockedThemes = current.unlockedThemes ?? [];
+    if (unlockedThemes.includes(themeId)) return;
+
+    this.profileSignal.set({
+      ...current,
+      unlockedThemes: [...unlockedThemes, themeId],
+    });
+  }
+
+  setActiveTheme(themeId: string | null) {
+    const current = this.profileSignal();
+    if (!current) return;
+
+    this.profileSignal.set({
+      ...current,
+      activeThemeId: themeId ?? undefined,
+    });
+
+    void this.loadActiveTheme(themeId);
+  }
+
   constructor(
     private authService: AuthService,
     private notification: NotificationStore,
-  ) {}
+  ) {
+    effect(() => {
+      const themeId = this.profileSignal()?.activeThemeId ?? null;
+      void this.loadActiveTheme(themeId);
+    });
+  }
 
   /**
    * Método para registro de novos usuários
@@ -228,6 +261,29 @@ export class AuthStore {
       throw e;
     } finally {
       this.jwtRequestInFlight = null;
+    }
+  }
+
+  private async loadActiveTheme(themeId: string | null | undefined) {
+    if (!themeId) {
+      this.activeThemeSignal.set(null);
+      return;
+    }
+
+    try {
+      const theme = await appwrite.databases.getRow<any>({
+        databaseId: 'app',
+        tableId: 'profile_themes',
+        rowId: themeId,
+      });
+
+      if (this.profileSignal()?.activeThemeId === themeId) {
+        this.activeThemeSignal.set(theme as ProfileTheme);
+      }
+    } catch {
+      if (this.profileSignal()?.activeThemeId === themeId) {
+        this.activeThemeSignal.set(null);
+      }
     }
   }
 

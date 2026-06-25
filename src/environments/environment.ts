@@ -4,6 +4,7 @@ export const environment = {
   appUrl: 'https://www.zetho.app/',
   appwriteEndpoint: 'https://appwrite.adstrito.com/v1',
   appwriteProject: '690a16460002c718253a',
+  themesBucketId: 'zetho-themes',
   zethoApiEndpoint: 'https://api.zetho.app/',
   firebase: {
     apiKey: 'AIzaSyCzPo_B-Imte8ojtAsQAYg-oQ3FaFp34dg',

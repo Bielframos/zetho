@@ -5,6 +5,7 @@ import { appwrite } from '../appwrite/appwrite.client';
 import { AuthStore } from '../auth/auth.store';
 import { ConnectionsService } from '../connections/connections.service';
 import type { ConnectionRow } from '../connections/connections.types';
+import { ProfileTheme } from '../themes/themes.types';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileStore {
@@ -33,20 +34,52 @@ export class ProfileStore {
           });
       }
     });
+
+    effect(() => {
+      const currentProfile = this._current();
+
+      if (currentProfile?.activeThemeId) {
+        appwrite.databases
+          .getRow<any>({
+            databaseId: 'app',
+            tableId: 'profile_themes',
+            rowId: currentProfile.activeThemeId,
+          })
+          .then((theme) => {
+            if (this._current()?.$id === currentProfile.$id) {
+              this._activeTheme.set(theme as ProfileTheme);
+            }
+          })
+          .catch(() => {
+            this._activeTheme.set(null);
+          });
+      } else {
+        this._activeTheme.set(null);
+      }
+    });
   }
 
   private _loading = signal(false);
   private _current = signal<UserProfileRow | null>(null);
   private _connection = signal<ConnectionRow | null | undefined>(undefined);
+  private _activeTheme = signal<ProfileTheme | null>(null);
 
   readonly isLoading = computed(() => this._loading());
-  readonly current = computed<UserProfileRow | ProfileWithConnection | null>(() => {
-    const profile = this._current();
-    const connection = this._connection();
-    if (!profile) return null;
-    if (connection === undefined) return profile;
-    return { ...profile, connection };
+  readonly activeTheme = computed(() => {
+    if (this.itsMe()) {
+      return this.authStore.activeTheme();
+    }
+    return this._activeTheme();
   });
+  readonly current = computed<UserProfileRow | ProfileWithConnection | null>(
+    () => {
+      const profile = this._current();
+      const connection = this._connection();
+      if (!profile) return null;
+      if (connection === undefined) return profile;
+      return { ...profile, connection };
+    },
+  );
   readonly profile$ = toObservable(this.current);
 
   readonly avatarUrl = computed(() => {

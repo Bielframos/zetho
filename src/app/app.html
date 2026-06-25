@@ -50,6 +50,15 @@
           <span>Sorteios</span>
         </a>
 
+        <a
+          routerLink="/loja"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-storefront"></i>
+          <span>Z Shop</span>
+        </a>
+
         @if (authStore.user()) {
         <a
           [routerLink]="profileRoute()"
@@ -101,126 +110,185 @@
       class="sticky top-0 hidden h-dvh overflow-y-auto border-l border-gray-4 px-4 py-5 lg:block"
     >
       @if (isProfileRoute() && profileSidebarProfile; as profile) {
-      <div class="rounded-lg border border-gray-6">
-        @if (authStore.isAuthenticated() && !profileStore.itsMe()) { @if
-        (profile && 'connection' in profile && profile.connection) {
-        <button
-          class="flex items-center gap-2 justify-center w-full px-4 py-2 hover:bg-gray-3 transition-colors border-b border-gray-6"
-          (click)="profileStore.followOrUnfollow()"
+      <div
+        class="profile-theme-card rounded-lg border border-gray-6 relative overflow-hidden"
+        [style.--theme-bg]="profileStore.activeTheme()?.backgroundColor"
+        [style.--theme-c1]="profileStore.activeTheme()?.primaryColor"
+        [style.--theme-c2]="profileStore.activeTheme()?.secondaryColor"
+        [style.--theme-c3]="profileStore.activeTheme()?.tertiaryColor"
+        [style.background-color]="profileStore.activeTheme()?.backgroundColor"
+      >
+        <!-- Background Image Mask -->
+        @if (profileStore.activeTheme()?.backgroundImageId; as imageId) {
+        <div
+          class="absolute inset-0 right-0 w-full z-0 opacity-50 pointer-events-none"
+          style="
+            mask-image: linear-gradient(to bottom, transparent, black 60%);
+            -webkit-mask-image: linear-gradient(
+              to bottom,
+              transparent,
+              black 60%
+            );
+          "
         >
-          <i class="ph ph-user-minus text-[16px]"></i>
-          deixar de seguir
-        </button>
-        } @else {
-        <button
-          class="flex items-center gap-2 justify-center w-full px-4 py-2 hover:bg-gray-3 transition-colors border-b border-gray-6"
-          (click)="profileStore.followOrUnfollow()"
-        >
-          <i class="ph ph-user-plus text-[16px]"></i>
-          seguir
-        </button>
-        }}
-
-        <header class="flex items-center gap-3 px-4 py-4">
           <img
-            [src]="profileStore.avatarUrl()"
-            alt="{{`Avatar do ${profile.gamertag}`}}"
-            class="h-12 w-12 rounded-full bg-blue-12 object-cover"
+            [src]="getMediaUrl(imageId)"
+            class="w-full h-full object-cover"
           />
-
-          <div class="min-w-0">
-            <p class="truncate font-semibold text-gray-12">
-              {{ profileStore.itsMe() ? authStore.user()?.name :
-              profile.gamertag }}
-            </p>
-            <p class="truncate text-sm text-gray-11">@{{ profile.gamertag }}</p>
-          </div>
-        </header>
-
-        @if (profile.bio; as bio) {
-        <div class="border-t border-gray-6 px-4 py-3">
-          <p class="text-sm text-gray-11">{{ bio }}</p>
-        </div>
-        } @if (profileStore.itsMe()) {
-        <div class="border-t border-gray-6 py-3">
-          <app-z-coin-balance></app-z-coin-balance>
-        </div>
-        } @if (profileSidebarHasSocialNicks) {
-        <div class="flex flex-wrap gap-2 border-t border-gray-6 px-4 py-3">
-          @if (profile.socialSteam) {
-          <button
-            class="rounded-lg border border-gray-6 px-2 py-0.5 text-sm text-gray-11 transition-colors hover:bg-blue-3 hover:text-gray-12"
-            (click)="copyProfileSocial('socialSteam')"
-          >
-            Steam
-          </button>
-          } @if (profile.socialXbox) {
-          <button
-            class="rounded-lg border border-gray-6 px-2 py-0.5 text-sm text-gray-11 transition-colors hover:bg-blue-3 hover:text-gray-12"
-            (click)="copyProfileSocial('socialXbox')"
-          >
-            Xbox
-          </button>
-          } @if (profile.socialPsn) {
-          <button
-            class="rounded-lg border border-gray-6 px-2 py-0.5 text-sm text-gray-11 transition-colors hover:bg-blue-3 hover:text-gray-12"
-            (click)="copyProfileSocial('socialPsn')"
-          >
-            Playstation
-          </button>
-          }
         </div>
         }
 
-        <ul class="flex flex-col gap-1 border-t border-gray-6 px-2 py-3">
-          @for (tab of profileTabs; track tab.key) {
-          <li
-            class="group"
-            [attr.data-active]="profileLayoutStore.currentTab() === tab.key"
+        <div class="relative z-10">
+          @if (authStore.isAuthenticated() && !profileStore.itsMe()) { @if
+          (profile && 'connection' in profile && profile.connection) {
+          <button
+            class="profile-theme-action flex items-center gap-2 justify-center w-full px-4 py-2 transition-colors border-b border-gray-6"
+            (click)="profileStore.followOrUnfollow()"
           >
-            <a
-              [routerLink]="tab.key === 'games' ? ['/player', profile.gamertag] : ['/player', profile.gamertag, tab.key]"
-              class="flex w-full gap-2 rounded-lg py-2 pl-2 pr-4 text-sm transition-colors hover:bg-blue-4 hover:text-white group-data-[active=true]:bg-blue-3 group-data-[active=true]:hover:bg-blue-4"
-            >
-              <i class="ph {{ tab.icon }}"></i>
-              {{ tab.label }}
-            </a>
-          </li>
-          }
-        </ul>
+            <i class="ph ph-user-minus text-[16px]"></i>
+            deixar de seguir
+          </button>
+          } @else {
+          <button
+            class="profile-theme-action flex items-center gap-2 justify-center w-full px-4 py-2 transition-colors border-b border-gray-6"
+            (click)="profileStore.followOrUnfollow()"
+          >
+            <i class="ph ph-user-plus text-[16px]"></i>
+            seguir
+          </button>
+          }}
 
-        <div class="py-2">
-          <ng-container
-            *ngComponentOutlet="profileLayoutStore.sidebarComponent()"
-          ></ng-container>
+          <header class="flex items-center gap-3 px-4 py-4">
+            <img
+              [src]="profileStore.avatarUrl()"
+              alt="{{`Avatar do ${profile.gamertag}`}}"
+              class="profile-theme-avatar h-12 w-12 rounded-full bg-blue-12 object-cover"
+            />
+
+            <div class="min-w-0">
+              <p class="truncate font-semibold text-gray-12">
+                {{ profileStore.itsMe() ? authStore.user()?.name :
+                profile.gamertag }}
+              </p>
+              <p class="truncate text-sm text-gray-11">
+                @{{ profile.gamertag }}
+              </p>
+            </div>
+          </header>
+
+          @if (profile.bio; as bio) {
+          <div class="profile-theme-divider border-t border-gray-6 px-4 py-3">
+            <p class="text-sm">{{ bio }}</p>
+          </div>
+          } @if (profileStore.itsMe()) {
+          <div class="profile-theme-divider border-t border-gray-6 py-3">
+            <app-z-coin-balance></app-z-coin-balance>
+          </div>
+          } @if (profileSidebarHasSocialNicks) {
+          <div class="profile-theme-divider flex flex-wrap gap-2 border-t border-gray-6 px-4 py-3">
+            @if (profile.socialSteam) {
+            <button
+              class="profile-theme-chip rounded-lg border border-gray-6 px-2 py-0.5 text-sm transition-colors cursor-pointer"
+              (click)="copyProfileSocial('socialSteam')"
+            >
+              Steam
+            </button>
+            } @if (profile.socialXbox) {
+            <button
+              class="profile-theme-chip rounded-lg border border-gray-6 px-2 py-0.5 text-sm transition-colors cursor-pointer"
+              (click)="copyProfileSocial('socialXbox')"
+            >
+              Xbox
+            </button>
+            } @if (profile.socialPsn) {
+            <button
+              class="profile-theme-chip rounded-lg border border-gray-6 px-2 py-0.5 text-sm transition-colors cursor-pointer"
+              (click)="copyProfileSocial('socialPsn')"
+            >
+              Playstation
+            </button>
+            }
+          </div>
+          }
+
+          <ul class="profile-theme-divider flex flex-col gap-1 border-t border-gray-6 px-2 py-3">
+            @for (tab of profileTabs; track tab.key) {
+            <li
+              class="group"
+              [attr.data-active]="profileLayoutStore.currentTab() === tab.key"
+            >
+              <a
+                [routerLink]="tab.key === 'games' ? ['/player', profile.gamertag] : ['/player', profile.gamertag, tab.key]"
+                class="profile-theme-tab flex w-full gap-2 rounded-lg py-2 pl-2 pr-4 text-sm transition-colors"
+              >
+                <i class="ph {{ tab.icon }}"></i>
+                {{ tab.label }}
+              </a>
+            </li>
+            }
+          </ul>
+
+          <div class="py-2">
+            <ng-container
+              *ngComponentOutlet="profileLayoutStore.sidebarComponent()"
+            ></ng-container>
+          </div>
         </div>
       </div>
       } @else if (authStore.user()) {
-      <div class="rounded-lg border border-gray-6">
-        <div class="flex items-center gap-3 px-4 mt-4">
-          <a
-            [routerLink]="profileRoute()"
-            class="overflow-hidden rounded-full bg-blue-12"
-          >
-            <img
-              [src]="authStore.avatarUrl()"
-              alt="{{`Avatar do ${authStore.user()?.name}`}}"
-              class="h-12 w-12 object-cover"
-            />
-          </a>
-
-          <div class="min-w-0">
-            <p class="truncate font-semibold text-gray-12">
-              {{ authStore.user()?.name }}
-            </p>
-            <p class="truncate text-sm text-gray-11">
-              @{{ authStore.profile()?.gamertag }}
-            </p>
-          </div>
+      <div
+        class="profile-theme-card rounded-lg border border-gray-6 relative overflow-hidden"
+        [style.--theme-bg]="authStore.activeTheme()?.backgroundColor"
+        [style.--theme-c1]="authStore.activeTheme()?.primaryColor"
+        [style.--theme-c2]="authStore.activeTheme()?.secondaryColor"
+        [style.--theme-c3]="authStore.activeTheme()?.tertiaryColor"
+        [style.background-color]="authStore.activeTheme()?.backgroundColor"
+      >
+        @if (authStore.activeTheme()?.backgroundImageId; as imageId) {
+        <div
+          class="absolute inset-0 right-0 w-full z-0 opacity-40 pointer-events-none"
+          style="
+            mask-image: linear-gradient(to bottom, transparent, black 60%);
+            -webkit-mask-image: linear-gradient(
+              to bottom,
+              transparent,
+              black 60%
+            );
+          "
+        >
+          <img
+            [src]="getMediaUrl(imageId)"
+            class="w-full h-full object-cover"
+          />
         </div>
+        }
 
-        <div class="mt-4 border-t border-gray-6 py-3">
-          <app-z-coin-balance></app-z-coin-balance>
+        <div class="relative z-10">
+          <div class="flex items-center gap-3 px-4 mt-4">
+            <a
+              [routerLink]="profileRoute()"
+              class="profile-theme-avatar overflow-hidden rounded-full bg-blue-12 border border-gray-6"
+            >
+              <img
+                [src]="authStore.avatarUrl()"
+                alt="{{`Avatar do ${authStore.user()?.name}`}}"
+                class="h-12 w-12 object-cover"
+              />
+            </a>
+
+            <div class="min-w-0">
+              <p class="truncate font-semibold text-gray-12">
+                {{ authStore.user()?.name }}
+              </p>
+              <p class="truncate text-sm text-gray-11">
+                @{{ authStore.profile()?.gamertag }}
+              </p>
+            </div>
+          </div>
+
+          <div class="profile-theme-divider mt-4 border-t border-gray-6 py-3">
+            <app-z-coin-balance></app-z-coin-balance>
+          </div>
         </div>
       </div>
       } @else {
@@ -314,6 +382,15 @@
         aria-label="Sorteios"
       >
         <i class="ph ph-gift"></i>
+      </a>
+
+      <a
+        routerLink="/loja"
+        routerLinkActive="bg-gray-3 text-gray-12"
+        class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        aria-label="Z Shop"
+      >
+        <i class="ph ph-storefront"></i>
       </a>
 
       @if (authStore.user()) {

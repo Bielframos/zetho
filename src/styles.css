@@ -188,28 +188,114 @@
   background: linear-gradient(90deg, var(--color-blue-7), var(--color-blue-9));
 }
 
+.discreet-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gray-6) transparent;
+}
+
+.discreet-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.discreet-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.discreet-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-gray-6);
+  border-radius: 9999px;
+}
+
+.discreet-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-8);
+}
+
+.profile-theme-card {
+  --profile-theme-bg: var(--theme-bg, var(--color-gray-2));
+  --profile-theme-accent: var(--theme-c1, var(--color-blue-9));
+  --profile-theme-accent-strong: var(
+    --theme-c2,
+    var(--profile-theme-accent)
+  );
+  --profile-theme-accent-muted: var(
+    --theme-c3,
+    var(--profile-theme-accent)
+  );
+  --profile-theme-border: color-mix(
+    in srgb,
+    var(--profile-theme-accent-strong) 58%,
+    var(--color-gray-6)
+  );
+  --profile-theme-surface: color-mix(
+    in srgb,
+    var(--profile-theme-accent) 18%,
+    transparent
+  );
+  --profile-theme-surface-strong: color-mix(
+    in srgb,
+    var(--profile-theme-accent) 30%,
+    transparent
+  );
+
+  border-color: var(--profile-theme-border);
+}
+
+.profile-theme-divider,
+.profile-theme-action,
+.profile-theme-avatar,
+.profile-theme-chip {
+  border-color: var(--profile-theme-border);
+}
+
+.profile-theme-action:hover,
+.profile-theme-chip:hover,
+.profile-theme-tab:hover {
+  background-color: var(--profile-theme-surface);
+  color: var(--color-gray-12);
+}
+
+.group[data-active="true"] > .profile-theme-tab {
+  background-color: var(--profile-theme-surface);
+  border-color: var(--profile-theme-accent);
+  color: var(--color-gray-12);
+}
+
+.group[data-active="true"] > .profile-theme-tab:hover {
+  background-color: var(--profile-theme-surface-strong);
+}
+
+.profile-theme-badge {
+  background-color: var(--profile-theme-surface);
+  color: var(--color-gray-12);
+}
+
+.group[data-active="true"] .profile-theme-badge {
+  background-color: var(--profile-theme-surface-strong);
+  color: var(--color-gray-12);
+}
 /* Componentes */
 @layer components {
   /* Link */
   .ui-link {
-    @apply px-4 py-1 border border-transparent leading-[24px] bg-gray-2 inline-flex gap-2 items-center justify-center rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
+    @apply px-4 py-1 border border-transparent leading-[24px] bg-gray-2 inline-flex gap-2 items-center justify-center text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
   }
 
   /* Botões */
   .ui-primary-btn {
-    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center rounded-lg text-gray-12 bg-blue-9 hover:bg-blue-10 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center text-gray-12 bg-blue-9 hover:bg-blue-10 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
   }
 
   .ui-secondary-btn {
-    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-gray-3 rounded-lg text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-gray-3 text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
   }
 
   .ui-ghost-btn {
-    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center rounded-lg text-gray-11 hover:bg-blue-3/70 hover:backdrop-blur-lg hover:text-blue-9 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center text-gray-11 hover:bg-blue-3/70 hover:backdrop-blur-lg hover:text-blue-9 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
   }
 
   .ui-destructive-btn {
-    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-gray-3 rounded-lg text-red-300 hover:bg-red-600 hover:border-red-400 hover:text-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 ease-in-out;
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-gray-3 text-red-300 hover:bg-red-600 hover:border-red-400 hover:text-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 ease-in-out;
   }
 
   .ui-action-btn {

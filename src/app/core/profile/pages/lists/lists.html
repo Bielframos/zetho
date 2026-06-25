@@ -1,23 +1,73 @@
 <section>
   <header
-    class="w-full flex justify-between items-end border-b border-gray-6 p-4"
+    class="w-full flex flex-col sm:flex-row justify-between sm:items-end border-b border-gray-6 p-4 gap-4"
   >
     <div>
       <h3 class="text-2xl max-w-xl">
         @if (itsMe) { Minhas listas } @else { Listas }
       </h3>
-      <span class="text-gray-11"
-        >{{controller.total()}} {{controller.total() > 1 ? "Listas" :
-        "Lista"}}</span
-      >
+      @if (itsMe && activeTab() === 'salvas') {
+        <span class="text-gray-11"
+          >{{savedTotal()}} {{savedTotal() > 1 ? "Listas salvas" : "Lista salva"}}</span
+        >
+      } @else {
+        <span class="text-gray-11"
+          >{{controller.total()}} {{controller.total() > 1 ? "Listas criadas" : "Lista criada"}}</span
+        >
+      }
     </div>
+
     @if (itsMe) {
-    <app-new-list-dialog></app-new-list-dialog>
+      <div class="flex gap-4 items-center">
+        <div class="flex bg-gray-2 p-1 border border-gray-6 w-fit h-[34px]">
+          <button
+            class="px-4 text-sm font-medium transition-colors"
+            [class.bg-gray-3]="activeTab() === 'minhas'"
+            [class.text-white]="activeTab() === 'minhas'"
+            [class.text-gray-11]="activeTab() !== 'minhas'"
+            (click)="activeTab.set('minhas')"
+          >
+            Criadas
+          </button>
+          <button
+            class="px-4 text-sm font-medium transition-colors"
+            [class.bg-gray-3]="activeTab() === 'salvas'"
+            [class.text-white]="activeTab() === 'salvas'"
+            [class.text-gray-11]="activeTab() !== 'salvas'"
+            (click)="activeTab.set('salvas')"
+          >
+            Salvas
+          </button>
+        </div>
+        <app-new-list-dialog></app-new-list-dialog>
+      </div>
     }
   </header>
 
-  <app-user-lists
-    [lists]="controller.lists()"
-    [disableGrid]="true"
-  ></app-user-lists>
+  @if (!itsMe || activeTab() === 'minhas') {
+    <app-user-lists
+      [lists]="controller.lists()"
+      [disableGrid]="true"
+    ></app-user-lists>
+  } @else {
+    @if (loadingSaved()) {
+      <div class="flex justify-center py-8">
+        <i class="ph ph-spinner animate-spin text-3xl text-blue-9"></i>
+      </div>
+    } @else {
+      <ul class="flex flex-col w-full divide-y divide-gray-6">
+        @for (list of savedLists(); track list.$id) {
+          <ui-list-card
+            [list]="list"
+            [ownerGamertag]="list.author?.gamertag || list.ownerFingerprint"
+          ></ui-list-card>
+        } @empty {
+          <div class="p-8 text-center text-gray-11">
+            <i class="ph ph-bookmark-simple text-4xl mb-4 block"></i>
+            <p>Você ainda não salvou nenhuma lista.</p>
+          </div>
+        }
+      </ul>
+    }
+  }
 </section>

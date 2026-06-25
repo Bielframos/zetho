@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { NgComponentOutlet } from '@angular/common';
 import { Component, DestroyRef, effect, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -19,6 +20,7 @@ import { ProfileStore } from './core/userProfiles/profile.store';
 import { ProfileLayoutStore } from './shared/app/profile-layout/profile-layout.store';
 import { NotificationStore } from './core/notifications/notification.store';
 import { UserProfileRow } from './types';
+import { getThemeMediaUrl } from './core/themes/theme-media';
 
 @Component({
   selector: 'app-root',
@@ -70,6 +72,10 @@ export class App {
 
   onSearch(query: string) {
     this.route.navigate(['/buscar'], { queryParams: { q: query } });
+  }
+
+  getMediaUrl(imageId: string) {
+    return getThemeMediaUrl(imageId);
   }
 
   onSearchInputFocus() {

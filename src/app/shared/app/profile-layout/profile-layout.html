@@ -1,6 +1,26 @@
-<aside class="h-fit flex-1 border-y border-gray-6 lg:hidden">
+<aside
+  class="profile-theme-card h-fit flex-1 border-y border-gray-6 lg:hidden relative overflow-hidden"
+  [style.--theme-bg]="profileStore.activeTheme()?.backgroundColor"
+  [style.--theme-c1]="profileStore.activeTheme()?.primaryColor"
+  [style.--theme-c2]="profileStore.activeTheme()?.secondaryColor"
+  [style.--theme-c3]="profileStore.activeTheme()?.tertiaryColor"
+  [style.background-color]="profileStore.activeTheme()?.backgroundColor"
+>
+  <!-- Background Image Mask -->
+  @if (profileStore.activeTheme()?.backgroundImageId; as imageId) {
+  <div
+    class="absolute inset-0 right-0 w-full z-0 opacity-40 pointer-events-none"
+    style="
+      mask-image: linear-gradient(to bottom, transparent, black 60%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent, black 60%);
+    "
+  >
+    <img [src]="getMediaUrl(imageId)" class="w-full h-full object-cover" />
+  </div>
+  }
+
   <header
-    class="flex flex-col items-center w-full gap-2 px-2 pb-6 border-b border-gray-6"
+    class="profile-theme-divider flex flex-col items-center w-full gap-2 px-2 pb-6 border-b border-gray-6 relative z-10"
   >
     @if (profileStore.itsMe()) {
     <div class="flex justify-end w-full pt-2">
@@ -17,14 +37,14 @@
       @if (profileStore.current()) { @if (this.profile && 'connection' in
       this.profile && this.profile.connection) {
       <button
-        class="ui-secondary-btn w-full mb-4"
+        class="profile-theme-action w-full mb-4 flex items-center justify-center gap-2 rounded-lg border border-gray-6 px-4 py-1 text-gray-11 transition-colors"
         (click)="profileStore.followOrUnfollow()"
       >
         <i class="ph ph-user-minus text-[16px]"></i> deixar de seguir
       </button>
       } @else {
       <button
-        class="ui-secondary-btn"
+        class="profile-theme-action flex items-center justify-center gap-2 rounded-lg border border-gray-6 px-4 py-1 text-gray-11 transition-colors"
         (click)="profileStore.followOrUnfollow()"
       >
         <i class="ph ph-user-plus text-[16px]"></i> seguir
@@ -36,7 +56,7 @@
     <img
       [src]="profileStore.avatarUrl()"
       alt="{{`Avatar do ${profile?.gamertag}`}}"
-      class="rounded-full w-24 h-24 object-cover border border-gray-6"
+      class="profile-theme-avatar rounded-full w-24 h-24 object-cover border border-gray-6"
     />
     <h3 class="text-xl text-center">{{profile?.gamertag}}</h3>
 
@@ -47,7 +67,7 @@
       <!-- Perfil da Steam -->
       @if(profile?.socialSteam) {
       <button
-        class="flex gap-2 items-center hover:bg-blue-3 rounded-lg px-2 py-0.5 cursor-pointer border border-gray-6"
+        class="profile-theme-chip flex gap-2 items-center rounded-lg px-2 py-0.5 cursor-pointer border border-gray-6"
         (click)="copySocial('socialSteam')"
       >
         <svg
@@ -70,7 +90,7 @@
       <!-- Perfil do Xbox -->
       @if(profile?.socialXbox) {
       <button
-        class="flex gap-2 items-center hover:bg-blue-3 rounded-lg px-2 py-0.5 cursor-pointer border border-gray-6"
+        class="profile-theme-chip flex gap-2 items-center rounded-lg px-2 py-0.5 cursor-pointer border border-gray-6"
         (click)="copySocial('socialXbox')"
       >
         <svg
@@ -93,7 +113,7 @@
       <!-- Perfil do Playstation -->
       @if(profile?.socialPsn) {
       <button
-        class="flex gap-2 items-center hover:bg-blue-3 rounded-lg px-2 py-0.5 cursor-pointer border border-gray-6"
+        class="profile-theme-chip flex gap-2 items-center rounded-lg px-2 py-0.5 cursor-pointer border border-gray-6"
         (click)="copySocial('socialPsn')"
       >
         <svg
@@ -116,7 +136,7 @@
     }
   </header>
 
-  <ul class="flex md:flex-col px-2 overflow-x-auto border-b border-gray-6">
+  <ul class="profile-theme-divider flex md:flex-col px-2 overflow-x-auto border-b border-gray-6">
     @for (tab of tabs(); track tab.key) {
     <li
       class="group flex-1"
@@ -124,7 +144,7 @@
     >
       <a
         [routerLink]="tab.key === 'games' ? ['/player', profile?.gamertag] : ['/player', profile?.gamertag, tab.key]"
-        class="flex gap-2 w-full whitespace-nowrap max-md:justify-center px-3 py-3 border-b-2 border-transparent hover:text-blue-11 group-data-[active=true]:border-blue-9 group-data-[active=true]:text-gray-12 transition-colors"
+        class="profile-theme-tab flex gap-2 w-full whitespace-nowrap max-md:justify-center px-3 py-3 border-b-2 border-transparent transition-colors"
       >
         <i class="ph {{ tab.icon }}"></i>
         {{ tab.label }}

@@ -301,6 +301,89 @@
   </section>
 
   <header class="p-4 border-t-8 border-b border-gray-6">
+    <h2 class="text-2xl">Aparência</h2>
+    <p class="text-gray-11">Escolha o tema aplicado ao seu perfil.</p>
+  </header>
+
+  <section>
+    <div class="flex flex-col gap-4 w-full">
+      @if (isThemesLoading()) {
+      <div class="flex justify-center py-8">
+        <i class="ph ph-spinner animate-spin text-3xl text-blue-9"></i>
+      </div>
+      } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gray-6">
+        <button
+          type="button"
+          (click)="equipTheme(null)"
+          class="h-32 bg-gray-1 p-4 text-left transition-colors hover:bg-gray-2 cursor-pointer"
+        >
+          <div class="flex h-full flex-col justify-between">
+            <i class="ph ph-prohibit text-2xl text-gray-11"></i>
+            <div>
+              <span class="block text-gray-12">Padrão</span>
+              <span class="text-sm text-gray-11"> Sem tema personalizado </span>
+            </div>
+          </div>
+        </button>
+
+        @for (theme of unlockedThemes(); track theme.$id) {
+        <button
+          type="button"
+          (click)="equipTheme(theme.$id)"
+          class="relative h-32 overflow-hidden p-4 text-left transition-colors group cursor-pointer"
+          [style.background-color]="theme.backgroundColor || theme.primaryColor || '#18191b'"
+        >
+          @if (theme.backgroundImageId) {
+          <img
+            [src]="getMediaUrl(theme.backgroundImageId)"
+            [alt]="theme.name"
+            class="absolute inset-y-0 right-0 h-full w-3/4 object-cover opacity-70 group-hover:opacity-60 transition-all"
+            style="
+              mask-image: linear-gradient(to right, transparent, black 35%);
+              -webkit-mask-image: linear-gradient(
+                to right,
+                transparent,
+                black 35%
+              );
+            "
+          />
+          }
+
+          <div class="absolute inset-0 bg-black/10"></div>
+
+          @if (activeThemeId() === theme.$id) {
+          <span
+            class="absolute right-3 top-3 border border-blue-7 bg-blue-3 px-2 py-0.5 text-xs text-blue-11"
+          >
+            Ativo
+          </span>
+          }
+
+          <div class="relative z-10 flex h-full flex-col justify-end">
+            <span class="block truncate text-gray-12" [title]="theme.name">
+              {{ theme.name }}
+            </span>
+            <span class="text-sm text-gray-11">
+              {{ activeThemeId() === theme.$id ? 'Em uso' : 'Clique para
+              equipar' }}
+            </span>
+          </div>
+        </button>
+        }
+      </div>
+
+      @if (unlockedThemes().length === 0) {
+      <div class="border border-gray-6 bg-gray-1 p-4 text-gray-11">
+        Você não possui nenhum tema desbloqueado. Visite a
+        <a routerLink="/loja" class="text-blue-11 hover:underline">Z Shop</a>
+        para comprar novos temas.
+      </div>
+      } }
+    </div>
+  </section>
+
+  <header class="p-4 border-t-8 border-b border-gray-6">
     <h2 class="text-2xl">Zona de risco</h2>
   </header>
 

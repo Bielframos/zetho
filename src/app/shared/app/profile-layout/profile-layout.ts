@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { NgComponentOutlet } from '@angular/common';
 import { Component, computed, effect, inject, OnDestroy } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
@@ -8,6 +9,7 @@ import { NotificationStore } from '../../../core/notifications/notification.stor
 import { UserProfileRow } from '../../../types';
 import { SeoService } from '../../../core/seo/seo.service';
 import { AuthStore } from '../../../core/auth/auth.store';
+import { getThemeMediaUrl } from '../../../core/themes/theme-media';
 
 @Component({
   selector: 'app-profile-layout',
@@ -62,6 +64,10 @@ export class AppProfileLayout {
     } catch (e) {
       this.notification.show({ message: 'Erro ao copiar', type: 'error' });
     }
+  }
+
+  getMediaUrl(imageId: string) {
+    return getThemeMediaUrl(imageId);
   }
 
   constructor() {

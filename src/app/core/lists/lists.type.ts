@@ -1,24 +1,33 @@
-import { StoredList, StoredRow } from "../appwrite/appwrite.types"
+import { StoredList, StoredRow } from '../appwrite/appwrite.types';
 
 type ZereiList = {
-    ownerFingerprint: string,
-    title: string,
-    slug: string,
-    description?: string,
-    isPublic?: boolean,
-    itemCount?: number,
-    latestAdditions?: string[]
-    lastOrderKey?: string
-}
-type ZereiListRow = StoredRow<ZereiList>
-type ZereiLists = StoredList<ZereiListRow>
+  ownerFingerprint: string;
+  title: string;
+  slug: string;
+  description?: string;
+  isPublic?: boolean;
+  itemCount?: number;
+  likeCount?: number;
+  saveCount?: number;
+  latestAdditions?: string[];
+  lastOrderKey?: string;
+};
+type ZereiListRow = StoredRow<ZereiList>;
+type ZereiLists = StoredList<ZereiListRow>;
 
 type ZereiListItem = {
-    list: string,
-    game: string,
-    orderKey: string
-}
-type ZereiListItemRow = StoredRow<ZereiListItem>
-type ZereiListItems = StoredList<ZereiListItemRow>
+  list: string;
+  game: string;
+  orderKey: string;
+};
+type ZereiListItemRow = StoredRow<ZereiListItem>;
+type ZereiListItems = StoredList<ZereiListItemRow>;
 
-export type { ZereiList, ZereiListRow, ZereiLists, ZereiListItem, ZereiListItemRow, ZereiListItems }
+export type {
+  ZereiList,
+  ZereiListRow,
+  ZereiLists,
+  ZereiListItem,
+  ZereiListItemRow,
+  ZereiListItems,
+};

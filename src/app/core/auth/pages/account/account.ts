@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { OnInit } from '@angular/core';
 import {
   Component,
   computed,
@@ -12,7 +14,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { UiModal } from '../../../../shared/ui/modal/modal';
@@ -26,13 +28,24 @@ import {
 import { UserProfileService } from '../../../userProfiles/userProfile.service';
 import { AuthService } from '../../auth.service';
 import { AuthStore } from '../../auth.store';
+import { ThemesService } from '../../../themes/themes.service';
+import { ProfileTheme } from '../../../themes/themes.types';
+import { getThemeMediaUrl } from '../../../themes/theme-media';
 
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-account',
   standalone: true,
-  imports: [UiInput, ReactiveFormsModule, UiModal, AppProfileInviteCard, UiLoading],
+  imports: [
+    CommonModule,
+    UiInput,
+    ReactiveFormsModule,
+    UiModal,
+    AppProfileInviteCard,
+    UiLoading,
+    RouterLink,
+  ],
   templateUrl: './account.html',
 })
 export class AccountPage {
@@ -48,6 +61,51 @@ export class AccountPage {
 
   /** Estado centralizado de autenticação e perfil do usuário */
   authStore: AuthStore = inject(AuthStore);
+
+  themesService = inject(ThemesService);
+  unlockedThemes = signal<ProfileTheme[]>([]);
+  activeThemeId = computed(() => this.authStore.profile()?.activeThemeId);
+  isThemesLoading = signal(true);
+
+  async loadThemes(profile: any) {
+    if (
+      !profile ||
+      !profile.unlockedThemes ||
+      profile.unlockedThemes.length === 0
+    ) {
+      this.unlockedThemes.set([]);
+      this.isThemesLoading.set(false);
+      return;
+    }
+    try {
+      const allThemes = await this.themesService.listThemes();
+      const myThemes = allThemes.filter((t) =>
+        profile.unlockedThemes!.includes(t.$id),
+      );
+      this.unlockedThemes.set(myThemes);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.isThemesLoading.set(false);
+    }
+  }
+
+  async equipTheme(themeId: string | null) {
+    try {
+      if (themeId) {
+        await this.themesService.equipTheme(themeId);
+      } else {
+        await this.themesService.unequipTheme();
+      }
+      this.authStore.setActiveTheme(themeId);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  getMediaUrl(imageId: string) {
+    return getThemeMediaUrl(imageId);
+  }
 
   /** Estado da exibição da caixa de dialogo de verificação de identidade */
   dialogType = signal<'email' | 'profileDeletion'>('email');
@@ -288,6 +346,14 @@ export class AccountPage {
     effect(() => {
       if (!this.authStore.isAuthenticated()) {
         this.router.navigate(['/']);
+      }
+    });
+
+    // Carrega os temas de forma reativa quando o perfil estiver carregado
+    effect(() => {
+      const profile = this.authStore.profile();
+      if (profile) {
+        void this.loadThemes(profile);
       }
     });
   }

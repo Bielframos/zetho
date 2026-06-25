@@ -16,17 +16,17 @@
       >
     </div>
 
-    <div class="flex p-1 rounded-lg border border-gray-6 max-md:mt-4">
+    <div class="flex p-1 border border-gray-6 max-md:mt-4">
       <button
-        class="px-2 py-1 rounded-md hover:bg-gray-3 cursor-pointer transition-colors flex-1"
-        [ngClass]="{'bg-blue-9 hover:bg-blue-10 text-white': controller.connectionType() === 'followers'}"
+        class="px-4 cursor-pointer transition-colors flex-1"
+        [ngClass]="{'bg-gray-3 hover:bg-gray-4 text-white': controller.connectionType() === 'followers'}"
         (click)="controller.setConnectionType('followers')"
       >
         Seguidores
       </button>
       <button
-        class="px-2 py-1 rounded-md hover:bg-gray-3 cursor-pointer transition-colors flex-1"
-        [ngClass]="{'bg-blue-9 hover:bg-blue-10 text-white': controller.connectionType() === 'following'}"
+        class="px-4 cursor-pointer transition-colors flex-1"
+        [ngClass]="{'bg-gray-3 hover:bg-gray-4 text-white': controller.connectionType() === 'following'}"
         (click)="controller.setConnectionType('following')"
       >
         Seguindo
