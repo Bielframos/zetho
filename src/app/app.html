@@ -112,6 +112,7 @@
       @if (isProfileRoute() && profileSidebarProfile; as profile) {
       <div
         class="profile-theme-card rounded-lg border border-gray-6 relative overflow-hidden"
+        [class.has-theme]="!!profileStore.activeTheme()"
         [style.--theme-bg]="profileStore.activeTheme()?.backgroundColor"
         [style.--theme-c1]="profileStore.activeTheme()?.primaryColor"
         [style.--theme-c2]="profileStore.activeTheme()?.secondaryColor"
@@ -238,6 +239,7 @@
       } @else if (authStore.user()) {
       <div
         class="profile-theme-card rounded-lg border border-gray-6 relative overflow-hidden"
+        [class.has-theme]="!!authStore.activeTheme()"
         [style.--theme-bg]="authStore.activeTheme()?.backgroundColor"
         [style.--theme-c1]="authStore.activeTheme()?.primaryColor"
         [style.--theme-c2]="authStore.activeTheme()?.secondaryColor"

@@ -1,5 +1,6 @@
 <aside
   class="profile-theme-card h-fit flex-1 border-y border-gray-6 lg:hidden relative overflow-hidden"
+  [class.has-theme]="!!profileStore.activeTheme()"
   [style.--theme-bg]="profileStore.activeTheme()?.backgroundColor"
   [style.--theme-c1]="profileStore.activeTheme()?.primaryColor"
   [style.--theme-c2]="profileStore.activeTheme()?.secondaryColor"
