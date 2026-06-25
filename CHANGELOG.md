@@ -4,6 +4,19 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [1.13.0] - 2026-06-25
+
+### Added
+
+- Nova aba "Salvas" na seção de Listas do seu perfil, permitindo visualizar de forma rápida todas as listas de outros usuários que você salvou.
+- Adicionada segurança transacional na compra de temas: caso a transação falhe, os Z-Coins debitados são reembolsados automaticamente.
+
+### Changed
+
+- Melhorias na reatividade e velocidade ao carregar os temas adquiridos e ativos na página de Conta.
+- Ajustes de interface na Loja de Temas.
+
+
 ## [1.11.0] - 2026-06-23
 
 ### Changed

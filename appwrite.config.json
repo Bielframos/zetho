@@ -41,7 +41,9 @@
   "functions": [
     {
       "$id": "igdb-core",
-      "execute": ["team:zerei"],
+      "execute": [
+        "team:zerei"
+      ],
       "name": "IGDB Core",
       "enabled": true,
       "logging": true,
@@ -66,7 +68,9 @@
       "name": "IGDB Webhook",
       "runtime": "node-21.0",
       "specification": "s-0.5vcpu-512mb",
-      "execute": ["any"],
+      "execute": [
+        "any"
+      ],
       "events": [],
       "scopes": [
         "rows.read",
@@ -85,7 +89,9 @@
     },
     {
       "$id": "zerei-core",
-      "execute": ["users"],
+      "execute": [
+        "users"
+      ],
       "name": "Zerei Core",
       "enabled": true,
       "logging": true,
@@ -130,7 +136,9 @@
         "rows.write",
         "documents.write"
       ],
-      "events": ["databases.app.tables.z_entries.rows.*"],
+      "events": [
+        "databases.app.tables.z_entries.rows.*"
+      ],
       "schedule": "",
       "timeout": 15,
       "entrypoint": "src/main.js",
@@ -140,7 +148,9 @@
     },
     {
       "$id": "users-core",
-      "execute": ["any"],
+      "execute": [
+        "any"
+      ],
       "name": "Users Core",
       "enabled": true,
       "logging": true,
@@ -200,7 +210,9 @@
     },
     {
       "$id": "games",
-      "$permissions": ["read(\"any\")"],
+      "$permissions": [
+        "read(\"any\")"
+      ],
       "databaseId": "app",
       "name": "Games",
       "enabled": true,
@@ -255,8 +267,8 @@
           "type": "integer",
           "required": true,
           "array": false,
-          "min": -9223372036854775808,
-          "max": 9223372036854775807,
+          "min": -9223372036854776000,
+          "max": 9223372036854776000,
           "default": null
         },
         {
@@ -295,15 +307,23 @@
           "key": "unique_game",
           "type": "unique",
           "status": "available",
-          "attributes": ["externalReference"],
-          "orders": ["ASC"]
+          "attributes": [
+            "externalReference"
+          ],
+          "orders": [
+            "ASC"
+          ]
         },
         {
           "key": "search",
           "type": "fulltext",
           "status": "available",
-          "attributes": ["name"],
-          "orders": ["ASC"]
+          "attributes": [
+            "name"
+          ],
+          "orders": [
+            "ASC"
+          ]
         }
       ]
     },
@@ -338,7 +358,10 @@
     },
     {
       "$id": "user_profiles",
-      "$permissions": ["create(\"any\")", "read(\"any\")"],
+      "$permissions": [
+        "create(\"any\")",
+        "read(\"any\")"
+      ],
       "databaseId": "app",
       "name": "User Profiles",
       "enabled": true,
@@ -384,8 +407,8 @@
           "type": "integer",
           "required": false,
           "array": false,
-          "min": -9223372036854775808,
-          "max": 9223372036854775807,
+          "min": -9223372036854776000,
+          "max": 9223372036854776000,
           "default": 0
         },
         {
@@ -393,8 +416,8 @@
           "type": "integer",
           "required": false,
           "array": false,
-          "min": -9223372036854775808,
-          "max": 9223372036854775807,
+          "min": -9223372036854776000,
+          "max": 9223372036854776000,
           "default": 0
         },
         {
@@ -402,8 +425,8 @@
           "type": "integer",
           "required": false,
           "array": false,
-          "min": -9223372036854775808,
-          "max": 9223372036854775807,
+          "min": -9223372036854776000,
+          "max": 9223372036854776000,
           "default": 0
         },
         {
@@ -411,8 +434,8 @@
           "type": "integer",
           "required": false,
           "array": false,
-          "min": -9223372036854775808,
-          "max": 9223372036854775807,
+          "min": -9223372036854776000,
+          "max": 9223372036854776000,
           "default": 0
         }
       ],
@@ -421,15 +444,23 @@
           "key": "unique_user",
           "type": "unique",
           "status": "available",
-          "attributes": ["userId"],
-          "orders": ["ASC"]
+          "attributes": [
+            "userId"
+          ],
+          "orders": [
+            "ASC"
+          ]
         },
         {
           "key": "unique_username",
           "type": "unique",
           "status": "available",
-          "attributes": ["gamertag"],
-          "orders": ["ASC"]
+          "attributes": [
+            "gamertag"
+          ],
+          "orders": [
+            "ASC"
+          ]
         }
       ]
     },
@@ -467,7 +498,12 @@
           "type": "string",
           "required": true,
           "array": false,
-          "elements": ["completed", "backlog", "dropped", "playing"],
+          "elements": [
+            "completed",
+            "backlog",
+            "dropped",
+            "playing"
+          ],
           "format": "enum",
           "default": null
         },
@@ -492,8 +528,8 @@
           "type": "integer",
           "required": false,
           "array": false,
-          "min": -9223372036854775808,
-          "max": 9223372036854775807,
+          "min": -9223372036854776000,
+          "max": 9223372036854776000,
           "default": 0
         },
         {
@@ -547,7 +583,9 @@
     },
     {
       "$id": "games",
-      "$permissions": ["read(\"any\")"],
+      "$permissions": [
+        "read(\"any\")"
+      ],
       "databaseId": "app",
       "name": "Games",
       "enabled": true,
@@ -603,8 +641,8 @@
           "required": true,
           "array": false,
           "default": null,
-          "min": -9223372036854775808,
-          "max": 9223372036854775807
+          "min": -9223372036854776000,
+          "max": 9223372036854776000
         },
         {
           "key": "gameType",
@@ -713,7 +751,7 @@
           "array": false,
           "default": 0,
           "min": 0,
-          "max": 1.7976931348623157e308
+          "max": 1.7976931348623157e+308
         },
         {
           "key": "ratingSum",
@@ -722,7 +760,7 @@
           "array": false,
           "default": 0,
           "min": 0,
-          "max": 1.7976931348623157e308
+          "max": 1.7976931348623157e+308
         }
       ],
       "indexes": [
@@ -730,21 +768,31 @@
           "key": "unique_game",
           "type": "unique",
           "status": "available",
-          "columns": ["externalReference"],
-          "orders": ["ASC"]
+          "columns": [
+            "externalReference"
+          ],
+          "orders": [
+            "ASC"
+          ]
         },
         {
           "key": "search",
           "type": "fulltext",
           "status": "available",
-          "columns": ["name"],
-          "orders": ["ASC"]
+          "columns": [
+            "name"
+          ],
+          "orders": [
+            "ASC"
+          ]
         }
       ]
     },
     {
       "$id": "game_types",
-      "$permissions": ["read(\"any\")"],
+      "$permissions": [
+        "read(\"any\")"
+      ],
       "databaseId": "app",
       "name": "Game Types",
       "enabled": true,
@@ -827,8 +875,8 @@
           "required": false,
           "array": false,
           "default": 0,
-          "min": -9223372036854775808,
-          "max": 9223372036854775807
+          "min": -9223372036854776000,
+          "max": 9223372036854776000
         },
         {
           "key": "totalsBacklog",
@@ -836,8 +884,8 @@
           "required": false,
           "array": false,
           "default": 0,
-          "min": -9223372036854775808,
-          "max": 9223372036854775807
+          "min": -9223372036854776000,
+          "max": 9223372036854776000
         },
         {
           "key": "totalsDropped",
@@ -845,8 +893,8 @@
           "required": false,
           "array": false,
           "default": 0,
-          "min": -9223372036854775808,
-          "max": 9223372036854775807
+          "min": -9223372036854776000,
+          "max": 9223372036854776000
         },
         {
           "key": "totalsPlaying",
@@ -854,8 +902,8 @@
           "required": false,
           "array": false,
           "default": 0,
-          "min": -9223372036854775808,
-          "max": 9223372036854775807
+          "min": -9223372036854776000,
+          "max": 9223372036854776000
         },
         {
           "key": "totalsWishlist",
@@ -864,7 +912,7 @@
           "array": false,
           "default": 0,
           "min": 0,
-          "max": 9223372036854775807
+          "max": 9223372036854776000
         },
         {
           "key": "fingerprint",
@@ -882,7 +930,10 @@
           "array": false,
           "default": "active",
           "format": "enum",
-          "elements": ["active", "pending_deletion"]
+          "elements": [
+            "active",
+            "pending_deletion"
+          ]
         },
         {
           "key": "deletedAt",
@@ -925,22 +976,34 @@
           "key": "unique_user",
           "type": "unique",
           "status": "available",
-          "columns": ["userId"],
-          "orders": ["ASC"]
+          "columns": [
+            "userId"
+          ],
+          "orders": [
+            "ASC"
+          ]
         },
         {
           "key": "unique_username",
           "type": "unique",
           "status": "available",
-          "columns": ["gamertag"],
-          "orders": ["ASC"]
+          "columns": [
+            "gamertag"
+          ],
+          "orders": [
+            "ASC"
+          ]
         },
         {
           "key": "unique_fingerprint",
           "type": "unique",
           "status": "available",
-          "columns": ["fingerprint"],
-          "orders": ["ASC"]
+          "columns": [
+            "fingerprint"
+          ],
+          "orders": [
+            "ASC"
+          ]
         }
       ]
     },
@@ -966,7 +1029,13 @@
           "array": false,
           "default": null,
           "format": "enum",
-          "elements": ["completed", "backlog", "dropped", "playing", "wishlist"]
+          "elements": [
+            "completed",
+            "backlog",
+            "dropped",
+            "playing",
+            "wishlist"
+          ]
         },
         {
           "key": "liked",
@@ -1006,7 +1075,9 @@
     },
     {
       "$id": "genres",
-      "$permissions": ["read(\"any\")"],
+      "$permissions": [
+        "read(\"any\")"
+      ],
       "databaseId": "app",
       "name": "Genres",
       "enabled": true,
@@ -1053,7 +1124,9 @@
     },
     {
       "$id": "companies",
-      "$permissions": ["read(\"any\")"],
+      "$permissions": [
+        "read(\"any\")"
+      ],
       "databaseId": "app",
       "name": "Companies",
       "enabled": true,
@@ -1091,7 +1164,9 @@
     },
     {
       "$id": "z_entry_count",
-      "$permissions": ["read(\"any\")"],
+      "$permissions": [
+        "read(\"any\")"
+      ],
       "databaseId": "app",
       "name": "Z Entry Count",
       "enabled": true,
@@ -1104,7 +1179,7 @@
           "array": false,
           "default": 0,
           "min": 0,
-          "max": 9223372036854775807
+          "max": 9223372036854776000
         },
         {
           "key": "backlogCount",
@@ -1113,7 +1188,7 @@
           "array": false,
           "default": 0,
           "min": 0,
-          "max": 9223372036854775807
+          "max": 9223372036854776000
         },
         {
           "key": "droppedCount",
@@ -1122,7 +1197,7 @@
           "array": false,
           "default": 0,
           "min": 0,
-          "max": 9223372036854775807
+          "max": 9223372036854776000
         },
         {
           "key": "playingCount",
@@ -1131,7 +1206,7 @@
           "array": false,
           "default": 0,
           "min": 0,
-          "max": 9223372036854775807
+          "max": 9223372036854776000
         },
         {
           "key": "wishlistCount",
@@ -1140,7 +1215,7 @@
           "array": false,
           "default": 0,
           "min": 0,
-          "max": 9223372036854775807
+          "max": 9223372036854776000
         },
         {
           "key": "game",
@@ -1161,7 +1236,7 @@
           "array": false,
           "default": 0,
           "min": 0,
-          "max": 9223372036854775807
+          "max": 9223372036854776000
         }
       ],
       "indexes": []
@@ -1225,7 +1300,7 @@
           "array": false,
           "default": 0,
           "min": 0,
-          "max": 9223372036854775807
+          "max": 9223372036854776000
         },
         {
           "key": "replyCount",
@@ -1234,7 +1309,7 @@
           "array": false,
           "default": 0,
           "min": 0,
-          "max": 9223372036854775807
+          "max": 9223372036854776000
         },
         {
           "key": "depth",
@@ -1243,7 +1318,7 @@
           "array": false,
           "default": 0,
           "min": 0,
-          "max": 9223372036854775807
+          "max": 9223372036854776000
         },
         {
           "key": "votes",
@@ -1262,7 +1337,9 @@
     },
     {
       "$id": "game_comment_votes",
-      "$permissions": ["create(\"users\")"],
+      "$permissions": [
+        "create(\"users\")"
+      ],
       "databaseId": "app",
       "name": "Game Comment Votes",
       "enabled": true,
@@ -1275,7 +1352,10 @@
           "array": false,
           "default": null,
           "format": "enum",
-          "elements": ["up", "down"]
+          "elements": [
+            "up",
+            "down"
+          ]
         },
         {
           "key": "comment",
@@ -1303,7 +1383,10 @@
     },
     {
       "$id": "lists",
-      "$permissions": ["create(\"users\")", "read(\"any\")"],
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"any\")"
+      ],
       "databaseId": "app",
       "name": "Lists",
       "enabled": true,
@@ -1359,7 +1442,25 @@
           "array": false,
           "default": 0,
           "min": 0,
-          "max": 9223372036854775807
+          "max": 9223372036854776000
+        },
+        {
+          "key": "saveCount",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 0,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "likeCount",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 0,
+          "min": 0,
+          "max": 2147483647
         },
         {
           "key": "latestAdditions",
@@ -1383,8 +1484,145 @@
       "indexes": []
     },
     {
+      "$id": "saved_lists",
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"users\")",
+        "delete(\"users\")"
+      ],
+      "databaseId": "app",
+      "name": "Saved Lists",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "listId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 48,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "userId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 48,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "profileId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 48,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "saved_lists_list_user_unique",
+          "type": "unique",
+          "status": "available",
+          "columns": [
+            "listId",
+            "userId"
+          ],
+          "orders": [
+            "ASC",
+            "ASC"
+          ]
+        },
+        {
+          "key": "saved_lists_user_idx",
+          "type": "key",
+          "status": "available",
+          "columns": [
+            "userId"
+          ],
+          "orders": [
+            "ASC"
+          ]
+        }
+      ]
+    },
+    {
+      "$id": "list_likes",
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"users\")",
+        "delete(\"users\")"
+      ],
+      "databaseId": "app",
+      "name": "List Likes",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "listId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 48,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "userId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 48,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "profileId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 48,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "list_likes_list_user_unique",
+          "type": "unique",
+          "status": "available",
+          "columns": [
+            "listId",
+            "userId"
+          ],
+          "orders": [
+            "ASC",
+            "ASC"
+          ]
+        },
+        {
+          "key": "list_likes_user_idx",
+          "type": "key",
+          "status": "available",
+          "columns": [
+            "userId"
+          ],
+          "orders": [
+            "ASC"
+          ]
+        }
+      ]
+    },
+    {
       "$id": "list_items",
-      "$permissions": ["create(\"users\")", "read(\"any\")"],
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"any\")"
+      ],
       "databaseId": "app",
       "name": "List Items",
       "enabled": true,
@@ -1448,7 +1686,13 @@
           "array": false,
           "default": null,
           "format": "enum",
-          "elements": ["completed", "backlog", "dropped", "playing", "wishlist"]
+          "elements": [
+            "completed",
+            "backlog",
+            "dropped",
+            "playing",
+            "wishlist"
+          ]
         },
         {
           "key": "liked",
@@ -1481,14 +1725,22 @@
           "key": "unique_entry",
           "type": "unique",
           "status": "available",
-          "columns": ["ownerFingerprint", "gameId"],
-          "orders": ["ASC", "ASC"]
+          "columns": [
+            "ownerFingerprint",
+            "gameId"
+          ],
+          "orders": [
+            "ASC",
+            "ASC"
+          ]
         }
       ]
     },
     {
       "$id": "game_platforms",
-      "$permissions": ["read(\"any\")"],
+      "$permissions": [
+        "read(\"any\")"
+      ],
       "databaseId": "app",
       "name": "Game Platforms",
       "enabled": true,
@@ -1537,7 +1789,11 @@
           "array": false,
           "default": null,
           "format": "enum",
-          "elements": ["console", "pc", "mobile"]
+          "elements": [
+            "console",
+            "pc",
+            "mobile"
+          ]
         },
         {
           "key": "generation",
@@ -1546,7 +1802,7 @@
           "array": false,
           "default": null,
           "min": 0,
-          "max": 9223372036854775807
+          "max": 9223372036854776000
         },
         {
           "key": "releasedAt",
@@ -1561,7 +1817,9 @@
     },
     {
       "$id": "ratings",
-      "$permissions": ["read(\"any\")"],
+      "$permissions": [
+        "read(\"any\")"
+      ],
       "databaseId": "app",
       "name": "Avaliações",
       "enabled": true,
@@ -1618,8 +1876,8 @@
           "required": false,
           "array": false,
           "default": 0,
-          "min": -9223372036854775807,
-          "max": 9223372036854775807
+          "min": -9223372036854776000,
+          "max": 9223372036854776000
         },
         {
           "key": "votes",
@@ -1656,7 +1914,10 @@
           "array": false,
           "default": null,
           "format": "enum",
-          "elements": ["up", "down"]
+          "elements": [
+            "up",
+            "down"
+          ]
         },
         {
           "key": "rating",
@@ -1684,7 +1945,10 @@
     },
     {
       "$id": "connections",
-      "$permissions": ["read(\"any\")", "create(\"users\")"],
+      "$permissions": [
+        "read(\"any\")",
+        "create(\"users\")"
+      ],
       "databaseId": "app",
       "name": "Conexões",
       "enabled": true,
@@ -1714,17 +1978,50 @@
           "key": "connection_idx",
           "type": "key",
           "status": "available",
-          "columns": ["requesterProfileId", "targetProfileId"],
-          "orders": ["ASC", "ASC"]
+          "columns": [
+            "requesterProfileId",
+            "targetProfileId"
+          ],
+          "orders": [
+            "ASC",
+            "ASC"
+          ]
         },
         {
           "key": "unique_connection_idx",
           "type": "unique",
           "status": "available",
-          "columns": ["requesterProfileId", "targetProfileId"],
-          "orders": ["ASC", "ASC"]
+          "columns": [
+            "requesterProfileId",
+            "targetProfileId"
+          ],
+          "orders": [
+            "ASC",
+            "ASC"
+          ]
         }
       ]
+    }
+  ],
+  "buckets": [
+    {
+      "$id": "zetho-themes",
+      "$permissions": [
+        "read(\"any\")"
+      ],
+      "fileSecurity": false,
+      "name": "zetho-themes",
+      "enabled": true,
+      "maximumFileSize": 30000000,
+      "allowedFileExtensions": [
+        "jpg",
+        "jpeg",
+        "png",
+        "webp"
+      ],
+      "compression": "none",
+      "encryption": true,
+      "antivirus": true
     }
   ]
 }

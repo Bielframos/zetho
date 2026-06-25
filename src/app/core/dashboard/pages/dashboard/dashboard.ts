@@ -1,89 +1,95 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AppUserLists } from '../../../../shared/app/user-lists/user-lists';
 import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { RelativeTimePipe } from '../../../../utils/pipes';
 import { GameRow } from '../../../../types';
 import { AuthStore } from '../../../auth/auth.store';
 import { GameService } from '../../../games/games.service';
-import { ListsController } from '../../../lists/lists.controller';
 import { UpperCasePipe } from '@angular/common';
-import { DashboardService, CommunityHighlight } from '../../dashboard.service';
+import {
+  DashboardFeedItem,
+  DashboardService,
+  ListSocialState,
+  TrendingListItem,
+} from '../../dashboard.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [
-    RouterLink,
-    RelativeTimePipe,
-    AppUserLists,
-    UiGameCard,
-    UiLoading,
-    UpperCasePipe,
-  ],
+  imports: [RouterLink, RelativeTimePipe, UiGameCard, UiLoading, UpperCasePipe],
   templateUrl: './dashboard.html',
 })
 export class DashboardPage {
   authStore = inject(AuthStore);
-  controller = inject(ListsController);
   gameService = inject(GameService);
   dashboardService = inject(DashboardService);
 
   upcomingHypedGames = signal<GameRow[]>([]);
   loadingUpcomingHyped = signal(false);
 
-  highlights = signal<CommunityHighlight[]>([]);
-  loadingHighlights = signal(false);
-  highlightsPage = signal(1);
-  hasMoreHighlights = signal(false);
-  loadingMoreHighlights = signal(false);
+  feed = signal<DashboardFeedItem[]>([]);
+  loadingFeed = signal(false);
+  feedPage = signal(1);
+  hasMoreFeed = signal(false);
+  loadingMoreFeed = signal(false);
+
+  trendingLists = signal<TrendingListItem[]>([]);
+  loadingTrendingLists = signal(false);
+  updatingListIds = signal<Set<string>>(new Set());
 
   get profile() {
     return this.authStore.profile();
   }
 
   constructor() {
-    void this.controller.loadLists({
-      ownerFingerprint: this.profile!.fingerprint,
-    });
-
     void this.loadUpcomingHypedGames();
-    void this.loadHighlights();
+    void this.loadFeed();
+    void this.loadTrendingLists();
   }
 
-  private async loadHighlights() {
-    this.loadingHighlights.set(true);
+  private async loadFeed() {
+    this.loadingFeed.set(true);
     try {
-      const res = await this.dashboardService.getCommunityHighlights(1, 12);
-      this.highlights.set(res.items);
-      this.hasMoreHighlights.set(res.hasMore);
-      this.highlightsPage.set(1);
+      const res = await this.dashboardService.getPersonalFeed(1, 12);
+      this.feed.set(res.items);
+      this.hasMoreFeed.set(res.hasMore);
+      this.feedPage.set(1);
     } catch (e) {
       console.error(e);
     } finally {
-      this.loadingHighlights.set(false);
+      this.loadingFeed.set(false);
     }
   }
 
-  async loadMoreHighlights() {
-    if (this.loadingMoreHighlights() || !this.hasMoreHighlights()) return;
+  async loadMoreFeed() {
+    if (this.loadingMoreFeed() || !this.hasMoreFeed()) return;
 
-    this.loadingMoreHighlights.set(true);
-    const nextPage = this.highlightsPage() + 1;
+    this.loadingMoreFeed.set(true);
+    const nextPage = this.feedPage() + 1;
 
     try {
-      const res = await this.dashboardService.getCommunityHighlights(
-        nextPage,
-        12,
-      );
-      this.highlights.update((prev) => [...prev, ...res.items]);
-      this.hasMoreHighlights.set(res.hasMore);
-      this.highlightsPage.set(nextPage);
+      const res = await this.dashboardService.getPersonalFeed(nextPage, 12);
+      this.feed.update((prev) => [...prev, ...res.items]);
+      this.hasMoreFeed.set(res.hasMore);
+      this.feedPage.set(nextPage);
     } catch (e) {
       console.error(e);
     } finally {
-      this.loadingMoreHighlights.set(false);
+      this.loadingMoreFeed.set(false);
+    }
+  }
+
+  private async loadTrendingLists() {
+    this.loadingTrendingLists.set(true);
+
+    try {
+      const response = await this.dashboardService.getTrendingLists(12);
+      this.trendingLists.set(response.items);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.loadingTrendingLists.set(false);
     }
   }
 
@@ -100,5 +106,104 @@ export class DashboardPage {
     } finally {
       this.loadingUpcomingHyped.set(false);
     }
+  }
+
+  latestCovers(list: { latestAdditions?: string[] }) {
+    return (list.latestAdditions ?? [])
+      .map((item) => {
+        try {
+          return JSON.parse(item) as { gameName: string; gameCoverUrl: string };
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean)
+      .slice(0, 3);
+  }
+
+  listLink(list: {
+    userProfile?: { gamertag: string } | null;
+    author?: { gamertag: string } | null;
+    slug?: string;
+  }) {
+    const gamertag = list.userProfile?.gamertag ?? list.author?.gamertag;
+    return gamertag && list.slug
+      ? ['/player', gamertag, 'listas', list.slug]
+      : null;
+  }
+
+  async toggleListLike(listId: string) {
+    await this.toggleTrendingList(listId, 'like');
+  }
+
+  async toggleListSave(listId: string) {
+    await this.toggleTrendingList(listId, 'save');
+  }
+
+  private async toggleTrendingList(listId: string, action: 'like' | 'save') {
+    if (this.updatingListIds().has(`${action}:${listId}`)) return;
+
+    const previous = this.trendingLists();
+    this.updatingListIds.update((ids) =>
+      new Set(ids).add(`${action}:${listId}`),
+    );
+    this.applyOptimisticListState(listId, action);
+
+    try {
+      const state =
+        action === 'like'
+          ? await this.dashboardService.toggleListLike(listId)
+          : await this.dashboardService.toggleListSave(listId);
+      this.applyListState(listId, state);
+    } catch (e) {
+      console.error(e);
+      this.trendingLists.set(previous);
+    } finally {
+      this.updatingListIds.update((ids) => {
+        const next = new Set(ids);
+        next.delete(`${action}:${listId}`);
+        return next;
+      });
+    }
+  }
+
+  private applyOptimisticListState(listId: string, action: 'like' | 'save') {
+    this.trendingLists.update((lists) =>
+      lists.map((list) => {
+        if (list.$id !== listId) return list;
+
+        if (action === 'like') {
+          const likedByMe = !list.likedByMe;
+          return {
+            ...list,
+            likedByMe,
+            likeCount: Math.max(0, list.likeCount + (likedByMe ? 1 : -1)),
+          };
+        }
+
+        const savedByMe = !list.savedByMe;
+        return {
+          ...list,
+          savedByMe,
+          saveCount: Math.max(0, list.saveCount + (savedByMe ? 1 : -1)),
+        };
+      }),
+    );
+  }
+
+  private applyListState(listId: string, state: ListSocialState) {
+    this.trendingLists.update((lists) =>
+      lists.map((list) =>
+        list.$id === listId
+          ? {
+              ...list,
+              likedByMe: state.likedByMe,
+              savedByMe: state.savedByMe,
+              likeCount: state.likeCount,
+              saveCount: state.saveCount,
+            }
+          : list,
+      ),
+    );
   }
 }

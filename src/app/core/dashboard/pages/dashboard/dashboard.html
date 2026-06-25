@@ -1,11 +1,17 @@
 <div class="w-full max-w-5xl mx-auto">
   <section>
-    @if (loadingHighlights()) {
+    <header
+      class="flex gap-4 items-baseline flex-wrap border-b border-gray-6 p-4"
+    >
+      <h2 class="text-2xl">Das suas conexões</h2>
+    </header>
+
+    @if (loadingFeed()) {
     <ui-loading></ui-loading>
-    } @else if (highlights().length > 0) {
+    } @else if (feed().length > 0) {
     <div class="flex flex-col divide-y divide-gray-6">
-      @for (item of highlights(); track item.$id) {
-      <div class="flex flex-col gap-3 p-4">
+      @for (item of feed(); track item.type + ':' + item.$id) {
+      <article class="flex flex-col gap-3 p-4">
         <header class="flex items-center gap-3">
           @if (item.userProfile?.avatarUrl) {
           <img
@@ -26,38 +32,70 @@
               class="font-medium text-gray-12 hover:underline"
               >{{ item.userProfile?.gamertag || 'Jogador' }}</a
             >
-            <span class="text-xs text-gray-10"
-              >{{ item.$createdAt | relativeTime }}</span
-            >
+            <span class="text-xs text-gray-10">
+              {{ item.$createdAt | relativeTime }}
+            </span>
           </div>
+
           <div class="ml-auto flex items-center gap-2">
-            @if (item._highlightType === 'rating') {
-            <span
-              class="text-xs bg-amber-300/10 text-amber-300 px-2 py-0.5 rounded-full font-medium"
-              >Review</span
-            >
+            @if (item.type === 'rating') {
+            <span class="text-xs text-gray-11">Review</span>
             <div class="flex items-center gap-1 text-amber-300">
               <i class="ph-fill ph-star"></i>
               <span class="font-bold text-gray-12 ml-1"
                 >{{ item.rating?.toFixed(1) }}</span
               >
             </div>
+            } @else if (item.type === 'comment') {
+            <span class="text-xs text-gray-11">Comentário</span>
             } @else {
-            <span
-              class="text-xs bg-blue-3 text-blue-11 px-2 py-0.5 rounded-full font-medium"
-              >Comentário</span
-            >
+            <span class="text-xs text-gray-11">Lista</span>
             }
           </div>
         </header>
 
-        @if (item.content) {
+        @if (item.type === 'list') {
+        <div class="flex flex-col gap-3">
+          <div>
+            @if (listLink(item); as href) {
+            <a
+              [routerLink]="href"
+              class="text-lg font-medium text-gray-12 hover:underline"
+              >{{ item.title }}</a
+            >
+            } @else {
+            <h3 class="text-lg font-medium text-gray-12">{{ item.title }}</h3>
+            } @if (item.description) {
+            <p class="text-sm text-gray-11 line-clamp-2">
+              {{ item.description }}
+            </p>
+            }
+          </div>
+
+          @if (latestCovers(item).length > 0) {
+          <div class="flex -space-x-2">
+            @for (cover of latestCovers(item); track cover?.gameCoverUrl) {
+            <img
+              [src]="cover?.gameCoverUrl"
+              [alt]="cover?.gameName"
+              class="h-16 w-11 rounded border border-gray-1 object-cover bg-gray-4"
+            />
+            }
+          </div>
+          }
+
+          <footer class="flex items-center gap-4 text-sm text-gray-11">
+            <span>{{ item.itemCount || 0 }} jogos</span>
+            <span>{{ item.likeCount || 0 }} curtidas</span>
+            <span>{{ item.saveCount || 0 }} salvos</span>
+          </footer>
+        </div>
+        } @else { @if (item.content) {
         <div
           class="prose prose-invert prose-sm prose-gray max-w-none prose-p:font-light line-clamp-3"
           [innerHTML]="item.content"
         ></div>
-
-        @if (item.game) {
+        } @if (item.game) {
         <a
           [routerLink]="['/jogo', item.game.slug]"
           class="flex items-center gap-3 hover:bg-gray-3 p-2 rounded-lg transition-colors border border-gray-6"
@@ -73,25 +111,29 @@
             >{{ item.game.name }}</span
           >
         </a>
-        } }
+        }
 
         <footer class="flex items-center gap-2 text-sm text-gray-11 mt-2">
           <i class="ph ph-arrow-up text-lg text-blue-9"></i>
           <span class="font-medium">{{ item.voteCount || 0 }} votos</span>
         </footer>
-      </div>
+        }
+      </article>
       }
     </div>
     } @else {
-    <p class="text-gray-11">Nenhum destaque encontrado no momento.</p>
-    } @if (hasMoreHighlights()) {
+    <p class="text-gray-11 p-4">
+      Siga perfis para ver reviews, comentários e listas públicas das suas
+      conexões.
+    </p>
+    } @if (hasMoreFeed()) {
     <div class="mt-4 flex justify-center">
       <button
-        (click)="loadMoreHighlights()"
-        [disabled]="loadingMoreHighlights()"
-        class="bg-gray-3 hover:bg-gray-4 text-gray-12 font-medium px-6 py-2.5 rounded-full transition-colors disabled:opacity-50 flex items-center gap-2"
+        (click)="loadMoreFeed()"
+        [disabled]="loadingMoreFeed()"
+        class="px-4 py-2 w-full border-t border-gray-6 cursor-pointer hover:bg-gray-2"
       >
-        @if (loadingMoreHighlights()) {
+        @if (loadingMoreFeed()) {
         <ui-loading [inline]="true" size="sm"></ui-loading>
         Carregando... } @else { Ver mais }
       </button>
@@ -99,24 +141,91 @@
     }
   </section>
 
-  <header
-    class="flex gap-4 items-baseline flex-wrap max-md:px-4 border-t-8 border-b border-gray-6 p-4"
-  >
-    <h2 class="text-2xl">Minhas listas</h2>
+  <section>
+    <header
+      class="flex gap-4 items-baseline flex-wrap border-t-8 border-b border-gray-6 p-4"
+    >
+      <h2 class="text-2xl">Listas em alta</h2>
+    </header>
 
-    <a
-      [routerLink]="['/player', profile?.gamertag, 'listas']"
-      class="text-blue-11 hover:underline hover:text-blue-9"
-      >Ir para minhas listas
-    </a>
-  </header>
+    @if (loadingTrendingLists()) {
+    <ui-loading></ui-loading>
+    } @else if (trendingLists().length > 0) {
+    <ul class="grid gap-px bg-gray-6 md:grid-cols-2">
+      @for (list of trendingLists(); track list.$id) {
+      <li
+        class="p-4 bg-gray-1 flex flex-col gap-3"
+      >
+        <header class="relative flex items-start gap-3">
+          <div class="min-w-0 flex-1">
+            @if (listLink(list); as href) {
+            <a
+              [routerLink]="href"
+              class="text-lg font-medium text-gray-12 hover:underline line-clamp-2"
+              >{{ list.title }}</a
+            >
+            } @else {
+            <h3 class="text-lg font-medium text-gray-12 line-clamp-2">
+              {{ list.title }}
+            </h3>
+            }
+            <p class="text-sm text-gray-11">
+              por {{ list.author?.gamertag || 'Jogador' }}
+            </p>
+          </div>
 
-  <app-user-lists
-    [lists]="controller.lists()"
-    [fromMe]="true"
-    [disableGrid]="true"
-  >
-  </app-user-lists>
+          <div class="absolute right-0 top-0 flex flex-col items-center gap-1">
+            <button
+              type="button"
+              class="ui-ghost-btn"
+              data-size="icon"
+              [class.text-red-9]="list.likedByMe"
+              (click)="toggleListLike(list.$id)"
+              aria-label="Curtir lista"
+            >
+              <i
+                [class]="list.likedByMe ? 'ph-fill ph-heart text-red-400' : 'ph ph-heart'"
+              ></i>
+            </button>
+            <button
+              type="button"
+              class="ui-ghost-btn"
+              data-size="icon"
+              [class.text-blue-9]="list.savedByMe"
+              (click)="toggleListSave(list.$id)"
+              aria-label="Salvar lista"
+            >
+              <i
+                [class]="list.savedByMe ? 'ph-fill ph-bookmark-simple' : 'ph ph-bookmark-simple'"
+              ></i>
+            </button>
+          </div>
+        </header>
+
+        @if (latestCovers(list).length > 0) {
+        <div class="flex -space-x-2">
+          @for (cover of latestCovers(list); track cover?.gameCoverUrl) {
+          <img
+            [src]="cover?.gameCoverUrl"
+            [alt]="cover?.gameName"
+            class="h-20 w-14 rounded border border-gray-1 object-cover bg-gray-4"
+          />
+          }
+        </div>
+        }
+
+        <footer class="flex items-center gap-4 text-sm text-gray-11">
+          <span>{{ list.itemCount }} jogos</span>
+          <span>{{ list.likeCount }} curtidas</span>
+          <span>{{ list.saveCount }} salvos</span>
+        </footer>
+      </li>
+      }
+    </ul>
+    } @else {
+    <p class="text-gray-11 p-4">Nenhuma lista pública em alta no momento.</p>
+    }
+  </section>
 
   <section>
     <header
@@ -146,7 +255,7 @@
       }
     </ul>
     } @else {
-    <p class="text-gray-11">Nenhum jogo hypado encontrado no momento.</p>
+    <p class="text-gray-11 p-4">Nenhum jogo hypado encontrado no momento.</p>
     }
   </section>
 </div>

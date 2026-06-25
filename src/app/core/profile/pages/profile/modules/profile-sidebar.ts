@@ -9,7 +9,7 @@ import { ProfileStore } from '../../../../userProfiles/profile.store';
   imports: [RouterLink],
   template: `
     <ul
-      class="flex md:flex-col p-2 space-y-1 overflow-x-auto border-t border-gray-6"
+      class="profile-theme-divider flex md:flex-col p-2 space-y-1 overflow-x-auto border-t border-gray-6"
     >
       @for (tab of tabs(); track tab.key) {
         <li
@@ -20,11 +20,11 @@ import { ProfileStore } from '../../../../userProfiles/profile.store';
           <a
             [routerLink]="['/player', profileStore.current()?.gamertag]"
             [queryParams]="{ t: tab.key }"
-            class="flex gap-2 justify-between w-fit md:w-full whitespace-nowrap pl-4 pr-2 py-2 rounded-lg hover:bg-blue-4 hover:text-white group-data-[active=true]:bg-blue-3 group-data-[active=true]:hover:bg-blue-4 transition-colors"
+            class="profile-theme-tab flex gap-2 justify-between w-fit md:w-full whitespace-nowrap pl-4 pr-2 py-2 rounded-lg transition-colors"
           >
             {{ tab.label }}
             <span
-              class="px-1 text-gray-11 rounded-lg bg-gray-3 min-w-6 text-center"
+              class="profile-theme-badge px-1 text-gray-11 rounded-lg bg-gray-3 min-w-6 text-center"
             >
               {{ tab.count }}
             </span>

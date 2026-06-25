@@ -19,6 +19,8 @@ type UserProfile = {
   socialPsn?: string;
   zcoinBalance?: number;
   inviteCode?: string;
+  activeThemeId?: string;
+  unlockedThemes?: string[];
 };
 
 type UserProfileRow = StoredRow<UserProfile>;
