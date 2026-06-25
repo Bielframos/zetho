@@ -5,6 +5,7 @@ import { ThemesService } from '../../../themes/themes.service';
 import { ProfileTheme } from '../../../themes/themes.types';
 import { AuthStore } from '../../../auth/auth.store';
 import { getThemeMediaUrl } from '../../../themes/theme-media';
+import { NotificationStore } from '../../../notifications/notification.store';
 
 @Component({
   selector: 'z-shop',
@@ -16,12 +17,11 @@ export class ShopPage implements OnInit {
   private title = inject(Title);
   private themesService = inject(ThemesService);
   private authStore = inject(AuthStore);
+  private notification = inject(NotificationStore);
 
   themes: ProfileTheme[] = [];
   isLoading = true;
   buyingThemeId: string | null = null;
-  successMessage = '';
-  errorMessage = '';
 
   constructor() {
     this.title.setTitle('Zetho | Loja');
@@ -59,15 +59,19 @@ export class ShopPage implements OnInit {
   async buyTheme(theme: ProfileTheme) {
     if (this.ownsTheme(theme)) {
       this.buyingThemeId = theme.$id;
-      this.successMessage = '';
-      this.errorMessage = '';
 
       try {
         await this.themesService.equipTheme(theme.$id);
         this.authStore.setActiveTheme(theme.$id);
-        this.successMessage = `Tema "${theme.name}" equipado.`;
+        this.notification.show({
+          message: `Tema "${theme.name}" equipado.`,
+          type: 'success',
+        });
       } catch (e: any) {
-        this.errorMessage = e.message || 'Erro ao equipar tema.';
+        this.notification.show({
+          message: e.message || 'Erro ao equipar tema.',
+          type: 'error',
+        });
       } finally {
         this.buyingThemeId = null;
       }
@@ -80,18 +84,22 @@ export class ShopPage implements OnInit {
       )
     ) {
       this.buyingThemeId = theme.$id;
-      this.successMessage = '';
-      this.errorMessage = '';
 
       try {
         await this.themesService.buyTheme(theme.$id);
         await this.themesService.equipTheme(theme.$id);
         this.authStore.addUnlockedTheme(theme.$id);
         this.authStore.setActiveTheme(theme.$id);
-        this.successMessage = `Tema "${theme.name}" comprado e equipado com sucesso.`;
+        this.notification.show({
+          message: `Tema "${theme.name}" comprado e equipado com sucesso.`,
+          type: 'success',
+        });
       } catch (e: any) {
-        this.errorMessage =
-          e.message || 'Erro ao comprar tema. Verifique seu saldo de z-coins.';
+        this.notification.show({
+          message:
+            e.message || 'Erro ao comprar tema. Verifique seu saldo de z-coins.',
+          type: 'error',
+        });
       } finally {
         this.buyingThemeId = null;
       }

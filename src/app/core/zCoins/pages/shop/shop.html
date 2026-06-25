@@ -14,19 +14,7 @@
   </header>
 
   <section>
-    @if (successMessage) {
-    <div
-      class="mb-4 p-3 border border-green-700/40 bg-green-900/20 text-green-200 text-sm"
-    >
-      {{ successMessage }}
-    </div>
-    } @if (errorMessage) {
-    <div
-      class="mb-4 p-3 border border-red-700/40 bg-red-900/20 text-red-200 text-sm"
-    >
-      {{ errorMessage }}
-    </div>
-    } @if (isLoading) {
+    @if (isLoading) {
     <div class="flex justify-center py-12">
       <i class="ph ph-spinner animate-spin text-4xl text-blue-9"></i>
     </div>
