@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { AuthStore } from '../auth/auth.store';
 
 type ProfileSummary = {
+  $id?: string;
   gamertag: string;
   avatarUrl: string | null;
 };
@@ -11,6 +12,15 @@ type GameSummary = {
   name: string;
   slug: string;
   coverUrl: string | null;
+};
+
+type VoteType = 'up' | 'down';
+
+export type ParentCommentSummary = {
+  $id: string;
+  content: string;
+  $createdAt: string;
+  userProfile?: ProfileSummary | null;
 };
 
 export interface DashboardFeedItem {
@@ -30,6 +40,8 @@ export interface DashboardFeedItem {
   userProfile?: ProfileSummary | null;
   gameId?: string;
   game?: GameSummary | null;
+  parentComment?: ParentCommentSummary | null;
+  viewerVote?: VoteType | null;
 }
 
 export interface TrendingListItem {
@@ -53,6 +65,14 @@ export interface ListSocialState {
   saveCount: number;
   likedByMe: boolean;
   savedByMe: boolean;
+}
+
+export interface CommentVoteState {
+  success: boolean;
+  delta: number;
+  operation: VoteType;
+  newVoteCount: number;
+  viewerVote: VoteType | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -94,7 +114,8 @@ export class DashboardService {
       throw new Error(`Failed to fetch personal feed: ${response.statusText}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    return data;
   }
 
   async getTrendingLists(limit = 12): Promise<{ items: TrendingListItem[] }> {
@@ -152,6 +173,30 @@ export class DashboardService {
 
   async toggleListSave(listId: string): Promise<ListSocialState> {
     return this.toggleListAction(listId, 'save');
+  }
+
+  async voteComment(
+    commentId: string,
+    operation: VoteType,
+  ): Promise<CommentVoteState> {
+    const response = await fetch(
+      new URL(
+        `dashboard/comments/${commentId}/vote`,
+        environment.zethoApiEndpoint,
+      ),
+      {
+        method: 'POST',
+        headers: await this.getAuthHeaders(true),
+        body: JSON.stringify({ operation }),
+      },
+    );
+
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      throw new Error(body.message || 'Failed to vote on comment');
+    }
+
+    return (await response.json()) as CommentVoteState;
   }
 
   private async toggleListAction(listId: string, action: 'like' | 'save') {

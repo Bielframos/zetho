@@ -8,6 +8,7 @@ import { AuthStore } from '../../../auth/auth.store';
 import { GameService } from '../../../games/games.service';
 import { UpperCasePipe } from '@angular/common';
 import {
+  CommentVoteState,
   DashboardFeedItem,
   DashboardService,
   ListSocialState,
@@ -33,6 +34,7 @@ export class DashboardPage {
   feedPage = signal(1);
   hasMoreFeed = signal(false);
   loadingMoreFeed = signal(false);
+  updatingCommentVoteIds = signal<Set<string>>(new Set());
 
   trendingLists = signal<TrendingListItem[]>([]);
   loadingTrendingLists = signal(false);
@@ -140,6 +142,31 @@ export class DashboardPage {
     await this.toggleTrendingList(listId, 'save');
   }
 
+  async voteFeedComment(commentId: string, operation: 'up' | 'down') {
+    if (this.updatingCommentVoteIds().has(commentId)) return;
+
+    const previous = this.feed();
+    this.updatingCommentVoteIds.update((ids) => new Set(ids).add(commentId));
+    this.applyOptimisticCommentVote(commentId, operation);
+
+    try {
+      const state = await this.dashboardService.voteComment(
+        commentId,
+        operation,
+      );
+      this.applyCommentVoteState(commentId, state);
+    } catch (e) {
+      console.error(e);
+      this.feed.set(previous);
+    } finally {
+      this.updatingCommentVoteIds.update((ids) => {
+        const next = new Set(ids);
+        next.delete(commentId);
+        return next;
+      });
+    }
+  }
+
   private async toggleTrendingList(listId: string, action: 'like' | 'save') {
     if (this.updatingListIds().has(`${action}:${listId}`)) return;
 
@@ -203,6 +230,66 @@ export class DashboardPage {
               saveCount: state.saveCount,
             }
           : list,
+      ),
+    );
+  }
+
+  private applyOptimisticCommentVote(
+    commentId: string,
+    operation: 'up' | 'down',
+  ) {
+    this.feed.update((items) =>
+      items.map((item) => {
+        if (item.type !== 'comment' || item.$id !== commentId) return item;
+
+        const currentVote = item.viewerVote ?? null;
+        let delta = 0;
+        let viewerVote: 'up' | 'down' | null = operation;
+
+        if (!currentVote) {
+          delta = operation === 'up' ? 1 : (item.voteCount ?? 0) > 0 ? -1 : 0;
+        } else if (currentVote === operation) {
+          delta =
+            operation === 'up'
+              ? (item.voteCount ?? 0) > 0
+                ? -1
+                : 0
+              : (item.voteCount ?? 0) > 0
+                ? 1
+                : 0;
+          viewerVote = null;
+        } else {
+          delta =
+            operation === 'up'
+              ? (item.voteCount ?? 0) > 0
+                ? 2
+                : 1
+              : (item.voteCount ?? 0) > 1
+                ? -2
+                : (item.voteCount ?? 0) > 0
+                  ? -1
+                  : 0;
+        }
+
+        return {
+          ...item,
+          viewerVote,
+          voteCount: Math.max(0, (item.voteCount ?? 0) + delta),
+        };
+      }),
+    );
+  }
+
+  private applyCommentVoteState(commentId: string, state: CommentVoteState) {
+    this.feed.update((items) =>
+      items.map((item) =>
+        item.type === 'comment' && item.$id === commentId
+          ? {
+              ...item,
+              voteCount: state.newVoteCount,
+              viewerVote: state.viewerVote,
+            }
+          : item,
       ),
     );
   }

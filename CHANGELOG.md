@@ -4,6 +4,18 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
+## [Unreleased]
+
+### Added
+
+- O feed do dashboard agora exibe o comentário pai direto em respostas, dando mais contexto à conversa.
+- Comentários do feed agora podem receber upvote e downvote diretamente pelo dashboard.
+
+### Fixed
+
+- Corrigido o estado visual dos votos no feed para indicar a seleção de forma sutil.
+- Corrigida a sincronização de votos para evitar ações concorrentes no mesmo comentário.
+
 ## [1.13.0] - 2026-06-25
 
 ### Added
