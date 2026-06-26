@@ -90,7 +90,27 @@
             <span>{{ item.saveCount || 0 }} salvos</span>
           </footer>
         </div>
-        } @else { @if (item.content) {
+        } @else { @if (item.type === 'comment' && item.parentComment &&
+        item.parentComment.$id !== item.$id) {
+        <div class="border-l-2 border-gray-6 bg-gray-2/60 px-3 py-2">
+          <div class="mb-1 flex items-center gap-2 text-xs text-gray-10">
+            <span>Em resposta a</span>
+            @if (item.parentComment.userProfile?.gamertag) {
+            <a
+              [routerLink]="['/player', item.parentComment.userProfile?.gamertag]"
+              class="font-medium text-gray-11 hover:text-gray-12 hover:underline"
+              >{{ item.parentComment.userProfile?.gamertag }}</a
+            >
+            } @else {
+            <span class="font-medium text-gray-11">Jogador</span>
+            }
+          </div>
+          <div
+            class="prose prose-invert prose-xs prose-gray max-w-none text-sm text-gray-11 prose-p:my-0 line-clamp-2"
+            [innerHTML]="item.parentComment.content"
+          ></div>
+        </div>
+        } @if (item.content) {
         <div
           class="prose prose-invert prose-sm prose-gray max-w-none prose-p:font-light line-clamp-3"
           [innerHTML]="item.content"
@@ -113,9 +133,41 @@
         </a>
         }
 
-        <footer class="flex items-center gap-2 text-sm text-gray-11 mt-2">
+        <footer
+          class="mt-2 flex items-center justify-end gap-2 text-sm text-gray-11"
+        >
+          @if (item.type === 'comment') {
+          <button
+            type="button"
+            class="ui-ghost-btn"
+            data-size="icon"
+            (click)="voteFeedComment(item.$id, 'up')"
+            aria-label="Upvote"
+          >
+            <i
+              class="ph ph-arrow-up"
+              [class.text-blue-9]="item.viewerVote === 'up'"
+            ></i>
+          </button>
+          <span class="min-w-6 text-center font-medium"
+            >{{ item.voteCount || 0 }}</span
+          >
+          <button
+            type="button"
+            class="ui-ghost-btn"
+            data-size="icon"
+            (click)="voteFeedComment(item.$id, 'down')"
+            aria-label="Downvote"
+          >
+            <i
+              class="ph ph-arrow-down"
+              [class.text-red-400]="item.viewerVote === 'down'"
+            ></i>
+          </button>
+          } @else {
           <i class="ph ph-arrow-up text-lg text-blue-9"></i>
           <span class="font-medium">{{ item.voteCount || 0 }} votos</span>
+          }
         </footer>
         }
       </article>
@@ -153,9 +205,7 @@
     } @else if (trendingLists().length > 0) {
     <ul class="grid gap-px bg-gray-6 md:grid-cols-2">
       @for (list of trendingLists(); track list.$id) {
-      <li
-        class="p-4 bg-gray-1 flex flex-col gap-3"
-      >
+      <li class="p-4 bg-gray-1 flex flex-col gap-3">
         <header class="relative flex items-start gap-3">
           <div class="min-w-0 flex-1">
             @if (listLink(list); as href) {
