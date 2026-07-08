@@ -26,6 +26,14 @@ export class CommentService {
     return comment;
   }
 
+  async deleteComment(comment: CommentRow) {
+    await this.repo.delete(comment.$id);
+
+    if (comment.parentId) {
+      await this.repo.decrementReplies(comment.parentId);
+    }
+  }
+
   async getComments(gameId: string, opts?: any) {
     const queries = [
       Query.equal('gameId', gameId),
