@@ -1,7 +1,8 @@
 @reference "#app.css";
 
 .base-card {
-  @apply flex overflow-hidden relative;
+  @apply relative flex w-full overflow-hidden;
+  aspect-ratio: 3 / 4;
 }
 
 .entry-indicator {
