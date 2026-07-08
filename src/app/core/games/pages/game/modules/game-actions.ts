@@ -39,6 +39,25 @@ import { ZereiListRow } from '../../../../lists/lists.type';
       }
     </button>
 
+    <!-- Ação de notificações -->
+    <button
+      (click)="gameController.toggleNotifications()"
+      class="ui-ghost-btn"
+      data-size="icon"
+      [disabled]="gameController.updatingNotifications()"
+      [aria-label]="
+        gameController.notificationsEnabled()
+          ? 'Desativar notificações'
+          : 'Ativar notificações'
+      "
+    >
+      @if (gameController.notificationsEnabled()) {
+        <i class="ph-fill ph-bell-ringing text-blue-9"></i>
+      } @else {
+        <i class="ph ph-bell"></i>
+      }
+    </button>
+
     <!-- Ações de lista de desejos -->
     <button
       (click)="

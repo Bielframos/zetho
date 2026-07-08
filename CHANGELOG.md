@@ -6,8 +6,11 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.14.0] - 2026-07-08
+
 ### Added
 
+- Adicionada ação para ativar e desativar notificações por e-mail nas páginas de jogos.
 - O feed do dashboard agora exibe o comentário pai direto em respostas, dando mais contexto à conversa.
 - Comentários do feed agora podem receber upvote e downvote diretamente pelo dashboard.
 

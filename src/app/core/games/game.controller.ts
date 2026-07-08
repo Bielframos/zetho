@@ -6,6 +6,7 @@ import { AuthStore } from '../auth/auth.store';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { GameService } from './games.service';
 import { ZCoinsService } from '../zCoins/zcoins.service';
+import { NotificationStore } from '../notifications/notification.store';
 
 @Injectable({ providedIn: 'root' })
 export class GameController {
@@ -19,6 +20,8 @@ export class GameController {
   errors = signal<Record<string, any>>({});
   loading = signal(false);
   updating = signal(false);
+  notificationsEnabled = signal(false);
+  updatingNotifications = signal(false);
   isUpcomingRelease = computed(() => {
     const game = this.game();
     if (!game) return false;
@@ -44,6 +47,7 @@ export class GameController {
     private zEntryService: ZEntryService,
     private authStore: AuthStore,
     private zCoinsService: ZCoinsService,
+    private notification: NotificationStore,
   ) {}
 
   async loadPage(slug: string) {
@@ -55,6 +59,8 @@ export class GameController {
       this.medias.set([]);
       this.heroImage.set(null);
       this.errors.set({});
+      this.notificationsEnabled.set(false);
+      this.updatingNotifications.set(false);
       this.loading.set(true);
 
       const user = this.authStore.user();
@@ -102,6 +108,55 @@ export class GameController {
     }
   }
 
+  async toggleNotifications() {
+    const game = this.game();
+
+    if (!game) return;
+    if (this.updatingNotifications()) return;
+
+    if (!this.authStore.isAuthenticated()) {
+      this.errors.update((state) => ({
+        ...state,
+        notifications: 'auth_required',
+      }));
+      this.notification.show({
+        message: 'Entre na sua conta para ativar notificações.',
+        type: 'info',
+      });
+      return;
+    }
+
+    const active = !this.notificationsEnabled();
+
+    this.updatingNotifications.set(true);
+
+    try {
+      await this.gameService.toggleNotifications(game.$id, active);
+      this.notificationsEnabled.set(active);
+      this.notification.show({
+        message: active
+          ? 'Notificações ativadas para este jogo.'
+          : 'Notificações desativadas para este jogo.',
+        type: 'success',
+      });
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Não foi possível atualizar as notificações.';
+
+      this.errors.update((state) => ({
+        ...state,
+        notifications: message,
+      }));
+      this.notification.show({
+        message,
+        type: 'error',
+      });
+    } finally {
+      this.updatingNotifications.set(false);
+    }
+  }
 
   async handleEntry(
     payload:
