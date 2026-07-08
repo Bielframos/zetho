@@ -7,6 +7,7 @@ import { GameStore } from './game.store';
 import { GameRepository } from './games.repository';
 import { GenresCacheService } from './genres-cache.service';
 import { environment } from '../../../environments/environment';
+import { AuthStore } from '../auth/auth.store';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
@@ -14,6 +15,7 @@ export class GameService {
   private gameStore = inject(GameStore);
   private genresCache = inject(GenresCacheService);
   private repository = inject(GameRepository);
+  private authStore = inject(AuthStore);
 
   private appendGenres(game: GameRow): GameRow {
     return {
@@ -227,6 +229,40 @@ export class GameService {
     } catch {
       return null;
     }
+  }
+
+  async toggleNotifications(gameId: string, active: boolean) {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${await this.authStore.getJwt()}`,
+    };
+    const fallbackCookie = localStorage.getItem('cookieFallback');
+
+    if (fallbackCookie) {
+      headers['x-appwrite-session'] = fallbackCookie;
+    }
+
+    const response = await fetch(
+      new URL(
+        `games/${gameId}/notifications/toggle`,
+        environment.zethoApiEndpoint,
+      ),
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ active }),
+      },
+    );
+
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok || payload?.success === false) {
+      throw new Error(
+        payload?.message || 'Não foi possível atualizar as notificações.',
+      );
+    }
+
+    return payload as { success: boolean; message?: string };
   }
 
   async getGame(slug: string) {
