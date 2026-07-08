@@ -46,6 +46,16 @@ export class CommentsRepository {
     });
   }
 
+  async decrementReplies(parentId: string) {
+    return appwrite.databases.incrementRowColumn({
+      databaseId: 'app',
+      tableId: 'game_comments',
+      rowId: parentId,
+      column: 'replyCount',
+      value: -1,
+    });
+  }
+
   async list(queries: any[]) {
     return appwrite.databases.listRows<CommentRow>({
       databaseId: 'app',
@@ -78,6 +88,14 @@ export class CommentsRepository {
       databaseId: 'app',
       tableId: 'game_comment_votes',
       rowId: voteId,
+    });
+  }
+
+  async delete(commentId: string) {
+    return appwrite.databases.deleteRow({
+      databaseId: 'app',
+      tableId: 'game_comments',
+      rowId: commentId,
     });
   }
 }

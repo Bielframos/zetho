@@ -28,6 +28,7 @@ export class CommentsController {
 
   loading = signal(false);
   loadingReplies = signal<Record<string, boolean>>({});
+  deletingCommentIds = signal<Set<string>>(new Set());
 
   constructor(
     private authStore: AuthStore,
@@ -162,6 +163,42 @@ export class CommentsController {
   }
 
   /* =======================
+     Exclusão
+     ======================= */
+
+  canDelete(comment: CommentRow) {
+    const profileId = this.authStore.profile()?.$id;
+    return (
+      !!profileId &&
+      (comment.userProfile?.$id === profileId || this.authStore.isAdmin())
+    );
+  }
+
+  async deleteComment(comment: CommentRow) {
+    if (
+      !this.canDelete(comment) ||
+      this.deletingCommentIds().has(comment.$id)
+    ) {
+      return;
+    }
+
+    if (!confirm('Deseja realmente excluir este comentário?')) return;
+
+    this.deletingCommentIds.update((ids) => new Set(ids).add(comment.$id));
+
+    try {
+      await this.commentService.deleteComment(comment);
+      this.removeLocalComment(comment);
+    } finally {
+      this.deletingCommentIds.update((ids) => {
+        const next = new Set(ids);
+        next.delete(comment.$id);
+        return next;
+      });
+    }
+  }
+
+  /* =======================
      Voto
      ======================= */
 
@@ -209,6 +246,85 @@ export class CommentsController {
     }
 
     return this.rootComments().find((c) => c.$id === commentId);
+  }
+
+  private removeLocalComment(comment: CommentRow) {
+    const removedIds = new Set<string>([comment.$id]);
+    this.collectLoadedDescendantIds(comment.$id, removedIds);
+
+    this.rootComments.update((list) =>
+      list.filter((item) => !removedIds.has(item.$id)),
+    );
+
+    this.childComments.update((map) => {
+      const next = { ...map };
+
+      for (const id of removedIds) {
+        delete next[id];
+      }
+
+      if (comment.parentId && next[comment.parentId]) {
+        const parentRef = next[comment.parentId];
+        next[comment.parentId] = {
+          ...parentRef,
+          comments: parentRef.comments.filter(
+            (item) => !removedIds.has(item.$id),
+          ),
+          pagination: parentRef.pagination
+            ? {
+                ...parentRef.pagination,
+                total: Math.max(0, parentRef.pagination.total - 1),
+              }
+            : undefined,
+        };
+      }
+
+      return next;
+    });
+
+    if (!comment.parentId) {
+      this.total.update((value) => Math.max(0, value - 1));
+      return;
+    }
+
+    this.decrementLocalReplyCount(comment.parentId);
+  }
+
+  private collectLoadedDescendantIds(commentId: string, ids: Set<string>) {
+    const comments = this.childComments()[commentId]?.comments ?? [];
+
+    for (const comment of comments) {
+      ids.add(comment.$id);
+      this.collectLoadedDescendantIds(comment.$id, ids);
+    }
+  }
+
+  private decrementLocalReplyCount(commentId: string) {
+    const update = (comment: CommentRow): CommentRow => ({
+      ...comment,
+      replyCount: Math.max(0, (comment.replyCount ?? 0) - 1),
+    });
+
+    this.rootComments.update((list) =>
+      list.map((comment) =>
+        comment.$id === commentId ? update(comment) : comment,
+      ),
+    );
+
+    this.childComments.update((map) => {
+      const next = { ...map };
+
+      for (const [parentId, ref] of Object.entries(next)) {
+        next[parentId] = {
+          ...ref,
+          comments: ref.comments.map((comment) =>
+            comment.$id === commentId ? update(comment) : comment,
+          ),
+        };
+      }
+
+      return next;
+    });
   }
 
   private applyLocalVote(

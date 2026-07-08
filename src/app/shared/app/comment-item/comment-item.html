@@ -1,4 +1,4 @@
-<div class="comment">
+<div class="comment py-4">
   <a
     class="flex gap-2 items-center"
     [routerLink]="['/player', comment().userProfile.gamertag]"
@@ -15,7 +15,7 @@
   <p class="pl-10 font-light -mt-1">{{ comment().content }}</p>
 
   <!-- Ações -->
-  <div class="pl-10 mt-2 flex gap-2">
+  <div class="pl-10 mt-2 flex flex-wrap gap-2">
     @if (depth < 2) {
     <div class="flex items-center gap-0.5 bg-gray-3 rounded-full text-gray-11">
       <button
@@ -57,10 +57,7 @@
 
     <!-- botão para expandir respostas -->
     @if (comment().replyCount && comment().replyCount! > 0) {
-    <button
-      class="ui-action-btn border border-gray-6"
-      (click)="loadReplies.emit()"
-    >
+    <button class="ui-action-btn" (click)="loadReplies.emit()">
       <i class="ph ph-chats text-[16px]"></i>
       {{ comment().replyCount }}
     </button>
@@ -69,6 +66,21 @@
     <!-- botão para responder -->
     @if (depth < 2) {
     <button class="ui-action-btn" (click)="toggleReplyBox()">Responder</button>
+    } @if (controller.canDelete(comment())) {
+    <button
+      class="ui-action-btn text-red-300 hover:bg-red-600/20 hover:text-red-100 disabled:pointer-events-none disabled:opacity-50"
+      data-size="icon"
+      aria-label="Excluir comentário"
+      title="Excluir comentário"
+      [disabled]="controller.deletingCommentIds().has(comment().$id)"
+      (click)="controller.deleteComment(comment())"
+    >
+      @if (controller.deletingCommentIds().has(comment().$id)) {
+      <ui-loading [inline]="true" size="sm"></ui-loading>
+      } @else {
+      <i class="ph ph-trash text-[16px]"></i>
+      }
+    </button>
     }
   </div>
 
@@ -99,13 +111,17 @@
   <!-- Loader enquanto carrega respostas -->
   @if (isLoadingReplies()) {
   <div class="flex text-sm text-gray-11 gap-2 items-center mt-2">
-    <ui-loading [inline]="true" size="sm" fallback="Carregando respostas..."></ui-loading>
+    <ui-loading
+      [inline]="true"
+      size="sm"
+      fallback="Carregando respostas..."
+    ></ui-loading>
   </div>
   }
 
   <!-- Lista de respostas (nível 1 ou 2) -->
   @if (!controller.childComments()[comment().$id]?.hidden) {
-  <div class="pl-10 mt-4">
+  <div class="pl-10 mt-4 pb-4">
     @for (reply of replies(); track reply.$id) {
     <app-comment-item
       [comment]="reply"

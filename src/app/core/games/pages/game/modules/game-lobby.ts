@@ -55,7 +55,7 @@ import { CommentsController } from '../../../../comments/comments.controller';
         </div>
       </div>
 
-      <div class="px-4">
+      <div class="px-4 pb-4">
         @for (comment of controller.rootComments(); track comment.$id) {
           <app-comment-item
             [comment]="comment"
@@ -68,7 +68,7 @@ import { CommentsController } from '../../../../comments/comments.controller';
       </div>
 
       @if (controller.hasMore()) {
-        <footer class="w-full flex justify-center">
+        <footer class="w-full flex justify-center px-4 pb-6 pt-2">
           <button
             class="ui-primary-btn"
             (click)="controller.loadRootComments({ loadMore: true })"

@@ -1247,6 +1247,7 @@
         "create(\"users\")",
         "read(\"users\")",
         "update(\"users\")",
+        "delete(\"users\")",
         "read(\"any\")"
       ],
       "databaseId": "app",
