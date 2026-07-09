@@ -1,4 +1,4 @@
-<div class="comment py-4">
+<div class="comment">
   <a
     class="flex gap-2 items-center"
     [routerLink]="['/player', comment().userProfile.gamertag]"
@@ -110,7 +110,7 @@
 
   <!-- Loader enquanto carrega respostas -->
   @if (isLoadingReplies()) {
-  <div class="flex text-sm text-gray-11 gap-2 items-center mt-2">
+  <div class="flex text-sm text-gray-11 gap-2 items-center mt-2 px-4">
     <ui-loading
       [inline]="true"
       size="sm"
@@ -120,7 +120,7 @@
   }
 
   <!-- Lista de respostas (nível 1 ou 2) -->
-  @if (!controller.childComments()[comment().$id]?.hidden) {
+  @if (replies().length > 0 && !controller.childComments()[comment().$id]?.hidden) {
   <div class="pl-10 mt-4 pb-4">
     @for (reply of replies(); track reply.$id) {
     <app-comment-item

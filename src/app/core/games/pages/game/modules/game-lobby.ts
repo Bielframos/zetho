@@ -55,7 +55,7 @@ import { CommentsController } from '../../../../comments/comments.controller';
         </div>
       </div>
 
-      <div class="px-4 pb-4">
+      <div class="flex flex-col gap-4 px-4 pb-4">
         @for (comment of controller.rootComments(); track comment.$id) {
           <app-comment-item
             [comment]="comment"
