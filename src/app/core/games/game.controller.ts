@@ -262,7 +262,7 @@ export class GameController {
       return next;
     }
 
-    next.status = payload.value;
+    next.status = payload.value === current?.status ? null : payload.value;
 
     const rank = (status: ZEntryRow['status'] | undefined | null) => {
       if (status === 'completed') return 3;
