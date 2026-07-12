@@ -6,6 +6,21 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.15.0] - 2026-07-12
+
+### Added
+
+- No celular, o saldo de Z-Coins agora fica sempre visível em um botão flutuante no canto inferior direito.
+- O acesso à área de administração virou um botão flutuante dedicado no celular, deixando a barra de navegação inferior mais limpa.
+
+### Changed
+
+- No celular, modais e caixas de diálogo agora ocupam a tela inteira, com o conteúdo alinhado à esquerda e os botões de ação no canto inferior direito.
+
+### Fixed
+
+- Corrigido o comportamento de definir o status de um jogo: tocar novamente em um status já ativo agora o desativa, como esperado.
+
 ## [1.14.0] - 2026-07-08
 
 ### Added

@@ -25,16 +25,20 @@ import { UiLoading } from '../loading';
 
     <dialog
       #modal
-      class="self-center mx-auto w-[90%] max-h-[70%] overflow-hidden max-w-lg p-6 rounded-lg bg-gray-1 text-gray-12 border border-gray-6"
+      class="m-0 bg-gray-1 text-gray-12 open:flex open:flex-col h-dvh w-screen max-h-none max-w-none rounded-none border-0 p-6 lg:mx-auto lg:h-auto lg:max-h-[70%] lg:w-[90%] lg:max-w-lg lg:self-center lg:rounded-lg lg:border lg:border-gray-6"
     >
       <header class="w-full text-start">
         <h5 class="text-2xl">{{ title() }}</h5>
         <p class="text-gray-11">{{ description() }}</p>
       </header>
 
-      <ng-content></ng-content>
+      <div
+        class="min-h-0 flex-1 overflow-y-auto lg:flex-none lg:overflow-visible"
+      >
+        <ng-content></ng-content>
+      </div>
 
-      <footer class="w-full flex justify-end gap-2">
+      <footer class="mt-auto w-full flex justify-end gap-2 pt-4 lg:mt-0">
         <button (click)="closeModal()" class="ui-secondary-btn">
           Cancelar
         </button>

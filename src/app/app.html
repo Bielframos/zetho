@@ -334,11 +334,7 @@
   <nav
     class="fixed inset-x-0 bottom-0 z-30 border-t border-gray-4 bg-gray-1/95 px-2 py-2 backdrop-blur lg:hidden"
   >
-    <div
-      class="mx-auto grid max-w-md gap-1"
-      [class.grid-cols-5]="!authStore.isAdmin()"
-      [class.grid-cols-6]="authStore.isAdmin()"
-    >
+    <div class="mx-auto grid max-w-md grid-cols-5 gap-1">
       @if (authStore.user()) {
       <a
         routerLink="/dashboard"
@@ -412,18 +408,37 @@
       >
         <i class="ph ph-sign-in"></i>
       </a>
-      } @if (authStore.isAdmin()) {
-      <a
-        routerLink="/admin"
-        routerLinkActive="bg-gray-3 text-gray-12"
-        class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        aria-label="Admin"
-      >
-        <i class="ph ph-shield-star"></i>
-      </a>
       }
     </div>
   </nav>
+
+  <div
+    class="fixed right-4 z-40 flex flex-col items-end gap-3 lg:hidden"
+    style="bottom: calc(4.75rem + env(safe-area-inset-bottom))"
+  >
+    @if (authStore.isAdmin()) {
+    <a
+      routerLink="/admin"
+      routerLinkActive="ring-2 ring-gray-8"
+      class="flex h-12 w-12 items-center justify-center rounded-full border border-gray-6 bg-gray-1/95 text-gray-12 shadow-lg backdrop-blur transition-colors hover:bg-gray-3"
+      aria-label="Admin"
+    >
+      <i class="ph ph-shield-star text-xl"></i>
+    </a>
+    } @if (authStore.profile()) {
+    <div
+      class="flex h-11 items-center gap-1.5 rounded-full border border-gray-6 bg-gray-1/95 pl-1.5 pr-3 shadow-lg backdrop-blur"
+      aria-label="Saldo de Z-Coins"
+    >
+      <img src="/animated_z_coin.gif" alt="" class="h-8 w-8" />
+      <strong
+        class="font-display text-lg font-normal leading-none text-gray-12"
+      >
+        {{ authStore.profile()?.zcoinBalance ?? 0 }}
+      </strong>
+    </div>
+    }
+  </div>
 </div>
 } @else {
 <div class="flex min-h-dvh flex-col">
