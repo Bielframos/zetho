@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  appVersion: '1.15.0',
+  appVersion: '1.16.0',
   appUrl: 'http://localhost:4200/',
   appwriteEndpoint: 'https://appwrite.adstrito.com/v1',
   appwriteProject: '690a16460002c718253a',

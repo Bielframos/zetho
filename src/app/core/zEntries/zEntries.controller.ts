@@ -8,7 +8,7 @@ import { GameRow, ZEntryRow } from '../../types';
 
 @Injectable({ providedIn: 'root' })
 export class ZEntriesController {
-  pageSize = 24;
+  pageSize = 32;
 
   status = signal<Exclude<ZEntryRow['status'], null | undefined>>('completed');
   entries = signal<(ZEntryRow & { game: GameRow })[]>([]);
