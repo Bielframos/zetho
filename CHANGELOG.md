@@ -6,6 +6,12 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.16.0] - 2026-07-12
+
+### Changed
+
+- A biblioteca de jogos no perfil de um usuário agora usa rolagem infinita: os itens são carregados automaticamente em lotes maiores conforme você rola a página, sem precisar clicar em "Carregar mais".
+
 ## [1.15.0] - 2026-07-12
 
 ### Added
