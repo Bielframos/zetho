@@ -6,6 +6,13 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.16.1] - 2026-07-13
+
+### Changed
+
+- O estado vazio do perfil agora sugere, de forma bem-humorada, um jogo para o próprio usuário registrar, enquanto visitantes continuam vendo uma mensagem neutra.
+- A apresentação do estado vazio foi simplificada, sem a antiga caixa com borda tracejada.
+
 ## [1.16.0] - 2026-07-12
 
 ### Changed
