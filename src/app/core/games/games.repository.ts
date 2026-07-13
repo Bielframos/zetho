@@ -64,4 +64,20 @@ export class GameRepository {
 
     return result.rows;
   }
+
+  async findBySlugs(slugs: string[], fields: string[]): Promise<GameRow[]> {
+    if (slugs.length === 0) return [];
+
+    const result = await appwrite.databases.listRows<GameRow>({
+      databaseId: DATABASE_ID,
+      tableId: GAMES_TABLE_ID,
+      queries: [
+        Query.equal('slug', slugs),
+        Query.select(fields),
+        Query.limit(slugs.length),
+      ],
+    });
+
+    return result.rows;
+  }
 }
