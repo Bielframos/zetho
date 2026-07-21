@@ -1,11 +1,5 @@
 <div class="w-full max-w-2xl mx-auto">
   <section>
-    <header
-      class="flex gap-4 items-baseline flex-wrap border-b border-gray-6 p-4"
-    >
-      <h2 class="text-2xl">Das suas conexões</h2>
-    </header>
-
     @if (loadingFeed()) {
     <div class="flex flex-col divide-y divide-gray-6">
       @for (i of [0, 1, 2]; track i) {
