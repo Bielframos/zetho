@@ -44,7 +44,7 @@ const PREVIEW_MAX_W = 300;
       (click)="onBackdrop($event)"
     >
       <div
-        class="flex min-h-dvh w-screen flex-col gap-5 overflow-y-auto bg-gray-1 p-5 text-gray-12 lg:min-h-0 lg:w-[26rem] lg:border lg:border-gray-6"
+        class="flex h-dvh w-screen flex-col gap-5 overflow-y-auto bg-gray-1 p-5 text-gray-12 lg:h-auto lg:max-h-[90dvh] lg:w-[26rem] lg:border lg:border-gray-6"
       >
         <header
           class="flex items-center justify-between border-b border-gray-6 pb-4"
