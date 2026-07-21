@@ -9,7 +9,7 @@ import { ZEntry } from '../../../../zEntries/zEntries.types';
   imports: [NgClass],
   template: `
     <div
-      class="grid w-full auto-rows-auto divide-x grid-cols-4 divide-gray-6 animate-fade-in-slide md:h-full border-t-8 border-gray-6"
+      class="grid w-full auto-rows-auto divide-x grid-cols-4 divide-gray-6 animate-fade-in-slide md:h-full"
     >
       @for (action of actions; track action.key) {
         <button
@@ -54,7 +54,7 @@ import { ZEntry } from '../../../../zEntries/zEntries.types';
     </div>
   `,
   host: {
-    class: 'w-full max-w-[318px]',
+    class: 'block w-full',
   },
 })
 export class UiZEntryActions {

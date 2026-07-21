@@ -7,6 +7,6 @@ export const DASHBOARD_ROUTES: Routes = [
     path: 'dashboard',
     component: DashboardPage,
     canMatch: [userGuard],
-    title: 'Zetho',
+    title: 'Início',
   },
 ];

@@ -1,9 +1,11 @@
 import {
   Component,
+  computed,
   effect,
   inject,
   signal,
   untracked,
+  viewChild,
   OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -17,6 +19,8 @@ import { RatingsService, RatingRow } from '../../../../ratings/ratings.service';
 import { RichTextEditorComponent } from '../../../../../shared/ui/rich-text-editor/rich-text-editor';
 import { AppStartingRating } from '../../../../../shared/ui/star-rating/star-rating';
 import { UiLoading } from '../../../../../shared/ui/loading';
+import { UiShareModal } from '../../../../share/share-modal';
+import { ShareCardData } from '../../../../share/share.types';
 
 @Component({
   selector: 'ui-game-reviews',
@@ -28,22 +32,14 @@ import { UiLoading } from '../../../../../shared/ui/loading';
     RichTextEditorComponent,
     AppStartingRating,
     UiLoading,
+    UiShareModal,
   ],
   template: `
     <article>
-      <header class="flex items-center gap-3 px-4 py-4 border-b border-gray-6">
-        <div
-          class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6"
-        >
-          <i class="ph ph-star-half text-[24px] text-blue-11"></i>
-        </div>
-        <div>
-          <h3 class="text-2xl">Reviews</h3>
-        </div>
-
-        @if (
-          authStore.isAuthenticated() && !gameController.isUpcomingRelease()
-        ) {
+      @if (
+        authStore.isAuthenticated() && !gameController.isUpcomingRelease()
+      ) {
+        <header class="flex items-center px-4 py-4 border-b border-gray-6">
           <button class="ui-primary-btn ml-auto" (click)="toggleForm()">
             {{
               showForm()
@@ -53,8 +49,8 @@ import { UiLoading } from '../../../../../shared/ui/loading';
                   : 'Escrever crítica'
             }}
           </button>
-        }
-      </header>
+        </header>
+      }
 
       <!-- Formulário de Crítica (Tiptap + Stars) -->
       @if (showForm()) {
@@ -191,6 +187,13 @@ import { UiLoading } from '../../../../../shared/ui/loading';
                   >
                     <button
                       class="hover:text-blue-9 transition-colors"
+                      (click)="shareMyReview()"
+                      aria-label="Compartilhar crítica"
+                    >
+                      <i class="ph ph-share-network text-lg"></i>
+                    </button>
+                    <button
+                      class="hover:text-blue-9 transition-colors"
                       (click)="voteReview(mine, 'up')"
                     >
                       <i class="ph ph-caret-up text-lg"></i>
@@ -307,6 +310,8 @@ import { UiLoading } from '../../../../../shared/ui/loading';
         </div>
       }
     </article>
+
+    <ui-share-modal #shareModal [data]="reviewShareData()"></ui-share-modal>
   `,
   styles: ``,
 })
@@ -315,6 +320,33 @@ export class UiGameReviews implements OnInit {
   gameStore = inject(GameStore);
   authStore = inject(AuthStore);
   gameController = inject(GameController);
+
+  private shareModal = viewChild<UiShareModal>('shareModal');
+
+  reviewShareData = computed<ShareCardData | null>(() => {
+    const mine = this.myRating();
+    const game = this.gameStore.currentGame();
+    if (!mine || !game) return null;
+    return {
+      kind: 'review',
+      game: {
+        name: game.name,
+        coverUrl: game.coverUrl,
+        releaseYear: game.releaseYear,
+      },
+      author: {
+        gamertag: mine.profile?.gamertag ?? this.authStore.profile()?.gamertag ?? 'jogador',
+        avatarUrl:
+          mine.profile?.avatarUrl ?? this.authStore.profile()?.avatarUrl ?? null,
+      },
+      rating: mine.rating,
+      content: mine.title || mine.content || null,
+    };
+  });
+
+  shareMyReview() {
+    this.shareModal()?.open();
+  }
 
   ratings = signal<RatingRow[]>([]);
   myRating = signal<RatingRow | null>(null);

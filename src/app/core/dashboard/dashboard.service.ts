@@ -23,9 +23,11 @@ export type ParentCommentSummary = {
   userProfile?: ProfileSummary | null;
 };
 
+export type FeedGameStatus = 'completed' | 'backlog' | 'playing' | 'dropped';
+
 export interface DashboardFeedItem {
   $id: string;
-  type: 'rating' | 'comment' | 'list';
+  type: 'rating' | 'comment' | 'list' | 'status' | 'list_item';
   title?: string;
   slug?: string;
   description?: string;
@@ -36,10 +38,12 @@ export interface DashboardFeedItem {
   saveCount?: number;
   itemCount?: number;
   latestAdditions?: string[];
+  status?: FeedGameStatus;
+  list?: { $id: string; title: string; slug: string } | null;
   $createdAt: string;
   userProfile?: ProfileSummary | null;
   gameId?: string;
-  game?: GameSummary | null;
+  game?: (GameSummary & { $id?: string }) | null;
   parentComment?: ParentCommentSummary | null;
   viewerVote?: VoteType | null;
 }
@@ -57,6 +61,13 @@ export interface TrendingListItem {
   likedByMe: boolean;
   savedByMe: boolean;
   author?: ProfileSummary | null;
+}
+
+export interface SuggestedConnection {
+  $id: string;
+  gamertag: string;
+  avatarUrl: string | null;
+  sharedCount: number;
 }
 
 export interface ListSocialState {
@@ -116,6 +127,31 @@ export class DashboardService {
 
     const data = await response.json();
     return data;
+  }
+
+  async getSuggestedConnections(
+    limit = 6,
+    gameIds: string[] = [],
+  ): Promise<{ items: SuggestedConnection[] }> {
+    const url = new URL(
+      'dashboard/suggested-connections',
+      environment.zethoApiEndpoint,
+    );
+    url.searchParams.set('limit', limit.toString());
+    if (gameIds.length > 0) {
+      url.searchParams.set('gameIds', gameIds.join(','));
+    }
+    const response = await fetch(url.toString(), {
+      headers: await this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch suggested connections: ${response.statusText}`,
+      );
+    }
+
+    return await response.json();
   }
 
   async getTrendingLists(limit = 12): Promise<{ items: TrendingListItem[] }> {

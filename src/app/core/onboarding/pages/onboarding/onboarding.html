@@ -1,0 +1,198 @@
+<main class="mx-auto min-h-dvh w-full max-w-2xl px-4 py-8">
+  <header class="mb-6 flex items-center justify-between">
+    <span class="font-display text-3xl leading-none">zetho</span>
+    <button
+      type="button"
+      class="cursor-pointer text-sm text-gray-11 hover:text-gray-12"
+      (click)="finish()"
+    >
+      Pular
+    </button>
+  </header>
+
+  <!-- Indicador de passos -->
+  <div class="mb-8 flex gap-2">
+    @for (s of [1, 2, 3]; track s) {
+    <div
+      class="h-1 flex-1 rounded-full"
+      [class]="step() >= s ? 'bg-blue-9' : 'bg-gray-6'"
+    ></div>
+    }
+  </div>
+
+  <!-- ===================== PASSO 1 ===================== -->
+  @if (step() === 1) {
+  <section class="flex flex-col gap-4">
+    <div>
+      <h1 class="text-3xl leading-tight">Monte sua estante</h1>
+      <p class="mt-2 font-light text-gray-11">
+        Busque e marque jogos que você já zerou. Sua identidade de jogador
+        começa aqui.
+      </p>
+    </div>
+
+    <div
+      class="flex items-center gap-2 border-y border-gray-6 px-3 py-2 md:border"
+    >
+      <i class="ph ph-magnifying-glass text-gray-10"></i>
+      <input
+        type="text"
+        placeholder="Buscar um jogo…"
+        class="w-full bg-transparent py-1 text-gray-12 outline-none placeholder:text-gray-10"
+        [value]="query()"
+        (input)="onQueryInput($any($event.target).value)"
+      />
+    </div>
+
+    @if (searching()) {
+    <ui-loading></ui-loading>
+    } @else if (results().length > 0) {
+    <ul class="grid grid-cols-3 gap-2 sm:grid-cols-4">
+      @for (game of results(); track game.$id) {
+      <li>
+        <button
+          type="button"
+          class="group relative block w-full cursor-pointer overflow-hidden rounded-lg border transition-colors"
+          [class]="isMarked(game) ? 'border-blue-9' : 'border-gray-6'"
+          (click)="toggleMark(game)"
+        >
+          @if (gameCover(game)) {
+          <img [src]="gameCover(game)" [alt]="game.name" class="w-full" />
+          } @else {
+          <div class="flex aspect-[3/4] items-center justify-center bg-gray-3">
+            <span class="p-2 text-center text-xs text-gray-11">
+              {{ game.name }}
+            </span>
+          </div>
+          } @if (isMarked(game)) {
+          <div
+            class="absolute inset-0 flex items-center justify-center bg-blue-9/40"
+          >
+            <i class="ph-fill ph-check-circle text-3xl text-white"></i>
+          </div>
+          }
+        </button>
+      </li>
+      }
+    </ul>
+    } @else if (query().length >= 2) {
+    <p class="text-gray-11">Nenhum jogo encontrado.</p>
+    }
+
+    <div
+      class="sticky bottom-0 flex items-center justify-between gap-3 border-t border-gray-6 bg-gray-1/95 py-4 backdrop-blur"
+    >
+      <span class="text-sm text-gray-11">
+        <strong class="text-gray-12">{{ markedCount() }}</strong> jogo(s) zerado(s)
+      </span>
+      <button
+        type="button"
+        class="ui-primary-btn"
+        [disabled]="markedCount() === 0"
+        (click)="goToStep(2)"
+      >
+        Continuar
+      </button>
+    </div>
+  </section>
+  }
+
+  <!-- ===================== PASSO 2 ===================== -->
+  @if (step() === 2) {
+  <section class="flex flex-col gap-4">
+    <div>
+      <h1 class="text-3xl leading-tight">Dê uma nota</h1>
+      <p class="mt-2 font-light text-gray-11">
+        Avalie pelo menos um jogo — é assim que a comunidade descobre seu gosto.
+      </p>
+    </div>
+
+    <ul class="flex flex-col divide-y divide-gray-6 border-y border-gray-6">
+      @for (game of markedList(); track game.$id) {
+      <li class="flex items-center gap-3 py-3">
+        @if (gameCover(game)) {
+        <img
+          [src]="gameCover(game)"
+          [alt]="game.name"
+          class="h-16 w-11 rounded object-cover"
+        />
+        }
+        <div class="min-w-0 flex-1">
+          <p class="truncate text-gray-12">{{ game.name }}</p>
+          <app-star-rating
+            [value]="0"
+            (ratingChange)="rateGame(game.$id, $event)"
+          ></app-star-rating>
+        </div>
+      </li>
+      }
+    </ul>
+
+    <div class="flex justify-between gap-3 py-2">
+      <button type="button" class="ui-ghost-btn" (click)="goToStep(1)">
+        Voltar
+      </button>
+      <button type="button" class="ui-primary-btn" (click)="goToStep(3)">
+        Continuar
+      </button>
+    </div>
+  </section>
+  }
+
+  <!-- ===================== PASSO 3 ===================== -->
+  @if (step() === 3) {
+  <section class="flex flex-col gap-4">
+    <div>
+      <h1 class="text-3xl leading-tight">Encontre sua turma</h1>
+      <p class="mt-2 font-light text-gray-11">
+        Jogadores com gostos parecidos com o seu. Siga alguns para seu feed
+        nascer com vida.
+      </p>
+    </div>
+
+    @if (loadingSuggestions()) {
+    <ui-loading></ui-loading>
+    } @else if (suggestions().length > 0) {
+    <ul class="flex flex-col divide-y divide-gray-6 border-y border-gray-6">
+      @for (person of suggestions(); track person.$id) {
+      <li class="flex items-center gap-3 py-3">
+        <img
+          [src]="suggestionAvatar(person)"
+          alt="Avatar"
+          class="h-12 w-12 rounded-full border border-gray-6 object-cover"
+        />
+        <div class="min-w-0 flex-1">
+          <p class="truncate font-medium text-gray-12">{{ person.gamertag }}</p>
+          <p class="text-xs text-gray-11">
+            {{ person.sharedCount }} jogo(s) em comum
+          </p>
+        </div>
+        <button
+          type="button"
+          class="ui-primary-btn"
+          [disabled]="isFollowing(person)"
+          (click)="follow(person)"
+        >
+          {{ isFollowing(person) ? 'Seguindo' : 'Seguir' }}
+        </button>
+      </li>
+      }
+    </ul>
+    } @else {
+    <p class="text-gray-11">
+      Ainda não encontramos jogadores parecidos — explore e siga perfis à
+      medida que descobrir a comunidade.
+    </p>
+    }
+
+    <div class="flex justify-between gap-3 py-2">
+      <button type="button" class="ui-ghost-btn" (click)="goToStep(2)">
+        Voltar
+      </button>
+      <button type="button" class="ui-primary-btn" (click)="finish()">
+        Ir para o meu dashboard
+      </button>
+    </div>
+  </section>
+  }
+</main>

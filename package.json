@@ -1,6 +1,6 @@
 {
   "name": "zetho",
-  "version": "1.16.1",
+  "version": "1.17.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -31,6 +31,7 @@
     "@tiptap/starter-kit": "^3.26.1",
     "appwrite": "^21.4.0",
     "firebase": "^12.6.0",
+    "html-to-image": "^1.11.13",
     "lexorank": "^1.0.5",
     "ngx-tiptap": "^14.0.1",
     "postcss": "^8.5.6",

@@ -12,10 +12,18 @@
       }
     </div>
     <div class="flex items-start gap-2">
+      <button
+        type="button"
+        class="flex h-9 w-9 cursor-pointer items-center justify-center border border-gray-6 hover:bg-gray-3"
+        (click)="openShare()"
+        aria-label="Compartilhar lista"
+      >
+        <i class="ph ph-share-network"></i>
+      </button>
       @if (!itsMe()) {
       <button
         type="button"
-        class="h-9 w-9 rounded-full border border-gray-6 hover:bg-gray-3"
+        class="flex h-9 w-9 cursor-pointer items-center justify-center border border-gray-6 hover:bg-gray-3"
         [class.text-red-9]="socialState()?.likedByMe"
         (click)="toggleLike()"
         aria-label="Curtir lista"
@@ -26,7 +34,7 @@
       </button>
       <button
         type="button"
-        class="h-9 w-9 rounded-full border border-gray-6 hover:bg-gray-3"
+        class="flex h-9 w-9 cursor-pointer items-center justify-center border border-gray-6 hover:bg-gray-3"
         [class.text-blue-9]="socialState()?.savedByMe"
         (click)="toggleSave()"
         aria-label="Salvar lista"
@@ -45,4 +53,6 @@
   } @else {
   <ui-draggable-list [itsMe]="itsMe()"></ui-draggable-list>
   }
+
+  <ui-share-modal #shareModal [data]="shareData()"></ui-share-modal>
 </section>

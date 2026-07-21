@@ -1,13 +1,24 @@
-<div class="w-full max-w-5xl mx-auto">
+<div class="w-full max-w-2xl mx-auto">
   <section>
-    <header
-      class="flex gap-4 items-baseline flex-wrap border-b border-gray-6 p-4"
-    >
-      <h2 class="text-2xl">Das suas conexões</h2>
-    </header>
-
     @if (loadingFeed()) {
-    <ui-loading></ui-loading>
+    <div class="flex flex-col divide-y divide-gray-6">
+      @for (i of [0, 1, 2]; track i) {
+      <div class="flex flex-col gap-3 p-4">
+        <div class="flex items-center gap-3">
+          <div class="h-8 w-8 overflow-hidden rounded-full">
+            <ui-skeleton [height]="32"></ui-skeleton>
+          </div>
+          <div class="flex flex-col gap-1">
+            <ui-skeleton [height]="14" [width]="30"></ui-skeleton>
+            <ui-skeleton [height]="10" [width]="15"></ui-skeleton>
+          </div>
+        </div>
+        <ui-skeleton [height]="12"></ui-skeleton>
+        <ui-skeleton [height]="12"></ui-skeleton>
+        <ui-skeleton [height]="12" [width]="60"></ui-skeleton>
+      </div>
+      }
+    </div>
     } @else if (feed().length > 0) {
     <div class="flex flex-col divide-y divide-gray-6">
       @for (item of feed(); track item.type + ':' + item.$id) {
@@ -26,12 +37,28 @@
             {{ (item.userProfile?.gamertag || 'Z')[0] | uppercase }}
           </div>
           }
-          <div class="flex flex-col">
-            <a
-              [routerLink]="['/player', item.userProfile?.gamertag]"
-              class="font-medium text-gray-12 hover:underline"
-              >{{ item.userProfile?.gamertag || 'Jogador' }}</a
-            >
+          <div class="flex min-w-0 flex-col">
+            <span class="text-sm">
+              <a
+                [routerLink]="['/player', item.userProfile?.gamertag]"
+                class="font-medium text-gray-12 hover:underline"
+                >{{ item.userProfile?.gamertag || 'Jogador' }}</a
+              >
+              @if (item.type === 'status') {
+              <span class="text-gray-11">&nbsp;{{ statusLabel(item.status) }}</span>
+              } @else if (item.type === 'list_item' && item.list) {
+              <span class="text-gray-11">&nbsp;adicionou em&nbsp;</span>
+              @if (listLink(item); as href) {
+              <a
+                [routerLink]="href"
+                class="font-medium text-gray-12 hover:underline"
+                >{{ item.list.title }}</a
+              >
+              } @else {
+              <span class="font-medium text-gray-12">{{ item.list.title }}</span>
+              }
+              }
+            </span>
             <span class="text-xs text-gray-10">
               {{ item.$createdAt | relativeTime }}
             </span>
@@ -48,8 +75,16 @@
             </div>
             } @else if (item.type === 'comment') {
             <span class="text-xs text-gray-11">Comentário</span>
-            } @else {
+            } @else if (item.type === 'list') {
             <span class="text-xs text-gray-11">Lista</span>
+            } @else if (item.type === 'status') {
+            <i
+              [class]="statusIcon(item.status)"
+              [class.text-amber-300]="item.status === 'completed'"
+              [class.text-gray-11]="item.status !== 'completed'"
+            ></i>
+            } @else if (item.type === 'list_item') {
+            <i class="ph ph-list-plus text-gray-11"></i>
             }
           </div>
         </header>
@@ -90,9 +125,10 @@
             <span>{{ item.saveCount || 0 }} salvos</span>
           </footer>
         </div>
-        } @else { @if (item.type === 'comment' && item.parentComment &&
+        } @else {
+        @if (item.type === 'comment' && item.parentComment &&
         item.parentComment.$id !== item.$id) {
-        <div class="border-l-2 border-gray-6 bg-gray-2/60 px-3 py-2">
+        <div class="border-l-2 border-gray-6 pl-3">
           <div class="mb-1 flex items-center gap-2 text-xs text-gray-10">
             <span>Em resposta a</span>
             @if (item.parentComment.userProfile?.gamertag) {
@@ -115,197 +151,109 @@
           class="prose prose-invert prose-sm prose-gray max-w-none prose-p:font-light line-clamp-3"
           [innerHTML]="item.content"
         ></div>
-        } @if (item.game) {
-        <a
-          [routerLink]="['/jogo', item.game.slug]"
-          class="flex items-center gap-3 hover:bg-gray-3 p-2 rounded-lg transition-colors border border-gray-6"
-        >
-          @if (item.game.coverUrl) {
-          <img
-            [src]="item.game.coverUrl"
-            class="w-10 h-14 object-cover rounded"
-            alt="Cover"
-          />
-          }
-          <span class="font-medium text-gray-12 hover:underline"
-            >{{ item.game.name }}</span
-          >
-        </a>
         }
 
-        <footer
-          class="mt-2 flex items-center justify-end gap-2 text-sm text-gray-11"
-        >
+        <!-- Barra de votos: à direita das ações do jogo (mesma linha) quando
+             há preview; solta no rodapé quando o item não tem jogo. -->
+        <ng-template #voteBar>
           @if (item.type === 'comment') {
-          <button
-            type="button"
-            class="ui-ghost-btn"
-            data-size="icon"
-            (click)="voteFeedComment(item.$id, 'up')"
-            aria-label="Upvote"
-          >
-            <i
-              class="ph ph-arrow-up"
-              [class.text-blue-9]="item.viewerVote === 'up'"
-            ></i>
-          </button>
-          <span class="min-w-6 text-center font-medium"
-            >{{ item.voteCount || 0 }}</span
-          >
-          <button
-            type="button"
-            class="ui-ghost-btn"
-            data-size="icon"
-            (click)="voteFeedComment(item.$id, 'down')"
-            aria-label="Downvote"
-          >
-            <i
-              class="ph ph-arrow-down"
-              [class.text-red-400]="item.viewerVote === 'down'"
-            ></i>
-          </button>
-          } @else {
-          <i class="ph ph-arrow-up text-lg text-blue-9"></i>
-          <span class="font-medium">{{ item.voteCount || 0 }} votos</span>
+          <div class="flex items-center gap-2 text-sm text-gray-11">
+            <button
+              type="button"
+              class="ui-ghost-btn"
+              data-size="icon"
+              (click)="voteFeedComment(item.$id, 'up')"
+              aria-label="Upvote"
+            >
+              <i
+                class="ph ph-arrow-up"
+                [class.text-blue-9]="item.viewerVote === 'up'"
+              ></i>
+            </button>
+            <span class="min-w-6 text-center font-medium"
+              >{{ item.voteCount || 0 }}</span
+            >
+            <button
+              type="button"
+              class="ui-ghost-btn"
+              data-size="icon"
+              (click)="voteFeedComment(item.$id, 'down')"
+              aria-label="Downvote"
+            >
+              <i
+                class="ph ph-arrow-down"
+                [class.text-red-400]="item.viewerVote === 'down'"
+              ></i>
+            </button>
+          </div>
+          } @else if (item.type === 'rating') {
+          <div class="flex items-center gap-2 text-sm text-gray-11">
+            <i class="ph ph-arrow-up text-lg text-blue-9"></i>
+            <span class="font-medium">{{ item.voteCount || 0 }} votos</span>
+          </div>
           }
+        </ng-template>
+
+        @if (item.game) {
+        <ui-feed-game [game]="$any(item.game)">
+          <ng-container [ngTemplateOutlet]="voteBar"></ng-container>
+        </ui-feed-game>
+        } @else if (item.type === 'comment' || item.type === 'rating') {
+        <footer class="mt-2 flex justify-end">
+          <ng-container [ngTemplateOutlet]="voteBar"></ng-container>
         </footer>
+        }
         }
       </article>
       }
     </div>
     } @else {
     <p class="text-gray-11 p-4">
-      Siga perfis para ver reviews, comentários e listas públicas das suas
-      conexões.
+      Siga perfis para ver reviews, comentários, listas e registros de jogos das
+      suas conexões.
     </p>
-    } @if (hasMoreFeed()) {
-    <div class="mt-4 flex justify-center">
-      <button
-        (click)="loadMoreFeed()"
-        [disabled]="loadingMoreFeed()"
-        class="px-4 py-2 w-full border-t border-gray-6 cursor-pointer hover:bg-gray-2"
-      >
-        @if (loadingMoreFeed()) {
-        <ui-loading [inline]="true" size="sm"></ui-loading>
-        Carregando... } @else { Ver mais }
-      </button>
-    </div>
-    }
-  </section>
 
-  <section>
-    <header
-      class="flex gap-4 items-baseline flex-wrap border-t-8 border-b border-gray-6 p-4"
-    >
-      <h2 class="text-2xl">Listas em alta</h2>
-    </header>
-
-    @if (loadingTrendingLists()) {
-    <ui-loading></ui-loading>
-    } @else if (trendingLists().length > 0) {
-    <ul class="grid gap-px bg-gray-6 md:grid-cols-2">
-      @for (list of trendingLists(); track list.$id) {
-      <li class="p-4 bg-gray-1 flex flex-col gap-3">
-        <header class="relative flex items-start gap-3">
-          <div class="min-w-0 flex-1">
-            @if (listLink(list); as href) {
-            <a
-              [routerLink]="href"
-              class="text-lg font-medium text-gray-12 hover:underline line-clamp-2"
-              >{{ list.title }}</a
-            >
-            } @else {
-            <h3 class="text-lg font-medium text-gray-12 line-clamp-2">
-              {{ list.title }}
-            </h3>
-            }
-            <p class="text-sm text-gray-11">
-              por {{ list.author?.gamertag || 'Jogador' }}
-            </p>
-          </div>
-
-          <div class="absolute right-0 top-0 flex flex-col items-center gap-1">
-            <button
-              type="button"
-              class="ui-ghost-btn"
-              data-size="icon"
-              [class.text-red-9]="list.likedByMe"
-              (click)="toggleListLike(list.$id)"
-              aria-label="Curtir lista"
-            >
-              <i
-                [class]="list.likedByMe ? 'ph-fill ph-heart text-red-400' : 'ph ph-heart'"
-              ></i>
-            </button>
-            <button
-              type="button"
-              class="ui-ghost-btn"
-              data-size="icon"
-              [class.text-blue-9]="list.savedByMe"
-              (click)="toggleListSave(list.$id)"
-              aria-label="Salvar lista"
-            >
-              <i
-                [class]="list.savedByMe ? 'ph-fill ph-bookmark-simple' : 'ph ph-bookmark-simple'"
-              ></i>
-            </button>
-          </div>
-        </header>
-
-        @if (latestCovers(list).length > 0) {
-        <div class="flex -space-x-2">
-          @for (cover of latestCovers(list); track cover?.gameCoverUrl) {
+    @if (suggestedConnections().length > 0) {
+    <div class="border-t border-gray-6">
+      <h3 class="px-4 pt-4 text-sm font-medium text-gray-11">
+        Jogadores com gostos parecidos
+      </h3>
+      <ul class="flex flex-col divide-y divide-gray-6">
+        @for (person of suggestedConnections(); track person.$id) {
+        <li class="flex items-center gap-3 px-4 py-3">
           <img
-            [src]="cover?.gameCoverUrl"
-            [alt]="cover?.gameName"
-            class="h-20 w-14 rounded border border-gray-1 object-cover bg-gray-4"
+            [src]="suggestionAvatar(person)"
+            alt="Avatar"
+            class="h-10 w-10 rounded-full border border-gray-6 object-cover"
           />
-          }
-        </div>
+          <a [routerLink]="['/player', person.gamertag]" class="min-w-0 flex-1">
+            <p class="truncate font-medium text-gray-12">
+              {{ person.gamertag }}
+            </p>
+            <p class="text-xs text-gray-11">
+              {{ person.sharedCount }} jogo(s) em comum
+            </p>
+          </a>
+          <button
+            type="button"
+            class="ui-primary-btn"
+            [disabled]="followingIds().has(person.$id)"
+            (click)="followSuggestion(person)"
+          >
+            Seguir
+          </button>
+        </li>
         }
+      </ul>
+    </div>
+    } }
 
-        <footer class="flex items-center gap-4 text-sm text-gray-11">
-          <span>{{ list.itemCount }} jogos</span>
-          <span>{{ list.likeCount }} curtidas</span>
-          <span>{{ list.saveCount }} salvos</span>
-        </footer>
-      </li>
-      }
-    </ul>
-    } @else {
-    <p class="text-gray-11 p-4">Nenhuma lista pública em alta no momento.</p>
-    }
-  </section>
-
-  <section>
-    <header
-      class="flex gap-4 items-baseline flex-wrap border-t-8 border-b border-gray-6 p-4"
-    >
-      <h2 class="text-2xl">Mais aguardados</h2>
-
-      <a
-        [routerLink]="['/buscar']"
-        [queryParams]="{ view: 'hyped-upcoming' }"
-        class="text-blue-11 hover:underline hover:text-blue-9"
-      >
-        Ver todos os mais hypados
-      </a>
-    </header>
-
-    @if (loadingUpcomingHyped()) {
-    <ui-loading></ui-loading>
-    } @else if (upcomingHypedGames().length > 0) {
-    <ul
-      class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-px"
-    >
-      @for (game of upcomingHypedGames(); track game.$id) {
-      <li class="flex flex-col">
-        <ui-game-card [game]="game"></ui-game-card>
-      </li>
-      }
-    </ul>
-    } @else {
-    <p class="text-gray-11 p-4">Nenhum jogo hypado encontrado no momento.</p>
+    <!-- Carregamento infinito -->
+    <div #sentinel aria-hidden="true"></div>
+    @if (loadingMoreFeed()) {
+    <div class="flex justify-center border-t border-gray-6 py-4">
+      <ui-loading [inline]="true" size="sm"></ui-loading>
+    </div>
     }
   </section>
 </div>

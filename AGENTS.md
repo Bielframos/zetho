@@ -60,24 +60,25 @@ Fontes principais:
 
 ## Padroes Do Dashboard
 
-- O Dashboard combina um feed vertical de destaques, a area de listas do usuario e uma grade de games aguardados.
+- O Dashboard e um feed social unico e cronologico (estilo timeline), em coluna focada (`w-full max-w-2xl mx-auto`), com carregamento infinito. Nao ha mais secoes separadas de descoberta (trending/aguardados) na home.
+- O feed mistura varios tipos de atividade das conexoes: review, comentario, lista, registro de status (`status`: zerou/adicionou a biblioteca/comecou a jogar/abandonou) e adicao de jogo a lista (`list_item`). O tipo de cada item define o corpo renderizado.
 - Feeds usam `flex flex-col divide-y divide-gray-6`; cada item usa `p-4`, avatar `h-8 w-8 rounded-full`, metadados `text-xs text-gray-10` e conteudo em `text-gray-12/11`.
+- A acao do item (verbo) fica na linha do autor para `status` e `list_item` (ex.: "**Fulano** zerou", "**Fulano** adicionou em [Lista]"); review/comentario/lista usam um rotulo discreto a direita. Icone de status a direita, com `text-amber-300` para o marco `completed` (pico) e `text-gray-11` nos demais. **Gotcha:** o `@if` do Angular remove o espaco entre o `<a>` do nome e o `<span>` do verbo — force o espaco com `&nbsp;` dentro do span condicional, senao renderiza "Lottozerou".
 - Avatares sem imagem devem cair para uma bolha `rounded-full bg-blue-9 text-white` com inicial.
-- Badges de tipo de atividade usam `text-xs`, `px-2 py-0.5`, `rounded-full` e cor contextual discreta.
-- Previews de game dentro do feed devem ser compactos: imagem pequena, `border border-gray-6`, `rounded-lg`, `hover:bg-gray-3` e transicao de cor.
-- Secoes como "Minhas listas" e "Mais aguardados" usam headers com `border-t-8 border-b border-gray-6 p-4`, titulo `text-2xl` e link de apoio em azul.
-- Empty states devem ser simples e diretos, normalmente `text-gray-11`, sem composicao de card pesada.
+- O preview de game no feed (`ui-feed-game`) e arejado, sem caixa nem bordas: uma coluna com o link do jogo (capa `h-16 w-11 rounded` + nome `group-hover:underline`) e, abaixo, uma linha `flex justify-between` — a esquerda a barra de acoes (`gap-5 text-sm text-gray-11`) com Biblioteca, Desejos e Lista (icone + rotulo, sem fundo nem divisorias, acendem para `text-gray-12` no hover e viram "feito" em `text-blue-11` com `ph-fill`); a direita, um `ng-content` para os controles de engajamento do post. Para comentario/review, a barra de votos (upvote/downvote/contagem) e projetada nesse slot via `ngTemplateOutlet`, dividindo a linha com as acoes do jogo; quando o item nao tem jogo, a mesma barra cai num rodape solto a direita. As acoes de jogo sao otimistas/fire-and-forget (nao carregam o z-entry do espectador) e usam `ZEntryService`/`ListsController`; so aparecem para usuario autenticado. Icone de desejos e `ph-shopping-bag` (o mesmo da tela de game) — nunca o coracao, que e curtida.
+- Carregamento infinito via `IntersectionObserver` sobre uma sentinela no fim da lista; indicador de carga discreto (`ui-loading` inline) enquanto pagina. A janela mesclada tem teto pratico (top ~100 por fonte).
+- Empty states devem ser simples e diretos, normalmente `text-gray-11`, sem composicao de card pesada; o estado vazio do feed sugere jogadores com gostos parecidos.
 
 ## Padroes Da Pagina De Game
 
 - A pagina de game e uma tela de detalhe imersiva, nao um dashboard de cards.
 - Quando houver imagem hero, use uma camada absoluta no topo, com `background-size: cover`, opacidade baixa e mascara vertical para desaparecer no fundo. A imagem deve ser decorativa (`aria-hidden="true"`) e nao bloquear interacao.
-- O header do game e centralizado: capa grande com `ui-game-card` em `readonlyMode`, titulo `text-4xl md:text-5xl`, metadados em grid com divisorias e resumo em texto leve (`font-light leading-7`).
-- O bloco de rating e uma faixa de destaque com `border-y-8 border-gray-6`, nota grande (`text-6xl`) e CTA textual para avaliacoes.
-- Acoes do game ficam em botoes ghost icon-only no canto superior direito quando o usuario esta autenticado.
-- Modulos abaixo do header sao empilhados com separadores fortes: status/entry actions, stats, sorteios, midias, tabs e jogos similares.
+- O header do game e uma banda horizontal alinhada a esquerda (perfil social): capa `ui-game-card` em `readonlyMode` a esquerda (`w-24` no mobile, `[width]="150"` no desktop), a direita o titulo como heroi (`text-3xl md:text-5xl`, `leading-[1.05]`), uma linha de metadados sempre visivel (`ano · desenvolvedor · generos` em `text-sm text-gray-11`, generos como links) e as acoes ghost no topo-direito. So o resumo longo (em `font-light leading-7`) e a data de lancamento ficam no disclosure recolhivel. Nunca exponha IDs ou dados de sistema na UI.
+- O titulo do jogo e sempre o maior elemento do header. A nota agregada e uma linha de score compacta estilo Letterboxd (`ui-game-rating`): numero `text-3xl tabular-nums` + estrelas readonly agrupados, seguidos de contagem e do CTA `Ver avaliacoes →` na mesma linha. Nunca deixe a nota maior que o titulo. No mobile, uma nota compacta fica sempre visivel na barra sticky.
+- Acoes do game ficam em botoes ghost icon-only compostos no header (topo-direito) quando o usuario esta autenticado.
+- Modulos abaixo do header: status/entry actions e uma barra de tabs sticky. Todo o resto (incluindo as estatisticas, que sao uma lista de uma coluna com `divide-y`, nunca grid) e conteudo de tab (Lobby como default, Estatisticas, Reviews, Midias, "Talvez voce goste"), sem headers de secao empilhados.
 - Tabs usam container `border-t-8 border-b border-gray-6 px-4`, botoes com `py-4`, borda inferior de 2px e estado ativo em `border-blue-9 text-gray-12`.
-- A area de midias usa grid 70/30 no desktop (`grid-cols-[70%_1fr]`) e uma coluna no mobile. Videos e imagens devem preencher o espaco com `aspect-video`, `object-cover` e hover de zoom leve para thumbnails.
+- A area de midias e uma aba dedicada: o trailer (ou, na ausencia dele, a primeira screenshot) e o destaque em largura total no topo (`aspect-video`, `border-b border-gray-6`); abaixo, todas as demais screenshots ficam sempre visiveis num grid (`grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-px bg-gray-6`), sem botao de "ver galeria" escondendo conteudo. Cada thumbnail abre o lightbox em tela cheia ao clicar. Videos e imagens preenchem o espaco com `aspect-video`, `object-cover` e hover de zoom leve.
 - Lightbox deve ser tela cheia com `dialog`, backdrop escuro, botoes icon-only e imagem `object-contain`.
 - Para jogos sem login ou ainda nao lancados, use blocos informativos centralizados com icone grande, titulo curto, texto `text-gray-11` e CTA quando aplicavel.
 
