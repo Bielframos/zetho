@@ -157,48 +157,56 @@
           class="prose prose-invert prose-sm prose-gray max-w-none prose-p:font-light line-clamp-3"
           [innerHTML]="item.content"
         ></div>
-        } @if (item.game) {
-        <ui-feed-game [game]="$any(item.game)"></ui-feed-game>
         }
 
-        @if (item.type === 'comment') {
-        <footer
-          class="mt-2 flex items-center justify-end gap-2 text-sm text-gray-11"
-        >
-          <button
-            type="button"
-            class="ui-ghost-btn"
-            data-size="icon"
-            (click)="voteFeedComment(item.$id, 'up')"
-            aria-label="Upvote"
-          >
-            <i
-              class="ph ph-arrow-up"
-              [class.text-blue-9]="item.viewerVote === 'up'"
-            ></i>
-          </button>
-          <span class="min-w-6 text-center font-medium"
-            >{{ item.voteCount || 0 }}</span
-          >
-          <button
-            type="button"
-            class="ui-ghost-btn"
-            data-size="icon"
-            (click)="voteFeedComment(item.$id, 'down')"
-            aria-label="Downvote"
-          >
-            <i
-              class="ph ph-arrow-down"
-              [class.text-red-400]="item.viewerVote === 'down'"
-            ></i>
-          </button>
-        </footer>
-        } @else if (item.type === 'rating') {
-        <footer
-          class="mt-2 flex items-center justify-end gap-2 text-sm text-gray-11"
-        >
-          <i class="ph ph-arrow-up text-lg text-blue-9"></i>
-          <span class="font-medium">{{ item.voteCount || 0 }} votos</span>
+        <!-- Barra de votos: à direita das ações do jogo (mesma linha) quando
+             há preview; solta no rodapé quando o item não tem jogo. -->
+        <ng-template #voteBar>
+          @if (item.type === 'comment') {
+          <div class="flex items-center gap-2 text-sm text-gray-11">
+            <button
+              type="button"
+              class="ui-ghost-btn"
+              data-size="icon"
+              (click)="voteFeedComment(item.$id, 'up')"
+              aria-label="Upvote"
+            >
+              <i
+                class="ph ph-arrow-up"
+                [class.text-blue-9]="item.viewerVote === 'up'"
+              ></i>
+            </button>
+            <span class="min-w-6 text-center font-medium"
+              >{{ item.voteCount || 0 }}</span
+            >
+            <button
+              type="button"
+              class="ui-ghost-btn"
+              data-size="icon"
+              (click)="voteFeedComment(item.$id, 'down')"
+              aria-label="Downvote"
+            >
+              <i
+                class="ph ph-arrow-down"
+                [class.text-red-400]="item.viewerVote === 'down'"
+              ></i>
+            </button>
+          </div>
+          } @else if (item.type === 'rating') {
+          <div class="flex items-center gap-2 text-sm text-gray-11">
+            <i class="ph ph-arrow-up text-lg text-blue-9"></i>
+            <span class="font-medium">{{ item.voteCount || 0 }} votos</span>
+          </div>
+          }
+        </ng-template>
+
+        @if (item.game) {
+        <ui-feed-game [game]="$any(item.game)">
+          <ng-container [ngTemplateOutlet]="voteBar"></ng-container>
+        </ui-feed-game>
+        } @else if (item.type === 'comment' || item.type === 'rating') {
+        <footer class="mt-2 flex justify-end">
+          <ng-container [ngTemplateOutlet]="voteBar"></ng-container>
         </footer>
         }
         }

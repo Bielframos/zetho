@@ -44,53 +44,59 @@ export interface FeedGame {
         >
       </a>
 
-      @if (isAuthed()) {
-        <div class="flex items-center gap-5 text-sm text-gray-11">
-          <button
-            type="button"
-            class="flex cursor-pointer items-center gap-1.5 transition-colors hover:text-gray-12 disabled:cursor-default"
-            [class.text-blue-11]="libraryDone()"
-            [disabled]="busyLibrary() || libraryDone()"
-            (click)="addToLibrary()"
-            [attr.aria-label]="
-              libraryDone() ? 'Na sua biblioteca' : 'Adicionar à biblioteca'
-            "
-          >
-            <i [class]="libraryDone() ? 'ph-fill ph-books' : 'ph ph-books'"></i>
-            {{ libraryDone() ? 'Na biblioteca' : 'Biblioteca' }}
-          </button>
-
-          <button
-            type="button"
-            class="flex cursor-pointer items-center gap-1.5 transition-colors hover:text-gray-12 disabled:cursor-default"
-            [class.text-blue-11]="wishlistDone()"
-            [disabled]="busyWishlist() || wishlistDone()"
-            (click)="addToWishlist()"
-            [attr.aria-label]="
-              wishlistDone() ? 'Nos seus desejos' : 'Adicionar aos desejos'
-            "
-          >
-            <i
-              [class]="
-                wishlistDone()
-                  ? 'ph-fill ph-shopping-bag-open'
-                  : 'ph ph-shopping-bag'
+      <div class="flex items-center justify-between gap-4 text-sm">
+        <div class="flex items-center gap-5 text-gray-11">
+          @if (isAuthed()) {
+            <button
+              type="button"
+              class="flex cursor-pointer items-center gap-1.5 transition-colors hover:text-gray-12 disabled:cursor-default"
+              [class.text-blue-11]="libraryDone()"
+              [disabled]="busyLibrary() || libraryDone()"
+              (click)="addToLibrary()"
+              [attr.aria-label]="
+                libraryDone() ? 'Na sua biblioteca' : 'Adicionar à biblioteca'
               "
-            ></i>
-            {{ wishlistDone() ? 'Nos desejos' : 'Desejos' }}
-          </button>
+            >
+              <i
+                [class]="libraryDone() ? 'ph-fill ph-books' : 'ph ph-books'"
+              ></i>
+              {{ libraryDone() ? 'Na biblioteca' : 'Biblioteca' }}
+            </button>
 
-          <button
-            type="button"
-            class="flex cursor-pointer items-center gap-1.5 transition-colors hover:text-gray-12"
-            (click)="openListModal()"
-            aria-label="Adicionar a uma lista"
-          >
-            <i class="ph ph-list-plus"></i>
-            Lista
-          </button>
+            <button
+              type="button"
+              class="flex cursor-pointer items-center gap-1.5 transition-colors hover:text-gray-12 disabled:cursor-default"
+              [class.text-blue-11]="wishlistDone()"
+              [disabled]="busyWishlist() || wishlistDone()"
+              (click)="addToWishlist()"
+              [attr.aria-label]="
+                wishlistDone() ? 'Nos seus desejos' : 'Adicionar aos desejos'
+              "
+            >
+              <i
+                [class]="
+                  wishlistDone()
+                    ? 'ph-fill ph-shopping-bag-open'
+                    : 'ph ph-shopping-bag'
+                "
+              ></i>
+              {{ wishlistDone() ? 'Nos desejos' : 'Desejos' }}
+            </button>
+
+            <button
+              type="button"
+              class="flex cursor-pointer items-center gap-1.5 transition-colors hover:text-gray-12"
+              (click)="openListModal()"
+              aria-label="Adicionar a uma lista"
+            >
+              <i class="ph ph-list-plus"></i>
+              Lista
+            </button>
+          }
         </div>
-      }
+
+        <ng-content></ng-content>
+      </div>
     </div>
 
     <ui-modal

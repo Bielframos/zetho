@@ -13,7 +13,7 @@ import { UiLoading } from '../../../../shared/ui/loading';
 import { UiSkeleton } from '../../../../shared/ui/skeleton';
 import { RelativeTimePipe } from '../../../../utils/pipes';
 import { AuthStore } from '../../../auth/auth.store';
-import { UpperCasePipe } from '@angular/common';
+import { NgTemplateOutlet, UpperCasePipe } from '@angular/common';
 import {
   CommentVoteState,
   DashboardFeedItem,
@@ -45,6 +45,7 @@ const STATUS_ICONS: Record<FeedGameStatus, string> = {
   imports: [
     RouterLink,
     RelativeTimePipe,
+    NgTemplateOutlet,
     UiFeedGame,
     UiLoading,
     UiSkeleton,
