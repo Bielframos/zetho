@@ -51,9 +51,9 @@
                 >{{ item.userProfile?.gamertag || 'Jogador' }}</a
               >
               @if (item.type === 'status') {
-              <span class="text-gray-11">{{ statusLabel(item.status) }}</span>
+              <span class="text-gray-11">&nbsp;{{ statusLabel(item.status) }}</span>
               } @else if (item.type === 'list_item' && item.list) {
-              <span class="text-gray-11">adicionou em </span>
+              <span class="text-gray-11">&nbsp;adicionou em&nbsp;</span>
               @if (listLink(item); as href) {
               <a
                 [routerLink]="href"
@@ -158,21 +158,7 @@
           [innerHTML]="item.content"
         ></div>
         } @if (item.game) {
-        <a
-          [routerLink]="['/jogo', item.game.slug]"
-          class="flex items-center gap-3 hover:bg-gray-3 p-2 rounded-lg transition-colors border border-gray-6"
-        >
-          @if (item.game.coverUrl) {
-          <img
-            [src]="item.game.coverUrl"
-            class="w-10 h-14 object-cover rounded"
-            alt="Cover"
-          />
-          }
-          <span class="font-medium text-gray-12 hover:underline"
-            >{{ item.game.name }}</span
-          >
-        </a>
+        <ui-feed-game [game]="$any(item.game)"></ui-feed-game>
         }
 
         @if (item.type === 'comment') {

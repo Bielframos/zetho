@@ -8,6 +8,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { UiFeedGame } from './feed-game';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { UiSkeleton } from '../../../../shared/ui/skeleton';
 import { RelativeTimePipe } from '../../../../utils/pipes';
@@ -41,7 +42,14 @@ const STATUS_ICONS: Record<FeedGameStatus, string> = {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, RelativeTimePipe, UiLoading, UiSkeleton, UpperCasePipe],
+  imports: [
+    RouterLink,
+    RelativeTimePipe,
+    UiFeedGame,
+    UiLoading,
+    UiSkeleton,
+    UpperCasePipe,
+  ],
   templateUrl: './dashboard.html',
 })
 export class DashboardPage implements OnDestroy {

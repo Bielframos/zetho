@@ -19,6 +19,7 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 ### Changed
 
 - Dashboard reformulado como um feed social único com carregamento infinito. As antigas seções separadas deram lugar a um fluxo cronológico que reúne reviews, comentários, listas, registros de status (zerou, adicionou à biblioteca, começou a jogar, abandonou) e adições de jogos às listas das suas conexões. Registros de status são deduplicados por jogo (mostrando o mais recente) e as vitrines de "Listas em alta" e "Mais aguardados" saíram do dashboard.
+- Todo jogo que aparece no feed agora traz ações rápidas embutidas — adicionar à biblioteca, aos desejos ou a uma lista — para você agir sobre o que descobre sem sair do fluxo.
 - Página de um jogo redesenhada: header centralizado com nota compacta e ações agrupadas, e conteúdo organizado em abas (Lobby, Estatísticas, Reviews, Mídias, Talvez você goste) carregadas sob demanda.
 - Estatísticas do jogo agora têm aba própria e viraram uma lista de uma coluna, sem o grid anterior.
 - Aba de Mídias redesenhada: o trailer (ou a primeira screenshot, na ausência de vídeo) vira o destaque em largura total, e todas as demais imagens ficam sempre visíveis em um grid, sem o antigo botão "Ver galeria" escondendo o restante. Clicar em qualquer imagem continua abrindo a visualização ampliada.
