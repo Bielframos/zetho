@@ -19,7 +19,9 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ### Changed
 
-- Página de um jogo redesenhada: header centralizado com nota compacta e ações agrupadas, e conteúdo organizado em abas (Lobby, Reviews, Mídias, Talvez você goste) carregadas sob demanda.
+- Página de um jogo redesenhada: header centralizado com nota compacta e ações agrupadas, e conteúdo organizado em abas (Lobby, Estatísticas, Reviews, Mídias, Talvez você goste) carregadas sob demanda.
+- Estatísticas do jogo agora têm aba própria e viraram uma lista de uma coluna, sem o grid anterior.
+- Aba de Mídias redesenhada: o trailer (ou a primeira screenshot, na ausência de vídeo) vira o destaque em largura total, e todas as demais imagens ficam sempre visíveis em um grid, sem o antigo botão "Ver galeria" escondendo o restante. Clicar em qualquer imagem continua abrindo a visualização ampliada.
 - Os skeletons de carregamento do dashboard agora espelham o layout real do conteúdo, sem o antigo gradiente azul.
 - Ações de compartilhar, curtir e salvar em listas foram padronizadas visualmente.
 - A lista de conexões (seguidores/seguindo) do perfil agora é exibida em coluna única.

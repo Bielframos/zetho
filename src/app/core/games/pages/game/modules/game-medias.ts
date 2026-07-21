@@ -15,73 +15,67 @@ import type { GameMedia } from '../../../game.types';
   standalone: true,
   template: `
     <article>
-      <!-- Grid: vídeo + coluna lateral -->
-      <div class="grid grid-cols-[70%_1fr] gap-1 max-md:grid-cols-1">
-        <!-- Coluna esquerda: trailer -->
-        <div class="aspect-video overflow-hidden bg-gray-1">
-          @if (primaryVideo()) {
-            <iframe
-              class="w-full h-full"
-              [src]="getEmbedUrl(primaryVideo()!.url)"
-              allowfullscreen
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              [title]="primaryVideo()!.name || 'Trailer'"
-            ></iframe>
-          } @else if (screenshots()[0]) {
-            <img
-              class="w-full h-full object-cover cursor-pointer"
-              [src]="screenshots()[0].url"
-              alt="Screenshot"
-              (click)="openGallery(0)"
-            />
-          }
+      <!-- Trailer: elemento principal da aba -->
+      @if (primaryVideo()) {
+        <div class="aspect-video overflow-hidden border-b border-gray-6 bg-gray-1">
+          <iframe
+            class="h-full w-full"
+            [src]="getEmbedUrl(primaryVideo()!.url)"
+            allowfullscreen
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            [title]="primaryVideo()!.name || 'Trailer'"
+          ></iframe>
         </div>
-
-        <!-- Coluna direita: 2 screenshots + botão galeria -->
-        <div class="flex flex-col gap-1 max-md:hidden relative">
-          @for (screenshot of sideScreenshots(); track screenshot.$id) {
-            <div
-              class="group flex-1 cursor-pointer overflow-hidden bg-gray-1"
-              (click)="openGallery(screenshots().indexOf(screenshot))"
-            >
-              <img
-                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                [src]="screenshot.url"
-                [alt]="screenshot.name || 'Screenshot'"
-              />
-            </div>
-          }
-
-          <!-- Botão abrir galeria -->
-          <button
-            class="absolute bottom-1 right-1 flex w-fit cursor-pointer items-center gap-2 rounded-lg border border-gray-6 bg-gray-1/90 px-4 py-2 text-gray-11 backdrop-blur transition-colors hover:bg-gray-3 hover:text-gray-12"
-            (click)="openGallery(0)"
-            aria-label="Abrir galeria de imagens"
-          >
-            <i class="ph ph-images text-[32px]"></i>
-
-            <div class="flex flex-col items-start">
-              <span class="text-sm font-medium">Ver galeria</span>
-              <span class="text-xs text-gray-10"
-                >{{ screenshots().length }} imagens</span
-              >
-            </div>
-          </button>
-        </div>
-      </div>
-
-      <!-- Botão galeria no mobile (fora do grid) -->
-      <button
-        class="mt-2 flex w-full items-center justify-center gap-3 border-y border-gray-6 py-4 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12 md:hidden"
-        (click)="openGallery(0)"
-        aria-label="Abrir galeria de imagens"
-      >
-        <i class="ph ph-images text-[24px]"></i>
-        <span class="text-sm font-medium">Ver galeria</span>
-        <span class="text-xs text-gray-10"
-          >({{ screenshots().length }} imagens)</span
+      } @else if (heroScreenshot(); as hero) {
+        <button
+          type="button"
+          class="group block aspect-video w-full cursor-pointer overflow-hidden border-b border-gray-6 bg-gray-1"
+          (click)="openGallery(screenshots().indexOf(hero))"
+          aria-label="Ampliar screenshot"
         >
-      </button>
+          <img
+            class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            [src]="hero.url"
+            [alt]="hero.name || 'Screenshot'"
+          />
+        </button>
+      }
+
+      <!-- Galeria: todas as screenshots, sempre visíveis -->
+      @if (gridScreenshots().length > 0) {
+        <div class="flex items-baseline justify-between px-4 py-3">
+          <span class="text-xs uppercase tracking-wide text-gray-11"
+            >Imagens</span
+          >
+          <span class="text-xs text-gray-10"
+            >{{ gridScreenshots().length }}</span
+          >
+        </div>
+
+        <ul class="grid grid-cols-2 gap-px bg-gray-6 sm:grid-cols-3 lg:grid-cols-4">
+          @for (screenshot of gridScreenshots(); track screenshot.$id) {
+            <li>
+              <button
+                type="button"
+                class="group relative block aspect-video w-full cursor-pointer overflow-hidden bg-gray-1"
+                (click)="openGallery(screenshots().indexOf(screenshot))"
+                aria-label="Ampliar screenshot"
+              >
+                <img
+                  class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  [src]="screenshot.url"
+                  [alt]="screenshot.name || 'Screenshot'"
+                />
+                <span
+                  class="absolute inset-0 flex items-center justify-center bg-gray-1/0 opacity-0 transition-all duration-200 group-hover:bg-gray-1/40 group-hover:opacity-100"
+                >
+                  <i class="ph ph-arrows-out text-2xl text-gray-12"></i>
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+      }
     </article>
 
     <!-- Lightbox -->
@@ -154,7 +148,17 @@ export class UiGameMedias {
   );
 
   primaryVideo = computed(() => this.videos()[0] ?? null);
-  sideScreenshots = computed(() => this.screenshots().slice(0, 2));
+
+  // Sem trailer, a primeira screenshot vira o destaque principal da aba.
+  heroScreenshot = computed(() =>
+    this.primaryVideo() ? null : (this.screenshots()[0] ?? null),
+  );
+
+  // Galeria completa: exclui a screenshot já exibida como destaque (quando não há trailer).
+  gridScreenshots = computed(() =>
+    this.primaryVideo() ? this.screenshots() : this.screenshots().slice(1),
+  );
+
   currentScreenshot = computed(
     () => this.screenshots()[this.lightboxIndex()] ?? null,
   );

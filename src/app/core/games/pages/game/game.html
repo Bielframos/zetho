@@ -87,12 +87,6 @@
     </div>
     }
 
-    <ui-game-stats
-      [stats]="controller.game()?.zStats"
-      [gameHypes]="controller.game()?.hypes"
-      [isUpcomingRelease]="controller.isUpcomingRelease()"
-    ></ui-game-stats>
-
     <!-- Barra de tabs (sticky) -->
     <div id="tabs-section" class="sticky top-0 z-20 bg-gray-1/95 backdrop-blur-sm">
       <!-- Nota compacta sempre visível no mobile (sem borda: o border-t-8 das
@@ -123,6 +117,14 @@
         class="block animate-fade-in-slide"
         [class.hidden]="activeTab() !== 'lobby'"
       ></ui-game-lobby>
+      } @if (visitedTabs().has('stats')) {
+      <ui-game-stats
+        class="block animate-fade-in-slide"
+        [class.hidden]="activeTab() !== 'stats'"
+        [stats]="controller.game()?.zStats"
+        [gameHypes]="controller.game()?.hypes"
+        [isUpcomingRelease]="controller.isUpcomingRelease()"
+      ></ui-game-stats>
       } @if (visitedTabs().has('reviews')) {
       <ui-game-reviews
         class="block animate-fade-in-slide"

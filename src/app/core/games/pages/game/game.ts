@@ -28,7 +28,7 @@ import { UiShareModal } from '../../../share/share-modal';
 import { ShareCardData } from '../../../share/share.types';
 import { RatingsService } from '../../../ratings/ratings.service';
 
-type GameTab = 'lobby' | 'reviews' | 'midias' | 'similar';
+type GameTab = 'lobby' | 'stats' | 'reviews' | 'midias' | 'similar';
 
 @Component({
   selector: 'app-game',
@@ -94,6 +94,7 @@ export class GamePage {
   tabs = computed<UiTab[]>(() => {
     const list: UiTab[] = [
       { id: 'lobby', label: 'Lobby' },
+      { id: 'stats', label: 'Estatísticas' },
       { id: 'reviews', label: 'Reviews', badge: this.controller.game()?.ratingCount ?? null },
     ];
     if (this.controller.medias().length > 0) {
