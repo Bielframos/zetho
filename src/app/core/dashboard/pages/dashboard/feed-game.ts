@@ -26,36 +26,30 @@ export interface FeedGame {
   standalone: true,
   imports: [RouterLink, UiModal],
   template: `
-    <div class="overflow-hidden rounded-lg border border-gray-6">
+    <div class="flex flex-col gap-2.5">
       <a
         [routerLink]="['/jogo', game().slug]"
-        class="flex items-center gap-3 p-2 transition-colors hover:bg-gray-3"
+        class="group flex items-center gap-3"
       >
         @if (game().coverUrl) {
           <img
             [src]="game().coverUrl"
-            class="h-14 w-10 shrink-0 rounded object-cover"
+            class="h-16 w-11 shrink-0 rounded object-cover"
             alt="Capa"
           />
         }
-        <span class="min-w-0 flex-1 truncate font-medium text-gray-12">{{
-          game().name
-        }}</span>
-        <i class="ph ph-caret-right shrink-0 text-gray-10"></i>
+        <span
+          class="min-w-0 flex-1 truncate font-medium text-gray-12 group-hover:underline"
+          >{{ game().name }}</span
+        >
       </a>
 
       @if (isAuthed()) {
-        <div
-          class="flex items-stretch divide-x divide-gray-6 border-t border-gray-6 text-sm"
-        >
+        <div class="flex items-center gap-5 text-sm text-gray-11">
           <button
             type="button"
-            class="flex flex-1 cursor-pointer items-center justify-center gap-2 py-2.5 transition-colors disabled:cursor-default"
-            [class]="
-              libraryDone()
-                ? 'text-blue-11'
-                : 'text-gray-11 hover:bg-gray-3 hover:text-gray-12'
-            "
+            class="flex cursor-pointer items-center gap-1.5 transition-colors hover:text-gray-12 disabled:cursor-default"
+            [class.text-blue-11]="libraryDone()"
             [disabled]="busyLibrary() || libraryDone()"
             (click)="addToLibrary()"
             [attr.aria-label]="
@@ -68,12 +62,8 @@ export interface FeedGame {
 
           <button
             type="button"
-            class="flex flex-1 cursor-pointer items-center justify-center gap-2 py-2.5 transition-colors disabled:cursor-default"
-            [class]="
-              wishlistDone()
-                ? 'text-blue-11'
-                : 'text-gray-11 hover:bg-gray-3 hover:text-gray-12'
-            "
+            class="flex cursor-pointer items-center gap-1.5 transition-colors hover:text-gray-12 disabled:cursor-default"
+            [class.text-blue-11]="wishlistDone()"
             [disabled]="busyWishlist() || wishlistDone()"
             (click)="addToWishlist()"
             [attr.aria-label]="
@@ -83,8 +73,8 @@ export interface FeedGame {
             <i
               [class]="
                 wishlistDone()
-                  ? 'ph-fill ph-heart-straight'
-                  : 'ph ph-heart-straight'
+                  ? 'ph-fill ph-shopping-bag-open'
+                  : 'ph ph-shopping-bag'
               "
             ></i>
             {{ wishlistDone() ? 'Nos desejos' : 'Desejos' }}
@@ -92,7 +82,7 @@ export interface FeedGame {
 
           <button
             type="button"
-            class="flex flex-1 cursor-pointer items-center justify-center gap-2 py-2.5 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+            class="flex cursor-pointer items-center gap-1.5 transition-colors hover:text-gray-12"
             (click)="openListModal()"
             aria-label="Adicionar a uma lista"
           >
