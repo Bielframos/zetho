@@ -60,13 +60,14 @@ Fontes principais:
 
 ## Padroes Do Dashboard
 
-- O Dashboard combina um feed vertical de destaques, a area de listas do usuario e uma grade de games aguardados.
+- O Dashboard e um feed social unico e cronologico (estilo timeline), em coluna focada (`w-full max-w-2xl mx-auto`), com carregamento infinito. Nao ha mais secoes separadas de descoberta (trending/aguardados) na home.
+- O feed mistura varios tipos de atividade das conexoes: review, comentario, lista, registro de status (`status`: zerou/adicionou a biblioteca/comecou a jogar/abandonou) e adicao de jogo a lista (`list_item`). O tipo de cada item define o corpo renderizado.
 - Feeds usam `flex flex-col divide-y divide-gray-6`; cada item usa `p-4`, avatar `h-8 w-8 rounded-full`, metadados `text-xs text-gray-10` e conteudo em `text-gray-12/11`.
+- A acao do item (verbo) fica na linha do autor para `status` e `list_item` (ex.: "**Fulano** zerou", "**Fulano** adicionou em [Lista]"); review/comentario/lista usam um rotulo discreto a direita. Icone de status a direita, com `text-amber-300` para o marco `completed` (pico) e `text-gray-11` nos demais.
 - Avatares sem imagem devem cair para uma bolha `rounded-full bg-blue-9 text-white` com inicial.
-- Badges de tipo de atividade usam `text-xs`, `px-2 py-0.5`, `rounded-full` e cor contextual discreta.
 - Previews de game dentro do feed devem ser compactos: imagem pequena, `border border-gray-6`, `rounded-lg`, `hover:bg-gray-3` e transicao de cor.
-- Secoes como "Minhas listas" e "Mais aguardados" usam headers com `border-t-8 border-b border-gray-6 p-4`, titulo `text-2xl` e link de apoio em azul.
-- Empty states devem ser simples e diretos, normalmente `text-gray-11`, sem composicao de card pesada.
+- Carregamento infinito via `IntersectionObserver` sobre uma sentinela no fim da lista; indicador de carga discreto (`ui-loading` inline) enquanto pagina. A janela mesclada tem teto pratico (top ~100 por fonte).
+- Empty states devem ser simples e diretos, normalmente `text-gray-11`, sem composicao de card pesada; o estado vazio do feed sugere jogadores com gostos parecidos.
 
 ## Padroes Da Pagina De Game
 

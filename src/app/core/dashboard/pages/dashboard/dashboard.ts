@@ -1,52 +1,54 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  afterNextRender,
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { UiSkeleton } from '../../../../shared/ui/skeleton';
 import { RelativeTimePipe } from '../../../../utils/pipes';
-import { GameRow } from '../../../../types';
 import { AuthStore } from '../../../auth/auth.store';
-import { GameService } from '../../../games/games.service';
 import { UpperCasePipe } from '@angular/common';
 import {
   CommentVoteState,
-  ConnectionsListActivityItem,
   DashboardFeedItem,
   DashboardService,
-  ListSocialState,
+  FeedGameStatus,
   SuggestedConnection,
-  TrendingListItem,
 } from '../../dashboard.service';
 import { ConnectionsService } from '../../../connections/connections.service';
 import { NotificationStore } from '../../../notifications/notification.store';
 import { appwrite } from '../../../appwrite/appwrite.client';
 
+const STATUS_LABELS: Record<FeedGameStatus, string> = {
+  completed: 'zerou',
+  backlog: 'adicionou à biblioteca',
+  playing: 'começou a jogar',
+  dropped: 'abandonou',
+};
+
+const STATUS_ICONS: Record<FeedGameStatus, string> = {
+  completed: 'ph-fill ph-trophy',
+  backlog: 'ph-fill ph-books',
+  playing: 'ph-fill ph-game-controller',
+  dropped: 'ph-fill ph-x-circle',
+};
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [
-    RouterLink,
-    RelativeTimePipe,
-    UiGameCard,
-    UiLoading,
-    UiSkeleton,
-    UpperCasePipe,
-  ],
+  imports: [RouterLink, RelativeTimePipe, UiLoading, UiSkeleton, UpperCasePipe],
   templateUrl: './dashboard.html',
 })
-export class DashboardPage {
+export class DashboardPage implements OnDestroy {
   authStore = inject(AuthStore);
-  gameService = inject(GameService);
   dashboardService = inject(DashboardService);
   private connectionsService = inject(ConnectionsService);
   private notification = inject(NotificationStore);
-
-  suggestedConnections = signal<SuggestedConnection[]>([]);
-  loadingSuggestions = signal(false);
-  followingIds = signal<Set<string>>(new Set());
-
-  upcomingHypedGames = signal<GameRow[]>([]);
-  loadingUpcomingHyped = signal(false);
 
   feed = signal<DashboardFeedItem[]>([]);
   loadingFeed = signal(false);
@@ -55,113 +57,53 @@ export class DashboardPage {
   loadingMoreFeed = signal(false);
   updatingCommentVoteIds = signal<Set<string>>(new Set());
 
-  trendingLists = signal<TrendingListItem[]>([]);
-  loadingTrendingLists = signal(false);
-  updatingListIds = signal<Set<string>>(new Set());
+  suggestedConnections = signal<SuggestedConnection[]>([]);
+  loadingSuggestions = signal(false);
+  followingIds = signal<Set<string>>(new Set());
 
-  connectionsListActivity = signal<ConnectionsListActivityItem[]>([]);
-  loadingListActivity = signal(false);
-  listActivityPage = signal(1);
-  hasMoreListActivity = signal(false);
-  loadingMoreListActivity = signal(false);
+  // Sentinela observada para o carregamento infinito.
+  private sentinel = viewChild<ElementRef<HTMLElement>>('sentinel');
+  private observer?: IntersectionObserver;
 
   get profile() {
     return this.authStore.profile();
   }
 
   constructor() {
-    void this.loadUpcomingHypedGames();
     void this.loadFeed();
-    void this.loadConnectionsListActivity();
-    void this.loadTrendingLists();
     void this.loadSuggestedConnections();
+
+    afterNextRender(() => this.setupInfiniteScroll());
   }
 
-  private async loadSuggestedConnections() {
-    this.loadingSuggestions.set(true);
-    try {
-      const res = await this.dashboardService.getSuggestedConnections(6);
-      this.suggestedConnections.set(res.items);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      this.loadingSuggestions.set(false);
-    }
+  ngOnDestroy() {
+    this.observer?.disconnect();
   }
 
-  suggestionAvatar(item: SuggestedConnection) {
-    if (item.avatarUrl) return item.avatarUrl;
-    return appwrite.avatars.getInitials({
-      name: item.gamertag,
-      width: 80,
-      height: 80,
-      background: '3e63dd',
-    });
+  private setupInfiniteScroll() {
+    const el = this.sentinel()?.nativeElement;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) void this.loadMoreFeed();
+      },
+      { rootMargin: '600px' },
+    );
+    this.observer.observe(el);
   }
 
-  async followSuggestion(item: SuggestedConnection) {
-    const myProfileId = this.profile?.$id;
-    if (!myProfileId || this.followingIds().has(item.$id)) return;
-
-    this.followingIds.update((set) => new Set(set).add(item.$id));
-    try {
-      await this.connectionsService.followOrUnfollow(item.$id, myProfileId);
-      this.suggestedConnections.update((list) =>
-        list.filter((c) => c.$id !== item.$id),
-      );
-      this.notification.show({
-        message: `Você seguiu ${item.gamertag}!`,
-        type: 'success',
-      });
-    } catch (e) {
-      console.error(e);
-      this.followingIds.update((set) => {
-        const next = new Set(set);
-        next.delete(item.$id);
-        return next;
-      });
-      this.notification.show({
-        message: 'Não foi possível seguir agora.',
-        type: 'error',
-      });
-    }
+  statusLabel(status?: FeedGameStatus) {
+    return status ? STATUS_LABELS[status] : '';
   }
 
-  private async loadConnectionsListActivity() {
-    this.loadingListActivity.set(true);
-    try {
-      const res = await this.dashboardService.getConnectionsListActivity(1, 12);
-      this.connectionsListActivity.set(res.items);
-      this.hasMoreListActivity.set(res.hasMore);
-      this.listActivityPage.set(1);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      this.loadingListActivity.set(false);
-    }
+  statusIcon(status?: FeedGameStatus) {
+    return status ? STATUS_ICONS[status] : 'ph ph-game-controller';
   }
 
-  async loadMoreListActivity() {
-    if (this.loadingMoreListActivity() || !this.hasMoreListActivity()) return;
-
-    this.loadingMoreListActivity.set(true);
-    const nextPage = this.listActivityPage() + 1;
-
-    try {
-      const res = await this.dashboardService.getConnectionsListActivity(
-        nextPage,
-        12,
-      );
-      this.connectionsListActivity.update((prev) => [...prev, ...res.items]);
-      this.hasMoreListActivity.set(res.hasMore);
-      this.listActivityPage.set(nextPage);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      this.loadingMoreListActivity.set(false);
-    }
-  }
-
+  // ------------------------------------------------------------------
+  // Feed
+  // ------------------------------------------------------------------
   private async loadFeed() {
     this.loadingFeed.set(true);
     try {
@@ -194,34 +136,6 @@ export class DashboardPage {
     }
   }
 
-  private async loadTrendingLists() {
-    this.loadingTrendingLists.set(true);
-
-    try {
-      const response = await this.dashboardService.getTrendingLists(12);
-      this.trendingLists.set(response.items);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      this.loadingTrendingLists.set(false);
-    }
-  }
-
-  private async loadUpcomingHypedGames() {
-    this.loadingUpcomingHyped.set(true);
-
-    try {
-      const response = await this.gameService.getUpcomingHypedGames({
-        pageSize: 8,
-        fingerprint: this.profile?.fingerprint,
-      });
-
-      this.upcomingHypedGames.set(response.rows);
-    } finally {
-      this.loadingUpcomingHyped.set(false);
-    }
-  }
-
   latestCovers(list: { latestAdditions?: string[] }) {
     return (list.latestAdditions ?? [])
       .map((item) => {
@@ -237,21 +151,12 @@ export class DashboardPage {
 
   listLink(list: {
     userProfile?: { gamertag: string } | null;
-    author?: { gamertag: string } | null;
     slug?: string;
   }) {
-    const gamertag = list.userProfile?.gamertag ?? list.author?.gamertag;
+    const gamertag = list.userProfile?.gamertag;
     return gamertag && list.slug
       ? ['/player', gamertag, 'listas', list.slug]
       : null;
-  }
-
-  async toggleListLike(listId: string) {
-    await this.toggleTrendingList(listId, 'like');
-  }
-
-  async toggleListSave(listId: string) {
-    await this.toggleTrendingList(listId, 'save');
   }
 
   async voteFeedComment(commentId: string, operation: 'up' | 'down') {
@@ -277,73 +182,6 @@ export class DashboardPage {
         return next;
       });
     }
-  }
-
-  private async toggleTrendingList(listId: string, action: 'like' | 'save') {
-    if (this.updatingListIds().has(`${action}:${listId}`)) return;
-
-    const previous = this.trendingLists();
-    this.updatingListIds.update((ids) =>
-      new Set(ids).add(`${action}:${listId}`),
-    );
-    this.applyOptimisticListState(listId, action);
-
-    try {
-      const state =
-        action === 'like'
-          ? await this.dashboardService.toggleListLike(listId)
-          : await this.dashboardService.toggleListSave(listId);
-      this.applyListState(listId, state);
-    } catch (e) {
-      console.error(e);
-      this.trendingLists.set(previous);
-    } finally {
-      this.updatingListIds.update((ids) => {
-        const next = new Set(ids);
-        next.delete(`${action}:${listId}`);
-        return next;
-      });
-    }
-  }
-
-  private applyOptimisticListState(listId: string, action: 'like' | 'save') {
-    this.trendingLists.update((lists) =>
-      lists.map((list) => {
-        if (list.$id !== listId) return list;
-
-        if (action === 'like') {
-          const likedByMe = !list.likedByMe;
-          return {
-            ...list,
-            likedByMe,
-            likeCount: Math.max(0, list.likeCount + (likedByMe ? 1 : -1)),
-          };
-        }
-
-        const savedByMe = !list.savedByMe;
-        return {
-          ...list,
-          savedByMe,
-          saveCount: Math.max(0, list.saveCount + (savedByMe ? 1 : -1)),
-        };
-      }),
-    );
-  }
-
-  private applyListState(listId: string, state: ListSocialState) {
-    this.trendingLists.update((lists) =>
-      lists.map((list) =>
-        list.$id === listId
-          ? {
-              ...list,
-              likedByMe: state.likedByMe,
-              savedByMe: state.savedByMe,
-              likeCount: state.likeCount,
-              saveCount: state.saveCount,
-            }
-          : list,
-      ),
-    );
   }
 
   private applyOptimisticCommentVote(
@@ -404,5 +242,58 @@ export class DashboardPage {
           : item,
       ),
     );
+  }
+
+  // ------------------------------------------------------------------
+  // Sugestões de conexão (estado vazio)
+  // ------------------------------------------------------------------
+  private async loadSuggestedConnections() {
+    this.loadingSuggestions.set(true);
+    try {
+      const res = await this.dashboardService.getSuggestedConnections(6);
+      this.suggestedConnections.set(res.items);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.loadingSuggestions.set(false);
+    }
+  }
+
+  suggestionAvatar(item: SuggestedConnection) {
+    if (item.avatarUrl) return item.avatarUrl;
+    return appwrite.avatars.getInitials({
+      name: item.gamertag,
+      width: 80,
+      height: 80,
+      background: '3e63dd',
+    });
+  }
+
+  async followSuggestion(item: SuggestedConnection) {
+    const myProfileId = this.profile?.$id;
+    if (!myProfileId || this.followingIds().has(item.$id)) return;
+
+    this.followingIds.update((set) => new Set(set).add(item.$id));
+    try {
+      await this.connectionsService.followOrUnfollow(item.$id, myProfileId);
+      this.suggestedConnections.update((list) =>
+        list.filter((c) => c.$id !== item.$id),
+      );
+      this.notification.show({
+        message: `Você seguiu ${item.gamertag}!`,
+        type: 'success',
+      });
+    } catch (e) {
+      console.error(e);
+      this.followingIds.update((set) => {
+        const next = new Set(set);
+        next.delete(item.$id);
+        return next;
+      });
+      this.notification.show({
+        message: 'Não foi possível seguir agora.',
+        type: 'error',
+      });
+    }
   }
 }

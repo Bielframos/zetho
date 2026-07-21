@@ -23,9 +23,11 @@ export type ParentCommentSummary = {
   userProfile?: ProfileSummary | null;
 };
 
+export type FeedGameStatus = 'completed' | 'backlog' | 'playing' | 'dropped';
+
 export interface DashboardFeedItem {
   $id: string;
-  type: 'rating' | 'comment' | 'list';
+  type: 'rating' | 'comment' | 'list' | 'status' | 'list_item';
   title?: string;
   slug?: string;
   description?: string;
@@ -36,10 +38,12 @@ export interface DashboardFeedItem {
   saveCount?: number;
   itemCount?: number;
   latestAdditions?: string[];
+  status?: FeedGameStatus;
+  list?: { $id: string; title: string; slug: string } | null;
   $createdAt: string;
   userProfile?: ProfileSummary | null;
   gameId?: string;
-  game?: GameSummary | null;
+  game?: (GameSummary & { $id?: string }) | null;
   parentComment?: ParentCommentSummary | null;
   viewerVote?: VoteType | null;
 }
@@ -57,14 +61,6 @@ export interface TrendingListItem {
   likedByMe: boolean;
   savedByMe: boolean;
   author?: ProfileSummary | null;
-}
-
-export interface ConnectionsListActivityItem {
-  $id: string;
-  $createdAt: string;
-  author: (ProfileSummary & { $id: string }) | null;
-  list: { $id: string; title: string; slug: string };
-  game: (GameSummary & { $id: string }) | null;
 }
 
 export interface SuggestedConnection {
@@ -131,29 +127,6 @@ export class DashboardService {
 
     const data = await response.json();
     return data;
-  }
-
-  async getConnectionsListActivity(
-    page: number = 1,
-    pageSize: number = 12,
-  ): Promise<{ items: ConnectionsListActivityItem[]; hasMore: boolean }> {
-    const url = new URL(
-      'dashboard/connections-list-activity',
-      environment.zethoApiEndpoint,
-    );
-    url.searchParams.set('page', page.toString());
-    url.searchParams.set('pageSize', pageSize.toString());
-    const response = await fetch(url.toString(), {
-      headers: await this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch connections list activity: ${response.statusText}`,
-      );
-    }
-
-    return await response.json();
   }
 
   async getSuggestedConnections(
