@@ -6,6 +6,25 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.17.0] - 2026-07-21
+
+### Added
+
+- Onboarding "Monte sua estante" para quem acabou de se cadastrar: buscar e marcar jogos já zerados, avaliar um deles e seguir jogadores sugeridos, tudo em três passos rápidos e puláveis.
+- Novo módulo de compartilhamento: gere prints instagramáveis ao zerar um jogo, da sua biblioteca ou de uma lista, com escolha de formato (story ou quadrado), fundos (gradientes ou o tema do seu perfil) e opção de incluir sua nota.
+- O convite para amigos agora vira um link: quem se cadastra por ele já nasce seguindo (e sendo seguido por) quem convidou, e vê um mini-perfil de quem o convidou na tela de cadastro.
+- Nova seção no dashboard com as novidades nas listas públicas das suas conexões.
+- Sugestões de "jogadores com gostos parecidos" no dashboard, com base em jogos avaliados em comum.
+- A ação de hype agora aparece apenas em jogos ainda não lançados.
+
+### Changed
+
+- Página de um jogo redesenhada: header centralizado com nota compacta e ações agrupadas, e conteúdo organizado em abas (Lobby, Reviews, Mídias, Talvez você goste) carregadas sob demanda.
+- Os skeletons de carregamento do dashboard agora espelham o layout real do conteúdo, sem o antigo gradiente azul.
+- Ações de compartilhar, curtir e salvar em listas foram padronizadas visualmente.
+- A lista de conexões (seguidores/seguindo) do perfil agora é exibida em coluna única.
+- Sorteios foram temporariamente ocultados da navegação.
+
 ## [1.16.1] - 2026-07-13
 
 ### Changed

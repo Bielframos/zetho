@@ -72,10 +72,10 @@ Fontes principais:
 
 - A pagina de game e uma tela de detalhe imersiva, nao um dashboard de cards.
 - Quando houver imagem hero, use uma camada absoluta no topo, com `background-size: cover`, opacidade baixa e mascara vertical para desaparecer no fundo. A imagem deve ser decorativa (`aria-hidden="true"`) e nao bloquear interacao.
-- O header do game e centralizado: capa grande com `ui-game-card` em `readonlyMode`, titulo `text-4xl md:text-5xl`, metadados em grid com divisorias e resumo em texto leve (`font-light leading-7`).
-- O bloco de rating e uma faixa de destaque com `border-y-8 border-gray-6`, nota grande (`text-6xl`) e CTA textual para avaliacoes.
-- Acoes do game ficam em botoes ghost icon-only no canto superior direito quando o usuario esta autenticado.
-- Modulos abaixo do header sao empilhados com separadores fortes: status/entry actions, stats, sorteios, midias, tabs e jogos similares.
+- O header do game e uma banda horizontal alinhada a esquerda (perfil social): capa `ui-game-card` em `readonlyMode` a esquerda (`w-24` no mobile, `[width]="150"` no desktop), a direita o titulo como heroi (`text-3xl md:text-5xl`, `leading-[1.05]`), uma linha de metadados sempre visivel (`ano · desenvolvedor · generos` em `text-sm text-gray-11`, generos como links) e as acoes ghost no topo-direito. So o resumo longo (em `font-light leading-7`) e a data de lancamento ficam no disclosure recolhivel. Nunca exponha IDs ou dados de sistema na UI.
+- O titulo do jogo e sempre o maior elemento do header. A nota agregada e uma linha de score compacta estilo Letterboxd (`ui-game-rating`): numero `text-3xl tabular-nums` + estrelas readonly agrupados, seguidos de contagem e do CTA `Ver avaliacoes →` na mesma linha. Nunca deixe a nota maior que o titulo. No mobile, uma nota compacta fica sempre visivel na barra sticky.
+- Acoes do game ficam em botoes ghost icon-only compostos no header (topo-direito) quando o usuario esta autenticado.
+- Modulos abaixo do header: status/entry actions, stats e uma barra de tabs sticky. Todo o resto e conteudo de tab (Lobby como default, Reviews, Midias, "Talvez voce goste"), sem headers de secao empilhados.
 - Tabs usam container `border-t-8 border-b border-gray-6 px-4`, botoes com `py-4`, borda inferior de 2px e estado ativo em `border-blue-9 text-gray-12`.
 - A area de midias usa grid 70/30 no desktop (`grid-cols-[70%_1fr]`) e uma coluna no mobile. Videos e imagens devem preencher o espaco com `aspect-video`, `object-cover` e hover de zoom leve para thumbnails.
 - Lightbox deve ser tela cheia com `dialog`, backdrop escuro, botoes icon-only e imagem `object-contain`.

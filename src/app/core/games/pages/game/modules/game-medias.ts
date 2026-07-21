@@ -15,17 +15,6 @@ import type { GameMedia } from '../../../game.types';
   standalone: true,
   template: `
     <article>
-      <header class="flex items-center gap-3 px-4 py-4 border-b border-gray-6">
-        <div
-          class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6"
-        >
-          <i class="ph ph-film-strip text-[24px] text-blue-11"></i>
-        </div>
-        <div>
-          <h3 class="text-2xl">Mídias</h3>
-        </div>
-      </header>
-
       <!-- Grid: vídeo + coluna lateral -->
       <div class="grid grid-cols-[70%_1fr] gap-1 max-md:grid-cols-1">
         <!-- Coluna esquerda: trailer -->

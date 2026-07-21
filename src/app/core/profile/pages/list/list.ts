@@ -1,4 +1,11 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { UiDraggableList } from './modules/draggable-list';
@@ -12,12 +19,20 @@ import {
   DashboardService,
   ListSocialState,
 } from '../../../dashboard/dashboard.service';
+import { UiShareModal } from '../../../share/share-modal';
+import { ShareCardData } from '../../../share/share.types';
 
 @Component({
   selector: 'app-list',
   standalone: true,
   templateUrl: './list.html',
-  imports: [UiDraggableList, UiLoading, ReactiveFormsModule, AppListMenu],
+  imports: [
+    UiDraggableList,
+    UiLoading,
+    ReactiveFormsModule,
+    AppListMenu,
+    UiShareModal,
+  ],
 })
 export class ListPage {
   private route = inject(ActivatedRoute);
@@ -27,9 +42,37 @@ export class ListPage {
   controller = inject(ListController);
   socialState = signal<ListSocialState | null>(null);
 
+  shareModal = viewChild<UiShareModal>('shareModal');
+
   itsMe = computed(
     () => this.authStore.profile()?.$id === this.profileStore.current()?.$id,
   );
+
+  shareData = computed<ShareCardData | null>(() => {
+    const list = this.controller.list();
+    const owner = this.profileStore.current();
+    if (!list || !owner) return null;
+
+    const covers = this.controller
+      .items()
+      .map((item) => item.game?.coverUrl)
+      .filter((url): url is string => Boolean(url));
+
+    return {
+      kind: 'list',
+      author: {
+        gamertag: owner.gamertag,
+        avatarUrl: owner.avatarUrl ?? null,
+      },
+      title: list.title,
+      covers,
+      itemCount: list.itemCount ?? this.controller.totalItems(),
+    };
+  });
+
+  openShare() {
+    this.shareModal()?.open();
+  }
 
   constructor() {
     effect(() => {

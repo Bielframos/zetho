@@ -7,7 +7,24 @@
     </header>
 
     @if (loadingFeed()) {
-    <ui-loading></ui-loading>
+    <div class="flex flex-col divide-y divide-gray-6">
+      @for (i of [0, 1, 2]; track i) {
+      <div class="flex flex-col gap-3 p-4">
+        <div class="flex items-center gap-3">
+          <div class="h-8 w-8 overflow-hidden rounded-full">
+            <ui-skeleton [height]="32"></ui-skeleton>
+          </div>
+          <div class="flex flex-col gap-1">
+            <ui-skeleton [height]="14" [width]="30"></ui-skeleton>
+            <ui-skeleton [height]="10" [width]="15"></ui-skeleton>
+          </div>
+        </div>
+        <ui-skeleton [height]="12"></ui-skeleton>
+        <ui-skeleton [height]="12"></ui-skeleton>
+        <ui-skeleton [height]="12" [width]="60"></ui-skeleton>
+      </div>
+      }
+    </div>
     } @else if (feed().length > 0) {
     <div class="flex flex-col divide-y divide-gray-6">
       @for (item of feed(); track item.type + ':' + item.$id) {
@@ -178,7 +195,44 @@
       Siga perfis para ver reviews, comentários e listas públicas das suas
       conexões.
     </p>
-    } @if (hasMoreFeed()) {
+
+    @if (suggestedConnections().length > 0) {
+    <div class="border-t border-gray-6">
+      <h3 class="px-4 pt-4 text-sm font-medium text-gray-11">
+        Jogadores com gostos parecidos
+      </h3>
+      <ul class="flex flex-col divide-y divide-gray-6">
+        @for (person of suggestedConnections(); track person.$id) {
+        <li class="flex items-center gap-3 px-4 py-3">
+          <img
+            [src]="suggestionAvatar(person)"
+            alt="Avatar"
+            class="h-10 w-10 rounded-full border border-gray-6 object-cover"
+          />
+          <a
+            [routerLink]="['/player', person.gamertag]"
+            class="min-w-0 flex-1"
+          >
+            <p class="truncate font-medium text-gray-12">
+              {{ person.gamertag }}
+            </p>
+            <p class="text-xs text-gray-11">
+              {{ person.sharedCount }} jogo(s) em comum
+            </p>
+          </a>
+          <button
+            type="button"
+            class="ui-primary-btn"
+            [disabled]="followingIds().has(person.$id)"
+            (click)="followSuggestion(person)"
+          >
+            Seguir
+          </button>
+        </li>
+        }
+      </ul>
+    </div>
+    } } @if (hasMoreFeed()) {
     <div class="mt-4 flex justify-center">
       <button
         (click)="loadMoreFeed()"
@@ -197,11 +251,125 @@
     <header
       class="flex gap-4 items-baseline flex-wrap border-t-8 border-b border-gray-6 p-4"
     >
+      <h2 class="text-2xl">Novidades nas listas das suas conexões</h2>
+    </header>
+
+    @if (loadingListActivity()) {
+    <div class="flex flex-col divide-y divide-gray-6">
+      @for (i of [0, 1, 2]; track i) {
+      <div class="flex flex-col gap-3 p-4">
+        <div class="flex items-center gap-3">
+          <div class="h-8 w-8 overflow-hidden rounded-full">
+            <ui-skeleton [height]="32"></ui-skeleton>
+          </div>
+          <div class="flex flex-col gap-1">
+            <ui-skeleton [height]="14" [width]="40"></ui-skeleton>
+            <ui-skeleton [height]="10" [width]="20"></ui-skeleton>
+          </div>
+        </div>
+        <ui-skeleton [height]="120" [width]="30"></ui-skeleton>
+      </div>
+      }
+    </div>
+    } @else if (connectionsListActivity().length > 0) {
+    <div class="flex flex-col divide-y divide-gray-6">
+      @for (item of connectionsListActivity(); track item.$id) {
+      <article class="flex flex-col gap-3 p-4">
+        <header class="flex items-center gap-3">
+          @if (item.author?.avatarUrl) {
+          <img
+            [src]="item.author?.avatarUrl"
+            alt="Avatar"
+            class="h-8 w-8 rounded-full object-cover"
+          />
+          } @else {
+          <div
+            class="h-8 w-8 rounded-full bg-blue-9 text-white flex items-center justify-center font-bold text-xs"
+          >
+            {{ (item.author?.gamertag || 'Z')[0] | uppercase }}
+          </div>
+          }
+          <div class="flex flex-col">
+            <span class="text-sm text-gray-11">
+              <a
+                [routerLink]="['/player', item.author?.gamertag]"
+                class="font-medium text-gray-12 hover:underline"
+                >{{ item.author?.gamertag || 'Jogador' }}</a
+              >
+              adicionou em
+              <a
+                [routerLink]="[
+                  '/player',
+                  item.author?.gamertag,
+                  'listas',
+                  item.list.slug
+                ]"
+                class="font-medium text-gray-12 hover:underline"
+                >{{ item.list.title }}</a
+              >
+            </span>
+            <span class="text-xs text-gray-10">
+              {{ item.$createdAt | relativeTime }}
+            </span>
+          </div>
+        </header>
+
+        @if (item.game) {
+        <div class="w-24">
+          <ui-game-card [game]="$any(item.game)"></ui-game-card>
+        </div>
+        }
+      </article>
+      }
+    </div>
+    } @else {
+    <p class="text-gray-11 p-4">
+      As suas conexões ainda não adicionaram jogos às listas. Siga mais perfis
+      para acompanhar o que eles estão colecionando.
+    </p>
+    } @if (hasMoreListActivity()) {
+    <div class="mt-4 flex justify-center">
+      <button
+        (click)="loadMoreListActivity()"
+        [disabled]="loadingMoreListActivity()"
+        class="px-4 py-2 w-full border-t border-gray-6 cursor-pointer hover:bg-gray-2"
+      >
+        @if (loadingMoreListActivity()) {
+        <ui-loading [inline]="true" size="sm"></ui-loading>
+        Carregando... } @else { Ver mais }
+      </button>
+    </div>
+    }
+  </section>
+
+  <section>
+    <header
+      class="flex gap-4 items-baseline flex-wrap border-t-8 border-b border-gray-6 p-4"
+    >
       <h2 class="text-2xl">Listas em alta</h2>
     </header>
 
     @if (loadingTrendingLists()) {
-    <ui-loading></ui-loading>
+    <ul class="grid gap-px bg-gray-6 md:grid-cols-2">
+      @for (i of [0, 1, 2, 3]; track i) {
+      <li class="flex flex-col gap-3 bg-gray-1 p-4">
+        <ui-skeleton [height]="20" [width]="70"></ui-skeleton>
+        <ui-skeleton [height]="12" [width]="40"></ui-skeleton>
+        <div class="flex gap-2">
+          @for (c of [0, 1, 2]; track c) {
+          <div class="h-20 w-14 overflow-hidden rounded">
+            <ui-skeleton [height]="80"></ui-skeleton>
+          </div>
+          }
+        </div>
+        <div class="flex gap-4">
+          @for (s of [0, 1, 2]; track s) {
+          <ui-skeleton [height]="12" [width]="20"></ui-skeleton>
+          }
+        </div>
+      </li>
+      }
+    </ul>
     } @else if (trendingLists().length > 0) {
     <ul class="grid gap-px bg-gray-6 md:grid-cols-2">
       @for (list of trendingLists(); track list.$id) {
@@ -293,7 +461,15 @@
     </header>
 
     @if (loadingUpcomingHyped()) {
-    <ui-loading></ui-loading>
+    <ul
+      class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-px"
+    >
+      @for (i of [0, 1, 2, 3, 4, 5, 6, 7]; track i) {
+      <li class="flex flex-col">
+        <ui-skeleton [height]="200"></ui-skeleton>
+      </li>
+      }
+    </ul>
     } @else if (upcomingHypedGames().length > 0) {
     <ul
       class="grid grid-cols-3 md:grid-cols-[repeat(4,minmax(100px,1fr))] gap-px"

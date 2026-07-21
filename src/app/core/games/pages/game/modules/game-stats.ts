@@ -32,9 +32,11 @@ import { ZStatsRow } from '../../../../zStats/zStats.types';
                 } @else {
                   <i class="{{ item.icon }} text-gray-11"></i>
                 }
-                <span>{{ item.label }}</span>
+                <span class="text-sm">{{ item.label }}</span>
               </div>
-              <span>{{ getItemValue(item.key) | shortNumber }}</span>
+              <span class="text-lg tabular-nums text-gray-12">{{
+                getItemValue(item.key) | shortNumber
+              }}</span>
             </div>
           }
         </div>
@@ -59,9 +61,11 @@ import { ZStatsRow } from '../../../../zStats/zStats.types';
                   fill="var(--color-gray-11)"
                 />
               </svg>
-              <span>Zerado</span>
+              <span class="text-sm">Zerado</span>
             </div>
-            <span>{{ stats()?.completedCount | shortNumber }}</span>
+            <span class="text-lg tabular-nums text-gray-12">{{
+              stats()?.completedCount | shortNumber
+            }}</span>
           </div>
 
           <!-- Demais categorias -->
@@ -73,9 +77,11 @@ import { ZStatsRow } from '../../../../zStats/zStats.types';
             >
               <div class="flex gap-2 items-center">
                 <i class="{{ item.icon }} text-gray-11"></i>
-                <span>{{ item.label }}</span>
+                <span class="text-sm">{{ item.label }}</span>
               </div>
-              <span>{{ stats()?.[item.key] | shortNumber }}</span>
+              <span class="text-lg tabular-nums text-gray-12">{{
+                stats()?.[item.key] | shortNumber
+              }}</span>
             </div>
           }
         </div>

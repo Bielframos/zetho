@@ -28,11 +28,22 @@
   }
 
   <div class="relative z-0">
-    @if (authStore.isAuthenticated() && controller.game()) {
-    <ui-game-actions [game]="controller.game()"></ui-game-actions>
-    }
-
-    <ui-game-header [game]="controller.game()"></ui-game-header>
+    <ui-game-header [game]="controller.game()">
+      @if (authStore.isAuthenticated() && controller.game()) {
+      <ui-game-actions
+        headerActions
+        [game]="controller.game()"
+        (share)="openShare()"
+      ></ui-game-actions>
+      } @if (controller.game()) {
+      <ui-game-rating
+        headerRating
+        [game]="controller.game()"
+        [loading]="controller.loading() || controller.updating()"
+        (viewReviews)="openTab('reviews')"
+      ></ui-game-rating>
+      }
+    </ui-game-header>
   </div>
 
   @if (!controller.game()) {
@@ -46,10 +57,12 @@
   <section class="animate-fade-in-slide" style="animation-delay: 400ms">
     @if ( controller.game() && authStore.isAuthenticated() &&
     !controller.isUpcomingRelease() ) {
-    <ui-z-entry-actions></ui-z-entry-actions>
+    <div class="border-b border-gray-6">
+      <ui-z-entry-actions></ui-z-entry-actions>
+    </div>
     } @else if (controller.game() && authStore.isAuthenticated()) {
     <div
-      class="flex w-full flex-col items-center p-6 text-center animate-fade-in-slide border-t-8 border-b border-gray-6"
+      class="flex w-full flex-col items-center p-6 text-center animate-fade-in-slide border-b border-gray-6"
     >
       <i class="ph ph-calendar-plus text-[40px] mb-2"></i>
       <h3 class="mb-1 text-lg">Jogo ainda não lançado</h3>
@@ -60,7 +73,7 @@
     </div>
     } @else {
     <div
-      class="flex w-full flex-col items-center p-6 text-center animate-fade-in-slide border-t-8 border-b border-gray-6"
+      class="flex w-full flex-col items-center p-6 text-center animate-fade-in-slide border-b border-gray-6"
     >
       <i class="ph ph-game-controller text-[40px] mb-2"></i>
       <h3 class="mb-1 text-lg">Acompanhar seus jogos</h3>
@@ -74,86 +87,63 @@
     </div>
     }
 
-    <ui-game-rating
-      [game]="controller.game()"
-      [loading]="controller.loading() || controller.updating()"
-      (viewReviews)="scrollToReviews()"
-    ></ui-game-rating>
-
     <ui-game-stats
       [stats]="controller.game()?.zStats"
       [gameHypes]="controller.game()?.hypes"
       [isUpcomingRelease]="controller.isUpcomingRelease()"
     ></ui-game-stats>
 
-    <div class="h-2 bg-gray-6" aria-hidden="true"></div>
-
-    <ui-game-raffles></ui-game-raffles>
-
-    @if (controller.medias().length > 0) {
-    <ui-game-medias [medias]="controller.medias()"></ui-game-medias>
-    }
-
-    <!-- Tabs Navigation -->
-    <div
-      id="tabs-section"
-      class="flex gap-1 border-t-8 border-b border-gray-6 px-4"
-    >
-      <button
-        class="px-4 py-4 text-sm transition-colors cursor-pointer border-b-2"
-        [class.border-blue-9]="activeTab() === 'lobby'"
-        [class.text-gray-12]="activeTab() === 'lobby'"
-        [class.border-transparent]="activeTab() !== 'lobby'"
-        [class.text-gray-10]="activeTab() !== 'lobby'"
-        (click)="setActiveTab('lobby')"
-      >
-        Lobby
-      </button>
-      <button
-        class="px-4 py-4 text-sm transition-colors cursor-pointer border-b-2 flex items-center gap-2"
-        [class.border-blue-9]="activeTab() === 'reviews'"
-        [class.text-gray-12]="activeTab() === 'reviews'"
-        [class.border-transparent]="activeTab() !== 'reviews'"
-        [class.text-gray-10]="activeTab() !== 'reviews'"
-        (click)="setActiveTab('reviews')"
-      >
-        Reviews @if (controller.game()?.ratingCount) {
-        <span class="text-xs bg-blue-3 text-blue-11 px-2 py-0.5 rounded-full">
-          {{ controller.game()?.ratingCount }}
+    <!-- Barra de tabs (sticky) -->
+    <div id="tabs-section" class="sticky top-0 z-20 bg-gray-1/95 backdrop-blur-sm">
+      <!-- Nota compacta sempre visível no mobile (sem borda: o border-t-8 das
+           tabs abaixo já faz a separação) -->
+      <div class="flex items-center gap-2 px-4 py-2.5 md:hidden">
+        <span class="min-w-0 truncate text-sm text-gray-12">
+          {{ controller.game()?.name }}
         </span>
-        }
-      </button>
+        <span class="ml-auto flex shrink-0 items-center gap-1 text-sm">
+          <strong class="tabular-nums text-gray-12">
+            {{ controller.game()?.ratingAvg ?? '0.0' }}
+          </strong>
+          <i class="ph-fill ph-star text-amber-300"></i>
+        </span>
+      </div>
+
+      <ui-tabs
+        [tabs]="tabs()"
+        [active]="activeTab()"
+        (activeChange)="openTab($event)"
+      ></ui-tabs>
     </div>
 
-    <!-- Tabs Content -->
-    @if (activeTab() === 'lobby') {
-    <ui-game-lobby class="block animate-fade-in-slide"></ui-game-lobby>
-    } @else if (activeTab() === 'reviews') {
-    <ui-game-reviews class="block animate-fade-in-slide"></ui-game-reviews>
-    } @if (controller.similarGames(); as similarGames) {
-    <header
-      class="flex items-center gap-3 px-4 py-4 border-t-8 border-b border-gray-6"
-    >
-      <div
-        class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6"
-      >
-        <i class="ph ph-game-controller text-[24px] text-blue-11"></i>
-      </div>
-      <div>
-        <h3 class="text-2xl">Talvez você goste</h3>
-      </div>
-    </header>
-    <ul class="grid grid-cols-3 gap-px">
-      @for (game of similarGames; track $index) {
-      <li>
-        <ui-game-card
-          [game]="game"
-          [entryStatus]="game.zEntry?.status"
-        ></ui-game-card>
-      </li>
+    <!-- Painéis de conteúdo (lazy + keep-alive) -->
+    <div uiTabSwipe (swipe)="onSwipe($event)">
+      @if (visitedTabs().has('lobby')) {
+      <ui-game-lobby
+        class="block animate-fade-in-slide"
+        [class.hidden]="activeTab() !== 'lobby'"
+      ></ui-game-lobby>
+      } @if (visitedTabs().has('reviews')) {
+      <ui-game-reviews
+        class="block animate-fade-in-slide"
+        [class.hidden]="activeTab() !== 'reviews'"
+      ></ui-game-reviews>
+      } @if (controller.medias().length > 0 && visitedTabs().has('midias')) {
+      <ui-game-medias
+        class="block animate-fade-in-slide"
+        [class.hidden]="activeTab() !== 'midias'"
+        [medias]="controller.medias()"
+      ></ui-game-medias>
+      } @if (controller.similarGames()?.length && visitedTabs().has('similar')) {
+      <ui-game-similar
+        class="block animate-fade-in-slide"
+        [class.hidden]="activeTab() !== 'similar'"
+        [games]="controller.similarGames() ?? []"
+      ></ui-game-similar>
       }
-    </ul>
-    }
+    </div>
   </section>
   }
+
+  <ui-share-modal #shareModal [data]="shareData()"></ui-share-modal>
 </main>

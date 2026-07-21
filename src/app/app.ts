@@ -40,6 +40,7 @@ export class App {
   profileStore = inject(ProfileStore);
   profileLayoutStore = inject(ProfileLayoutStore);
   appVersion = environment.appVersion;
+  featureRaffles = environment.features.raffles;
   private route = inject(Router);
   private destroyRef = inject(DestroyRef);
   private zCoinsService = inject(ZCoinsService);

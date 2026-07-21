@@ -83,6 +83,27 @@
         </p>
       </header>
 
+      @if (inviter(); as person) {
+      <div
+        class="mb-4 flex items-center gap-3 border border-gray-6 bg-gray-2/60 p-4"
+      >
+        <img
+          [src]="inviterAvatar(person)"
+          alt="Avatar"
+          class="h-12 w-12 rounded-full border border-gray-6 object-cover"
+        />
+        <div>
+          <p class="text-gray-12">
+            <strong>{{ person.gamertag }}</strong> convidou você
+          </p>
+          <p class="text-sm text-gray-11">
+            {{ person.totalsCompleted }} jogos zerados — monte sua estante também
+            e vocês já se conectam.
+          </p>
+        </div>
+      </div>
+      }
+
       <form [formGroup]="form" (ngSubmit)="submit()" class="grid gap-4">
         <div class="grid gap-4 sm:grid-cols-2">
           <div>

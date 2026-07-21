@@ -1,7 +1,10 @@
 export const environment = {
   production: false,
-  appVersion: '1.16.1',
+  appVersion: '1.17.0',
   appUrl: 'http://localhost:4200/',
+  features: {
+    raffles: false,
+  },
   appwriteEndpoint: 'https://appwrite.adstrito.com/v1',
   appwriteProject: '690a16460002c718253a',
    themesBucketId: 'zetho-themes',

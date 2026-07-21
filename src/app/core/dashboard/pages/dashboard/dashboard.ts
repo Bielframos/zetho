@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
 import { UiLoading } from '../../../../shared/ui/loading';
+import { UiSkeleton } from '../../../../shared/ui/skeleton';
 import { RelativeTimePipe } from '../../../../utils/pipes';
 import { GameRow } from '../../../../types';
 import { AuthStore } from '../../../auth/auth.store';
@@ -9,22 +10,40 @@ import { GameService } from '../../../games/games.service';
 import { UpperCasePipe } from '@angular/common';
 import {
   CommentVoteState,
+  ConnectionsListActivityItem,
   DashboardFeedItem,
   DashboardService,
   ListSocialState,
+  SuggestedConnection,
   TrendingListItem,
 } from '../../dashboard.service';
+import { ConnectionsService } from '../../../connections/connections.service';
+import { NotificationStore } from '../../../notifications/notification.store';
+import { appwrite } from '../../../appwrite/appwrite.client';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, RelativeTimePipe, UiGameCard, UiLoading, UpperCasePipe],
+  imports: [
+    RouterLink,
+    RelativeTimePipe,
+    UiGameCard,
+    UiLoading,
+    UiSkeleton,
+    UpperCasePipe,
+  ],
   templateUrl: './dashboard.html',
 })
 export class DashboardPage {
   authStore = inject(AuthStore);
   gameService = inject(GameService);
   dashboardService = inject(DashboardService);
+  private connectionsService = inject(ConnectionsService);
+  private notification = inject(NotificationStore);
+
+  suggestedConnections = signal<SuggestedConnection[]>([]);
+  loadingSuggestions = signal(false);
+  followingIds = signal<Set<string>>(new Set());
 
   upcomingHypedGames = signal<GameRow[]>([]);
   loadingUpcomingHyped = signal(false);
@@ -40,6 +59,12 @@ export class DashboardPage {
   loadingTrendingLists = signal(false);
   updatingListIds = signal<Set<string>>(new Set());
 
+  connectionsListActivity = signal<ConnectionsListActivityItem[]>([]);
+  loadingListActivity = signal(false);
+  listActivityPage = signal(1);
+  hasMoreListActivity = signal(false);
+  loadingMoreListActivity = signal(false);
+
   get profile() {
     return this.authStore.profile();
   }
@@ -47,7 +72,94 @@ export class DashboardPage {
   constructor() {
     void this.loadUpcomingHypedGames();
     void this.loadFeed();
+    void this.loadConnectionsListActivity();
     void this.loadTrendingLists();
+    void this.loadSuggestedConnections();
+  }
+
+  private async loadSuggestedConnections() {
+    this.loadingSuggestions.set(true);
+    try {
+      const res = await this.dashboardService.getSuggestedConnections(6);
+      this.suggestedConnections.set(res.items);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.loadingSuggestions.set(false);
+    }
+  }
+
+  suggestionAvatar(item: SuggestedConnection) {
+    if (item.avatarUrl) return item.avatarUrl;
+    return appwrite.avatars.getInitials({
+      name: item.gamertag,
+      width: 80,
+      height: 80,
+      background: '3e63dd',
+    });
+  }
+
+  async followSuggestion(item: SuggestedConnection) {
+    const myProfileId = this.profile?.$id;
+    if (!myProfileId || this.followingIds().has(item.$id)) return;
+
+    this.followingIds.update((set) => new Set(set).add(item.$id));
+    try {
+      await this.connectionsService.followOrUnfollow(item.$id, myProfileId);
+      this.suggestedConnections.update((list) =>
+        list.filter((c) => c.$id !== item.$id),
+      );
+      this.notification.show({
+        message: `Você seguiu ${item.gamertag}!`,
+        type: 'success',
+      });
+    } catch (e) {
+      console.error(e);
+      this.followingIds.update((set) => {
+        const next = new Set(set);
+        next.delete(item.$id);
+        return next;
+      });
+      this.notification.show({
+        message: 'Não foi possível seguir agora.',
+        type: 'error',
+      });
+    }
+  }
+
+  private async loadConnectionsListActivity() {
+    this.loadingListActivity.set(true);
+    try {
+      const res = await this.dashboardService.getConnectionsListActivity(1, 12);
+      this.connectionsListActivity.set(res.items);
+      this.hasMoreListActivity.set(res.hasMore);
+      this.listActivityPage.set(1);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.loadingListActivity.set(false);
+    }
+  }
+
+  async loadMoreListActivity() {
+    if (this.loadingMoreListActivity() || !this.hasMoreListActivity()) return;
+
+    this.loadingMoreListActivity.set(true);
+    const nextPage = this.listActivityPage() + 1;
+
+    try {
+      const res = await this.dashboardService.getConnectionsListActivity(
+        nextPage,
+        12,
+      );
+      this.connectionsListActivity.update((prev) => [...prev, ...res.items]);
+      this.hasMoreListActivity.set(res.hasMore);
+      this.listActivityPage.set(nextPage);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.loadingMoreListActivity.set(false);
+    }
   }
 
   private async loadFeed() {

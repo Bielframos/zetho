@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, inject, input, output, signal } from '@angular/core';
 import { UiModal } from '../../../../../shared/ui/modal/modal';
 import { ModalTriggerDirective } from '../../../../../shared/ui/modal/modal-trigger.directive';
 import { AuthStore } from '../../../../auth/auth.store';
@@ -11,6 +11,7 @@ import { ZereiListRow } from '../../../../lists/lists.type';
   selector: 'ui-game-actions',
   standalone: true,
   template: `
+    <div class="flex flex-col items-center gap-1">
     <!-- Ação de curtida -->
     <button
       (click)="handleLike()"
@@ -25,19 +26,21 @@ import { ZereiListRow } from '../../../../lists/lists.type';
       }
     </button>
 
-    <!-- Ação de hype -->
-    <button
-      (click)="handleHype()"
-      class="ui-ghost-btn"
-      data-size="icon"
-      [aria-label]="gameController.zEntry()?.hyped ? 'Remover hype' : 'Hypar'"
-    >
-      @if (gameController.zEntry()?.hyped) {
-        <i class="ph-fill ph-fire text-orange-400"></i>
-      } @else {
-        <i class="ph ph-fire"></i>
-      }
-    </button>
+    <!-- Ação de hype (apenas para jogos ainda não lançados) -->
+    @if (gameController.isUpcoming()) {
+      <button
+        (click)="handleHype()"
+        class="ui-ghost-btn"
+        data-size="icon"
+        [aria-label]="gameController.zEntry()?.hyped ? 'Remover hype' : 'Hypar'"
+      >
+        @if (gameController.zEntry()?.hyped) {
+          <i class="ph-fill ph-fire text-orange-400"></i>
+        } @else {
+          <i class="ph ph-fire"></i>
+        }
+      </button>
+    }
 
     <!-- Ação de notificações -->
     <button
@@ -75,6 +78,18 @@ import { ZereiListRow } from '../../../../lists/lists.type';
         <i class="ph ph-shopping-bag"></i>
       }
     </button>
+
+    <!-- Compartilhar (apenas quando o jogo foi zerado) -->
+    @if (gameController.zEntry()?.status === 'completed') {
+      <button
+        (click)="share.emit()"
+        class="ui-ghost-btn"
+        data-size="icon"
+        aria-label="Compartilhar"
+      >
+        <i class="ph ph-share-network"></i>
+      </button>
+    }
 
     <!-- Modal para registro do jogo em uma lista -->
     <ui-modal
@@ -132,9 +147,10 @@ import { ZereiListRow } from '../../../../lists/lists.type';
 
       <div class="h-1"></div>
     </ui-modal>
+    </div>
   `,
   host: {
-    class: 'absolute top-4 right-4',
+    class: 'contents',
   },
   imports: [UiModal, ModalTriggerDirective],
 })
@@ -143,6 +159,7 @@ export class UiGameActions {
   gameController = inject(GameController);
   listController = inject(ListsController);
   game = input<GameRow | null>();
+  share = output<void>();
   isLiking = signal(false);
   isHyping = signal(false);
 
@@ -189,6 +206,7 @@ export class UiGameActions {
 
   async handleHype() {
     if (!this.authStore.isAuthenticated()) return;
+    if (!this.gameController.isUpcoming()) return;
 
     this.isHyping.set(true);
 

@@ -18,6 +18,9 @@ export class GameController {
   medias = signal<GameMedia[]>([]);
   heroImage = signal<GameHero | null>(null);
   errors = signal<Record<string, any>>({});
+  // Contador incrementado quando o usuário marca um jogo como zerado; a página
+  // observa para abrir o compartilhamento no pico emocional ("Zerei!").
+  justZeroed = signal(0);
   loading = signal(false);
   updating = signal(false);
   notificationsEnabled = signal(false);
@@ -34,6 +37,28 @@ export class GameController {
 
     const releaseDate = new Date(rawReleaseDate);
 
+    if (Number.isNaN(releaseDate.getTime())) return false;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return releaseDate.getTime() > today.getTime();
+  });
+
+  /**
+   * Versão estrita de `isUpcomingRelease`: só retorna `true` quando há uma data
+   * de lançamento válida e comprovadamente no futuro. Datas ausentes ou
+   * inválidas são tratadas como "já lançado" (o mais seguro). Usada para
+   * liberar o hype apenas em jogos ainda não lançados.
+   */
+  isUpcoming = computed(() => {
+    const game = this.game();
+    if (!game) return false;
+
+    const rawReleaseDate = game.rawReleaseDate;
+    if (!rawReleaseDate) return false;
+
+    const releaseDate = new Date(rawReleaseDate);
     if (Number.isNaN(releaseDate.getTime())) return false;
 
     const today = new Date();
@@ -188,6 +213,9 @@ export class GameController {
       return;
     }
 
+    // Hype só é permitido para jogos ainda não lançados.
+    if (action === 'hype' && !this.isUpcoming()) return;
+
     const optimisticEntry = this.buildOptimisticEntry(zEntry, payload);
     let rollbackReward: (() => void) | null = null;
 
@@ -222,6 +250,15 @@ export class GameController {
         ...updated,
         ...optimisticEntry,
       });
+
+      // Marcou como zerado (e não estava antes): dispara a celebração/share.
+      if (
+        action === 'updateStatus' &&
+        value === 'completed' &&
+        zEntry?.status !== 'completed'
+      ) {
+        this.justZeroed.update((count) => count + 1);
+      }
     } catch (err) {
       rollbackReward?.();
       this.zEntry.set(zEntry);

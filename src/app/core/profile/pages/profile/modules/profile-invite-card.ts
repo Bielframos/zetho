@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { AuthStore } from '../../../../auth/auth.store';
 import { NotificationStore } from '../../../../notifications/notification.store';
 import { UiLoading } from '../../../../../shared/ui/loading';
+import { environment } from '../../../../../../environments/environment';
 
 @Component({
   selector: 'app-profile-invite-card',
@@ -13,14 +14,14 @@ import { UiLoading } from '../../../../../shared/ui/loading';
         <div
           class="flex items-center gap-2 border border-gray-6 rounded-lg px-3 py-2"
         >
-          <span class="font-mono text-gray-12 flex-1 text-sm tracking-wide">{{
-            code
+          <span class="font-mono text-gray-12 flex-1 truncate text-sm tracking-wide">{{
+            inviteLink(code)
           }}</span>
           <button
-            (click)="copyInviteCode(code)"
+            (click)="copyInviteLink(code)"
             class="ui-ghost-btn shrink-0"
             data-size="icon"
-            [attr.title]="inviteCopied() ? 'Copiado!' : 'Copiar código'"
+            [attr.title]="inviteCopied() ? 'Copiado!' : 'Copiar link'"
           >
             <i
               [class]="
@@ -31,7 +32,8 @@ import { UiLoading } from '../../../../../shared/ui/loading';
           </button>
         </div>
         <p class="text-xs text-gray-10 mt-2">
-          Ganhe Z-Coins sempre que seus amigos se registrarem usando seu código.
+          Compartilhe seu link: quem entrar por ele já nasce conectado a você —
+          vocês passam a seguir um ao outro e trocam bibliotecas.
         </p>
       } @else {
         <p class="text-sm text-gray-11 mt-4 mb-3">
@@ -61,14 +63,21 @@ export class AppProfileInviteCard {
   generatingCode = signal(false);
   inviteCopied = signal(false);
 
-  async copyInviteCode(code: string) {
+  inviteLink(code: string) {
+    return new URL(
+      `registrar?invite=${encodeURIComponent(code)}`,
+      environment.appUrl,
+    ).toString();
+  }
+
+  async copyInviteLink(code: string) {
     try {
-      await navigator.clipboard.writeText(code);
+      await navigator.clipboard.writeText(this.inviteLink(code));
       this.inviteCopied.set(true);
       setTimeout(() => this.inviteCopied.set(false), 2000);
     } catch {
       this.notification.show({
-        message: 'Não foi possível copiar o código.',
+        message: 'Não foi possível copiar o link.',
         type: 'error',
       });
     }

@@ -6,11 +6,19 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { AuthStore } from '../../auth.store';
 import { UserProfileService } from '../../../userProfiles/userProfile.service';
+import { appwrite } from '../../../appwrite/appwrite.client';
+import { environment } from '../../../../../environments/environment';
+
+interface InviterPreview {
+  gamertag: string;
+  avatarUrl: string | null;
+  totalsCompleted: number;
+}
 import {
   gamertagAsyncValidator,
   gamertagFormatValidator,
@@ -28,10 +36,45 @@ import {
 })
 export class RegisterPage {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private authStore = inject(AuthStore);
   private profileService = inject(UserProfileService);
 
   isSubmitting = signal(false);
+  inviter = signal<InviterPreview | null>(null);
+
+  constructor() {
+    const code = this.route.snapshot.queryParamMap.get('invite');
+    if (code) {
+      this.form.controls.inviteCode.setValue(code);
+      void this.loadInviter(code);
+    }
+  }
+
+  private async loadInviter(code: string) {
+    try {
+      const url = new URL(
+        `profile/invite/${encodeURIComponent(code)}`,
+        environment.zethoApiEndpoint,
+      );
+      const response = await fetch(url.toString());
+      if (!response.ok) return;
+      const data = (await response.json()) as InviterPreview | null;
+      if (data?.gamertag) this.inviter.set(data);
+    } catch {
+      // silencioso — o convite ainda funciona sem o preview
+    }
+  }
+
+  inviterAvatar(person: InviterPreview) {
+    if (person.avatarUrl) return person.avatarUrl;
+    return appwrite.avatars.getInitials({
+      name: person.gamertag,
+      width: 96,
+      height: 96,
+      background: '3e63dd',
+    });
+  }
 
   private passwordMatch: ValidatorFn = (group) => {
     const pass = group.get('password')?.value;
@@ -95,7 +138,7 @@ export class RegisterPage {
         gamertag,
         inviteCode || undefined,
       );
-      await this.router.navigate(['/']);
+      await this.router.navigate(['/comecar']);
     } catch (e) {
       this.form.setErrors({ submitFailed: true });
     } finally {

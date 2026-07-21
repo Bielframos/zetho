@@ -10,17 +10,6 @@ import { CommentsController } from '../../../../comments/comments.controller';
   imports: [AppCommentItem, ReactiveFormsModule, UiLoading],
   template: `
     <article class="flex flex-col">
-      <header class="flex items-center gap-3 px-4 py-4 border-b border-gray-6">
-        <div
-          class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6"
-        >
-          <i class="ph ph-users-three text-[24px] text-blue-11"></i>
-        </div>
-        <div>
-          <h3 class="text-2xl">Lobby</h3>
-        </div>
-      </header>
-
       <div class="p-4">
         <textarea
           name="comment"

@@ -59,6 +59,21 @@ export interface TrendingListItem {
   author?: ProfileSummary | null;
 }
 
+export interface ConnectionsListActivityItem {
+  $id: string;
+  $createdAt: string;
+  author: (ProfileSummary & { $id: string }) | null;
+  list: { $id: string; title: string; slug: string };
+  game: (GameSummary & { $id: string }) | null;
+}
+
+export interface SuggestedConnection {
+  $id: string;
+  gamertag: string;
+  avatarUrl: string | null;
+  sharedCount: number;
+}
+
 export interface ListSocialState {
   listId: string;
   likeCount: number;
@@ -116,6 +131,54 @@ export class DashboardService {
 
     const data = await response.json();
     return data;
+  }
+
+  async getConnectionsListActivity(
+    page: number = 1,
+    pageSize: number = 12,
+  ): Promise<{ items: ConnectionsListActivityItem[]; hasMore: boolean }> {
+    const url = new URL(
+      'dashboard/connections-list-activity',
+      environment.zethoApiEndpoint,
+    );
+    url.searchParams.set('page', page.toString());
+    url.searchParams.set('pageSize', pageSize.toString());
+    const response = await fetch(url.toString(), {
+      headers: await this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch connections list activity: ${response.statusText}`,
+      );
+    }
+
+    return await response.json();
+  }
+
+  async getSuggestedConnections(
+    limit = 6,
+    gameIds: string[] = [],
+  ): Promise<{ items: SuggestedConnection[] }> {
+    const url = new URL(
+      'dashboard/suggested-connections',
+      environment.zethoApiEndpoint,
+    );
+    url.searchParams.set('limit', limit.toString());
+    if (gameIds.length > 0) {
+      url.searchParams.set('gameIds', gameIds.join(','));
+    }
+    const response = await fetch(url.toString(), {
+      headers: await this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch suggested connections: ${response.statusText}`,
+      );
+    }
+
+    return await response.json();
   }
 
   async getTrendingLists(limit = 12): Promise<{ items: TrendingListItem[] }> {
