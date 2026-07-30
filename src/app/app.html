@@ -29,6 +29,15 @@
           <i class="ph ph-house"></i>
           <span>Início</span>
         </a>
+        } @if (authStore.user()) {
+        <a
+          routerLink="/sessions"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-game-controller"></i>
+          <span>Jogatina</span>
+        </a>
         }
 
         <a
@@ -92,14 +101,19 @@
     </aside>
 
     <main class="min-w-0 border-gray-4 lg:border-x">
-      <app-search-input
-        name="desktopShellSearchInput"
-        class="hidden lg:block"
-        variant="appShell"
-        placeholder="Busque um jogo ou player"
-        (search)="onSearch($event)"
-        (focusSearch)="onSearchInputFocus()"
-      />
+      <div class="sticky top-0 z-20 hidden h-14 lg:flex">
+        <div class="min-w-0 flex-1">
+          <app-search-input
+            class="block h-full"
+            name="desktopShellSearchInput"
+            variant="appShell"
+            placeholder="Busque um jogo ou player"
+            (search)="onSearch($event)"
+            (focusSearch)="onSearchInputFocus()"
+          />
+        </div>
+        <app-notifications-sheet class="block h-full" variant="appShell" />
+      </div>
 
       <div
         class="route-transition-scope min-h-dvh pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0"
@@ -188,7 +202,9 @@
             <app-z-coin-balance></app-z-coin-balance>
           </div>
           } @if (profileSidebarHasSocialNicks) {
-          <div class="profile-theme-divider flex flex-wrap gap-2 border-t border-gray-6 px-4 py-3">
+          <div
+            class="profile-theme-divider flex flex-wrap gap-2 border-t border-gray-6 px-4 py-3"
+          >
             @if (profile.socialSteam) {
             <button
               class="profile-theme-chip rounded-lg border border-gray-6 px-2 py-0.5 text-sm transition-colors cursor-pointer"
@@ -214,7 +230,9 @@
           </div>
           }
 
-          <ul class="profile-theme-divider flex flex-col gap-1 border-t border-gray-6 px-2 py-3">
+          <ul
+            class="profile-theme-divider flex flex-col gap-1 border-t border-gray-6 px-2 py-3"
+          >
             @for (tab of profileTabs; track tab.key) {
             <li
               class="group"
@@ -423,6 +441,7 @@
     class="fixed right-4 z-40 flex flex-col items-end gap-3 lg:hidden"
     style="bottom: calc(4.75rem + env(safe-area-inset-bottom))"
   >
+    <app-notifications-sheet />
     @if (authStore.isAdmin()) {
     <a
       routerLink="/admin"

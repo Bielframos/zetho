@@ -12,6 +12,7 @@ import { PROFILE_ROUTES } from './core/profile/profile.routes';
 import { RAFFLES_ROUTES } from './core/raffles/raffles.routes';
 import { SEARCH_ROUTES } from './core/search/search.routes';
 import { ZCOINS_ROUTES } from './core/zCoins/zcoins.routes';
+import { GAMEPLAY_SESSIONS_ROUTES } from './core/gameplay-sessions/gameplay-sessions.routes';
 import { environment } from '../environments/environment';
 
 export const routes: Routes = [
@@ -19,6 +20,7 @@ export const routes: Routes = [
   ...CHANGELOG_ROUTES,
   ...AUTH_ROUTES,
   ...ADMIN_ROUTES,
+  ...GAMEPLAY_SESSIONS_ROUTES,
   ...GAME_ROUTES,
   ...(environment.features.raffles ? RAFFLES_ROUTES : []),
   ...SEARCH_ROUTES,
