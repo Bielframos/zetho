@@ -1,5 +1,5 @@
 <div
-  class="relative w-full"
+  class="relative h-full w-full"
   [ngClass]="{
     'sticky top-0 z-10 border-b border-gray-6 bg-gray-1/50 backdrop-blur-lg':
       variant() === 'appShell',
@@ -11,7 +11,7 @@
   <input
     class="w-full bg-transparent pl-12 pr-4 text-gray-12 outline-none transition-colors placeholder:text-gray-11 focus:ring-2 focus:ring-blue-6"
     [ngClass]="{
-      'py-4': variant() === 'appShell',
+      'h-14': variant() === 'appShell',
       'h-[34px] rounded-lg bg-gray-2! hover:bg-gray-3 focus:border-blue-7':
         variant() === 'basic',
     }"

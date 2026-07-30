@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  appVersion: '1.17.0',
+  appVersion: '1.18.0',
   appUrl: 'https://www.zetho.app/',
   features: {
     raffles: false,

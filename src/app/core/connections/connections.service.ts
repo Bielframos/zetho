@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { UserProfileRow } from '../../types';
 import { ConnectionsRepository } from './connections.repository';
 import { ConnectionRow } from './connections.types';
 
@@ -53,5 +54,30 @@ export class ConnectionsService {
         'Ocorreu um erro ao verificar a conexão. Por favor, tente novamente mais tarde.',
       );
     }
+  }
+
+  async searchConnections(
+    profileId: string,
+    query = '',
+  ): Promise<UserProfileRow[]> {
+    const [followers, following] = await Promise.all([
+      this.repository.getFollowers(profileId, { pageSize: 100, offset: 0 }),
+      this.repository.getFollowing(profileId, { pageSize: 100, offset: 0 }),
+    ]);
+
+    const profilesById = new Map<string, UserProfileRow>();
+    for (const profile of [...followers.rows, ...following.rows]) {
+      profilesById.set(profile.$id, profile);
+    }
+
+    const normalizedQuery = query.trim().toLocaleLowerCase('pt-BR');
+    return Array.from(profilesById.values())
+      .filter((profile) => {
+        if (!normalizedQuery) return true;
+        return profile.gamertag
+          .toLocaleLowerCase('pt-BR')
+          .includes(normalizedQuery);
+      })
+      .sort((a, b) => a.gamertag.localeCompare(b.gamertag, 'pt-BR'));
   }
 }

@@ -1,0 +1,157 @@
+<div>
+  @if (label()) {
+  <label [for]="inputId" class="mb-1.5 block text-sm text-gray-12">
+    {{ label() }} @if (required()) {
+    <span class="text-red-300">*</span>
+    }
+  </label>
+  }
+
+  <div
+    class="flex min-h-10 w-full flex-wrap items-center gap-2 rounded-lg border border-gray-6 bg-transparent px-2 py-1.5 transition-colors focus-within:ring-2 focus-within:ring-blue-6"
+    [attr.aria-busy]="loading()"
+  >
+    @if (!multiple() && selectedOptions()[0]; as selected) { @if
+    (selected.imageUrl) {
+    <img
+      [src]="selected.imageUrl"
+      [alt]="selected.label"
+      class="shrink-0 rounded bg-gray-4 object-cover"
+      [class.h-9]="selected.imageShape !== 'cover'"
+      [class.w-9]="selected.imageShape !== 'cover'"
+      [class.rounded-full]="selected.imageShape !== 'cover'"
+      [class.h-10]="selected.imageShape === 'cover'"
+      [class.w-8]="selected.imageShape === 'cover'"
+    />
+    } @else if (selected.icon) {
+    <i class="ph {{ selected.icon }} shrink-0 text-blue-11"></i>
+    }
+
+    <div class="min-w-0 flex-1">
+      <p class="truncate text-sm text-gray-12">{{ selected.label }}</p>
+      @if (selected.description) {
+      <p class="truncate text-xs text-gray-10">{{ selected.description }}</p>
+      }
+    </div>
+
+    <button
+      type="button"
+      class="ui-ghost-btn shrink-0"
+      data-size="icon"
+      [attr.aria-label]="'Remover ' + selected.label"
+      (click)="removeOption(selected)"
+    >
+      <i class="ph ph-x"></i>
+    </button>
+    } @else { @if (multiple()) { @for (selected of selectedOptions(); track
+    selected.id) {
+    <span
+      class="inline-flex max-w-full items-center gap-1 rounded-full bg-blue-3 py-0.5 pl-2 pr-1 text-xs text-blue-11"
+    >
+      <span class="truncate">{{ selected.label }}</span>
+      <button
+        type="button"
+        class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full hover:bg-blue-4 focus:outline-none focus:ring-2 focus:ring-blue-6"
+        [attr.aria-label]="'Remover ' + selected.label"
+        (click)="removeOption(selected)"
+      >
+        <i class="ph ph-x text-xs"></i>
+      </button>
+    </span>
+    } }
+
+    <div class="flex min-w-40 flex-1 items-center gap-2">
+      <i class="ph ph-magnifying-glass shrink-0 text-gray-10"></i>
+      <input
+        [id]="inputId"
+        type="search"
+        role="combobox"
+        autocomplete="off"
+        class="min-w-0 flex-1 bg-transparent py-1 text-sm text-gray-12 outline-none placeholder:text-gray-10"
+        [placeholder]="placeholder()"
+        [value]="query()"
+        [attr.aria-expanded]="isOpen()"
+        [attr.aria-controls]="listboxId"
+        [attr.aria-autocomplete]="'list'"
+        [attr.aria-busy]="loading()"
+        (focus)="onFocus()"
+        (input)="onInput($event)"
+        (keydown)="onKeydown($event)"
+      />
+      @if (loading()) {
+      <i
+        class="ph ph-spinner shrink-0 animate-spin text-gray-10"
+        aria-hidden="true"
+      ></i>
+      <span class="sr-only">Buscando opções</span>
+      } @else {
+      <i class="ph ph-caret-down shrink-0 text-gray-10"></i>
+      }
+    </div>
+    }
+  </div>
+
+  @if (hint()) {
+  <p class="mt-1.5 text-xs text-gray-10">{{ hint() }}</p>
+  } @if (isOpen()) {
+  <div
+    [id]="listboxId"
+    role="listbox"
+    class="discreet-scrollbar mt-1 max-h-56 overflow-y-auto rounded-lg border border-gray-6 bg-gray-2"
+    [attr.aria-multiselectable]="multiple()"
+  >
+    @if (query().trim().length < minQueryLength()) {
+    <p class="px-3 py-4 text-center text-sm text-gray-11">
+      Digite ao menos {{ minQueryLength() }} {{ minQueryLength() === 1 ?
+      'caractere' : 'caracteres' }}.
+    </p>
+    } @else if (!loading() && results().length === 0) {
+    <p class="px-3 py-4 text-center text-sm text-gray-11">{{ emptyText() }}</p>
+    } @else { @for (option of results(); track option.id; let index = $index) {
+    <button
+      type="button"
+      role="option"
+      class="flex w-full items-center gap-3 border-b border-gray-6 p-2 text-left transition-colors last:border-b-0 hover:bg-gray-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-6 disabled:pointer-events-none disabled:opacity-50"
+      [class.bg-gray-3]="activeIndex() === index"
+      [disabled]="option.disabled"
+      [attr.aria-selected]="isSelected(option)"
+      (click)="selectOption(option)"
+    >
+      @if (option.imageUrl) {
+      <img
+        [src]="option.imageUrl"
+        [alt]="option.label"
+        class="shrink-0 rounded bg-gray-4 object-cover"
+        [class.h-9]="option.imageShape !== 'cover'"
+        [class.w-9]="option.imageShape !== 'cover'"
+        [class.rounded-full]="option.imageShape !== 'cover'"
+        [class.h-10]="option.imageShape === 'cover'"
+        [class.w-8]="option.imageShape === 'cover'"
+      />
+      } @else if (option.icon) {
+      <span
+        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-9 text-white"
+      >
+        <i class="ph {{ option.icon }}"></i>
+      </span>
+      }
+
+      <span class="min-w-0 flex-1">
+        <span class="block truncate text-sm text-gray-12">
+          {{ option.label }}
+        </span>
+        @if (option.description) {
+        <span class="block truncate text-xs text-gray-10">
+          {{ option.description }}
+        </span>
+        }
+      </span>
+
+      @if (isSelected(option)) {
+      <i class="ph-fill ph-check-circle shrink-0 text-blue-11"></i>
+      }
+    </button>
+    } }
+  </div>
+  }
+</div>
