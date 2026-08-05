@@ -354,10 +354,7 @@
   <nav
     class="fixed inset-x-0 bottom-0 z-30 border-t border-gray-4 bg-gray-1/95 px-2 py-2 backdrop-blur lg:hidden"
   >
-    <div
-      class="mx-auto grid max-w-md gap-1"
-      [class]="featureRaffles ? 'grid-cols-6' : 'grid-cols-5'"
-    >
+    <div class="mx-auto grid max-w-md grid-cols-5 gap-1">
       @if (authStore.user()) {
       <a
         routerLink="/dashboard"
@@ -396,26 +393,6 @@
         <i class="ph ph-ranking"></i>
       </a>
 
-      @if (featureRaffles) {
-      <a
-        routerLink="/sorteios"
-        routerLinkActive="bg-gray-3 text-gray-12"
-        class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        aria-label="Sorteios"
-      >
-        <i class="ph ph-gift"></i>
-      </a>
-      }
-
-      <a
-        routerLink="/loja"
-        routerLinkActive="bg-gray-3 text-gray-12"
-        class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        aria-label="Z Shop"
-      >
-        <i class="ph ph-storefront"></i>
-      </a>
-
       @if (authStore.user()) {
       <a
         [routerLink]="profileRoute()"
@@ -434,37 +411,118 @@
         <i class="ph ph-sign-in"></i>
       </a>
       }
+
+      <button
+        type="button"
+        class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        [class.bg-gray-3]="mobileMenuOpen()"
+        [class.text-gray-12]="mobileMenuOpen()"
+        aria-label="Abrir menu"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        (click)="toggleMobileMenu()"
+      >
+        <i class="ph ph-list"></i>
+      </button>
     </div>
   </nav>
 
+  @if (mobileMenuOpen()) {
   <div
-    class="fixed right-4 z-40 flex flex-col items-end gap-3 lg:hidden"
-    style="bottom: calc(4.75rem + env(safe-area-inset-bottom))"
+    class="fixed inset-0 z-40 bg-black/70 lg:hidden"
+    aria-hidden="true"
+    (click)="closeMobileMenu()"
+  ></div>
+  <aside
+    class="fixed inset-y-0 right-0 z-40 flex w-full max-w-sm flex-col border-l border-gray-4 bg-gray-1 lg:hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="mobile-menu-title"
+    cdkTrapFocus
+    [cdkTrapFocusAutoCapture]="true"
   >
-    <app-notifications-sheet />
-    @if (authStore.isAdmin()) {
-    <a
-      routerLink="/admin"
-      routerLinkActive="ring-2 ring-gray-8"
-      class="flex h-12 w-12 items-center justify-center rounded-full border border-gray-6 bg-gray-1/95 text-gray-12 shadow-lg backdrop-blur transition-colors hover:bg-gray-3"
-      aria-label="Admin"
+    <header
+      class="flex items-center justify-between border-b border-gray-6 p-4"
     >
-      <i class="ph ph-shield-star text-xl"></i>
-    </a>
-    } @if (authStore.profile()) {
-    <div
-      class="flex h-11 items-center gap-1.5 rounded-full border border-gray-6 bg-gray-1/95 pl-1.5 pr-3 shadow-lg backdrop-blur"
-      aria-label="Saldo de Z-Coins"
-    >
-      <img src="/animated_z_coin.gif" alt="" class="h-8 w-8" />
-      <strong
-        class="font-display text-lg font-normal leading-none text-gray-12"
+      <div>
+        <h2 id="mobile-menu-title" class="text-xl text-gray-12">Menu</h2>
+        <p class="text-xs text-gray-10">Mais opções do Zetho</p>
+      </div>
+      <button
+        type="button"
+        class="ui-ghost-btn"
+        data-size="icon"
+        aria-label="Fechar menu"
+        (click)="closeMobileMenu()"
       >
-        {{ authStore.profile()?.zcoinBalance ?? 0 }}
-      </strong>
+        <i class="ph ph-x"></i>
+      </button>
+    </header>
+
+    <div class="flex-1 overflow-y-auto p-4 discreet-scrollbar">
+      @if (authStore.profile()) {
+      <div class="mb-4 rounded-lg border border-gray-6 p-3">
+        <app-z-coin-balance />
+      </div>
+      <app-notifications-sheet class="mb-3 block" variant="menu" />
+      }
+
+      <nav class="flex flex-col gap-1">
+        @if (authStore.user()) {
+        <a
+          routerLink="/sessions"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-game-controller"></i><span>Jogatina</span>
+        </a>
+        } @if (featureRaffles) {
+        <a
+          routerLink="/sorteios"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-gift"></i><span>Sorteios</span>
+        </a>
+        }
+        <a
+          routerLink="/loja"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-storefront"></i><span>Z Shop</span>
+        </a>
+        @if (authStore.user()) {
+        <a
+          routerLink="/minha-conta"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-gear"></i><span>Minha conta</span>
+        </a>
+        }
+        <a
+          routerLink="/changelog"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-list-checks"></i><span>Changelog</span>
+        </a>
+        @if (authStore.isAdmin()) {
+        <a
+          routerLink="/admin"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-shield-star"></i><span>Admin</span>
+        </a>
+        }
+      </nav>
     </div>
-    }
-  </div>
+    <p class="border-t border-gray-6 px-4 py-3 text-xs text-gray-10">
+      v{{ appVersion }}
+    </p>
+  </aside>
+  }
 </div>
 } @else {
 <div class="flex min-h-dvh flex-col">

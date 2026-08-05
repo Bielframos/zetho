@@ -12,6 +12,7 @@ export interface InAppNotification {
     | 'session_rsvp'
     | 'session_reminder'
     | 'session_update'
+    | 'entry_comment'
     | 'system';
   read: boolean;
   createdAt: string;
@@ -47,7 +48,8 @@ export class InAppNotificationStore {
           createdAt: n.$createdAt
             ? this.formatRelativeTime(n.$createdAt)
             : 'Agora',
-          sessionId: n.entityId,
+          sessionId: n.type === 'entry_comment' ? undefined : n.entityId,
+          entityId: n.entityId,
           participantId: n.participantId,
           actionStatus: n.actionStatus,
           avatarUrl: n.senderProfile?.avatarUrl,

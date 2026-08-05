@@ -17,6 +17,7 @@ export interface GameplayNotificationDto {
     | 'session_rsvp'
     | 'session_reminder'
     | 'session_update'
+    | 'entry_comment'
     | 'system';
   read: boolean;
   $createdAt: string;

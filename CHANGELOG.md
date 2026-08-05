@@ -6,6 +6,25 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.18.1] - 2026-08-05
+
+### Added
+
+- Curtidas e comentários em registros de jogos publicados no feed, com respostas em thread e acompanhamento das interações.
+- Aba "Meus registros" para consultar as próprias publicações e os comentários recebidos.
+- Menu mobile em drawer para reunir atalhos adicionais sem sobrecarregar a navegação inferior.
+
+### Changed
+
+- A navegação inferior mobile passa a exibir cinco destinos principais: Início, Buscar, Placar semanal, Perfil e Menu.
+- As ações dos posts foram compactadas em botões apenas com ícones para evitar cortes em telas estreitas.
+- Corações preenchidos agora usam vermelho de forma consistente no feed, nas listas e nos jogos.
+- Notificações de comentários em registros direcionam o usuário ao conteúdo relacionado.
+
+### Fixed
+
+- Controles de voto e ações do feed permanecem acessíveis em larguras mobile reduzidas.
+
 ## [1.18.0] - 2026-07-29
 
 ### Added

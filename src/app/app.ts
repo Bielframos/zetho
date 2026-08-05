@@ -1,6 +1,14 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { A11yModule } from '@angular/cdk/a11y';
 import { NgComponentOutlet } from '@angular/common';
-import { Component, DestroyRef, effect, inject } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  effect,
+  HostListener,
+  inject,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   NavigationEnd,
@@ -28,6 +36,7 @@ import { InAppNotificationStore } from './core/notifications/in-app-notification
 @Component({
   selector: 'app-root',
   imports: [
+    A11yModule,
     AppSearchInput,
     NgComponentOutlet,
     NotificationsSheetComponent,
@@ -50,9 +59,11 @@ export class App {
   private zCoinsService = inject(ZCoinsService);
   private notification = inject(NotificationStore);
   private inAppNotifications = inject(InAppNotificationStore);
+  private document = inject(DOCUMENT);
   private lastOnlineRoute = '/';
   private dailyLoginAttemptedFor = '';
   private notificationsLoadedForProfile = '';
+  mobileMenuOpen = signal(false);
   profileTabs = [
     {
       key: 'games',
@@ -124,6 +135,22 @@ export class App {
     return gamertag ? ['/player', gamertag] : ['/dashboard'];
   }
 
+  toggleMobileMenu() {
+    const open = !this.mobileMenuOpen();
+    this.mobileMenuOpen.set(open);
+    this.document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  closeMobileMenu() {
+    this.mobileMenuOpen.set(false);
+    this.document.body.style.overflow = '';
+  }
+
+  @HostListener('document:keydown.escape')
+  closeMobileMenuOnEscape() {
+    if (this.mobileMenuOpen()) this.closeMobileMenu();
+  }
+
   isProfileRoute() {
     return this.currentPath().startsWith('/player/');
   }
@@ -181,6 +208,7 @@ export class App {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((event) => {
+        this.closeMobileMenu();
         if (!event.urlAfterRedirects.startsWith('/sem-conexao')) {
           this.lastOnlineRoute = event.urlAfterRedirects;
         }

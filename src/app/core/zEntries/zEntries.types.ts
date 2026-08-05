@@ -13,6 +13,8 @@ type ZEntry = {
   likedEver?: boolean;
   likeEver?: boolean;
   maxStatusReached?: ZEntry['status'];
+  likeCount?: number;
+  commentCount?: number;
 };
 
 type ZEntryRow = StoredRow<ZEntry>;

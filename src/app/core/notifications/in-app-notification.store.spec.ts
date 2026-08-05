@@ -73,4 +73,33 @@ describe('InAppNotificationStore', () => {
     ).toBeRejectedWithError('Falha ao excluir');
     expect(store.notifications()).toHaveSize(1);
   });
+
+  it('maps entry comment notifications without treating the entry as a session', async () => {
+    const repository = {
+      getNotifications: jasmine.createSpy().and.resolveTo([
+        {
+          $id: 'notification-2',
+          title: 'Novo comentário',
+          body: 'Boa jogatina!',
+          type: 'entry_comment',
+          read: false,
+          $createdAt: new Date().toISOString(),
+          entityId: 'entry-1',
+        },
+      ]),
+    };
+    TestBed.configureTestingModule({
+      providers: [
+        InAppNotificationStore,
+        { provide: GameplaySessionsRepository, useValue: repository },
+      ],
+    });
+    const store = TestBed.inject(InAppNotificationStore);
+
+    await store.loadNotifications();
+
+    expect(store.notifications()[0].type).toBe('entry_comment');
+    expect(store.notifications()[0].entityId).toBe('entry-1');
+    expect(store.notifications()[0].sessionId).toBeUndefined();
+  });
 });
