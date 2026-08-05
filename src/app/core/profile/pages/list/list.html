@@ -24,12 +24,11 @@
       <button
         type="button"
         class="flex h-9 w-9 cursor-pointer items-center justify-center border border-gray-6 hover:bg-gray-3"
-        [class.text-red-9]="socialState()?.likedByMe"
         (click)="toggleLike()"
         aria-label="Curtir lista"
       >
         <i
-          [class]="socialState()?.likedByMe ? 'ph-fill ph-heart' : 'ph ph-heart'"
+          [class]="socialState()?.likedByMe ? 'ph-fill ph-heart text-red-400' : 'ph ph-heart'"
         ></i>
       </button>
       <button

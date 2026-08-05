@@ -20,12 +20,17 @@ import { NotificationStore } from './notification.store';
       [ngClass]="
         variant() === 'appShell'
           ? 'h-full w-14 border-b border-l bg-gray-1/50 backdrop-blur-lg'
-          : 'h-12 w-12 rounded-full border bg-gray-1/95 shadow-lg backdrop-blur'
+          : variant() === 'menu'
+            ? 'h-12 w-full justify-start gap-3 rounded-lg border px-3'
+            : 'h-12 w-12 rounded-full border bg-gray-1/95 shadow-lg backdrop-blur'
       "
       aria-label="Notificações"
       [attr.aria-expanded]="isOpen()"
     >
       <i class="ph ph-bell text-xl"></i>
+      @if (variant() === 'menu') {
+        <span class="text-sm">Notificações</span>
+      }
       @if (store.unreadCount() > 0) {
         <span
           class="absolute right-2 top-2 flex min-h-4 min-w-4 items-center justify-center rounded-full bg-blue-9 px-1 text-[10px] font-semibold leading-none text-white"
@@ -59,7 +64,7 @@ import { NotificationStore } from './notification.store';
             <div class="min-w-0">
               <h2 class="text-xl text-gray-12">Notificações</h2>
               <p class="text-xs text-gray-10">
-                Convites e atualizações das suas Jogatinas
+                Interações, convites e atualizações
               </p>
             </div>
             @if (store.unreadCount() > 0) {
@@ -220,7 +225,7 @@ import { NotificationStore } from './notification.store';
                 <i class="ph ph-bell-slash text-[40px] text-gray-10"></i>
                 <h3 class="mt-3 text-lg text-gray-12">Nenhuma notificação</h3>
                 <p class="mx-auto mt-2 max-w-xs text-sm text-gray-11">
-                  Convites e atualizações das suas Jogatinas aparecerão aqui.
+                  Suas interações, convites e atualizações aparecerão aqui.
                 </p>
               </div>
             }
@@ -235,7 +240,7 @@ export class NotificationsSheetComponent {
   private toastStore = inject(NotificationStore);
   private router = inject(Router);
 
-  variant = input<'appShell' | 'floating'>('floating');
+  variant = input<'appShell' | 'floating' | 'menu'>('floating');
   isOpen = signal(false);
   processingIds = signal(new Set<string>());
 

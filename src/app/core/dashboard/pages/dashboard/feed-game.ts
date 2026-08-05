@@ -44,32 +44,41 @@ export interface FeedGame {
         >
       </a>
 
-      <div class="flex items-center justify-between gap-4 text-sm">
-        <div class="flex items-center gap-5 text-gray-11">
+      <div
+        class="flex w-full min-w-0 items-center justify-between gap-1 text-sm"
+      >
+        <div class="flex min-w-0 items-center gap-1 text-gray-11">
           @if (isAuthed()) {
             <button
               type="button"
-              class="flex cursor-pointer items-center gap-1.5 transition-colors hover:text-gray-12 disabled:cursor-default"
+              class="ui-ghost-btn"
+              data-size="icon"
               [class.text-blue-11]="libraryDone()"
               [disabled]="busyLibrary() || libraryDone()"
               (click)="addToLibrary()"
               [attr.aria-label]="
                 libraryDone() ? 'Na sua biblioteca' : 'Adicionar à biblioteca'
               "
+              [attr.title]="
+                libraryDone() ? 'Na sua biblioteca' : 'Adicionar à biblioteca'
+              "
             >
               <i
                 [class]="libraryDone() ? 'ph-fill ph-books' : 'ph ph-books'"
               ></i>
-              {{ libraryDone() ? 'Na biblioteca' : 'Biblioteca' }}
             </button>
 
             <button
               type="button"
-              class="flex cursor-pointer items-center gap-1.5 transition-colors hover:text-gray-12 disabled:cursor-default"
+              class="ui-ghost-btn"
+              data-size="icon"
               [class.text-blue-11]="wishlistDone()"
               [disabled]="busyWishlist() || wishlistDone()"
               (click)="addToWishlist()"
               [attr.aria-label]="
+                wishlistDone() ? 'Nos seus desejos' : 'Adicionar aos desejos'
+              "
+              [attr.title]="
                 wishlistDone() ? 'Nos seus desejos' : 'Adicionar aos desejos'
               "
             >
@@ -80,17 +89,17 @@ export interface FeedGame {
                     : 'ph ph-shopping-bag'
                 "
               ></i>
-              {{ wishlistDone() ? 'Nos desejos' : 'Desejos' }}
             </button>
 
             <button
               type="button"
-              class="flex cursor-pointer items-center gap-1.5 transition-colors hover:text-gray-12"
+              class="ui-ghost-btn"
+              data-size="icon"
               (click)="openListModal()"
               aria-label="Adicionar a uma lista"
+              title="Adicionar a uma lista"
             >
               <i class="ph ph-list-plus"></i>
-              Lista
             </button>
           }
         </div>
@@ -129,7 +138,9 @@ export interface FeedGame {
             />
           </label>
         } @empty {
-          <span class="p-4 text-gray-11">Você ainda não tem nenhuma lista.</span>
+          <span class="p-4 text-gray-11"
+            >Você ainda não tem nenhuma lista.</span
+          >
         }
       </div>
     </ui-modal>

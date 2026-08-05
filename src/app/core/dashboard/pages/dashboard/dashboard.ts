@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UiFeedGame } from './feed-game';
+import { EntryCommentsDrawer } from './entry-comments-drawer';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { UiSkeleton } from '../../../../shared/ui/skeleton';
 import { RelativeTimePipe } from '../../../../utils/pipes';
@@ -18,6 +19,7 @@ import {
   CommentVoteState,
   DashboardFeedItem,
   DashboardService,
+  FeedScope,
   FeedGameStatus,
   SuggestedConnection,
 } from '../../dashboard.service';
@@ -47,6 +49,7 @@ const STATUS_ICONS: Record<FeedGameStatus, string> = {
     RelativeTimePipe,
     NgTemplateOutlet,
     UiFeedGame,
+    EntryCommentsDrawer,
     UiLoading,
     UiSkeleton,
     UpperCasePipe,
@@ -60,11 +63,14 @@ export class DashboardPage implements OnDestroy {
   private notification = inject(NotificationStore);
 
   feed = signal<DashboardFeedItem[]>([]);
+  activeFeedScope = signal<FeedScope>('connections');
   loadingFeed = signal(false);
   feedPage = signal(1);
   hasMoreFeed = signal(false);
   loadingMoreFeed = signal(false);
   updatingCommentVoteIds = signal<Set<string>>(new Set());
+  updatingEntryLikeIds = signal<Set<string>>(new Set());
+  selectedEntry = signal<DashboardFeedItem | null>(null);
 
   suggestedConnections = signal<SuggestedConnection[]>([]);
   loadingSuggestions = signal(false);
@@ -73,6 +79,7 @@ export class DashboardPage implements OnDestroy {
   // Sentinela observada para o carregamento infinito.
   private sentinel = viewChild<ElementRef<HTMLElement>>('sentinel');
   private observer?: IntersectionObserver;
+  private feedRequestId = 0;
 
   get profile() {
     return this.authStore.profile();
@@ -114,17 +121,30 @@ export class DashboardPage implements OnDestroy {
   // Feed
   // ------------------------------------------------------------------
   private async loadFeed() {
+    const requestId = ++this.feedRequestId;
+    const scope = this.activeFeedScope();
     this.loadingFeed.set(true);
     try {
-      const res = await this.dashboardService.getPersonalFeed(1, 12);
+      const res = await this.dashboardService.getPersonalFeed(1, 12, scope);
+      if (requestId !== this.feedRequestId) return;
       this.feed.set(res.items);
       this.hasMoreFeed.set(res.hasMore);
       this.feedPage.set(1);
     } catch (e) {
       console.error(e);
     } finally {
-      this.loadingFeed.set(false);
+      if (requestId === this.feedRequestId) this.loadingFeed.set(false);
     }
+  }
+
+  setFeedScope(scope: FeedScope) {
+    if (scope === this.activeFeedScope()) return;
+    this.activeFeedScope.set(scope);
+    this.feed.set([]);
+    this.hasMoreFeed.set(false);
+    this.feedPage.set(1);
+    this.selectedEntry.set(null);
+    void this.loadFeed();
   }
 
   async loadMoreFeed() {
@@ -132,16 +152,28 @@ export class DashboardPage implements OnDestroy {
 
     this.loadingMoreFeed.set(true);
     const nextPage = this.feedPage() + 1;
+    const requestId = this.feedRequestId;
+    const scope = this.activeFeedScope();
 
     try {
-      const res = await this.dashboardService.getPersonalFeed(nextPage, 12);
+      const res = await this.dashboardService.getPersonalFeed(
+        nextPage,
+        12,
+        scope,
+      );
+      if (
+        requestId !== this.feedRequestId ||
+        scope !== this.activeFeedScope()
+      ) {
+        return;
+      }
       this.feed.update((prev) => [...prev, ...res.items]);
       this.hasMoreFeed.set(res.hasMore);
       this.feedPage.set(nextPage);
     } catch (e) {
       console.error(e);
     } finally {
-      this.loadingMoreFeed.set(false);
+      if (requestId === this.feedRequestId) this.loadingMoreFeed.set(false);
     }
   }
 
@@ -158,10 +190,7 @@ export class DashboardPage implements OnDestroy {
       .slice(0, 3);
   }
 
-  listLink(list: {
-    userProfile?: { gamertag: string } | null;
-    slug?: string;
-  }) {
+  listLink(list: { userProfile?: { gamertag: string } | null; slug?: string }) {
     const gamertag = list.userProfile?.gamertag;
     return gamertag && list.slug
       ? ['/player', gamertag, 'listas', list.slug]
@@ -251,6 +280,77 @@ export class DashboardPage implements OnDestroy {
           : item,
       ),
     );
+  }
+
+  async toggleEntryLike(entryId: string) {
+    if (this.updatingEntryLikeIds().has(entryId)) return;
+    const previous = this.feed().find((item) => item.$id === entryId);
+    if (!previous) return;
+
+    this.updatingEntryLikeIds.update((ids) => new Set(ids).add(entryId));
+    this.feed.update((items) =>
+      items.map((item) =>
+        item.$id === entryId && item.type === 'status'
+          ? {
+              ...item,
+              likedByMe: !item.likedByMe,
+              likeCount: Math.max(
+                0,
+                (item.likeCount ?? 0) + (item.likedByMe ? -1 : 1),
+              ),
+            }
+          : item,
+      ),
+    );
+
+    try {
+      const state = await this.dashboardService.toggleEntryLike(entryId);
+      this.feed.update((items) =>
+        items.map((item) =>
+          item.$id === entryId
+            ? {
+                ...item,
+                likedByMe: state.likedByMe,
+                likeCount: state.likeCount,
+                commentCount: state.commentCount,
+              }
+            : item,
+        ),
+      );
+    } catch (error) {
+      this.feed.update((items) =>
+        items.map((item) => (item.$id === entryId ? previous : item)),
+      );
+      this.notification.show({
+        message: 'Não foi possível atualizar a curtida.',
+        type: 'error',
+      });
+    } finally {
+      this.updatingEntryLikeIds.update((ids) => {
+        const next = new Set(ids);
+        next.delete(entryId);
+        return next;
+      });
+    }
+  }
+
+  openEntryComments(item: DashboardFeedItem) {
+    this.selectedEntry.set(item);
+  }
+
+  updateEntryCommentCount(entryId: string, delta: number) {
+    this.feed.update((items) =>
+      items.map((item) =>
+        item.$id === entryId
+          ? {
+              ...item,
+              commentCount: Math.max(0, (item.commentCount ?? 0) + delta),
+            }
+          : item,
+      ),
+    );
+    const selected = this.feed().find((item) => item.$id === entryId) ?? null;
+    this.selectedEntry.set(selected);
   }
 
   // ------------------------------------------------------------------
