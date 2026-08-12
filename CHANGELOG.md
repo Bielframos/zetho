@@ -6,6 +6,25 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.19.0] - 2026-08-12
+
+### Added
+
+- Página de notícias com carregamento infinito, estados de erro recuperáveis e apresentação textual sem imagem principal.
+- Página individual de notícia com fonte original, jogos relacionados, metadados SEO e dados estruturados.
+- Aba de notícias na página de cada jogo, exibindo somente as matérias relacionadas ao título.
+
+### Changed
+
+- A navegação desktop e mobile agora oferece acesso direto à seção de notícias.
+- Scrollbars de todo o aplicativo seguem o estilo visual do Design System.
+- Páginas sem imagem removem metadados sociais de imagem herdados da navegação anterior.
+
+### Fixed
+
+- O carregamento infinito volta a responder após uma falha ao buscar a próxima página.
+- As matérias da listagem agora possuem divisores visíveis de 1 px.
+
 ## [1.18.1] - 2026-08-05
 
 ### Added
