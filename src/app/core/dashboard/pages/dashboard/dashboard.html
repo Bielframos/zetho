@@ -1,5 +1,38 @@
 <div class="w-full max-w-2xl mx-auto">
   <section>
+    <nav
+      class="grid grid-cols-2 border-b border-gray-6"
+      role="tablist"
+      aria-label="Visualização do feed"
+    >
+      <button
+        type="button"
+        role="tab"
+        class="border-b-2 px-4 py-3 text-sm transition-colors"
+        [class.border-blue-9]="activeFeedScope() === 'connections'"
+        [class.border-transparent]="activeFeedScope() !== 'connections'"
+        [class.text-gray-12]="activeFeedScope() === 'connections'"
+        [class.text-gray-11]="activeFeedScope() !== 'connections'"
+        [attr.aria-selected]="activeFeedScope() === 'connections'"
+        (click)="setFeedScope('connections')"
+      >
+        Conexões
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="border-b-2 px-4 py-3 text-sm transition-colors"
+        [class.border-blue-9]="activeFeedScope() === 'mine'"
+        [class.border-transparent]="activeFeedScope() !== 'mine'"
+        [class.text-gray-12]="activeFeedScope() === 'mine'"
+        [class.text-gray-11]="activeFeedScope() !== 'mine'"
+        [attr.aria-selected]="activeFeedScope() === 'mine'"
+        (click)="setFeedScope('mine')"
+      >
+        Meus registros
+      </button>
+    </nav>
+
     @if (loadingFeed()) {
     <div class="flex flex-col divide-y divide-gray-6">
       @for (i of [0, 1, 2]; track i) {
@@ -45,7 +78,9 @@
                 >{{ item.userProfile?.gamertag || 'Jogador' }}</a
               >
               @if (item.type === 'status') {
-              <span class="text-gray-11">&nbsp;{{ statusLabel(item.status) }}</span>
+              <span class="text-gray-11"
+                >&nbsp;{{ statusLabel(item.status) }}</span
+              >
               } @else if (item.type === 'list_item' && item.list) {
               <span class="text-gray-11">&nbsp;adicionou em&nbsp;</span>
               @if (listLink(item); as href) {
@@ -55,9 +90,10 @@
                 >{{ item.list.title }}</a
               >
               } @else {
-              <span class="font-medium text-gray-12">{{ item.list.title }}</span>
-              }
-              }
+              <span class="font-medium text-gray-12"
+                >{{ item.list.title }}</span
+              >
+              } }
             </span>
             <span class="text-xs text-gray-10">
               {{ item.$createdAt | relativeTime }}
@@ -125,8 +161,7 @@
             <span>{{ item.saveCount || 0 }} salvos</span>
           </footer>
         </div>
-        } @else {
-        @if (item.type === 'comment' && item.parentComment &&
+        } @else { @if (item.type === 'comment' && item.parentComment &&
         item.parentComment.$id !== item.$id) {
         <div class="border-l-2 border-gray-6 pl-3">
           <div class="mb-1 flex items-center gap-2 text-xs text-gray-10">
@@ -157,7 +192,7 @@
              há preview; solta no rodapé quando o item não tem jogo. -->
         <ng-template #voteBar>
           @if (item.type === 'comment') {
-          <div class="flex items-center gap-2 text-sm text-gray-11">
+          <div class="flex shrink-0 items-center gap-0 text-sm text-gray-11">
             <button
               type="button"
               class="ui-ghost-btn"
@@ -170,7 +205,7 @@
                 [class.text-blue-9]="item.viewerVote === 'up'"
               ></i>
             </button>
-            <span class="min-w-6 text-center font-medium"
+            <span class="min-w-5 text-center font-medium"
               >{{ item.voteCount || 0 }}</span
             >
             <button
@@ -191,6 +226,36 @@
             <i class="ph ph-arrow-up text-lg text-blue-9"></i>
             <span class="font-medium">{{ item.voteCount || 0 }} votos</span>
           </div>
+          } @else if (item.type === 'status') {
+          <div class="flex shrink-0 items-center gap-1 text-sm text-gray-11">
+            <button
+              type="button"
+              class="ui-ghost-btn gap-1 px-2"
+              [disabled]="updatingEntryLikeIds().has(item.$id)"
+              [attr.aria-label]="item.likedByMe ? 'Remover curtida' : 'Curtir registro'"
+              [attr.title]="item.likedByMe ? 'Remover curtida' : 'Curtir registro'"
+              (click)="toggleEntryLike(item.$id)"
+            >
+              <i
+                [class]="item.likedByMe ? 'ph-fill ph-heart text-red-400' : 'ph ph-heart'"
+              ></i>
+              <span class="text-xs tabular-nums"
+                >{{ item.likeCount || 0 }}</span
+              >
+            </button>
+            <button
+              type="button"
+              class="ui-ghost-btn gap-1 px-2"
+              aria-label="Abrir comentários"
+              title="Abrir comentários"
+              (click)="openEntryComments(item)"
+            >
+              <i class="ph ph-chat-circle"></i>
+              <span class="text-xs tabular-nums"
+                >{{ item.commentCount || 0 }}</span
+              >
+            </button>
+          </div>
           }
         </ng-template>
 
@@ -202,13 +267,17 @@
         <footer class="mt-2 flex justify-end">
           <ng-container [ngTemplateOutlet]="voteBar"></ng-container>
         </footer>
-        }
-        }
+        } }
       </article>
       }
     </div>
+    } @else { @if (activeFeedScope() === 'mine') {
+    <p class="p-4 text-gray-11">
+      Seus registros públicos aparecerão aqui para você acompanhar curtidas e
+      comentários.
+    </p>
     } @else {
-    <p class="text-gray-11 p-4">
+    <p class="p-4 text-gray-11">
       Siga perfis para ver reviews, comentários, listas e registros de jogos das
       suas conexões.
     </p>
@@ -246,7 +315,7 @@
         }
       </ul>
     </div>
-    } }
+    } } }
 
     <!-- Carregamento infinito -->
     <div #sentinel aria-hidden="true"></div>
@@ -257,3 +326,11 @@
     }
   </section>
 </div>
+
+@if (selectedEntry(); as entry) {
+<ui-entry-comments-drawer
+  [item]="entry"
+  (closed)="selectedEntry.set(null)"
+  (countChanged)="updateEntryCommentCount(entry.$id, $event)"
+/>
+}

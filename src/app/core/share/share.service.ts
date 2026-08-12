@@ -34,8 +34,9 @@ export class ShareService {
 
   /** Renderiza o nó em um PNG de alta resolução (pixelRatio 2). */
   async exportNode(node: HTMLElement, width: number, height: number) {
-    const fonts = (document as unknown as { fonts?: { ready?: Promise<unknown> } })
-      .fonts;
+    const fonts = (
+      document as unknown as { fonts?: { ready?: Promise<unknown> } }
+    ).fonts;
     if (fonts?.ready) {
       await fonts.ready;
     }
@@ -45,6 +46,11 @@ export class ShareService {
       width,
       height,
       cacheBust: true,
+      // As capas e avatares usam o mesmo endpoint do Appwrite e só diferem
+      // pelos parâmetros de query (especialmente `url`). O html-to-image
+      // ignora a query ao formar sua chave de cache por padrão, o que faz uma
+      // imagem já embutida substituir as demais no PNG gerado.
+      includeQueryParams: true,
       backgroundColor: '#0c111c',
       // Neutraliza o transform de escala usado no preview durante a captura.
       style: { transform: 'none', transformOrigin: 'top left' },

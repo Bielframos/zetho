@@ -1,0 +1,110 @@
+<main class="mx-auto w-full max-w-2xl">
+  <header class="px-4 py-6">
+    <div class="flex items-end justify-between gap-4">
+      <div class="flex min-w-0 items-center gap-3">
+        <div
+          class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6"
+        >
+          <i class="ph ph-game-controller text-[24px] text-blue-11"></i>
+        </div>
+
+        <div class="min-w-0">
+          <h1 class="text-2xl leading-tight text-gray-12">Jogatina</h1>
+          <p class="mt-1 text-sm text-gray-11">
+            Encontre companhia para a próxima partida.
+          </p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        (click)="openCreateModal()"
+        class="ui-primary-btn shrink-0"
+      >
+        <i class="ph ph-plus"></i>
+        <span class="hidden sm:inline">Criar Jogatina</span>
+        <span class="sm:hidden">Criar</span>
+      </button>
+    </div>
+  </header>
+
+  <nav
+    class="discreet-scrollbar flex overflow-x-auto border-t-8 border-b border-gray-6 px-4"
+    aria-label="Filtros de Jogatinas"
+  >
+    @for (tab of filterTabs; track tab.key) {
+    <button
+      type="button"
+      (click)="setFilter(tab.key)"
+      class="flex shrink-0 cursor-pointer items-center gap-2 border-b-2 px-3 py-4 text-sm transition-colors"
+      [class.border-blue-9]="sessionsService.filter() === tab.key"
+      [class.text-gray-12]="sessionsService.filter() === tab.key"
+      [class.border-transparent]="sessionsService.filter() !== tab.key"
+      [class.text-gray-10]="sessionsService.filter() !== tab.key"
+    >
+      <i class="ph {{ tab.icon }}"></i>
+      <span>{{ tab.label }}</span>
+    </button>
+    }
+  </nav>
+
+  <label class="relative block border-b border-gray-6">
+    <span class="sr-only">Buscar Jogatinas</span>
+    <i
+      class="ph ph-magnifying-glass pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-11"
+    ></i>
+    <input
+      type="search"
+      placeholder="Buscar por jogo ou título"
+      [ngModel]="sessionsService.searchQuery()"
+      (ngModelChange)="onSearchChange($event)"
+      class="w-full bg-transparent py-3 pl-11 pr-4 text-sm text-gray-12 outline-none placeholder:text-gray-10 focus:ring-2 focus:ring-inset focus:ring-blue-6"
+    />
+  </label>
+
+  @if (sessionsService.loading()) {
+  <section class="border-b border-gray-6 px-4 py-10">
+    <ui-loading fallback="Carregando Jogatinas..."></ui-loading>
+  </section>
+  } @else if (sessionsService.filteredSessions().length > 0) {
+  <section class="animate-fade-in-slide">
+    <div class="flex flex-col divide-y divide-gray-6 border-b border-gray-6">
+      @for (session of sessionsService.filteredSessions(); track session.$id) {
+      <app-session-card
+        [session]="session"
+        [currentProfileId]="sessionsService.currentProfileId()"
+        (clickDetail)="openDetail($event)"
+        (requestJoin)="onRequestJoin(session)"
+        (respond)="onRespond(session, $event)"
+        (leave)="onLeaveSession(session)"
+      />
+      }
+    </div>
+  </section>
+  } @else {
+  <section class="border-b border-dashed border-gray-6 px-4 py-12 text-center">
+    <i class="ph ph-game-controller text-[40px] text-gray-10"></i>
+    <h2 class="mt-3 text-lg text-gray-12">Nenhuma Jogatina encontrada</h2>
+    <p class="mx-auto mt-2 max-w-md text-sm text-gray-11">
+      Ajuste os filtros ou crie uma Jogatina para reunir outros jogadores.
+    </p>
+    <button
+      type="button"
+      (click)="openCreateModal()"
+      class="ui-primary-btn mt-4"
+    >
+      <i class="ph ph-plus"></i>
+      Criar Jogatina
+    </button>
+  </section>
+  }
+
+  <app-create-session-modal [(isOpen)]="isCreateModalOpen" />
+
+  <app-session-detail-modal
+    [(isOpen)]="isDetailModalOpen"
+    [session]="sessionsService.selectedSession()"
+    [loading]="sessionsService.detailLoading()"
+    [currentProfileId]="sessionsService.currentProfileId()"
+  />
+</main>

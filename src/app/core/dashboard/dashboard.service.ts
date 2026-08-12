@@ -15,6 +15,7 @@ type GameSummary = {
 };
 
 type VoteType = 'up' | 'down';
+export type FeedScope = 'connections' | 'mine';
 
 export type ParentCommentSummary = {
   $id: string;
@@ -35,6 +36,8 @@ export interface DashboardFeedItem {
   rating?: number;
   voteCount?: number;
   likeCount?: number;
+  commentCount?: number;
+  likedByMe?: boolean;
   saveCount?: number;
   itemCount?: number;
   latestAdditions?: string[];
@@ -86,6 +89,25 @@ export interface CommentVoteState {
   viewerVote: VoteType | null;
 }
 
+export interface EntrySocialState {
+  entryId: string;
+  likeCount: number;
+  commentCount: number;
+  likedByMe: boolean;
+}
+
+export interface EntryComment {
+  $id: string;
+  $createdAt: string;
+  entryId: string;
+  profileId: string;
+  content: string;
+  parentId?: string | null;
+  depth: number;
+  replyCount: number;
+  userProfile?: ProfileSummary | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
   private authStore = inject(AuthStore);
@@ -113,10 +135,12 @@ export class DashboardService {
   async getPersonalFeed(
     page: number = 1,
     pageSize: number = 12,
+    scope: FeedScope = 'connections',
   ): Promise<{ items: DashboardFeedItem[]; hasMore: boolean }> {
     const url = new URL('dashboard/feed', environment.zethoApiEndpoint);
     url.searchParams.set('page', page.toString());
     url.searchParams.set('pageSize', pageSize.toString());
+    url.searchParams.set('scope', scope);
     const response = await fetch(url.toString(), {
       headers: await this.getAuthHeaders(),
     });
@@ -233,6 +257,81 @@ export class DashboardService {
     }
 
     return (await response.json()) as CommentVoteState;
+  }
+
+  async toggleEntryLike(entryId: string): Promise<EntrySocialState> {
+    const response = await fetch(
+      new URL(
+        `dashboard/entries/${entryId}/like`,
+        environment.zethoApiEndpoint,
+      ),
+      { method: 'POST', headers: await this.getAuthHeaders(true) },
+    );
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      throw new Error(body.message || 'Não foi possível atualizar a curtida');
+    }
+    return await response.json();
+  }
+
+  async getEntryComments(
+    entryId: string,
+    page = 1,
+    pageSize = 20,
+    parentId?: string,
+  ): Promise<{ items: EntryComment[]; total: number; hasMore: boolean }> {
+    const url = new URL(
+      `dashboard/entries/${entryId}/comments`,
+      environment.zethoApiEndpoint,
+    );
+    url.searchParams.set('page', String(page));
+    url.searchParams.set('pageSize', String(pageSize));
+    if (parentId) url.searchParams.set('parentId', parentId);
+    const response = await fetch(url, { headers: await this.getAuthHeaders() });
+    if (!response.ok)
+      throw new Error('Não foi possível carregar os comentários');
+    return await response.json();
+  }
+
+  async createEntryComment(
+    entryId: string,
+    content: string,
+    parentId?: string,
+  ): Promise<EntryComment> {
+    const response = await fetch(
+      new URL(
+        `dashboard/entries/${entryId}/comments`,
+        environment.zethoApiEndpoint,
+      ),
+      {
+        method: 'POST',
+        headers: await this.getAuthHeaders(true),
+        body: JSON.stringify({ content, parentId }),
+      },
+    );
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      throw new Error(body.message || 'Não foi possível comentar');
+    }
+    return await response.json();
+  }
+
+  async deleteEntryComment(entryId: string, commentId: string) {
+    const response = await fetch(
+      new URL(
+        `dashboard/entries/${entryId}/comments/${commentId}`,
+        environment.zethoApiEndpoint,
+      ),
+      { method: 'DELETE', headers: await this.getAuthHeaders() },
+    );
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      throw new Error(body.message || 'Não foi possível excluir o comentário');
+    }
+    return (await response.json()) as {
+      success: boolean;
+      deletedCount: number;
+    };
   }
 
   private async toggleListAction(listId: string, action: 'like' | 'save') {

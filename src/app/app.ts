@@ -1,6 +1,14 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { A11yModule } from '@angular/cdk/a11y';
 import { NgComponentOutlet } from '@angular/common';
-import { Component, DestroyRef, effect, inject } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  effect,
+  HostListener,
+  inject,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   NavigationEnd,
@@ -22,11 +30,16 @@ import { NotificationStore } from './core/notifications/notification.store';
 import { UserProfileRow } from './types';
 import { getThemeMediaUrl } from './core/themes/theme-media';
 
+import { NotificationsSheetComponent } from './core/notifications/notifications-sheet.component';
+import { InAppNotificationStore } from './core/notifications/in-app-notification.store';
+
 @Component({
   selector: 'app-root',
   imports: [
+    A11yModule,
     AppSearchInput,
     NgComponentOutlet,
+    NotificationsSheetComponent,
     RouterLink,
     RouterLinkActive,
     RouterOutlet,
@@ -45,8 +58,12 @@ export class App {
   private destroyRef = inject(DestroyRef);
   private zCoinsService = inject(ZCoinsService);
   private notification = inject(NotificationStore);
+  private inAppNotifications = inject(InAppNotificationStore);
+  private document = inject(DOCUMENT);
   private lastOnlineRoute = '/';
   private dailyLoginAttemptedFor = '';
+  private notificationsLoadedForProfile = '';
+  mobileMenuOpen = signal(false);
   profileTabs = [
     {
       key: 'games',
@@ -69,6 +86,7 @@ export class App {
     this.trackLastOnlineRoute();
     this.registerConnectionWatch();
     this.registerDailyLoginReward();
+    this.registerInAppNotifications();
   }
 
   onSearch(query: string) {
@@ -115,6 +133,22 @@ export class App {
   profileRoute() {
     const gamertag = this.authStore.profile()?.gamertag;
     return gamertag ? ['/player', gamertag] : ['/dashboard'];
+  }
+
+  toggleMobileMenu() {
+    const open = !this.mobileMenuOpen();
+    this.mobileMenuOpen.set(open);
+    this.document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  closeMobileMenu() {
+    this.mobileMenuOpen.set(false);
+    this.document.body.style.overflow = '';
+  }
+
+  @HostListener('document:keydown.escape')
+  closeMobileMenuOnEscape() {
+    if (this.mobileMenuOpen()) this.closeMobileMenu();
   }
 
   isProfileRoute() {
@@ -174,6 +208,7 @@ export class App {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((event) => {
+        this.closeMobileMenu();
         if (!event.urlAfterRedirects.startsWith('/sem-conexao')) {
           this.lastOnlineRoute = event.urlAfterRedirects;
         }
@@ -218,6 +253,20 @@ export class App {
 
       this.dailyLoginAttemptedFor = dayKey;
       void this.zCoinsService.recordDailyLogin();
+    });
+  }
+
+  private registerInAppNotifications() {
+    effect(() => {
+      const profileId = this.authStore.profile()?.$id ?? '';
+      if (!profileId) {
+        this.notificationsLoadedForProfile = '';
+        this.inAppNotifications.clear();
+        return;
+      }
+      if (profileId === this.notificationsLoadedForProfile) return;
+      this.notificationsLoadedForProfile = profileId;
+      void this.inAppNotifications.loadNotifications();
     });
   }
 

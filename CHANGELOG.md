@@ -6,6 +6,45 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.18.1] - 2026-08-05
+
+### Added
+
+- Curtidas e comentários em registros de jogos publicados no feed, com respostas em thread e acompanhamento das interações.
+- Aba "Meus registros" para consultar as próprias publicações e os comentários recebidos.
+- Menu mobile em drawer para reunir atalhos adicionais sem sobrecarregar a navegação inferior.
+
+### Changed
+
+- A navegação inferior mobile passa a exibir cinco destinos principais: Início, Buscar, Placar semanal, Perfil e Menu.
+- As ações dos posts foram compactadas em botões apenas com ícones para evitar cortes em telas estreitas.
+- Corações preenchidos agora usam vermelho de forma consistente no feed, nas listas e nos jogos.
+- Notificações de comentários em registros direcionam o usuário ao conteúdo relacionado.
+
+### Fixed
+
+- Controles de voto e ações do feed permanecem acessíveis em larguras mobile reduzidas.
+
+## [1.18.0] - 2026-07-29
+
+### Added
+
+- Nova área autenticada de Jogatinas para descobrir encontros públicos, acompanhar participações e criar sessões públicas, privadas ou por convite.
+- Convites de participantes por busca de conexões, com limite de vagas, data, descrição e contexto do jogo.
+- Central de notificações internas com contador, marcação de leitura e exclusão persistente.
+- Componentes reutilizáveis de combobox e folha de notificações.
+
+### Changed
+
+- As notificações são sincronizadas automaticamente ao autenticar e atualizadas sempre que a central é aberta.
+- A navegação exibe Jogatinas somente para usuários autenticados e protege a rota contra acesso anônimo.
+- O fluxo de criação valida data futura, capacidade entre 2 e 100 jogadores e preserva corretamente o horário local.
+
+### Fixed
+
+- A exclusão e a marcação de notificações usam atualização otimista com restauração do estado em caso de falha.
+- Os testes do shell principal agora inicializam o roteador e verificam o conteúdo atual da aplicação.
+
 ## [1.17.0] - 2026-07-21
 
 ### Added
@@ -80,7 +119,6 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 - Melhorias na reatividade e velocidade ao carregar os temas adquiridos e ativos na página de Conta.
 - Ajustes de interface na Loja de Temas.
-
 
 ## [1.11.0] - 2026-06-23
 
