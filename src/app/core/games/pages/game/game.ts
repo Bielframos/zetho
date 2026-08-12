@@ -22,13 +22,14 @@ import { UiGameStats } from './modules/game-stats';
 import { UiZEntryActions } from './modules/z-entry-actions';
 import { UiGameRating } from './modules/game-rating';
 import { UiGameReviews } from './modules/game-reviews';
+import { UiGameNews } from './modules/game-news';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { UiTab, UiTabs, UiTabSwipe } from '../../../../shared/ui/tabs';
 import { UiShareModal } from '../../../share/share-modal';
 import { ShareCardData } from '../../../share/share.types';
 import { RatingsService } from '../../../ratings/ratings.service';
 
-type GameTab = 'lobby' | 'stats' | 'reviews' | 'midias' | 'similar';
+type GameTab = 'lobby' | 'stats' | 'reviews' | 'news' | 'midias' | 'similar';
 
 @Component({
   selector: 'app-game',
@@ -44,6 +45,7 @@ type GameTab = 'lobby' | 'stats' | 'reviews' | 'midias' | 'similar';
     UiGameSimilar,
     UiGameRating,
     UiGameReviews,
+    UiGameNews,
     UiLoading,
     UiTabs,
     UiTabSwipe,
@@ -95,7 +97,12 @@ export class GamePage {
     const list: UiTab[] = [
       { id: 'lobby', label: 'Lobby' },
       { id: 'stats', label: 'Estatísticas' },
-      { id: 'reviews', label: 'Reviews', badge: this.controller.game()?.ratingCount ?? null },
+      {
+        id: 'reviews',
+        label: 'Reviews',
+        badge: this.controller.game()?.ratingCount ?? null,
+      },
+      { id: 'news', label: 'Notícias' },
     ];
     if (this.controller.medias().length > 0) {
       list.push({ id: 'midias', label: 'Mídias' });
