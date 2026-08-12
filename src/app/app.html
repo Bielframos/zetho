@@ -32,6 +32,15 @@
         }
 
         <a
+          routerLink="/noticias"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-newspaper"></i>
+          <span>Notícias</span>
+        </a>
+
+        <a
           routerLink="/zcoins/leaderboard/weekly"
           routerLinkActive="bg-gray-3 text-gray-12"
           class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
@@ -188,7 +197,9 @@
             <app-z-coin-balance></app-z-coin-balance>
           </div>
           } @if (profileSidebarHasSocialNicks) {
-          <div class="profile-theme-divider flex flex-wrap gap-2 border-t border-gray-6 px-4 py-3">
+          <div
+            class="profile-theme-divider flex flex-wrap gap-2 border-t border-gray-6 px-4 py-3"
+          >
             @if (profile.socialSteam) {
             <button
               class="profile-theme-chip rounded-lg border border-gray-6 px-2 py-0.5 text-sm transition-colors cursor-pointer"
@@ -214,7 +225,9 @@
           </div>
           }
 
-          <ul class="profile-theme-divider flex flex-col gap-1 border-t border-gray-6 px-2 py-3">
+          <ul
+            class="profile-theme-divider flex flex-col gap-1 border-t border-gray-6 px-2 py-3"
+          >
             @for (tab of profileTabs; track tab.key) {
             <li
               class="group"
@@ -319,6 +332,13 @@
           <span>Minha conta</span>
         </a>
         }
+        <a
+          routerLink="/noticias"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-newspaper"></i><span>Notícias</span>
+        </a>
         <a
           routerLink="/changelog"
           routerLinkActive="bg-gray-3 text-gray-12"

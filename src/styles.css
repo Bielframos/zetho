@@ -211,17 +211,36 @@
   background: var(--color-gray-8);
 }
 
+/* Scrollbars seguem a mesma hierarquia discreta do shell em qualquer área
+   rolável, inclusive tabs horizontais no desktop. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gray-6) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--color-gray-6);
+  border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-8);
+}
+
 .profile-theme-card {
   --profile-theme-bg: var(--theme-bg, var(--color-gray-2));
   --profile-theme-accent: var(--theme-c1, var(--color-blue-9));
-  --profile-theme-accent-strong: var(
-    --theme-c2,
-    var(--profile-theme-accent)
-  );
-  --profile-theme-accent-muted: var(
-    --theme-c3,
-    var(--profile-theme-accent)
-  );
+  --profile-theme-accent-strong: var(--theme-c2, var(--profile-theme-accent));
+  --profile-theme-accent-muted: var(--theme-c3, var(--profile-theme-accent));
   --profile-theme-border: color-mix(
     in srgb,
     var(--profile-theme-accent-strong) 58%,
@@ -237,7 +256,6 @@
     var(--profile-theme-accent) 30%,
     transparent
   );
-
 }
 
 .profile-theme-card.has-theme {
@@ -276,7 +294,9 @@
   color: var(--color-gray-12);
 }
 
-.profile-theme-card.has-theme .group[data-active="true"] > .profile-theme-tab:hover {
+.profile-theme-card.has-theme
+  .group[data-active="true"]
+  > .profile-theme-tab:hover {
   background-color: var(--profile-theme-surface-strong);
 }
 

@@ -88,7 +88,10 @@
     }
 
     <!-- Barra de tabs (sticky) -->
-    <div id="tabs-section" class="sticky top-0 z-20 bg-gray-1/95 backdrop-blur-sm">
+    <div
+      id="tabs-section"
+      class="sticky top-0 z-20 bg-gray-1/95 backdrop-blur-sm"
+    >
       <!-- Nota compacta sempre visível no mobile (sem borda: o border-t-8 das
            tabs abaixo já faz a separação) -->
       <div class="flex items-center gap-2 px-4 py-2.5 md:hidden">
@@ -130,13 +133,20 @@
         class="block animate-fade-in-slide"
         [class.hidden]="activeTab() !== 'reviews'"
       ></ui-game-reviews>
+      } @if (visitedTabs().has('news') && controller.game()) {
+      <ui-game-news
+        class="block animate-fade-in-slide"
+        [class.hidden]="activeTab() !== 'news'"
+        [gameId]="controller.game()!.$id"
+      ></ui-game-news>
       } @if (controller.medias().length > 0 && visitedTabs().has('midias')) {
       <ui-game-medias
         class="block animate-fade-in-slide"
         [class.hidden]="activeTab() !== 'midias'"
         [medias]="controller.medias()"
       ></ui-game-medias>
-      } @if (controller.similarGames()?.length && visitedTabs().has('similar')) {
+      } @if (controller.similarGames()?.length && visitedTabs().has('similar'))
+      {
       <ui-game-similar
         class="block animate-fade-in-slide"
         [class.hidden]="activeTab() !== 'similar'"

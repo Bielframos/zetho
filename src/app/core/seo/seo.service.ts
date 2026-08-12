@@ -72,6 +72,9 @@ export class SeoService {
       const image = this.toAbsoluteUrl(payload.ogImage);
       this.setMetaProperty('og:image', image);
       this.setMetaName('twitter:image', payload.twitterImage ?? image);
+    } else {
+      this.meta.removeTag("property='og:image'");
+      this.meta.removeTag("name='twitter:image'");
     }
   }
 
