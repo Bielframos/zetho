@@ -13,6 +13,7 @@ import { UiLoading } from '../../../shared/ui/loading';
 import { SeoService } from '../../seo/seo.service';
 import { NewsService } from '../news.service';
 import type { NewsDetail } from '../news.types';
+import { createSsrTaskRunner } from '../../../utils/ssr-task';
 
 @Component({
   selector: 'app-news-detail',
@@ -54,6 +55,23 @@ import type { NewsDetail } from '../news.types';
                 · por {{ item.author?.name }}
               }
             </p>
+
+            @if (item.author?.isAutomated) {
+              <p
+                class="mt-3 flex flex-wrap items-center gap-1.5 rounded-md border border-gray-6 bg-gray-2 px-3 py-2 text-xs text-gray-11"
+              >
+                <i class="ph ph-robot" aria-hidden="true"></i>
+                <span>
+                  Texto produzido por assistente editorial de IA a partir de
+                  fontes públicas, sob responsabilidade editorial do Zetho.
+                </span>
+                <a
+                  routerLink="/politica-editorial"
+                  class="text-blue-11 hover:underline"
+                  >Como fazemos</a
+                >
+              </p>
+            }
           </header>
           <div
             class="prose prose-invert prose-sm max-w-none px-4 py-6 text-gray-11 prose-headings:text-gray-12 prose-a:text-blue-11 prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg"
@@ -76,13 +94,17 @@ import type { NewsDetail } from '../news.types';
                 </div>
               }
               @if (item.originalSourceUrl) {
-                <a
-                  [href]="item.originalSourceUrl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-sm text-blue-11 hover:underline"
-                  >Ver fonte original <i class="ph ph-arrow-square-out"></i
-                ></a>
+                <div>
+                  <h2 class="text-sm text-gray-10">Fonte original</h2>
+                  <a
+                    [href]="item.originalSourceUrl"
+                    target="_blank"
+                    rel="nofollow noopener noreferrer"
+                    class="mt-1 inline-flex items-center gap-1 break-all text-sm text-blue-11 hover:underline"
+                    >{{ sourceHost(item.originalSourceUrl) }}
+                    <i class="ph ph-arrow-square-out" aria-hidden="true"></i
+                  ></a>
+                </div>
               }
             </footer>
           }
@@ -104,6 +126,7 @@ export class NewsDetailPage implements OnDestroy {
     this.route.paramMap.pipe(map((params) => params.get('slug'))),
     { initialValue: null },
   );
+  private runAsSsrTask = createSsrTaskRunner();
   news = signal<NewsDetail | null>(null);
   loading = signal(true);
   constructor() {
@@ -113,7 +136,11 @@ export class NewsDetailPage implements OnDestroy {
       untracked(() => void this.load(slug));
     });
   }
-  private async load(slug: string) {
+  private load(slug: string) {
+    return this.runAsSsrTask(() => this.loadInternal(slug));
+  }
+
+  private async loadInternal(slug: string) {
     this.loading.set(true);
     this.news.set(null);
     try {
@@ -131,6 +158,15 @@ export class NewsDetailPage implements OnDestroy {
         ogType: 'article',
         twitterCard: 'summary',
       });
+      // O `author` do markup precisa dizer a mesma coisa que o byline visível.
+      // Conteúdo automatizado é atribuído à organização, nunca a uma Person —
+      // divergência entre markup e página é ação manual de spam estruturado.
+      const author = news.author?.isAutomated
+        ? { '@type': 'Organization', name: 'Zetho' }
+        : news.author?.name
+          ? { '@type': 'Person', name: news.author.name }
+          : { '@type': 'Organization', name: 'Zetho' };
+
       this.seo.setJsonLd('news-page', {
         '@context': 'https://schema.org',
         '@type': 'NewsArticle',
@@ -138,10 +174,15 @@ export class NewsDetailPage implements OnDestroy {
         description: news.subtitle ?? news.title,
         datePublished: news.$createdAt,
         dateModified: news.$updatedAt,
-        mainEntityOfPage: new URL(
-          `/noticias/${news.slug}`,
-          window.location.origin,
-        ).toString(),
+        inLanguage: 'pt-BR',
+        author,
+        publisher: {
+          '@type': 'Organization',
+          name: 'Zetho',
+          url: this.seo.toAbsoluteUrl('/'),
+        },
+        isAccessibleForFree: true,
+        mainEntityOfPage: this.seo.toAbsoluteUrl(`/noticias/${news.slug}`),
       });
     } catch {
       this.news.set(null);
@@ -151,6 +192,13 @@ export class NewsDetailPage implements OnDestroy {
   }
   ngOnDestroy() {
     this.seo.clearJsonLd('news-page');
+  }
+  sourceHost(url: string) {
+    try {
+      return new URL(url).hostname.replace(/^www\./, '');
+    } catch {
+      return url;
+    }
   }
   formatDate(value: string) {
     return new Date(value).toLocaleDateString('pt-BR', {

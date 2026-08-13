@@ -6,9 +6,13 @@ import { AdminProfilesPage } from './pages/admin-profiles/admin-profiles';
 import { AdminRafflesPage } from './pages/admin-raffles/admin-raffles';
 import { AdminThemesPage } from './pages/admin-themes/admin-themes';
 
-export const ADMIN_ROUTES: Routes = [
+/**
+ * Filhas de `/admin`, carregadas via `loadChildren` a partir de
+ * `app.routes.ts`. O prefixo `admin` vive lá; aqui os paths são relativos.
+ */
+export const ADMIN_ROUTES_CHILDREN: Routes = [
   {
-    path: 'admin',
+    path: '',
     component: AdminLayout,
     canMatch: [adminGuard],
     title: 'Zetho | Painel Admin',
@@ -16,7 +20,11 @@ export const ADMIN_ROUTES: Routes = [
       { path: '', redirectTo: 'games', pathMatch: 'full' },
       { path: 'games', component: AdminGamesPage, title: 'Admin | Games' },
       { path: 'perfis', component: AdminProfilesPage, title: 'Admin | Perfis' },
-      { path: 'sorteios', component: AdminRafflesPage, title: 'Admin | Sorteios' },
+      {
+        path: 'sorteios',
+        component: AdminRafflesPage,
+        title: 'Admin | Sorteios',
+      },
       { path: 'temas', component: AdminThemesPage, title: 'Admin | Temas' },
     ],
   },

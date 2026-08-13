@@ -194,11 +194,20 @@ export class GamePage {
         game.summary?.trim() ||
         `Veja detalhes, avaliações e estatísticas de ${game.name} no Zetho.`;
 
+      // Indexável só com conteúdo original. Sem review de texto, o único
+      // conteúdo desta página é o `summary` do IGDB — idêntico ao de IGDB,
+      // Steam e Metacritic. Indexar milhares dessas páginas dilui o crawl
+      // budget e troca um problema de originalidade por outro.
+      //
+      // `noindex,follow` e não `Disallow`: a página continua rastreável e vira
+      // indexável sozinha assim que ganhar a primeira crítica.
+      const indexable = game.seo?.indexable ?? false;
+
       this.seo.apply({
         title: `${game.name} — Zetho`,
         description,
         canonical,
-        robots: 'index,follow',
+        robots: indexable ? 'index,follow' : 'noindex,follow',
         ogType: 'website',
         ogImage: game.coverUrl,
       });
@@ -223,7 +232,7 @@ export class GamePage {
         '@type': 'VideoGame',
         name: game.name,
         description,
-        url: new URL(canonical, window.location.origin).toString(),
+        url: this.seo.toAbsoluteUrl(canonical),
         image: game.coverUrl,
         genre: genres,
         publisher: {
@@ -239,15 +248,76 @@ export class GamePage {
         }));
       }
 
-      if (game.ratingCount > 0) {
+      // `ratingAvg` é `double` opcional: pode vir null com `ratingCount > 0`,
+      // e `toFixed` em null estoura o effect inteiro.
+      if (game.ratingCount > 0 && typeof game.ratingAvg === 'number') {
         jsonLd['aggregateRating'] = {
           '@type': 'AggregateRating',
           ratingValue: Number(game.ratingAvg.toFixed(1)),
           ratingCount: game.ratingCount,
+          bestRating: 5,
+          worstRating: 0.5,
         };
       }
 
+      // Só as críticas de fato renderizadas nesta URL. Emitir markup de
+      // conteúdo que não está visível na página é ação manual de spam
+      // estruturado — pior que não ter markup nenhum.
+      const renderedReviews = this.controller.communityReviews();
+      if (renderedReviews.length) {
+        jsonLd['review'] = renderedReviews.map((review) => ({
+          '@type': 'Review',
+          reviewBody: this.stripHtml(review.content ?? ''),
+          datePublished: review.$createdAt,
+          author: {
+            '@type': 'Person',
+            name: review.profile?.gamertag ?? 'Jogador do Zetho',
+          },
+          reviewRating: {
+            '@type': 'Rating',
+            ratingValue: review.rating,
+            bestRating: 5,
+            worstRating: 0.5,
+          },
+        }));
+      }
+
+      jsonLd['breadcrumb'] = {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Início',
+            item: this.seo.toAbsoluteUrl('/'),
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: game.name,
+            item: this.seo.toAbsoluteUrl(canonical),
+          },
+        ],
+      };
+
       this.seo.setJsonLd('game-page', jsonLd);
+    });
+  }
+
+  /** O `content` das críticas é HTML do Tiptap; `reviewBody` precisa ser texto. */
+  private stripHtml(value: string) {
+    return value
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  formatReviewDate(value: string) {
+    return new Date(value).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
     });
   }
 

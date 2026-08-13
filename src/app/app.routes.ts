@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { ADMIN_ROUTES } from './core/admin/admin.routes';
 import { AUTH_ROUTES } from './core/auth/auth.routes';
 import { CHANGELOG_ROUTES } from './core/changelog/changelog.routes';
 import { DASHBOARD_ROUTES } from './core/dashboard/dashboard.routes';
 import { GAME_ROUTES } from './core/games/game.routes';
 import { LANDING_ROUTES } from './core/landing/landing.routes';
+import { LEGAL_ROUTES } from './core/legal/legal.routes';
 import { NOT_FOUND_ROUTES } from './core/notFound/notFound.routes';
 import { OFFLINE_ROUTES } from './core/offline/offline.routes';
 import { ONBOARDING_ROUTES } from './core/onboarding/onboarding.routes';
@@ -19,8 +19,16 @@ import { environment } from '../environments/environment';
 export const routes: Routes = [
   ...LANDING_ROUTES,
   ...CHANGELOG_ROUTES,
+  ...LEGAL_ROUTES,
   ...AUTH_ROUTES,
-  ...ADMIN_ROUTES,
+  // Carregada sob demanda: o admin arrasta `ngx-tiptap` + `@tiptap/*` junto.
+  // Como a rota é `RenderMode.Client` e nunca renderiza no servidor, manter
+  // esse peso no bundle inicial (e no do servidor) é desperdício puro.
+  {
+    path: 'admin',
+    loadChildren: () =>
+      import('./core/admin/admin.routes').then((m) => m.ADMIN_ROUTES_CHILDREN),
+  },
   ...GAMEPLAY_SESSIONS_ROUTES,
   ...GAME_ROUTES,
   ...NEWS_ROUTES,

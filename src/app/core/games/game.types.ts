@@ -21,6 +21,17 @@ type Game = {
   ratingAvg: number;
   ratingCount: number;
   ratingSum: number;
+  /**
+   * Calculado pela API (`GET /games/:slug`), nunca persistido.
+   *
+   * É o predicado único de indexabilidade: a meta `robots` da página e o
+   * sitemap precisam derivar da mesma fonte. Se divergirem, o Google recebe
+   * sinais contraditórios.
+   */
+  seo?: {
+    indexable: boolean;
+    textReviewCount: number;
+  };
 };
 
 type GameRow = StoredRow<Game>;
