@@ -1,0 +1,18 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm run build",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "outputDirectory": "dist/zerei/browser",
+  "framework": null,
+  "functions": {
+    "api/render.mjs": {
+      "maxDuration": 30,
+      "includeFiles": "dist/zerei/**"
+    }
+  },
+  "rewrites": [
+    { "source": "/sitemap.xml", "destination": "https://api.zetho.app/sitemap.xml" },
+    { "source": "/sitemap-:shard.xml", "destination": "https://api.zetho.app/sitemap-:shard.xml" },
+    { "source": "/(.*)", "destination": "/api/render" }
+  ]
+}
