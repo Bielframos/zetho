@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { InfiniteScrollDirective } from '../../../shared/ui/infinite-scroll';
 import { UiLoading } from '../../../shared/ui/loading';
 import { UiSkeleton } from '../../../shared/ui/skeleton';
@@ -6,11 +7,18 @@ import { SeoService } from '../../seo/seo.service';
 import { NewsItemComponent } from '../news-item';
 import { NewsService } from '../news.service';
 import type { NewsSummary } from '../news.types';
+import { createSsrTaskRunner } from '../../../utils/ssr-task';
 
 @Component({
   selector: 'app-news-list',
   standalone: true,
-  imports: [InfiniteScrollDirective, NewsItemComponent, UiLoading, UiSkeleton],
+  imports: [
+    InfiniteScrollDirective,
+    NewsItemComponent,
+    RouterLink,
+    UiLoading,
+    UiSkeleton,
+  ],
   template: `
     <main class="mx-auto min-h-dvh w-full max-w-2xl">
       <header class="border-b border-gray-6 px-4 py-4">
@@ -26,6 +34,19 @@ import type { NewsSummary } from '../news.types';
             </p>
           </div>
         </div>
+
+        <p
+          class="mt-4 flex flex-wrap items-center gap-1.5 rounded-md border border-gray-6 bg-gray-2 px-3 py-2 text-xs text-gray-11"
+        >
+          <i class="ph ph-robot" aria-hidden="true"></i>
+          <span>
+            Matérias produzidas com apoio de IA a partir de fontes públicas,
+            sob responsabilidade editorial do Zetho.
+          </span>
+          <a routerLink="/politica-editorial" class="text-blue-11 hover:underline"
+            >Política Editorial</a
+          >
+        </p>
       </header>
       @if (loading()) {
         <div class="divide-y divide-gray-6">
@@ -81,6 +102,7 @@ import type { NewsSummary } from '../news.types';
 export class NewsListPage {
   private news = inject(NewsService);
   private seo = inject(SeoService);
+  private runAsSsrTask = createSsrTaskRunner();
   items = signal<NewsSummary[]>([]);
   loading = signal(true);
   loadingMore = signal(false);
@@ -106,7 +128,11 @@ export class NewsListPage {
     this.loadMoreError.set(false);
     await this.load();
   }
-  private async load() {
+  private load() {
+    return this.runAsSsrTask(() => this.loadInternal());
+  }
+
+  private async loadInternal() {
     this.loading.set(true);
     this.error.set(false);
     try {

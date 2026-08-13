@@ -14,6 +14,7 @@ import {
   AdminRaffleListResponse,
   AdminRaffleResponse,
 } from './admin.types';
+import { safeLocalStorage } from '../../utils/platform-storage';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -26,7 +27,7 @@ export class AdminService {
       ...init,
       headers: {
         Authorization: `Bearer ${jwt}`,
-        'x-appwrite-session': localStorage.getItem('cookieFallback') ?? '',
+        'x-appwrite-session': safeLocalStorage.getItem('cookieFallback') ?? '',
         'Content-Type': 'application/json',
         ...(init.headers ?? {}),
       },

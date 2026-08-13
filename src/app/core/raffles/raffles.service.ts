@@ -9,6 +9,7 @@ import {
   RaffleListResponse,
   RaffleMyKeysResponse,
 } from './raffle.types';
+import { safeLocalStorage } from '../../utils/platform-storage';
 
 @Injectable({ providedIn: 'root' })
 export class RafflesService {
@@ -29,7 +30,7 @@ export class RafflesService {
       headers.set('Authorization', `Bearer ${jwt}`);
       headers.set(
         'x-appwrite-session',
-        localStorage.getItem('cookieFallback') ?? '',
+        safeLocalStorage.getItem('cookieFallback') ?? '',
       );
     }
 

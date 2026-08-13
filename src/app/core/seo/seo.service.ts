@@ -115,7 +115,11 @@ export class SeoService {
     this.meta.updateTag({ property, content }, `property='${property}'`);
   }
 
-  private toAbsoluteUrl(url: string) {
+  /**
+   * Público de propósito: os JSON-LD das páginas precisam de URL absoluta e
+   * não podem depender de `window.location.origin`, que não existe no SSR.
+   */
+  toAbsoluteUrl(url: string) {
     if (/^https?:\/\//i.test(url)) {
       return url;
     }

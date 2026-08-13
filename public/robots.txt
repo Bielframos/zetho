@@ -1,7 +1,27 @@
 User-agent: *
 Allow: /
 
+# Áreas privadas ou administrativas
+Disallow: /admin
 Disallow: /dashboard
 Disallow: /minha-conta
 
-Sitemap: https://api.zetho.app/sitemap.xml
+# Fluxos de autenticação e onboarding
+Disallow: /entrar
+Disallow: /registrar
+Disallow: /recuperar-senha
+Disallow: /redefinir-senha
+Disallow: /verificacao
+Disallow: /comecar
+
+# Rotas sem valor de indexação
+Disallow: /loja
+Disallow: /sessions
+Disallow: /sorteios
+Disallow: /404
+Disallow: /sem-conexao
+
+# Busca interna: gera URLs infinitas e conteúdo duplicado
+Disallow: /buscar
+
+Sitemap: https://www.zetho.app/sitemap.xml

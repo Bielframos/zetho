@@ -1,33 +1,24 @@
 import {
   ApplicationConfig,
-  inject,
-  provideAppInitializer,
-  provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from '@angular/core';
-import { getAnalytics, provideAnalytics } from '@angular/fire/analytics';
-import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { provideClientHydration } from '@angular/platform-browser';
 import { provideRouter, withViewTransitions } from '@angular/router';
-import { provideServiceWorker } from '@angular/service-worker';
 
-import { environment } from '../environments/environment';
 import { routes } from './app.routes';
-import { AuthStore } from './core/auth/auth.store';
 
+/**
+ * Configuração isomórfica: só o que roda igual no browser e no Node.
+ *
+ * Tudo que depende de `window`, `document`, `sessionStorage` ou de SDK de
+ * terceiro que assume o browser vive em `app.config.browser.ts`. Além de
+ * evitar crash no SSR, isso tira `@angular/fire` + `firebase` (~400KB) do
+ * bundle do servidor por tree-shaking.
+ */
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withViewTransitions({ skipInitialTransition: true })),
-    provideServiceWorker('ngsw-worker.js', {
-      enabled: environment.production,
-      registrationStrategy: 'registerWhenStable:30000',
-    }),
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideAnalytics(() => getAnalytics()),
-    provideAppInitializer(async () => {
-      const authStore = inject(AuthStore);
-      await authStore.init();
-    }),
+    provideClientHydration(),
   ],
 };

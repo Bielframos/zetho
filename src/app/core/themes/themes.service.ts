@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { AuthStore } from '../auth/auth.store';
 import { ProfileTheme, CreateThemePayload } from './themes.types';
+import { safeLocalStorage } from '../../utils/platform-storage';
 
 @Injectable({ providedIn: 'root' })
 export class ThemesService {
@@ -12,7 +13,7 @@ export class ThemesService {
 
     const headers: Record<string, string> = {
       Authorization: `Bearer ${jwt}`,
-      'x-appwrite-session': localStorage.getItem('cookieFallback') ?? '',
+      'x-appwrite-session': safeLocalStorage.getItem('cookieFallback') ?? '',
     };
 
     if (init.body && typeof init.body === 'string') {

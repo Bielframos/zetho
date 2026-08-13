@@ -2,9 +2,20 @@ import { inject } from '@angular/core';
 import { CanMatchFn, Router } from '@angular/router';
 import { AuthStore } from './auth.store';
 
-export const guestGuard: CanMatchFn = () => {
+/**
+ * Os guards são assíncronos de propósito.
+ *
+ * Com o `init()` do AuthStore não bloqueando mais o bootstrap (necessário para
+ * a hidratação não quebrar), `isAuthenticated()` ainda é `false` no primeiro
+ * tick. Um guard síncrono leria esse estado provisório e expulsaria da rota um
+ * usuário que está, sim, logado. Esperar `authStore.ready` resolve isso sem
+ * reintroduzir o bloqueio no bootstrap.
+ */
+export const guestGuard: CanMatchFn = async () => {
   const authStore = inject(AuthStore);
   const router = inject(Router);
+
+  await authStore.ready;
 
   if (authStore.isAuthenticated()) {
     return router.parseUrl('/dashboard');
@@ -13,9 +24,11 @@ export const guestGuard: CanMatchFn = () => {
   return true;
 };
 
-export const userGuard: CanMatchFn = () => {
+export const userGuard: CanMatchFn = async () => {
   const authStore = inject(AuthStore);
   const router = inject(Router);
+
+  await authStore.ready;
 
   if (!authStore.isAuthenticated()) {
     return router.parseUrl('/');
@@ -24,9 +37,11 @@ export const userGuard: CanMatchFn = () => {
   return true;
 };
 
-export const adminGuard: CanMatchFn = () => {
+export const adminGuard: CanMatchFn = async () => {
   const authStore = inject(AuthStore);
   const router = inject(Router);
+
+  await authStore.ready;
 
   if (!authStore.isAuthenticated()) {
     return router.parseUrl('/');

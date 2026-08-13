@@ -1,5 +1,11 @@
 export interface NewsAuthor {
   name: string;
+  slug?: string | null;
+  /**
+   * Autoria automatizada (assistente editorial de IA). Usado para exibir a
+   * divulgação junto ao byline e para montar o JSON-LD coerente com ela.
+   */
+  isAutomated?: boolean;
 }
 
 export interface NewsSummary {

@@ -7,6 +7,7 @@ import type {
   InviteBonusResponse,
   InviteCodeResponse,
 } from '../userProfiles/userProfile.types';
+import { safeLocalStorage } from '../../utils/platform-storage';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -45,7 +46,7 @@ export class AuthService {
         {
           headers: {
             Authorization: `Bearer ${await this.createJWT()}`,
-            'x-appwrite-session': localStorage.getItem('cookieFallback') ?? '',
+            'x-appwrite-session': safeLocalStorage.getItem('cookieFallback') ?? '',
             'Content-Type': 'application/json',
           },
           method: 'POST',
@@ -132,7 +133,7 @@ export class AuthService {
       {
         headers: {
           Authorization: `Bearer ${await this.createJWT()}`,
-          'x-appwrite-session': localStorage.getItem('cookieFallback') ?? '',
+          'x-appwrite-session': safeLocalStorage.getItem('cookieFallback') ?? '',
         },
       },
     );
@@ -147,7 +148,7 @@ export class AuthService {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${await this.createJWT()}`,
-          'x-appwrite-session': localStorage.getItem('cookieFallback') ?? '',
+          'x-appwrite-session': safeLocalStorage.getItem('cookieFallback') ?? '',
         },
       },
     );

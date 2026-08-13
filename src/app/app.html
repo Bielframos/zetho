@@ -604,7 +604,7 @@
 
   @if (!isOfflineRoute()) {
   <footer
-    class="z-20 flex w-full items-center justify-between border-t border-gray-6 px-6 py-4 md:px-10"
+    class="z-20 flex w-full flex-wrap items-center justify-between gap-4 border-t border-gray-6 px-6 py-4 md:px-10"
   >
     <div>
       <h6 class="font-display text-4xl">Zetho</h6>
@@ -615,10 +615,46 @@
       </small>
     </div>
 
-    <div
-      class="flex flex-wrap items-center justify-end gap-3 text-sm text-gray-11"
+    <nav
+      class="flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-sm text-gray-11"
+      aria-label="Rodapé"
     >
-      <span>v{{ appVersion }}</span>
+      <a routerLink="/sobre" class="text-sm hover:text-blue-9 hover:underline">
+        Sobre
+      </a>
+
+      <span>•</span>
+
+      <a
+        routerLink="/contato"
+        class="text-sm hover:text-blue-9 hover:underline"
+      >
+        Contato
+      </a>
+
+      <span>•</span>
+
+      <a
+        routerLink="/politica-editorial"
+        class="text-sm hover:text-blue-9 hover:underline"
+      >
+        Política Editorial
+      </a>
+
+      <span>•</span>
+
+      <a routerLink="/termos" class="text-sm hover:text-blue-9 hover:underline">
+        Termos
+      </a>
+
+      <span>•</span>
+
+      <a
+        routerLink="/privacidade"
+        class="text-sm hover:text-blue-9 hover:underline"
+      >
+        Privacidade
+      </a>
 
       <span>•</span>
 
@@ -635,7 +671,11 @@
         Admin
       </a>
       }
-    </div>
+
+      <span>•</span>
+
+      <span>v{{ appVersion }}</span>
+    </nav>
   </footer>
   }
 </div>
