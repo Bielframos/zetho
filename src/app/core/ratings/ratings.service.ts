@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { AuthStore } from '../auth/auth.store';
+import { safeLocalStorage } from '../../utils/platform-storage';
 
 export interface RatingRow {
   $id: string;
@@ -42,7 +43,7 @@ export class RatingsService {
       } catch (err) {
         console.warn('Failed to retrieve JWT for ratings request', err);
       }
-      const fallbackCookie = localStorage.getItem('cookieFallback');
+      const fallbackCookie = safeLocalStorage.getItem('cookieFallback');
       if (fallbackCookie) {
         headers['x-appwrite-session'] = fallbackCookie;
       }

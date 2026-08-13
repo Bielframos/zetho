@@ -1,8 +1,10 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Notification } from './notification.types';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationStore {
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private notifications = signal<Notification[]>([]);
 
   readonly list = computed(() => this.notifications());
@@ -16,9 +18,10 @@ export class NotificationStore {
     const notification: Notification = { id, closing: false, ...opts };
     this.notifications.update((arr) => [notification, ...arr]);
 
-    // auto dismiss
+    // auto dismiss — só no browser: um timer de 5s no servidor segura a
+    // estabilidade da zone e trava o render da requisição inteira.
     const timeout = notification.timeout ?? 5000;
-    if (timeout && timeout > 0) {
+    if (this.isBrowser && timeout && timeout > 0) {
       setTimeout(() => this.dismiss(id), timeout);
     }
 

@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { AuthStore } from '../auth/auth.store';
+import { safeLocalStorage } from '../../utils/platform-storage';
 
 type ProfileSummary = {
   $id?: string;
@@ -123,7 +124,7 @@ export class DashboardService {
       const token = await this.authStore.getJwt();
       headers['Authorization'] = `Bearer ${token}`;
 
-      const fallbackCookie = localStorage.getItem('cookieFallback');
+      const fallbackCookie = safeLocalStorage.getItem('cookieFallback');
       if (fallbackCookie) {
         headers['x-appwrite-session'] = fallbackCookie;
       }

@@ -1,4 +1,5 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
 import type { GameRow, ZEntryRow } from '../../types';
 import type { GameWithEntry, GameMedia, GameHero } from './game.types';
 import type { SearchFilters } from '../search/search.controller';
@@ -8,9 +9,11 @@ import { GameRepository } from './games.repository';
 import { GenresCacheService } from './genres-cache.service';
 import { environment } from '../../../environments/environment';
 import { AuthStore } from '../auth/auth.store';
+import { safeLocalStorage } from '../../utils/platform-storage';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
+  private readonly isServer = isPlatformServer(inject(PLATFORM_ID));
   private zEntryService = inject(ZEntryService);
   private gameStore = inject(GameStore);
   private genresCache = inject(GenresCacheService);
@@ -194,9 +197,13 @@ export class GameService {
   }
 
   private async getGameFromApi(slug: string): Promise<GameRow | null> {
+    // `enrich=false` no servidor: o enriquecimento dispara import do IGDB e
+    // tradução por IA dentro da requisição, o que estoura o timeout da função
+    // de render. No browser o comportamento segue o de sempre.
+    const enrichParam = this.isServer ? '&enrich=false' : '';
     const response = await fetch(
       new URL(
-        `games/${slug}?select=*,involvedCompanies.name,involvedCompanies.slug,zStats.*`,
+        `games/${slug}?select=*,involvedCompanies.name,involvedCompanies.slug,zStats.*${enrichParam}`,
         environment.zethoApiEndpoint,
       ),
     );
@@ -236,7 +243,7 @@ export class GameService {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${await this.authStore.getJwt()}`,
     };
-    const fallbackCookie = localStorage.getItem('cookieFallback');
+    const fallbackCookie = safeLocalStorage.getItem('cookieFallback');
 
     if (fallbackCookie) {
       headers['x-appwrite-session'] = fallbackCookie;
@@ -307,6 +314,14 @@ export class GameService {
       rawReleaseDate: game.releaseDate,
       releaseDate: new Date(game.releaseDate).toLocaleDateString('pt-br'),
     };
+
+    // Render "leve" no servidor: mídias, similares e hero ficam em abas ou
+    // abaixo da dobra, e `zEntry` é sempre nulo (o SSR renderiza deslogado).
+    // Buscar tudo isso multiplica o TTFB sem acrescentar nada ao HTML que o
+    // crawler lê. A hidratação completa no cliente.
+    if (this.isServer) {
+      return result;
+    }
 
     const zEntryPromise =
       context.userId && context.fingerprint

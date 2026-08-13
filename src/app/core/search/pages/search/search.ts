@@ -13,6 +13,7 @@ import { SeoService } from '../../../seo/seo.service';
 import { ZStatsService } from '../../../zStats/zStats.service';
 import { SearchController } from '../../search.controller';
 import { AuthStore } from '../../../auth/auth.store';
+import { safeSessionStorage } from '../../../../utils/platform-storage';
 
 function buildYearOptions(): string[] {
   const currentYear = new Date().getFullYear();
@@ -95,11 +96,11 @@ export class SearchPage {
   async ngOnInit() {
     await this.genresCache.ensureLoaded();
 
-    const popularGames = sessionStorage.getItem('popularGames');
+    const popularGames = safeSessionStorage.getItem('popularGames');
 
     if (!popularGames) {
       const games = await this.zStatsService.getTrendingGames({ total: 8 });
-      sessionStorage.setItem('popularGames', JSON.stringify(games));
+      safeSessionStorage.setItem('popularGames', JSON.stringify(games));
       this.popularGames.set(games);
     } else {
       this.popularGames.set(JSON.parse(popularGames));

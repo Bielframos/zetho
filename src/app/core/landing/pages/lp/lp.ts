@@ -27,9 +27,14 @@ export class LandingPage {
     private userProfileService: UserProfileService,
     private zStatsService: ZStatsService,
   ) {
-    if (this.authStore.isAuthenticated()) {
-      this.router.navigateByUrl('/dashboard');
-    }
+    // Lido no construtor, `isAuthenticated()` reflete o estado antes de a
+    // sessão ser restaurada — o usuário logado ficaria preso na landing. Com o
+    // effect, o redirecionamento acontece quando o sinal de fato mudar.
+    effect(() => {
+      if (this.authStore.isAuthenticated()) {
+        void this.router.navigateByUrl('/dashboard');
+      }
+    });
 
     (async () => {
       try {

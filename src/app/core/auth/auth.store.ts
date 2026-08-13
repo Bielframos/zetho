@@ -10,6 +10,7 @@ import type {
 } from '../userProfiles/userProfile.types';
 import { NotificationStore } from '../notifications/notification.store';
 import { ProfileTheme } from '../themes/themes.types';
+import { safeSessionStorage } from '../../utils/platform-storage';
 
 const JWT_TTL_MS = 15 * 60 * 1000;
 
@@ -24,6 +25,21 @@ export class AuthStore {
   private cachedJwt = signal<string | null>(null);
   private jwtExpirationTime = signal<number | null>(null);
   private jwtRequestInFlight: Promise<string> | null = null;
+
+  /**
+   * Resolve quando a primeira tentativa de restaurar a sessão termina —
+   * com ou sem sucesso.
+   *
+   * O `init()` deixou de bloquear o bootstrap: se bloqueasse, o servidor
+   * renderizaria deslogado e o cliente hidrataria já logado, quebrando a
+   * hidratação (NG0500) em todo `@if (authStore.user())`. Quem realmente
+   * precisa da sessão resolvida — os guards de rota — espera por aqui.
+   */
+  private initPromise: Promise<void> | null = null;
+
+  get ready(): Promise<void> {
+    return this.initPromise ?? Promise.resolve();
+  }
 
   readonly user = computed(() => this.userSignal());
   readonly profile = computed(() => this.profileSignal());
@@ -155,9 +171,21 @@ export class AuthStore {
    * Método para inicializar o estado de autenticação
    * @returns
    */
-  async init() {
-    const cached = sessionStorage.getItem('user');
-    if (cached) this.userSignal.set(JSON.parse(cached));
+  init(): Promise<void> {
+    // Idempotente: chamadas concorrentes compartilham a mesma promise.
+    this.initPromise ??= this.runInit();
+    return this.initPromise;
+  }
+
+  private async runInit() {
+    const cached = safeSessionStorage.getItem('user');
+    if (cached) {
+      try {
+        this.userSignal.set(JSON.parse(cached));
+      } catch {
+        safeSessionStorage.removeItem('user');
+      }
+    }
 
     this.loadingSignal.set(true);
 
@@ -170,7 +198,7 @@ export class AuthStore {
       this.userSignal.set(user);
       this.profileSignal.set(profile);
 
-      sessionStorage.setItem('user', JSON.stringify(user));
+      safeSessionStorage.setItem('user', JSON.stringify(user));
       await this.getJwt();
     } catch (e) {
       this.clear();
@@ -191,7 +219,7 @@ export class AuthStore {
 
       this.userSignal.set(user);
       this.profileSignal.set(profile);
-      sessionStorage.setItem('user', JSON.stringify(user));
+      safeSessionStorage.setItem('user', JSON.stringify(user));
       await this.getJwt(true);
     } catch (e) {
       this.clear();
@@ -431,7 +459,7 @@ export class AuthStore {
     this.cachedJwt.set(null);
     this.jwtExpirationTime.set(null);
     this.jwtRequestInFlight = null;
-    sessionStorage.removeItem('user');
+    safeSessionStorage.removeItem('user');
   }
 
   async getInviteBonus(): Promise<InviteBonusResponse> {
