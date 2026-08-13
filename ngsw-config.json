@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/@angular/service-worker/config/schema.json",
-  "index": "/index.csr.html",
+  "index": "/sem-conexao/index.html",
   "navigationUrls": ["!/**"],
   "assetGroups": [
     {
@@ -8,7 +8,6 @@
       "installMode": "prefetch",
       "resources": {
         "files": [
-          "/index.csr.html",
           "/sem-conexao/index.html",
           "/manifest.webmanifest",
           "/favicon.png",

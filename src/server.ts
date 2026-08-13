@@ -10,7 +10,22 @@ import { join } from 'node:path';
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
-const angularApp = new AngularNodeAppEngine();
+
+/**
+ * `trustProxyHeaders` é obrigatório atrás da Vercel.
+ *
+ * O `@angular/ssr` desativa o SSR por conta própria — silenciosamente, com
+ * status 200 — quando recebe um header `X-Forwarded-*` que não foi declarado
+ * como confiável: a request é servida como CSR pura (`serveClientSidePage`).
+ * Como a Vercel envia `x-forwarded-for`, `x-forwarded-host` e
+ * `x-forwarded-proto` em toda request, sem isto **nenhuma** rota `Server`
+ * renderiza em produção — o crawler recebe o mesmo shell vazio de antes do SSR,
+ * e a única pista é um `console.warn` nos logs da função.
+ *
+ * A validação de host continua ativa: `x-forwarded-host` é conferido contra os
+ * `allowedHosts` de `angular.json` antes de qualquer render.
+ */
+const angularApp = new AngularNodeAppEngine({ trustProxyHeaders: true });
 
 /**
  * Estáticos saem do disco antes de qualquer render. Na Vercel o filesystem
