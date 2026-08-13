@@ -22,6 +22,34 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
  * falha. É intencional: força a decisão em vez de deixar a rota cair num
  * default silencioso.
  */
+/**
+ * Cache de borda para as rotas renderizadas sob demanda.
+ *
+ * `max-age=0` mantém o navegador sempre revalidando: quem já está na página não
+ * pode ficar preso a um HTML velho. `s-maxage` vale só para cache compartilhado
+ * — é a Vercel servindo a mesma resposta a todo mundo sem invocar a função de
+ * novo. `stale-while-revalidate` de 24h faz a borda entregar a cópia vencida na
+ * hora e renovar em segundo plano, então o custo do render nunca cai sobre um
+ * visitante.
+ *
+ * É seguro compartilhar a resposta entre visitantes porque o servidor renderiza
+ * sempre deslogado: o initializer que resolve a sessão vive em
+ * `app.config.browser.ts` e não roda em Node. Se algum dia o SSR passar a
+ * enxergar a sessão, estes headers precisam sair junto — caso contrário a
+ * página de um usuário é servida para o próximo.
+ */
+const EDGE_CACHE_5_MIN = {
+  'Cache-Control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=86400',
+};
+
+/**
+ * Notícia individual muda menos que uma listagem: o texto é imutável depois de
+ * publicado, só o entorno se mexe.
+ */
+const EDGE_CACHE_10_MIN = {
+  'Cache-Control': 'public, max-age=0, s-maxage=600, stale-while-revalidate=86400',
+};
+
 export const serverRoutes: ServerRoute[] = [
   // Estáticas puras — sem chamada de API.
   { path: 'privacidade', renderMode: RenderMode.Prerender },
@@ -33,17 +61,35 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'sem-conexao', renderMode: RenderMode.Prerender },
 
   // Conteúdo público renderizado no servidor.
-  { path: '', renderMode: RenderMode.Server },
-  { path: 'jogo/:slug', renderMode: RenderMode.Server },
-  { path: 'noticias', renderMode: RenderMode.Server },
-  { path: 'noticias/:slug', renderMode: RenderMode.Server },
-  { path: 'player/:gamertag', renderMode: RenderMode.Server },
-  { path: 'player/:gamertag/listas', renderMode: RenderMode.Server },
-  { path: 'player/:gamertag/listas/:slug', renderMode: RenderMode.Server },
-  { path: 'player/:gamertag/conexoes', renderMode: RenderMode.Server },
-  { path: 'zcoins/leaderboard/weekly', renderMode: RenderMode.Server },
+  { path: '', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
+  { path: 'jogo/:slug', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
+  { path: 'noticias', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
+  { path: 'noticias/:slug', renderMode: RenderMode.Server, headers: EDGE_CACHE_10_MIN },
+  { path: 'player/:gamertag', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
+  {
+    path: 'player/:gamertag/listas',
+    renderMode: RenderMode.Server,
+    headers: EDGE_CACHE_5_MIN,
+  },
+  {
+    path: 'player/:gamertag/listas/:slug',
+    renderMode: RenderMode.Server,
+    headers: EDGE_CACHE_5_MIN,
+  },
+  {
+    path: 'player/:gamertag/conexoes',
+    renderMode: RenderMode.Server,
+    headers: EDGE_CACHE_5_MIN,
+  },
+  {
+    path: 'zcoins/leaderboard/weekly',
+    renderMode: RenderMode.Server,
+    headers: EDGE_CACHE_5_MIN,
+  },
 
   // 404 precisa de status HTTP real, não só do visual da página.
+  // Sem cache de propósito: uma URL que hoje é 404 costuma ser conteúdo novo
+  // amanhã, e cachear a negativa atrasaria a descoberta pelo crawler.
   { path: '404', renderMode: RenderMode.Server, status: 404 },
 
   // Área logada, admin, autenticação e busca: renderizadas só no cliente.
