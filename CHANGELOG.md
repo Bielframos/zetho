@@ -6,6 +6,34 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.20.0] - 2026-08-13
+
+### Added
+
+- As páginas públicas — landing, jogo, notícias, perfil de jogador e placar semanal — agora são entregues já renderizadas pelo servidor, aparecendo completas para buscadores e em compartilhamentos.
+- Novas páginas institucionais de Privacidade, Termos, Política Editorial, Sobre e Contato, acessíveis pelo rodapé.
+- A página de cada jogo passa a exibir uma seção fixa de "Críticas da comunidade", com os textos mais votados sempre visíveis fora das abas.
+- Dados estruturados enriquecidos na página de jogo, incluindo críticas, nota agregada e trilha de navegação.
+- As matérias de notícias trazem aviso de autoria por assistente editorial de IA, com link para a Política Editorial e para a fonte original.
+
+### Changed
+
+- Páginas de jogo ainda sem crítica escrita deixam de ser indexadas pelos buscadores até receberem conteúdo original da comunidade.
+- O `robots.txt` passa a bloquear rotas privadas, fluxos de autenticação e a busca interna, e aponta o sitemap para o domínio principal.
+- As notícias declaram autoria da organização nos dados estruturados quando produzidas com apoio de IA, mantendo o markup coerente com o que aparece na página.
+- A página de jogo carrega mídias, jogos similares e destaque visual apenas no navegador, deixando o primeiro carregamento mais rápido.
+- O painel administrativo passa a ser carregado sob demanda, reduzindo o peso do pacote inicial para quem não é administrador.
+- Os pacotes do Angular foram alinhados na mesma versão e o pnpm ficou fixado como gerenciador de pacotes do projeto.
+- A publicação passa a exigir configuração de hospedagem com função de renderização no servidor; o sitemap é servido pelo domínio principal.
+
+### Fixed
+
+- URLs inexistentes agora respondem com erro 404 de verdade, em vez de redirecionar ou responder como se a página existisse.
+- Usuários já autenticados não ficam mais presos na landing enquanto a sessão é restaurada.
+- Corrigido o piscar de conteúdo na primeira carga causado pela diferença entre o que o servidor renderiza e o que o navegador exibe.
+- Rotas protegidas passam a aguardar a sessão ser restaurada antes de decidir o acesso, evitando redirecionamentos indevidos.
+- O modo offline deixa de sobrepor as páginas vindas do servidor.
+
 ## [1.19.0] - 2026-08-12
 
 ### Added
