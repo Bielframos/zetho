@@ -277,14 +277,216 @@
         </ng-template>
 
         @if (item.game) {
-        <ui-feed-game [game]="$any(item.game)">
+        <ui-feed-game
+          [game]="$any(item.game)"
+          [showActions]="item.type !== 'comment'"
+        >
           <ng-container [ngTemplateOutlet]="voteBar"></ng-container>
         </ui-feed-game>
         } @else if (item.type === 'comment' || item.type === 'rating') {
         <footer class="mt-2 flex justify-end">
           <ng-container [ngTemplateOutlet]="voteBar"></ng-container>
         </footer>
-        } }
+        } @if (item.type === 'comment') {
+        <div class="flex items-center border-t border-gray-6 pt-2">
+          <button
+            type="button"
+            class="ui-action-btn gap-2"
+            [id]="'comment-thread-toggle-' + item.$id"
+            [disabled]="isCommentThreadLoading(item.$id)"
+            [attr.aria-expanded]="isCommentThreadExpanded(item.$id)"
+            [attr.aria-controls]="'comment-thread-' + item.$id"
+            (click)="toggleCommentThread(item)"
+          >
+            @if (isCommentThreadLoading(item.$id)) {
+            <ui-loading [inline]="true" size="sm"></ui-loading>
+            } @else {
+            <i
+              [class]="
+                isCommentThreadExpanded(item.$id)
+                  ? 'ph ph-caret-up'
+                  : 'ph ph-chat-circle'
+              "
+              aria-hidden="true"
+            ></i>
+            } @if (isCommentThreadExpanded(item.$id)) {
+            <span>Ocultar conversa</span>
+            } @else if (commentReplyCount(item) > 0) {
+            <span>Ver conversa</span>
+            } @else {
+            <span>Responder</span>
+            } @if (commentReplyCount(item) > 0) {
+            <span class="text-xs tabular-nums text-gray-10">
+              {{ commentReplyCount(item) }}
+            </span>
+            }
+          </button>
+        </div>
+
+        @if (isCommentThreadExpanded(item.$id)) {
+        <section
+          [id]="'comment-thread-' + item.$id"
+          [attr.aria-labelledby]="'comment-thread-toggle-' + item.$id"
+          class="border-l-2 border-gray-6 pl-3"
+          aria-live="polite"
+        >
+          @if (isCommentThreadLoading(item.$id)) {
+          <ui-loading
+            fallback="Carregando conversa"
+            size="sm"
+            variant="subtle"
+          ></ui-loading>
+          } @else if (!commentThread(item.$id) && commentThreadError(item.$id))
+          {
+          <div class="flex items-center justify-between gap-3 py-3">
+            <p class="text-sm text-gray-11">
+              {{ commentThreadError(item.$id) }}
+            </p>
+            <button
+              type="button"
+              class="ui-secondary-btn shrink-0"
+              (click)="loadCommentThread(item)"
+            >
+              Tentar novamente
+            </button>
+          </div>
+          } @else if (commentThread(item.$id); as thread) {
+          <div class="flex flex-col divide-y divide-gray-6">
+            <article class="py-3">
+              <header class="mb-2 flex items-center gap-2">
+                @if (thread.parent.userProfile.avatarUrl) {
+                <img
+                  [src]="thread.parent.userProfile.avatarUrl"
+                  [alt]="'Avatar de ' + (thread.parent.userProfile.gamertag || 'Jogador')"
+                  class="h-7 w-7 rounded-full object-cover"
+                />
+                } @else {
+                <span
+                  class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-9 text-xs font-bold text-white"
+                  aria-hidden="true"
+                >
+                  {{ (thread.parent.userProfile.gamertag || 'J')[0] | uppercase
+                  }}
+                </span>
+                }
+                <span class="text-sm font-medium text-gray-12">
+                  {{ thread.parent.userProfile.gamertag || 'Jogador' }}
+                </span>
+                <span class="text-xs text-gray-10">Início da conversa</span>
+              </header>
+              <div
+                class="prose prose-invert prose-sm prose-gray max-w-none prose-p:my-0 prose-p:font-light"
+                [innerHTML]="thread.parent.content"
+              ></div>
+            </article>
+
+            @for (reply of thread.replies; track reply.$id) {
+            <article
+              class="py-3 pl-3"
+              [class.bg-gray-3]="reply.$id === item.$id"
+              [class.opacity-70]="reply.optimistic"
+            >
+              <header class="mb-2 flex items-center gap-2">
+                @if (reply.userProfile.avatarUrl) {
+                <img
+                  [src]="reply.userProfile.avatarUrl"
+                  [alt]="'Avatar de ' + (reply.userProfile.gamertag || 'Jogador')"
+                  class="h-6 w-6 rounded-full object-cover"
+                />
+                } @else {
+                <span
+                  class="flex h-6 w-6 items-center justify-center rounded-full bg-blue-9 text-[10px] font-bold text-white"
+                  aria-hidden="true"
+                >
+                  {{ (reply.userProfile.gamertag || 'J')[0] | uppercase }}
+                </span>
+                }
+                <span class="text-sm font-medium text-gray-12">
+                  {{ reply.userProfile.gamertag || 'Jogador' }}
+                </span>
+                @if (reply.optimistic) {
+                <span class="text-xs text-gray-10">Enviando…</span>
+                }
+              </header>
+              <div
+                class="prose prose-invert prose-sm prose-gray max-w-none prose-p:my-0 prose-p:font-light"
+                [innerHTML]="reply.content"
+              ></div>
+            </article>
+            } @empty {
+            <p class="py-3 text-sm text-gray-11">
+              Ainda não há respostas nesta conversa.
+            </p>
+            }
+          </div>
+
+          @if (commentThreadError(item.$id)) {
+          <p
+            [id]="'comment-reply-error-' + item.$id"
+            class="border-t border-gray-6 py-3 text-sm text-red-400"
+            role="alert"
+          >
+            {{ commentThreadError(item.$id) }}
+          </p>
+          } @if (authStore.isAuthenticated()) {
+          <form
+            class="flex flex-col gap-2 border-t border-gray-6 py-3"
+            (submit)="$event.preventDefault(); submitCommentReply(item)"
+          >
+            <label
+              [for]="'comment-reply-' + item.$id"
+              class="text-sm font-medium text-gray-12"
+            >
+              Responder à conversa
+            </label>
+            <textarea
+              [id]="'comment-reply-' + item.$id"
+              rows="3"
+              maxlength="350"
+              class="w-full resize-y rounded-lg border border-gray-6 bg-transparent px-3 py-2 text-sm text-gray-12 placeholder:text-gray-10 focus:outline-none focus:ring-2 focus:ring-blue-6 disabled:opacity-50"
+              placeholder="Escreva uma resposta"
+              [value]="commentReplyDraft(item.$id)"
+              [disabled]="isCommentReplySubmitting(item.$id)"
+              [attr.aria-describedby]="
+                commentThreadError(item.$id)
+                  ? 'comment-reply-error-' + item.$id
+                  : null
+              "
+              (input)="
+                setCommentReplyDraft(item.$id, $any($event.target).value)
+              "
+            ></textarea>
+            <div class="flex justify-end">
+              <button
+                type="submit"
+                class="ui-primary-btn"
+                [disabled]="
+                  isCommentReplySubmitting(item.$id) ||
+                  !commentReplyDraft(item.$id).trim()
+                "
+              >
+                @if (isCommentReplySubmitting(item.$id)) {
+                <ui-loading [inline]="true" size="sm"></ui-loading>
+                <span>Enviando</span>
+                } @else {
+                <i class="ph ph-paper-plane-tilt" aria-hidden="true"></i>
+                <span>Responder</span>
+                }
+              </button>
+            </div>
+          </form>
+          } @else {
+          <p class="border-t border-gray-6 py-3 text-sm text-gray-11">
+            <a
+              routerLink="/entrar"
+              class="text-blue-11 hover:text-blue-9 hover:underline"
+              >Entre na sua conta</a
+            >
+            para responder.
+          </p>
+          } }
+        </section>
+        } } }
       </article>
       }
     </div>
