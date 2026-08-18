@@ -204,6 +204,19 @@ import { NotificationStore } from './notification.store';
                         Ver Jogatina
                       </button>
                     }
+
+                    @if (notif.type === 'game_comment' && notif.targetUrl) {
+                      <button
+                        type="button"
+                        (click)="onViewGameComment(notif)"
+                        class="ui-ghost-btn"
+                        data-size="sm"
+                        aria-label="Ver comentário no jogo"
+                      >
+                        <i class="ph ph-arrow-right"></i>
+                        Ver comentário
+                      </button>
+                    }
                   </div>
                 </div>
 
@@ -309,6 +322,25 @@ export class NotificationsSheetComponent {
     void this.router.navigate(['/sessions'], {
       queryParams: { id: notif.sessionId },
     });
+  }
+
+  onViewGameComment(notif: InAppNotification) {
+    if (
+      notif.type !== 'game_comment' ||
+      !notif.targetUrl ||
+      !this.isSafeInternalUrl(notif.targetUrl)
+    ) {
+      return;
+    }
+
+    const id = notif.id || notif.$id || '';
+    void this.store.markAsRead(id);
+    this.closeSheet();
+    void this.router.navigateByUrl(notif.targetUrl);
+  }
+
+  private isSafeInternalUrl(targetUrl: string) {
+    return targetUrl.startsWith('/') && !targetUrl.startsWith('//');
   }
 
   private setProcessing(id: string, active: boolean) {
