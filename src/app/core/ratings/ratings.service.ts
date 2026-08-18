@@ -27,6 +27,32 @@ export interface RatingsListResponse {
   totalPages: number;
 }
 
+export interface RatingFeedGame {
+  $id: string;
+  name: string;
+  slug: string;
+  coverUrl: string | null;
+}
+
+export interface RatingFeedAuthor {
+  $id: string;
+  gamertag: string;
+  avatarUrl: string | null;
+}
+
+export interface RatingFeedRow extends RatingRow {
+  game: RatingFeedGame | null;
+  author: RatingFeedAuthor | null;
+}
+
+export interface RatingsFeedResponse {
+  items: RatingFeedRow[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class RatingsService {
   private authStore = inject(AuthStore);
@@ -58,6 +84,20 @@ export class RatingsService {
 
     if (!response.ok) {
       throw new Error(`Failed to fetch ratings: ${response.statusText}`);
+    }
+
+    return await response.json();
+  }
+
+  async getRatingsFeed(page = 1, pageSize = 12): Promise<RatingsFeedResponse> {
+    const url = new URL('ratings/feed', environment.zethoApiEndpoint);
+    url.searchParams.set('page', String(page));
+    url.searchParams.set('pageSize', String(pageSize));
+
+    const response = await fetch(url.toString());
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ratings feed: ${response.statusText}`);
     }
 
     return await response.json();
