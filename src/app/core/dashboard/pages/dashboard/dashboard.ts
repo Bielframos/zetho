@@ -93,9 +93,11 @@ export class DashboardPage implements OnDestroy {
   updatingEntryLikeIds = signal<Set<string>>(new Set());
   selectedEntry = signal<DashboardFeedItem | null>(null);
   expandedCommentThreadIds = signal<Set<string>>(new Set());
+  openCommentComposerIds = signal<Set<string>>(new Set());
   loadingCommentThreadIds = signal<Set<string>>(new Set());
   commentThreads = signal<Record<string, InlineCommentThread>>({});
   commentThreadErrors = signal<Record<string, string>>({});
+  commentReplyErrors = signal<Record<string, string>>({});
   commentReplyDrafts = signal<Record<string, string>>({});
   submittingCommentReplyIds = signal<Set<string>>(new Set());
 
@@ -239,6 +241,10 @@ export class DashboardPage implements OnDestroy {
     return this.loadingCommentThreadIds().has(commentId);
   }
 
+  isCommentComposerOpen(commentId: string) {
+    return this.openCommentComposerIds().has(commentId);
+  }
+
   isCommentReplySubmitting(commentId: string) {
     return this.submittingCommentReplyIds().has(commentId);
   }
@@ -251,15 +257,23 @@ export class DashboardPage implements OnDestroy {
     return this.commentThreadErrors()[commentId] ?? '';
   }
 
+  commentReplyError(commentId: string) {
+    return this.commentReplyErrors()[commentId] ?? '';
+  }
+
   commentReplyDraft(commentId: string) {
     return this.commentReplyDrafts()[commentId] ?? '';
   }
 
   commentReplyCount(item: DashboardFeedItem) {
+    return (item as CommentFeedItem).replyCount ?? 0;
+  }
+
+  commentThreadReplies(item: DashboardFeedItem) {
     return (
-      this.commentThread(item.$id)?.totalReplies ??
-      (item as CommentFeedItem).replyCount ??
-      0
+      this.commentThread(item.$id)?.replies.filter(
+        (reply) => reply.$id !== item.$id,
+      ) ?? []
     );
   }
 
@@ -268,7 +282,21 @@ export class DashboardPage implements OnDestroy {
       ...drafts,
       [commentId]: value,
     }));
-    this.clearCommentThreadError(commentId);
+    this.clearCommentReplyError(commentId);
+  }
+
+  toggleCommentComposer(item: DashboardFeedItem) {
+    if (item.type !== 'comment') return;
+
+    this.openCommentComposerIds.update((ids) => {
+      const next = new Set(ids);
+      if (next.has(item.$id)) {
+        next.delete(item.$id);
+      } else {
+        next.add(item.$id);
+      }
+      return next;
+    });
   }
 
   async toggleCommentThread(item: DashboardFeedItem) {
@@ -327,7 +355,6 @@ export class DashboardPage implements OnDestroy {
         ...threads,
         [item.$id]: inlineThread,
       }));
-      this.setFeedCommentReplyCount(item.$id, inlineThread.totalReplies);
       return inlineThread;
     } catch (error) {
       console.error(error);
@@ -361,7 +388,7 @@ export class DashboardPage implements OnDestroy {
     const profile = this.authStore.profile();
     const gameId = this.commentGameId(item);
     if (!profile || !gameId) {
-      this.setCommentThreadError(
+      this.setCommentReplyError(
         item.$id,
         profile
           ? 'Não foi possível identificar o jogo deste comentário.'
@@ -370,11 +397,7 @@ export class DashboardPage implements OnDestroy {
       return;
     }
 
-    const thread =
-      this.commentThread(item.$id) ?? (await this.loadCommentThread(item));
-    if (!thread) return;
-
-    const previousThread = thread;
+    const previousThread = this.commentThread(item.$id);
     const previousReplyCount = this.commentReplyCount(item);
     const optimisticId = `optimistic-${item.$id}-${Date.now()}`;
     const optimisticReply: InlineThreadComment = {
@@ -394,15 +417,17 @@ export class DashboardPage implements OnDestroy {
       ...drafts,
       [item.$id]: '',
     }));
-    this.clearCommentThreadError(item.$id);
-    this.commentThreads.update((threads) => ({
-      ...threads,
-      [item.$id]: {
-        ...thread,
-        replies: [...thread.replies, optimisticReply],
-        totalReplies: thread.totalReplies + 1,
-      },
-    }));
+    this.clearCommentReplyError(item.$id);
+    if (previousThread && !this.isReplyFeedItem(item)) {
+      this.commentThreads.update((threads) => ({
+        ...threads,
+        [item.$id]: {
+          ...previousThread,
+          replies: [...previousThread.replies, optimisticReply],
+          totalReplies: previousThread.totalReplies + 1,
+        },
+      }));
+    }
     this.setFeedCommentReplyCount(item.$id, previousReplyCount + 1);
 
     try {
@@ -428,19 +453,26 @@ export class DashboardPage implements OnDestroy {
           },
         };
       });
+      this.openCommentComposerIds.update((ids) => {
+        const next = new Set(ids);
+        next.delete(item.$id);
+        return next;
+      });
     } catch (error) {
       console.error(error);
       if (this.commentReplyRequestIds.get(item.$id) !== requestId) return;
-      this.commentThreads.update((threads) => ({
-        ...threads,
-        [item.$id]: previousThread,
-      }));
+      if (previousThread && !this.isReplyFeedItem(item)) {
+        this.commentThreads.update((threads) => ({
+          ...threads,
+          [item.$id]: previousThread,
+        }));
+      }
       this.setFeedCommentReplyCount(item.$id, previousReplyCount);
       this.commentReplyDrafts.update((drafts) => ({
         ...drafts,
         [item.$id]: content,
       }));
-      this.setCommentThreadError(
+      this.setCommentReplyError(
         item.$id,
         'Não foi possível enviar sua resposta.',
       );
@@ -616,6 +648,10 @@ export class DashboardPage implements OnDestroy {
     return item.gameId ?? item.game?.$id ?? null;
   }
 
+  private isReplyFeedItem(item: DashboardFeedItem) {
+    return !!item.parentComment && item.parentComment.$id !== item.$id;
+  }
+
   private toInlineCommentThread(thread: CommentThread): InlineCommentThread {
     return {
       parent: thread.parent,
@@ -650,13 +686,31 @@ export class DashboardPage implements OnDestroy {
     });
   }
 
+  private setCommentReplyError(commentId: string, message: string) {
+    this.commentReplyErrors.update((errors) => ({
+      ...errors,
+      [commentId]: message,
+    }));
+  }
+
+  private clearCommentReplyError(commentId: string) {
+    this.commentReplyErrors.update((errors) => {
+      if (!(commentId in errors)) return errors;
+      const next = { ...errors };
+      delete next[commentId];
+      return next;
+    });
+  }
+
   private resetInlineCommentState() {
     this.commentThreadRequestIds.clear();
     this.commentReplyRequestIds.clear();
     this.expandedCommentThreadIds.set(new Set());
+    this.openCommentComposerIds.set(new Set());
     this.loadingCommentThreadIds.set(new Set());
     this.commentThreads.set({});
     this.commentThreadErrors.set({});
+    this.commentReplyErrors.set({});
     this.commentReplyDrafts.set({});
     this.submittingCommentReplyIds.set(new Set());
   }

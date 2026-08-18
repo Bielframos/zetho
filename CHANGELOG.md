@@ -6,6 +6,20 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.21.1] - 2026-08-18
+
+### Changed
+
+- Reviews da comunidade agora usam divisórias mais largas, deixando a separação entre publicações mais evidente.
+- O destaque de comentários passa a usar uma cor neutra e um pulso lento, sem caixa azul ou bordas arredondadas.
+- No dashboard, o botão de comentário abre somente o campo de resposta, enquanto o conteúdo principal revela as demais respostas da conversa sem repetir o que já está visível.
+- O preview de listas públicas vazias agora ocupa toda a área reservada às capas e comunica o estado vazio com o padrão visual das listas do app.
+
+### Fixed
+
+- Responder a um comentário no dashboard deixa de recarregar a thread antes de exibir o campo de resposta.
+- A contagem de respostas do comentário não é mais sobrescrita pela quantidade de itens carregados no contexto da conversa.
+
 ## [1.21.0] - 2026-08-18
 
 ### Added
