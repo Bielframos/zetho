@@ -52,6 +52,7 @@ const EDGE_CACHE_10_MIN = {
 
 export const serverRoutes: ServerRoute[] = [
   // Estáticas puras — sem chamada de API.
+  { path: 'institucional', renderMode: RenderMode.Prerender },
   { path: 'privacidade', renderMode: RenderMode.Prerender },
   { path: 'termos', renderMode: RenderMode.Prerender },
   { path: 'politica-editorial', renderMode: RenderMode.Prerender },

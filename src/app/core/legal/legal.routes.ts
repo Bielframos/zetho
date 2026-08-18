@@ -2,10 +2,16 @@ import { Routes } from '@angular/router';
 import { AboutPage } from './pages/about';
 import { ContactPage } from './pages/contact';
 import { EditorialPolicyPage } from './pages/editorial-policy';
+import { InstitutionalPage } from './pages/institutional';
 import { PrivacyPage } from './pages/privacy';
 import { TermsPage } from './pages/terms';
 
 export const LEGAL_ROUTES: Routes = [
+  {
+    path: 'institucional',
+    component: InstitutionalPage,
+    title: 'Zetho | Institucional',
+  },
   {
     path: 'privacidade',
     component: PrivacyPage,
