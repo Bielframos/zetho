@@ -18,12 +18,14 @@ export interface GameplayNotificationDto {
     | 'session_reminder'
     | 'session_update'
     | 'entry_comment'
+    | 'game_comment'
     | 'system';
   read: boolean;
   $createdAt: string;
   entityId?: string;
   participantId?: string;
   actionStatus?: string;
+  targetUrl?: string;
   senderProfile?: { avatarUrl?: string } | null;
 }
 

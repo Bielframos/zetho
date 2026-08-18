@@ -33,6 +33,8 @@ describe('InAppNotificationStore', () => {
     await store.loadNotifications();
     expect(store.notifications()[0].read).toBeTrue();
     expect(store.notifications()[0].status).toBe('pending');
+    expect(store.notifications()[0].sessionId).toBe('session-1');
+    expect(store.notifications()[0].targetUrl).toBeUndefined();
 
     await store.acceptSessionInvite('notification-1');
     expect(repository.respondToInvitation).toHaveBeenCalledOnceWith(
@@ -101,5 +103,40 @@ describe('InAppNotificationStore', () => {
     expect(store.notifications()[0].type).toBe('entry_comment');
     expect(store.notifications()[0].entityId).toBe('entry-1');
     expect(store.notifications()[0].sessionId).toBeUndefined();
+  });
+
+  it('preserves a game comment target without treating the comment as a session', async () => {
+    const repository = {
+      getNotifications: jasmine.createSpy().and.resolveTo([
+        {
+          $id: 'notification-3',
+          title: 'Nova resposta',
+          body: 'Responderam ao seu comentário',
+          type: 'game_comment',
+          read: false,
+          $createdAt: new Date().toISOString(),
+          entityId: 'comment-1',
+          targetUrl: '/jogo/game-name?commentId=comment-1',
+        },
+      ]),
+    };
+    TestBed.configureTestingModule({
+      providers: [
+        InAppNotificationStore,
+        { provide: GameplaySessionsRepository, useValue: repository },
+      ],
+    });
+    const store = TestBed.inject(InAppNotificationStore);
+
+    await store.loadNotifications();
+
+    expect(store.notifications()[0]).toEqual(
+      jasmine.objectContaining({
+        type: 'game_comment',
+        entityId: 'comment-1',
+        targetUrl: '/jogo/game-name?commentId=comment-1',
+        sessionId: undefined,
+      }),
+    );
   });
 });
