@@ -32,6 +32,20 @@ export const routes: Routes = [
   ...GAMEPLAY_SESSIONS_ROUTES,
   ...GAME_ROUTES,
   ...NEWS_ROUTES,
+  {
+    path: 'reviews',
+    loadComponent: () =>
+      import('./core/ratings/pages/reviews-feed/reviews-feed').then(
+        (m) => m.ReviewsFeedPage,
+      ),
+  },
+  {
+    path: 'listas',
+    loadComponent: () =>
+      import('./core/lists/pages/public-lists/public-lists').then(
+        (m) => m.PublicListsPage,
+      ),
+  },
   ...(environment.features.raffles ? RAFFLES_ROUTES : []),
   ...SEARCH_ROUTES,
   ...OFFLINE_ROUTES,

@@ -6,6 +6,27 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.21.0] - 2026-08-18
+
+### Added
+
+- Novo feed público de críticas da comunidade em `/reviews`, com paginação infinita, estados de carregamento e recuperação de erros.
+- Nova descoberta de listas públicas em `/listas`, exibindo autor, capas dos jogos adicionados e totais de curtidas e salvamentos.
+- Nova página de entrada institucional em `/institucional`, reunindo as políticas, informações sobre o projeto e canais de contato.
+- Comentários do feed agora podem ser expandidos e respondidos diretamente no card, preservando a conversa em contexto.
+- Links para comentários específicos passam a abrir a thread correta na página do jogo, com destaque temporário para o comentário alvo.
+
+### Changed
+
+- A navegação desktop e mobile ganhou atalhos para Críticas, Listas e a área Institucional.
+- Cards de comentários no feed deixam de exibir ações rápidas do jogo para priorizar as ações da própria conversa.
+- A central de notificações agora leva diretamente ao comentário relacionado quando uma resposta é recebida.
+
+### Fixed
+
+- Threads abertas por link carregam o comentário alvo mesmo quando ele não está na primeira página de resultados.
+- A paginação de comentários evita duplicatas depois do pré-carregamento de uma thread específica.
+
 ## [1.20.0] - 2026-08-13
 
 ### Added

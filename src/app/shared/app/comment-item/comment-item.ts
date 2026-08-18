@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { appwrite } from '../../../core/appwrite/appwrite.client';
 import { CommentsController } from '../../../core/comments/comments.controller';
@@ -17,6 +17,14 @@ export class AppCommentItem {
   comment = input.required<CommentRow>();
   replies = input<CommentRow[]>([]);
   isLoadingReplies = input(false);
+  highlightedCommentId = input<string | null>(null);
+
+  protected readonly commentElementId = computed(
+    () => `comment-${this.comment().$id}`,
+  );
+  protected readonly isHighlighted = computed(
+    () => this.highlightedCommentId() === this.comment().$id,
+  );
 
   get depth() {
     return this.comment().depth || 0;

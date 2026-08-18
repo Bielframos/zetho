@@ -52,6 +52,7 @@ const EDGE_CACHE_10_MIN = {
 
 export const serverRoutes: ServerRoute[] = [
   // Estáticas puras — sem chamada de API.
+  { path: 'institucional', renderMode: RenderMode.Prerender },
   { path: 'privacidade', renderMode: RenderMode.Prerender },
   { path: 'termos', renderMode: RenderMode.Prerender },
   { path: 'politica-editorial', renderMode: RenderMode.Prerender },
@@ -65,6 +66,8 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'jogo/:slug', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   { path: 'noticias', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   { path: 'noticias/:slug', renderMode: RenderMode.Server, headers: EDGE_CACHE_10_MIN },
+  { path: 'reviews', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
+  { path: 'listas', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   { path: 'player/:gamertag', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   {
     path: 'player/:gamertag/listas',

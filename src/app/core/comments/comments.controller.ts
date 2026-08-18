@@ -66,7 +66,9 @@ export class CommentsController {
         },
       );
 
-      this.rootComments.update((list) => [...list, ...result.rows]);
+      this.rootComments.update((list) =>
+        this.mergeComments(list, result.rows),
+      );
       this.total.set(result.total);
     } finally {
       this.loading.set(false);
@@ -101,7 +103,7 @@ export class CommentsController {
         return {
           ...map,
           [parentId]: {
-            comments: [...prev, ...result.rows],
+            comments: this.mergeComments(prev, result.rows),
             pagination: {
               total: result.total,
               offset,
@@ -113,6 +115,52 @@ export class CommentsController {
     } finally {
       this.loadingReplies.update((m) => ({ ...m, [parentId]: false }));
     }
+  }
+
+  async preloadCommentThread(commentId: string): Promise<CommentRow | null> {
+    const gameId = this.gameStore.currentGame()?.$id;
+    if (!gameId) return null;
+
+    const thread = await this.commentService.getCommentThread(
+      gameId,
+      commentId,
+    );
+
+    if (!thread || this.gameStore.currentGame()?.$id !== gameId) return null;
+
+    this.rootComments.update((comments) =>
+      this.mergeComments([thread.parent], comments),
+    );
+
+    this.childComments.update((map) => {
+      const current = map[thread.parent.$id];
+      const replies = thread.target.parentId
+        ? this.mergeComments(thread.replies, [thread.target])
+        : thread.replies;
+      const loadedOffset = Math.max(
+        current?.pagination?.offset ?? 0,
+        thread.replies.length,
+      );
+      const total = Math.max(
+        current?.pagination?.total ?? 0,
+        thread.totalReplies,
+      );
+
+      return {
+        ...map,
+        [thread.parent.$id]: {
+          comments: this.mergeComments(replies, current?.comments ?? []),
+          pagination: {
+            total,
+            offset: loadedOffset,
+            hasMore: loadedOffset < total,
+          },
+          hidden: false,
+        },
+      };
+    });
+
+    return thread.target;
   }
 
   toggleHiddenReplies(parentId: string, hidden = true) {
@@ -234,6 +282,15 @@ export class CommentsController {
   /* =======================
      Helpers de estado local
      ======================= */
+
+  private mergeComments(current: CommentRow[], incoming: CommentRow[]) {
+    const ids = new Set(current.map((comment) => comment.$id));
+
+    return [
+      ...current,
+      ...incoming.filter((comment) => !ids.has(comment.$id)),
+    ];
+  }
 
   private findLocalComment(
     commentId: string,

@@ -1,0 +1,152 @@
+<section class="w-full max-w-5xl mx-auto">
+  <header class="border-b border-gray-6 px-4 py-4">
+    <div class="flex items-center gap-3">
+      <span
+        class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6 text-blue-11"
+        aria-hidden="true"
+      >
+        <i class="ph ph-list-dashes"></i>
+      </span>
+      <div>
+        <h1 class="text-2xl text-gray-12">Listas da comunidade</h1>
+        <p class="text-sm text-gray-11">
+          Descubra coleções criadas por outros jogadores.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  @if (loading()) {
+  <div
+    class="grid grid-cols-1 divide-y divide-gray-6 sm:grid-cols-2 sm:divide-y-0"
+    aria-label="Carregando listas públicas"
+  >
+    @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+    <div class="flex flex-col gap-4 border-gray-6 p-4 sm:border-b">
+      <ui-skeleton [height]="180"></ui-skeleton>
+      <ui-skeleton [height]="20" [width]="70"></ui-skeleton>
+      <ui-skeleton [height]="16" [width]="45"></ui-skeleton>
+    </div>
+    }
+  </div>
+  } @else if (error() && lists().length === 0) {
+  <div class="flex flex-col items-center gap-3 px-4 py-12 text-center">
+    <i
+      class="ph ph-warning-circle text-3xl text-gray-10"
+      aria-hidden="true"
+    ></i>
+    <p class="text-gray-11">{{ error() }}</p>
+    <button type="button" class="ui-secondary-btn" (click)="retry()">
+      Tentar novamente
+    </button>
+  </div>
+  } @else if (lists().length === 0) {
+  <div class="flex flex-col items-center gap-2 px-4 py-12 text-center">
+    <i class="ph ph-list-dashes text-3xl text-gray-10" aria-hidden="true"></i>
+    <p class="text-gray-11">Ainda não há listas públicas para descobrir.</p>
+  </div>
+  } @else {
+  <ul
+    class="grid grid-cols-1 divide-y divide-gray-6 sm:grid-cols-2 sm:divide-y-0"
+    aria-label="Listas públicas"
+  >
+    @for (list of lists(); track list.$id) {
+    <li class="border-gray-6 sm:border-b">
+      <a
+        [routerLink]="
+              list.author
+                ? ['/player', list.author.gamertag, 'listas', list.slug]
+                : null
+            "
+        class="group flex h-full flex-col gap-4 p-4 transition-colors hover:bg-gray-3"
+        [attr.aria-disabled]="list.author ? null : true"
+      >
+        <div class="flex h-44 items-end overflow-hidden bg-gray-2">
+          <div class="flex w-full items-end justify-center -space-x-10 px-8">
+            @for (cover of coversFor(list); track cover.gameCoverUrl) {
+            <img
+              [src]="cover.gameCoverUrl"
+              [alt]="'Capa de ' + cover.gameName"
+              class="aspect-3/4 h-40 w-auto border border-gray-6 object-cover drop-shadow-lg transition-transform group-hover:-translate-y-1"
+            />
+            } @empty {
+            <div
+              class="background-pattern flex h-40 w-28 items-center justify-center border border-dashed border-gray-6 text-gray-10"
+            >
+              <i class="ph ph-game-controller text-3xl" aria-hidden="true"></i>
+              <span class="sr-only">Lista sem capas</span>
+            </div>
+            }
+          </div>
+        </div>
+
+        <div class="min-w-0">
+          <h2 class="truncate text-lg text-gray-12 group-hover:underline">
+            {{ list.title }}
+          </h2>
+          <p class="truncate text-sm text-gray-11">
+            por {{ list.author?.gamertag ?? list.ownerFingerprint }}
+          </p>
+        </div>
+
+        <div class="mt-auto flex items-center gap-4 text-sm text-gray-11">
+          <span
+            class="flex items-center gap-1"
+            [attr.title]="list.itemCount + ' jogos'"
+          >
+            <i class="ph-fill ph-game-controller" aria-hidden="true"></i>
+            {{ list.itemCount }}
+          </span>
+          <span
+            class="flex items-center gap-1"
+            [class.text-blue-11]="list.likedByMe"
+            [attr.title]="list.likeCount + ' curtidas'"
+          >
+            <i
+              [class]="list.likedByMe ? 'ph-fill ph-heart' : 'ph ph-heart'"
+              aria-hidden="true"
+            ></i>
+            {{ list.likeCount }}
+          </span>
+          <span
+            class="flex items-center gap-1"
+            [class.text-blue-11]="list.savedByMe"
+            [attr.title]="list.saveCount + ' salvamentos'"
+          >
+            <i
+              [class]="
+                    list.savedByMe
+                      ? 'ph-fill ph-bookmark-simple'
+                      : 'ph ph-bookmark-simple'
+                  "
+              aria-hidden="true"
+            ></i>
+            {{ list.saveCount }}
+          </span>
+        </div>
+      </a>
+    </li>
+    }
+  </ul>
+
+  <div #sentinel class="min-h-1" aria-hidden="true"></div>
+
+  @if (loadingMore()) {
+  <ui-loading
+    fallback="Carregando mais listas"
+    size="sm"
+    variant="subtle"
+  ></ui-loading>
+  } @else if (error()) {
+  <div class="flex items-center justify-center gap-3 px-4 py-4">
+    <span class="text-sm text-gray-11">{{ error() }}</span>
+    <button type="button" class="ui-secondary-btn" (click)="retry()">
+      Tentar novamente
+    </button>
+  </div>
+  } @else if (!hasMore()) {
+  <p class="px-4 py-4 text-center text-sm text-gray-10">
+    Todas as {{ total() }} listas foram carregadas.
+  </p>
+  } }
+</section>

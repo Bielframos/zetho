@@ -13,6 +13,7 @@ export interface InAppNotification {
     | 'session_reminder'
     | 'session_update'
     | 'entry_comment'
+    | 'game_comment'
     | 'system';
   read: boolean;
   createdAt: string;
@@ -21,6 +22,7 @@ export interface InAppNotification {
   sessionId?: string;
   participantId?: string;
   actionStatus?: string;
+  targetUrl?: string;
   status?: 'pending' | 'accepted' | 'declined' | 'cancelled';
 }
 
@@ -48,10 +50,14 @@ export class InAppNotificationStore {
           createdAt: n.$createdAt
             ? this.formatRelativeTime(n.$createdAt)
             : 'Agora',
-          sessionId: n.type === 'entry_comment' ? undefined : n.entityId,
+          sessionId:
+            n.type === 'entry_comment' || n.type === 'game_comment'
+              ? undefined
+              : n.entityId,
           entityId: n.entityId,
           participantId: n.participantId,
           actionStatus: n.actionStatus,
+          targetUrl: n.targetUrl,
           avatarUrl: n.senderProfile?.avatarUrl,
           status:
             n.type !== 'session_invite'

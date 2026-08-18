@@ -67,6 +67,30 @@ export interface TrendingListItem {
   author?: ProfileSummary | null;
 }
 
+export interface PublicListItem {
+  $id: string;
+  ownerFingerprint: string;
+  title: string;
+  slug: string;
+  description?: string;
+  itemCount: number;
+  likeCount: number;
+  saveCount: number;
+  latestAdditions: string[];
+  likedByMe: boolean;
+  savedByMe: boolean;
+  author: ProfileSummary | null;
+}
+
+export interface PublicListsPage {
+  items: PublicListItem[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasMore: boolean;
+}
+
 export interface SuggestedConnection {
   $id: string;
   gamertag: string;
@@ -189,6 +213,25 @@ export class DashboardService {
 
     if (!response.ok) {
       throw new Error(`Failed to fetch trending lists: ${response.statusText}`);
+    }
+
+    return await response.json();
+  }
+
+  async getPublicLists(
+    page: number = 1,
+    pageSize: number = 12,
+  ): Promise<PublicListsPage> {
+    const url = new URL('lists/public', environment.zethoApiEndpoint);
+    url.searchParams.set('page', page.toString());
+    url.searchParams.set('pageSize', pageSize.toString());
+
+    const response = await fetch(url.toString(), {
+      headers: await this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch public lists: ${response.statusText}`);
     }
 
     return await response.json();
