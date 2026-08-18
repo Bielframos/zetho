@@ -1,0 +1,168 @@
+<main class="mx-auto w-full max-w-2xl">
+  <header class="border-b border-gray-6 px-4 py-4">
+    <div class="flex items-center gap-3">
+      <span
+        class="flex h-11 w-11 items-center justify-center border border-gray-6"
+        aria-hidden="true"
+      >
+        <i class="ph ph-star text-xl text-blue-11"></i>
+      </span>
+      <div>
+        <h1 class="text-2xl text-gray-12">Reviews da comunidade</h1>
+        <p class="text-sm text-gray-11">
+          Descubra o que a comunidade está jogando e recomendando.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="flex flex-col divide-y divide-gray-6" aria-live="polite">
+      @for (item of [1, 2, 3]; track item) {
+        <article class="flex flex-col gap-3 p-4">
+          <div class="flex items-center gap-3">
+            <div class="h-8 w-8 overflow-hidden rounded-full">
+              <ui-skeleton [height]="32"></ui-skeleton>
+            </div>
+            <div class="flex flex-1 flex-col gap-2">
+              <ui-skeleton [height]="14" [width]="30"></ui-skeleton>
+              <ui-skeleton [height]="10" [width]="20"></ui-skeleton>
+            </div>
+          </div>
+          <ui-skeleton [height]="18" [width]="65"></ui-skeleton>
+          <ui-skeleton [height]="12"></ui-skeleton>
+          <ui-skeleton [height]="12" [width]="75"></ui-skeleton>
+        </article>
+      }
+    </div>
+  } @else if (error()) {
+    <section
+      class="m-4 border border-red-900/60 bg-red-950/20 px-4 py-8 text-center"
+      role="alert"
+    >
+      <i class="ph ph-warning-circle text-2xl text-red-300" aria-hidden="true"></i>
+      <p class="mt-2 text-gray-11">Não foi possível carregar as reviews.</p>
+      <button type="button" class="ui-secondary-btn mt-4" (click)="retry()">
+        Tentar novamente
+      </button>
+    </section>
+  } @else if (reviews().length === 0) {
+    <section class="px-4 py-12 text-center text-gray-11">
+      <i class="ph ph-chat-centered-dots text-3xl text-gray-9" aria-hidden="true"></i>
+      <p class="mt-2">Nenhuma review publicada ainda.</p>
+    </section>
+  } @else {
+    <section
+      class="flex flex-col divide-y divide-gray-6"
+      aria-label="Reviews da comunidade"
+    >
+      @for (review of reviews(); track review.$id) {
+        <article class="flex flex-col gap-3 p-4">
+          <header class="flex items-center gap-3">
+            @if (review.author?.avatarUrl) {
+              <img
+                [src]="review.author?.avatarUrl"
+                [alt]="'Avatar de ' + review.author?.gamertag"
+                class="h-8 w-8 rounded-full object-cover"
+              />
+            } @else {
+              <span
+                class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-9 text-xs font-bold text-white"
+                aria-hidden="true"
+              >
+                {{ authorInitial(review) }}
+              </span>
+            }
+
+            <div class="flex min-w-0 flex-col">
+              @if (review.author) {
+                <a
+                  [routerLink]="['/player', review.author.gamertag]"
+                  class="truncate text-sm font-medium text-gray-12 hover:underline"
+                >
+                  {{ review.author.gamertag }}
+                </a>
+              } @else {
+                <span class="text-sm font-medium text-gray-12">Jogador</span>
+              }
+              <time class="text-xs text-gray-10" [attr.datetime]="review.$createdAt">
+                {{ review.$createdAt | relativeTime }}
+              </time>
+            </div>
+
+            <div
+              class="ml-auto flex shrink-0 items-center gap-1 text-amber-300"
+              [attr.aria-label]="'Nota ' + review.rating + ' de 5'"
+            >
+              <i class="ph-fill ph-star" aria-hidden="true"></i>
+              <span class="ml-1 font-bold tabular-nums text-gray-12">
+                {{ review.rating.toFixed(1) }}
+              </span>
+            </div>
+          </header>
+
+          @if (review.title) {
+            <h2 class="text-lg font-medium text-gray-12">{{ review.title }}</h2>
+          }
+          @if (review.content) {
+            <div
+              class="prose prose-invert prose-sm prose-gray max-w-none text-gray-11 prose-p:font-light"
+              [innerHTML]="review.content"
+            ></div>
+          }
+
+          @if (review.game) {
+            <a
+              [routerLink]="['/jogo', review.game.slug]"
+              class="group flex items-center gap-3 border-t border-gray-6 pt-3"
+            >
+              @if (review.game.coverUrl) {
+                <img
+                  [src]="review.game.coverUrl"
+                  [alt]="'Capa de ' + review.game.name"
+                  class="h-16 w-11 rounded bg-gray-4 object-cover"
+                />
+              } @else {
+                <span
+                  class="flex h-16 w-11 items-center justify-center rounded border border-dashed border-gray-6 bg-gray-2"
+                  aria-hidden="true"
+                >
+                  <i class="ph ph-game-controller text-gray-9"></i>
+                </span>
+              }
+              <span class="min-w-0">
+                <span class="block text-xs text-gray-10">Review de</span>
+                <span
+                  class="block truncate text-sm font-medium text-gray-12 group-hover:underline"
+                >
+                  {{ review.game.name }}
+                </span>
+              </span>
+            </a>
+          }
+        </article>
+      }
+    </section>
+
+    <div
+      uiInfiniteScroll
+      rootMargin="600px"
+      [disabled]="loadingMore() || loadMoreError() || !hasMore()"
+      (scrolled)="loadMore()"
+      class="flex min-h-16 items-center justify-center px-4"
+      aria-live="polite"
+    >
+      @if (loadingMore()) {
+        <ui-loading [inline]="true" size="sm" fallback="Carregando mais reviews"></ui-loading>
+      } @else if (loadMoreError()) {
+        <button
+          type="button"
+          class="ui-secondary-btn my-4"
+          (click)="retryLoadMore()"
+        >
+          Tentar carregar mais
+        </button>
+      }
+    </div>
+  }
+</main>
