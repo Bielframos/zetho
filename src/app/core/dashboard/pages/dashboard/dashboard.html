@@ -181,12 +181,29 @@
             [innerHTML]="item.parentComment.content"
           ></div>
         </div>
-        } @if (item.content) {
+        } @if (item.content) { @if (item.type === 'comment' && item.game) {
+        <a
+          [routerLink]="['/jogo', item.game.slug]"
+          [queryParams]="{ commentId: item.$id }"
+          class="block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-6"
+          [attr.aria-label]="
+            'Abrir comentário de ' +
+            (item.userProfile?.gamertag || 'Jogador') +
+            ' no jogo ' +
+            item.game.name
+          "
+        >
+          <div
+            class="prose prose-invert prose-sm prose-gray max-w-none prose-p:font-light line-clamp-3"
+            [innerHTML]="item.content"
+          ></div>
+        </a>
+        } @else {
         <div
           class="prose prose-invert prose-sm prose-gray max-w-none prose-p:font-light line-clamp-3"
           [innerHTML]="item.content"
         ></div>
-        }
+        } }
 
         <!-- Barra de votos: à direita das ações do jogo (mesma linha) quando
              há preview; solta no rodapé quando o item não tem jogo. -->
