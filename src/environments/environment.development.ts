@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  appVersion: '1.20.0',
+  appVersion: '1.21.0',
   appUrl: 'http://localhost:4200/',
   features: {
     raffles: false,
