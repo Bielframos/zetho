@@ -48,7 +48,7 @@ export interface FeedGame {
         class="flex w-full min-w-0 items-center justify-between gap-1 text-sm"
       >
         <div class="flex min-w-0 items-center gap-1 text-gray-11">
-          @if (isAuthed()) {
+          @if (showActions() && isAuthed()) {
             <button
               type="button"
               class="ui-ghost-btn"
@@ -153,6 +153,7 @@ export class UiFeedGame {
   listController = inject(ListsController);
 
   game = input.required<FeedGame>();
+  showActions = input(true);
 
   isAuthed = computed(() => this.authStore.isAuthenticated());
   libraryDone = signal(false);
