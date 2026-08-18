@@ -26,6 +26,26 @@ import {
 import { ConnectionsService } from '../../../connections/connections.service';
 import { NotificationStore } from '../../../notifications/notification.store';
 import { appwrite } from '../../../appwrite/appwrite.client';
+import {
+  CommentService,
+  CommentThread,
+} from '../../../comments/comments.service';
+import { CommentRow } from '../../../../types';
+
+type InlineThreadComment = Pick<
+  CommentRow,
+  '$id' | '$createdAt' | 'content' | 'userProfile' | 'parentId' | 'replyCount'
+> & {
+  optimistic?: boolean;
+};
+
+type InlineCommentThread = {
+  parent: InlineThreadComment;
+  replies: InlineThreadComment[];
+  totalReplies: number;
+};
+
+type CommentFeedItem = DashboardFeedItem & { replyCount?: number };
 
 const STATUS_LABELS: Record<FeedGameStatus, string> = {
   completed: 'zerou',
@@ -61,6 +81,7 @@ export class DashboardPage implements OnDestroy {
   dashboardService = inject(DashboardService);
   private connectionsService = inject(ConnectionsService);
   private notification = inject(NotificationStore);
+  private commentService = inject(CommentService);
 
   feed = signal<DashboardFeedItem[]>([]);
   activeFeedScope = signal<FeedScope>('connections');
@@ -71,6 +92,12 @@ export class DashboardPage implements OnDestroy {
   updatingCommentVoteIds = signal<Set<string>>(new Set());
   updatingEntryLikeIds = signal<Set<string>>(new Set());
   selectedEntry = signal<DashboardFeedItem | null>(null);
+  expandedCommentThreadIds = signal<Set<string>>(new Set());
+  loadingCommentThreadIds = signal<Set<string>>(new Set());
+  commentThreads = signal<Record<string, InlineCommentThread>>({});
+  commentThreadErrors = signal<Record<string, string>>({});
+  commentReplyDrafts = signal<Record<string, string>>({});
+  submittingCommentReplyIds = signal<Set<string>>(new Set());
 
   suggestedConnections = signal<SuggestedConnection[]>([]);
   loadingSuggestions = signal(false);
@@ -80,6 +107,10 @@ export class DashboardPage implements OnDestroy {
   private sentinel = viewChild<ElementRef<HTMLElement>>('sentinel');
   private observer?: IntersectionObserver;
   private feedRequestId = 0;
+  private nextCommentThreadRequestId = 0;
+  private commentThreadRequestIds = new Map<string, number>();
+  private nextCommentReplyRequestId = 0;
+  private commentReplyRequestIds = new Map<string, number>();
 
   get profile() {
     return this.authStore.profile();
@@ -94,6 +125,8 @@ export class DashboardPage implements OnDestroy {
 
   ngOnDestroy() {
     this.observer?.disconnect();
+    this.commentThreadRequestIds.clear();
+    this.commentReplyRequestIds.clear();
   }
 
   private setupInfiniteScroll() {
@@ -144,6 +177,7 @@ export class DashboardPage implements OnDestroy {
     this.hasMoreFeed.set(false);
     this.feedPage.set(1);
     this.selectedEntry.set(null);
+    this.resetInlineCommentState();
     void this.loadFeed();
   }
 
@@ -195,6 +229,231 @@ export class DashboardPage implements OnDestroy {
     return gamertag && list.slug
       ? ['/player', gamertag, 'listas', list.slug]
       : null;
+  }
+
+  isCommentThreadExpanded(commentId: string) {
+    return this.expandedCommentThreadIds().has(commentId);
+  }
+
+  isCommentThreadLoading(commentId: string) {
+    return this.loadingCommentThreadIds().has(commentId);
+  }
+
+  isCommentReplySubmitting(commentId: string) {
+    return this.submittingCommentReplyIds().has(commentId);
+  }
+
+  commentThread(commentId: string) {
+    return this.commentThreads()[commentId] ?? null;
+  }
+
+  commentThreadError(commentId: string) {
+    return this.commentThreadErrors()[commentId] ?? '';
+  }
+
+  commentReplyDraft(commentId: string) {
+    return this.commentReplyDrafts()[commentId] ?? '';
+  }
+
+  commentReplyCount(item: DashboardFeedItem) {
+    return (
+      this.commentThread(item.$id)?.totalReplies ??
+      (item as CommentFeedItem).replyCount ??
+      0
+    );
+  }
+
+  setCommentReplyDraft(commentId: string, value: string) {
+    this.commentReplyDrafts.update((drafts) => ({
+      ...drafts,
+      [commentId]: value,
+    }));
+    this.clearCommentThreadError(commentId);
+  }
+
+  async toggleCommentThread(item: DashboardFeedItem) {
+    if (item.type !== 'comment') return;
+
+    if (this.isCommentThreadExpanded(item.$id)) {
+      this.expandedCommentThreadIds.update((ids) => {
+        const next = new Set(ids);
+        next.delete(item.$id);
+        return next;
+      });
+      return;
+    }
+
+    this.expandedCommentThreadIds.update((ids) => new Set(ids).add(item.$id));
+    if (!this.commentThread(item.$id)) {
+      await this.loadCommentThread(item);
+    }
+  }
+
+  async loadCommentThread(item: DashboardFeedItem) {
+    if (item.type !== 'comment' || this.isCommentThreadLoading(item.$id)) {
+      return this.commentThread(item.$id);
+    }
+
+    const gameId = this.commentGameId(item);
+    if (!gameId) {
+      this.setCommentThreadError(
+        item.$id,
+        'Não foi possível identificar o jogo deste comentário.',
+      );
+      return null;
+    }
+
+    const requestId = ++this.nextCommentThreadRequestId;
+    this.commentThreadRequestIds.set(item.$id, requestId);
+    this.loadingCommentThreadIds.update((ids) => new Set(ids).add(item.$id));
+    this.clearCommentThreadError(item.$id);
+
+    try {
+      const thread = await this.commentService.getCommentThread(
+        gameId,
+        item.$id,
+      );
+      if (this.commentThreadRequestIds.get(item.$id) !== requestId) return null;
+      if (!thread) {
+        this.setCommentThreadError(
+          item.$id,
+          'Não foi possível carregar esta conversa.',
+        );
+        return null;
+      }
+
+      const inlineThread = this.toInlineCommentThread(thread);
+      this.commentThreads.update((threads) => ({
+        ...threads,
+        [item.$id]: inlineThread,
+      }));
+      this.setFeedCommentReplyCount(item.$id, inlineThread.totalReplies);
+      return inlineThread;
+    } catch (error) {
+      console.error(error);
+      if (this.commentThreadRequestIds.get(item.$id) === requestId) {
+        this.setCommentThreadError(
+          item.$id,
+          'Não foi possível carregar esta conversa.',
+        );
+      }
+      return null;
+    } finally {
+      if (this.commentThreadRequestIds.get(item.$id) === requestId) {
+        this.commentThreadRequestIds.delete(item.$id);
+        this.loadingCommentThreadIds.update((ids) => {
+          const next = new Set(ids);
+          next.delete(item.$id);
+          return next;
+        });
+      }
+    }
+  }
+
+  async submitCommentReply(item: DashboardFeedItem) {
+    if (item.type !== 'comment' || this.isCommentReplySubmitting(item.$id)) {
+      return;
+    }
+
+    const content = this.commentReplyDraft(item.$id).trim();
+    if (!content) return;
+
+    const profile = this.authStore.profile();
+    const gameId = this.commentGameId(item);
+    if (!profile || !gameId) {
+      this.setCommentThreadError(
+        item.$id,
+        profile
+          ? 'Não foi possível identificar o jogo deste comentário.'
+          : 'Entre na sua conta para responder.',
+      );
+      return;
+    }
+
+    const thread =
+      this.commentThread(item.$id) ?? (await this.loadCommentThread(item));
+    if (!thread) return;
+
+    const previousThread = thread;
+    const previousReplyCount = this.commentReplyCount(item);
+    const optimisticId = `optimistic-${item.$id}-${Date.now()}`;
+    const optimisticReply: InlineThreadComment = {
+      $id: optimisticId,
+      $createdAt: new Date().toISOString(),
+      content,
+      userProfile: profile,
+      parentId: item.$id,
+      replyCount: 0,
+      optimistic: true,
+    };
+    const requestId = ++this.nextCommentReplyRequestId;
+    this.commentReplyRequestIds.set(item.$id, requestId);
+
+    this.submittingCommentReplyIds.update((ids) => new Set(ids).add(item.$id));
+    this.commentReplyDrafts.update((drafts) => ({
+      ...drafts,
+      [item.$id]: '',
+    }));
+    this.clearCommentThreadError(item.$id);
+    this.commentThreads.update((threads) => ({
+      ...threads,
+      [item.$id]: {
+        ...thread,
+        replies: [...thread.replies, optimisticReply],
+        totalReplies: thread.totalReplies + 1,
+      },
+    }));
+    this.setFeedCommentReplyCount(item.$id, previousReplyCount + 1);
+
+    try {
+      const created = await this.commentService.createComment({
+        gameId,
+        userProfileId: profile.$id,
+        content,
+        parentId: item.$id,
+        depth:
+          item.parentComment && item.parentComment.$id !== item.$id ? 2 : 1,
+      });
+      if (this.commentReplyRequestIds.get(item.$id) !== requestId) return;
+      this.commentThreads.update((threads) => {
+        const current = threads[item.$id];
+        if (!current) return threads;
+        return {
+          ...threads,
+          [item.$id]: {
+            ...current,
+            replies: current.replies.map((reply) =>
+              reply.$id === optimisticId ? created : reply,
+            ),
+          },
+        };
+      });
+    } catch (error) {
+      console.error(error);
+      if (this.commentReplyRequestIds.get(item.$id) !== requestId) return;
+      this.commentThreads.update((threads) => ({
+        ...threads,
+        [item.$id]: previousThread,
+      }));
+      this.setFeedCommentReplyCount(item.$id, previousReplyCount);
+      this.commentReplyDrafts.update((drafts) => ({
+        ...drafts,
+        [item.$id]: content,
+      }));
+      this.setCommentThreadError(
+        item.$id,
+        'Não foi possível enviar sua resposta.',
+      );
+    } finally {
+      if (this.commentReplyRequestIds.get(item.$id) === requestId) {
+        this.commentReplyRequestIds.delete(item.$id);
+        this.submittingCommentReplyIds.update((ids) => {
+          const next = new Set(ids);
+          next.delete(item.$id);
+          return next;
+        });
+      }
+    }
   }
 
   async voteFeedComment(commentId: string, operation: 'up' | 'down') {
@@ -351,6 +610,55 @@ export class DashboardPage implements OnDestroy {
     );
     const selected = this.feed().find((item) => item.$id === entryId) ?? null;
     this.selectedEntry.set(selected);
+  }
+
+  private commentGameId(item: DashboardFeedItem) {
+    return item.gameId ?? item.game?.$id ?? null;
+  }
+
+  private toInlineCommentThread(thread: CommentThread): InlineCommentThread {
+    return {
+      parent: thread.parent,
+      replies: thread.replies,
+      totalReplies: thread.totalReplies,
+    };
+  }
+
+  private setFeedCommentReplyCount(commentId: string, replyCount: number) {
+    this.feed.update((items) =>
+      items.map((item) =>
+        item.type === 'comment' && item.$id === commentId
+          ? { ...item, replyCount: Math.max(0, replyCount) }
+          : item,
+      ),
+    );
+  }
+
+  private setCommentThreadError(commentId: string, message: string) {
+    this.commentThreadErrors.update((errors) => ({
+      ...errors,
+      [commentId]: message,
+    }));
+  }
+
+  private clearCommentThreadError(commentId: string) {
+    this.commentThreadErrors.update((errors) => {
+      if (!(commentId in errors)) return errors;
+      const next = { ...errors };
+      delete next[commentId];
+      return next;
+    });
+  }
+
+  private resetInlineCommentState() {
+    this.commentThreadRequestIds.clear();
+    this.commentReplyRequestIds.clear();
+    this.expandedCommentThreadIds.set(new Set());
+    this.loadingCommentThreadIds.set(new Set());
+    this.commentThreads.set({});
+    this.commentThreadErrors.set({});
+    this.commentReplyDrafts.set({});
+    this.submittingCommentReplyIds.set(new Set());
   }
 
   // ------------------------------------------------------------------
