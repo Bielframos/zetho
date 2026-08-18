@@ -1,4 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import {
+  Component,
+  DestroyRef,
+  PLATFORM_ID,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AppCommentItem } from '../../../../../shared/app/comment-item/comment-item';
 import { UiLoading } from '../../../../../shared/ui/loading';
@@ -50,6 +58,7 @@ import { CommentsController } from '../../../../comments/comments.controller';
             [comment]="comment"
             [replies]="controller.childComments()[comment.$id]?.comments || []"
             [isLoadingReplies]="controller.loadingReplies()[comment.$id]"
+            [highlightedCommentId]="highlightedCommentId()"
             (loadReplies)="controller.loadReplies(comment.$id)"
             (reply)="controller.addComment($event, comment.$id, 1)"
           />
@@ -70,9 +79,17 @@ import { CommentsController } from '../../../../comments/comments.controller';
   `,
 })
 export class UiGameLobby {
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly document = inject(DOCUMENT);
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private focusRequestId = 0;
+  private scrollFrameId: number | null = null;
+  private highlightTimer: ReturnType<typeof setTimeout> | null = null;
+
   controller = inject(CommentsController);
 
   isLoading = signal(false);
+  highlightedCommentId = signal<string | null>(null);
   comment = new FormControl('', {
     nonNullable: true,
     validators: [Validators.minLength(3), Validators.maxLength(350)],
@@ -81,9 +98,52 @@ export class UiGameLobby {
   result = signal<{ error?: boolean; message?: string }>({});
 
   constructor() {
-    this.comment.valueChanges.subscribe((value) =>
-      this.charsCount.set(value.length),
-    );
+    this.comment.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => this.charsCount.set(value.length));
+
+    this.destroyRef.onDestroy(() => {
+      this.focusRequestId += 1;
+      this.clearScheduledHighlight();
+    });
+  }
+
+  async focusComment(commentId: string) {
+    if (!this.isBrowser) return;
+
+    const requestId = ++this.focusRequestId;
+    this.clearScheduledHighlight();
+    this.highlightedCommentId.set(null);
+
+    const target = await this.controller.preloadCommentThread(commentId);
+    if (!target || requestId !== this.focusRequestId) return;
+
+    this.highlightedCommentId.set(target.$id);
+
+    const browserWindow = this.document.defaultView;
+    if (!browserWindow) return;
+
+    this.scrollFrameId = browserWindow.requestAnimationFrame(() => {
+      this.scrollFrameId = null;
+      if (requestId !== this.focusRequestId) return;
+
+      this.document
+        .getElementById(`comment-${target.$id}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      this.highlightTimer = setTimeout(() => {
+        if (requestId === this.focusRequestId) {
+          this.highlightedCommentId.set(null);
+        }
+        this.highlightTimer = null;
+      }, 4000);
+    });
+  }
+
+  clearCommentFocus() {
+    this.focusRequestId += 1;
+    this.clearScheduledHighlight();
+    this.highlightedCommentId.set(null);
   }
 
   async createComment() {
@@ -100,5 +160,18 @@ export class UiGameLobby {
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  private clearScheduledHighlight() {
+    const browserWindow = this.document.defaultView;
+    if (this.scrollFrameId !== null && browserWindow) {
+      browserWindow.cancelAnimationFrame(this.scrollFrameId);
+    }
+    this.scrollFrameId = null;
+
+    if (this.highlightTimer !== null) {
+      clearTimeout(this.highlightTimer);
+    }
+    this.highlightTimer = null;
   }
 }

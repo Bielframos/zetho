@@ -68,6 +68,7 @@ export class GamePage {
   myRating = signal<number | null>(null);
 
   shareModal = viewChild<UiShareModal>('shareModal');
+  gameLobby = viewChild(UiGameLobby);
 
   shareData = computed<ShareCardData | null>(() => {
     const game = this.controller.game();
@@ -143,6 +144,10 @@ export class GamePage {
     this.route.paramMap.pipe(map((params) => params.get('slug'))),
     { initialValue: null },
   );
+  commentId = toSignal(
+    this.route.queryParamMap.pipe(map((params) => params.get('commentId'))),
+    { initialValue: null },
+  );
 
   /* ---------------------------------------------------------
    * CICLO DE VIDA VIA SIGNAL EFFECTS
@@ -163,6 +168,28 @@ export class GamePage {
 
       untracked(() => {
         void this.controller.loadPage(slug);
+      });
+    });
+
+    effect(() => {
+      const commentId = this.commentId();
+      const lobby = this.gameLobby();
+      if (!commentId) {
+        untracked(() => lobby?.clearCommentFocus());
+        return;
+      }
+
+      this.openTab('lobby');
+
+      const slug = this.slug();
+      const game = this.controller.game();
+      if (!slug || game?.slug !== slug || !lobby) {
+        untracked(() => lobby?.clearCommentFocus());
+        return;
+      }
+
+      untracked(() => {
+        void lobby.focusComment(commentId);
       });
     });
 
