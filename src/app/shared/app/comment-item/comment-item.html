@@ -1,9 +1,7 @@
 <div
-  class="comment scroll-mt-24 rounded-lg transition-[background-color,box-shadow] duration-500"
+  class="comment scroll-mt-24 transition-colors duration-500"
   [id]="commentElementId()"
-  [class.bg-blue-3]="isHighlighted()"
-  [class.ring-1]="isHighlighted()"
-  [class.ring-blue-6]="isHighlighted()"
+  [class.comment-highlight]="isHighlighted()"
 >
   <a
     class="flex gap-2 items-center"

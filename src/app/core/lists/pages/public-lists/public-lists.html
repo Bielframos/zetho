@@ -61,24 +61,29 @@
         class="group flex h-full flex-col gap-4 p-4 transition-colors hover:bg-gray-3"
         [attr.aria-disabled]="list.author ? null : true"
       >
+        @if (coversFor(list); as covers) { @if (covers.length > 0) {
         <div class="flex h-44 items-end overflow-hidden bg-gray-2">
           <div class="flex w-full items-end justify-center -space-x-10 px-8">
-            @for (cover of coversFor(list); track cover.gameCoverUrl) {
+            @for (cover of covers; track cover.gameCoverUrl) {
             <img
               [src]="cover.gameCoverUrl"
               [alt]="'Capa de ' + cover.gameName"
               class="aspect-3/4 h-40 w-auto border border-gray-6 object-cover drop-shadow-lg transition-transform group-hover:-translate-y-1"
             />
-            } @empty {
-            <div
-              class="background-pattern flex h-40 w-28 items-center justify-center border border-dashed border-gray-6 text-gray-10"
-            >
-              <i class="ph ph-game-controller text-3xl" aria-hidden="true"></i>
-              <span class="sr-only">Lista sem capas</span>
-            </div>
             }
           </div>
         </div>
+        } @else {
+        <div
+          class="background-pattern flex h-44 items-center justify-center border border-dashed border-gray-6 text-gray-10 transition-colors group-hover:border-gray-7 group-hover:text-gray-11"
+          aria-label="Lista vazia"
+        >
+          <span class="flex flex-col items-center gap-2">
+            <i class="ph ph-list-plus text-3xl" aria-hidden="true"></i>
+            <span class="text-xs">Nenhum jogo adicionado</span>
+          </span>
+        </div>
+        } }
 
         <div class="min-w-0">
           <h2 class="truncate text-lg text-gray-12 group-hover:underline">

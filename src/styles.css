@@ -157,11 +157,31 @@
   }
 }
 
+.comment-highlight {
+  animation: comment-highlight-pulse 3s ease-in-out infinite;
+}
+
+@keyframes comment-highlight-pulse {
+  0%,
+  100% {
+    background-color: var(--color-gray-4);
+  }
+
+  50% {
+    background-color: var(--color-gray-2);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(route-scope),
   ::view-transition-old(route-scope),
   ::view-transition-new(route-scope) {
     animation: none !important;
+  }
+
+  .comment-highlight {
+    animation: none;
+    background-color: var(--color-gray-3);
   }
 }
 
