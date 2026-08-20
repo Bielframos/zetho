@@ -288,18 +288,27 @@ export class DashboardPage implements OnDestroy {
     this.clearCommentReplyError(commentId);
   }
 
-  toggleCommentComposer(item: DashboardFeedItem) {
+  async toggleCommentComposer(item: DashboardFeedItem) {
     if (item.type !== 'comment') return;
+
+    const willOpen = !this.openCommentComposerIds().has(item.$id);
 
     this.openCommentComposerIds.update((ids) => {
       const next = new Set(ids);
-      if (next.has(item.$id)) {
-        next.delete(item.$id);
-      } else {
+      if (willOpen) {
         next.add(item.$id);
+      } else {
+        next.delete(item.$id);
       }
       return next;
     });
+
+    if (willOpen) {
+      this.expandedCommentThreadIds.update((ids) => new Set(ids).add(item.$id));
+      if (!this.commentThread(item.$id)) {
+        await this.loadCommentThread(item);
+      }
+    }
   }
 
   async toggleCommentThread(item: DashboardFeedItem) {
