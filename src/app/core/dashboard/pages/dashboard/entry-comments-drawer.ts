@@ -84,28 +84,28 @@ type CommentPage = {
         </button>
       </header>
 
-      @if (isCommentMode()) {
+      @if (isCommentMode() && commentThreadParent(); as parentComment) {
       <div class="border-b border-gray-6 p-4">
         <div class="flex items-start gap-2">
           <img
-            [src]="feedItemAvatar()"
+            [src]="avatar(toEntryComment(parentComment))"
             alt=""
             class="h-8 w-8 shrink-0 rounded-full bg-gray-3 object-cover"
           />
           <div class="min-w-0 flex-1">
             <div class="flex items-center gap-2 text-xs">
               <a
-                [routerLink]="['/player', item().userProfile?.gamertag]"
+                [routerLink]="['/player', parentComment.userProfile.gamertag]"
                 class="font-medium text-gray-12 hover:underline"
-                >{{ item().userProfile?.gamertag || 'Jogador' }}</a
+                >{{ parentComment.userProfile.gamertag || 'Jogador' }}</a
               >
               <span class="text-gray-10">{{
-                item().$createdAt | relativeTime
+                parentComment.$createdAt | relativeTime
               }}</span>
             </div>
             <div
               class="mt-1 whitespace-pre-wrap break-words text-sm font-light text-gray-11 prose prose-invert prose-sm prose-gray max-w-none prose-p:my-0"
-              [innerHTML]="item().content"
+              [innerHTML]="parentComment.content"
             ></div>
           </div>
         </div>
@@ -378,6 +378,7 @@ export class EntryCommentsDrawer implements OnInit, OnDestroy {
   // Comment mode state
   commentThreadLoading = signal(false);
   private commentThread = signal<CommentThread | null>(null);
+  commentThreadParent = computed(() => this.commentThread()?.parent ?? null);
   commentThreadReplies = computed<CommentRow[]>(() => {
     const thread = this.commentThread();
     if (!thread) return [];
@@ -431,14 +432,17 @@ export class EntryCommentsDrawer implements OnInit, OnDestroy {
     const profile = this.authStore.profile();
     if (!gameId || !profile) return;
 
+    const parent = this.commentThread()?.parent;
+    const parentId = parent?.$id ?? feedItem.parentComment?.$id ?? feedItem.$id;
+
     this.submitting.set(true);
     try {
       const created = await this.commentService.createComment({
         gameId,
         userProfileId: profile.$id,
         content,
-        parentId: feedItem.$id,
-        depth: feedItem.parentComment && feedItem.parentComment.$id !== feedItem.$id ? 2 : 1,
+        parentId,
+        depth: (parent?.depth ?? 0) + 1,
       });
       // Add reply to thread
       const current = this.commentThread();
