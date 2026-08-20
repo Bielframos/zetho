@@ -36,6 +36,16 @@ import {
     >
       <div ngMenu class="menu" #formatMenu="ngMenu">
         <ng-template ngMenuContent>
+          @if (item().game.coverUrl) {
+            <div
+              ngMenuItem
+              value="Definir como capa"
+              (click)="controller.setCoverImage(item().game.coverUrl)"
+            >
+              <i class="ph ph-image" aria-hidden="true"> </i>
+              <span class="label">Definir como capa</span>
+            </div>
+          }
           <div
             ngMenuItem
             value="Remover da lista"

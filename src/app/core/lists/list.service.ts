@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import slugify from 'slugify';
-import { Query } from '../appwrite/appwrite.client';
+import { Query } from '../../shared/infra/appwrite/appwrite.client';
 import { GameRow, ZereiListItemRow, ZereiListRow } from '../../types';
 import { between } from '../../utils/lexorank';
 import { ListsRepository } from './lists.repository';
@@ -74,6 +74,7 @@ export class ListService {
       slug,
       itemCount: 0,
       latestAdditions: [],
+      coverImageUrls: [],
     });
   }
 
@@ -82,11 +83,19 @@ export class ListService {
     title?: string;
     description?: string;
     isPublic?: boolean;
+    latestAdditions?: string[];
+    coverImageUrls?: string[];
+    itemCount?: number;
+    lastOrderKey?: string;
   }) {
     return this.repository.updateList(params.listId, {
       title: params.title,
       description: params.description,
       isPublic: params.isPublic,
+      latestAdditions: params.latestAdditions,
+      coverImageUrls: params.coverImageUrls,
+      itemCount: params.itemCount,
+      lastOrderKey: params.lastOrderKey,
     });
   }
 
@@ -128,24 +137,55 @@ export class ListService {
       orderKey: newItem.orderKey,
       gameId: game.$id,
       gameName: game.name,
-      gameCoverUrl: game.coverUrl,
+      gameCoverUrl: game.coverUrl ?? '',
     });
+
+    const newCount = (list.itemCount ?? 0) + 1;
 
     /**
      * 4. Persiste estado agregado
      */
-    const [updatedList] = await Promise.all([
-      this.repository.updateList(list.$id, {
-        latestAdditions,
-        lastOrderKey: newOrderKey,
-      }),
-      this.repository.incrementItemCount(list.$id, 1),
-    ]);
+    const updatedList = await this.repository.updateList(list.$id, {
+      latestAdditions,
+      lastOrderKey: newOrderKey,
+      itemCount: newCount,
+    });
 
     return { updatedList, newItem };
   }
 
-  async removeItem(listId: string, itemId: string) {
+  async removeItem(
+    listId: string,
+    itemId: string,
+    gameId?: string,
+    currentLatestAdditions?: string[],
+  ) {
+    let latestAdditions: string[] | undefined;
+
+    if (gameId && currentLatestAdditions?.length) {
+      const filtered = currentLatestAdditions.filter((raw) => {
+        try {
+          const parsed = JSON.parse(raw) as LastAdditionItem;
+          return parsed.gameId !== gameId;
+        } catch {
+          return true;
+        }
+      });
+      if (filtered.length !== currentLatestAdditions.length) {
+        latestAdditions = filtered;
+      }
+    }
+
+    if (latestAdditions !== undefined) {
+      const [_, updatedList] = await Promise.all([
+        this.repository.deleteItem(itemId),
+        this.repository.updateList(listId, { latestAdditions }),
+        this.repository.incrementItemCount(listId, -1),
+      ]);
+
+      return updatedList;
+    }
+
     const [_, updatedList] = await Promise.all([
       this.repository.deleteItem(itemId),
       this.repository.incrementItemCount(listId, -1),
@@ -198,15 +238,25 @@ export class ListService {
     current: string[] | undefined,
     newItem: LastAdditionItem,
   ): string[] {
-    const parsed: LastAdditionItem[] = (current ?? []).map((item) =>
-      JSON.parse(item),
-    );
+    const parsed: LastAdditionItem[] = [];
+
+    if (current && Array.isArray(current)) {
+      for (const raw of current) {
+        try {
+          const item = JSON.parse(raw) as LastAdditionItem;
+          if (item && item.gameId && item.gameId !== newItem.gameId) {
+            parsed.push(item);
+          }
+        } catch {
+          // Ignite corrupt entries
+        }
+      }
+    }
 
     parsed.unshift(newItem);
 
     return parsed
       .slice(0, 3)
-      .reverse()
       .map((item) => JSON.stringify(item));
   }
 }

@@ -1,14 +1,14 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { AppwriteException, Models } from 'appwrite';
 import { AuthService } from './auth.service';
-import { appwrite } from '../appwrite/appwrite.client';
+import { appwrite } from '../../shared/infra/appwrite/appwrite.client';
 import { UserProfileService } from '../userProfiles/userProfile.service';
 import { UserProfileRow } from '../../types';
 import type {
   InviteBonusResponse,
   InviteCodeResponse,
 } from '../userProfiles/userProfile.types';
-import { NotificationStore } from '../notifications/notification.store';
+import { NotificationStore } from '../system/notifications/notification.store';
 import { ProfileTheme } from '../themes/themes.types';
 import { safeSessionStorage } from '../../utils/platform-storage';
 

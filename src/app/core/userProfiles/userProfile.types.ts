@@ -1,4 +1,4 @@
-import { StoredList, StoredRow } from '../appwrite/appwrite.types';
+import { StoredList, StoredRow } from '../../shared/infra/appwrite/appwrite.types';
 import { ConnectionRow } from '../connections/connections.types';
 
 type UserProfile = {

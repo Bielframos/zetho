@@ -9,7 +9,7 @@ import { UiLoading } from '../../../../shared/ui/loading';
 import { UiProfileCard } from '../../../../shared/ui/profile-card';
 import { GameRow } from '../../../games/game.types';
 import { GenresCacheService } from '../../../games/genres-cache.service';
-import { SeoService } from '../../../seo/seo.service';
+import { SeoService } from '../../../system/seo/seo.service';
 import { ZStatsService } from '../../../zStats/zStats.service';
 import { SearchController } from '../../search.controller';
 import { AuthStore } from '../../../auth/auth.store';

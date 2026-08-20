@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { appwrite, Query } from '../appwrite/appwrite.client';
+import { appwrite, Query } from '../../shared/infra/appwrite/appwrite.client';
 import { UserProfile, UserProfileRow } from '../../types';
 import { normalize } from '../search/search.helpers';
 

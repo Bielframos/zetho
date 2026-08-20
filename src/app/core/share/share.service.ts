@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { toBlob } from 'html-to-image';
-import { appwrite } from '../appwrite/appwrite.client';
+import { appwrite } from '../../shared/infra/appwrite/appwrite.client';
 
 /**
  * Gera imagens instagramáveis (cards de compartilhamento) renderizando um nó

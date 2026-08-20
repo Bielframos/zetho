@@ -18,8 +18,8 @@ import {
   EntryComment,
 } from '../../dashboard.service';
 import { AuthStore } from '../../../auth/auth.store';
-import { appwrite } from '../../../appwrite/appwrite.client';
-import { NotificationStore } from '../../../notifications/notification.store';
+import { appwrite } from '../../../../shared/infra/appwrite/appwrite.client';
+import { NotificationStore } from '../../../system/notifications/notification.store';
 import { RelativeTimePipe } from '../../../../utils/pipes';
 import { UiLoading } from '../../../../shared/ui/loading';
 

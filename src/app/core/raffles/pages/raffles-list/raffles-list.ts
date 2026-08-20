@@ -1,11 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '../../../auth/auth.store';
-import { NotificationStore } from '../../../notifications/notification.store';
+import { NotificationStore } from '../../../system/notifications/notification.store';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { RafflesService } from '../../raffles.service';
 import { RaffleItem, RaffleMyKey } from '../../raffle.types';
-import { SeoService } from '../../../seo/seo.service';
+import { SeoService } from '../../../system/seo/seo.service';
 
 @Component({
   selector: 'app-raffles-list-page',

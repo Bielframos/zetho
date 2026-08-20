@@ -51,21 +51,29 @@ export class PublicListsPage implements OnDestroy {
   }
 
   coversFor(list: PublicListItem): PublicListCover[] {
+    if (list.coverImageUrls && list.coverImageUrls.length > 0) {
+      return list.coverImageUrls.slice(0, 3).map((url) => ({
+        gameName: list.title ?? '',
+        gameCoverUrl: url,
+      }));
+    }
     return list.latestAdditions
-      .map((item) => {
-        try {
-          const cover = JSON.parse(item) as Partial<PublicListCover>;
-          return typeof cover.gameName === 'string' &&
-            typeof cover.gameCoverUrl === 'string' &&
-            cover.gameCoverUrl
-            ? (cover as PublicListCover)
-            : null;
-        } catch {
-          return null;
-        }
-      })
-      .filter((cover): cover is PublicListCover => cover !== null)
-      .slice(0, 3);
+      ? list.latestAdditions
+          .map((item) => {
+            try {
+              const cover = JSON.parse(item) as Partial<PublicListCover>;
+              return typeof cover.gameName === 'string' &&
+                typeof cover.gameCoverUrl === 'string' &&
+                cover.gameCoverUrl
+                ? (cover as PublicListCover)
+                : null;
+            } catch {
+              return null;
+            }
+          })
+          .filter((cover): cover is PublicListCover => cover !== null)
+          .slice(0, 3)
+      : [];
   }
 
   async retry() {

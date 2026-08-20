@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { GameplaySessionsRepository } from '../gameplay-sessions/gameplay-sessions.repository';
+import { GameplaySessionsRepository } from '../../gameplay-sessions/gameplay-sessions.repository';
 
 export interface InAppNotification {
   $id?: string;

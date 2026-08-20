@@ -1,4 +1,4 @@
-import { StoredList, StoredRow } from '../appwrite/appwrite.types';
+import { StoredList, StoredRow } from '../../shared/infra/appwrite/appwrite.types';
 
 type ZereiList = {
   ownerFingerprint: string;
@@ -9,6 +9,7 @@ type ZereiList = {
   itemCount?: number;
   likeCount?: number;
   saveCount?: number;
+  coverImageUrls?: string[];
   latestAdditions?: string[];
   lastOrderKey?: string;
 };

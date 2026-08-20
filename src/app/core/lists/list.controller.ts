@@ -188,7 +188,12 @@ export class ListController {
       const list = this.list();
       if (!list) return;
 
-      const updatedList = await this.listService.removeItem(list.$id, item.$id);
+      const updatedList = await this.listService.removeItem(
+        list.$id,
+        item.$id,
+        item.game?.$id,
+        list.latestAdditions,
+      );
 
       this.items.update((state) => state.filter((i) => i.$id !== item.$id));
 
@@ -221,6 +226,33 @@ export class ListController {
       const updatedList = await this.listService.updateList({
         listId: list.$id,
         ...params,
+      });
+
+      this.list.set(updatedList);
+    } catch (e) {
+      const error = e as AppwriteException;
+      console.error(e);
+
+      this.error.set({
+        message: error.message,
+        code: error.code,
+        type: error.type,
+      });
+    }
+  }
+
+  async setCoverImage(gameCoverUrl?: string) {
+    try {
+      const list = this.list();
+      if (!list || !gameCoverUrl) return;
+
+      const current = list.coverImageUrls ? [...list.coverImageUrls] : [];
+      const coverImageUrls = current.filter((url) => url !== gameCoverUrl);
+      coverImageUrls.push(gameCoverUrl);
+
+      const updatedList = await this.listService.updateList({
+        listId: list.$id,
+        coverImageUrls: coverImageUrls.slice(-3),
       });
 
       this.list.set(updatedList);

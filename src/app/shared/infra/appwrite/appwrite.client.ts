@@ -7,7 +7,7 @@ import {
   Teams,
   Storage,
 } from 'appwrite';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 
 const client = new Client()
   .setEndpoint(environment.appwriteEndpoint)

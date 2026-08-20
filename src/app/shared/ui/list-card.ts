@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ShortNumberPipe } from '../../utils/pipes';
 import { ParsedZereiListRow } from '../../core/lists/lists.controller';
@@ -13,10 +13,10 @@ import { ParsedZereiListRow } from '../../core/lists/lists.controller';
         class="flex flex-row items-end gap-6 px-4 hover:bg-gray-3 transition-colors"
       >
         <div class="flex -space-x-14">
-          @for (lastAddition of list().parsedLatestAdditions; track $index) {
+          @for (cover of covers(); track $index) {
             <img
-              [src]="lastAddition.gameCoverUrl"
-              [alt]="lastAddition.gameName + ' cover'"
+              [src]="cover.url"
+              [alt]="cover.alt"
               class="w-24 h-auto drop-shadow-lg"
             />
           } @empty {
@@ -50,4 +50,18 @@ import { ParsedZereiListRow } from '../../core/lists/lists.controller';
 export class UiListCard {
   ownerGamertag = input.required<string>();
   list = input.required<ParsedZereiListRow>();
+
+  covers = computed(() => {
+    const list = this.list();
+    if (list.coverImageUrls && list.coverImageUrls.length > 0) {
+      return list.coverImageUrls.map((url) => ({
+        url,
+        alt: `${list.title} cover`,
+      }));
+    }
+    return (list.parsedLatestAdditions ?? []).map((item) => ({
+      url: item.gameCoverUrl,
+      alt: `${item.gameName} cover`,
+    }));
+  });
 }

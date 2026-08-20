@@ -1,7 +1,7 @@
 import { computed, effect, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import type { ProfileWithConnection, UserProfileRow } from '../../types';
-import { appwrite } from '../appwrite/appwrite.client';
+import { appwrite } from '../../shared/infra/appwrite/appwrite.client';
 import { AuthStore } from '../auth/auth.store';
 import { ConnectionsService } from '../connections/connections.service';
 import type { ConnectionRow } from '../connections/connections.types';

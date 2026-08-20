@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { AuthStore } from '../../../auth/auth.store';
 import { ZEntryService } from '../../../zEntries/zEntries.service';
 import { ListsController } from '../../../lists/lists.controller';
-import { NotificationStore } from '../../../notifications/notification.store';
+import { NotificationStore } from '../../../system/notifications/notification.store';
 import { UiModal } from '../../../../shared/ui/modal/modal';
 import { ZereiListRow } from '../../../lists/lists.type';
 

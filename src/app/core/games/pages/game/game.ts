@@ -11,7 +11,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { AuthStore } from '../../../auth/auth.store';
-import { SeoService } from '../../../seo/seo.service';
+import { SeoService } from '../../../system/seo/seo.service';
 import { GameController } from '../../game.controller';
 import { UiGameActions } from './modules/game-actions';
 import { UiGameHeader } from './modules/game-header';

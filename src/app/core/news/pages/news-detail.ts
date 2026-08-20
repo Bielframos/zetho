@@ -10,7 +10,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UiLoading } from '../../../shared/ui/loading';
-import { SeoService } from '../../seo/seo.service';
+import { SeoService } from '../../system/seo/seo.service';
 import { NewsService } from '../news.service';
 import type { NewsDetail } from '../news.types';
 import { createSsrTaskRunner } from '../../../utils/ssr-task';

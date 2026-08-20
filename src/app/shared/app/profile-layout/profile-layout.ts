@@ -5,9 +5,9 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 import { ProfileStore } from '../../../core/userProfiles/profile.store';
 import { ZEntriesController } from '../../../core/zEntries/zEntries.controller';
 import { ProfileLayoutStore } from './profile-layout.store';
-import { NotificationStore } from '../../../core/notifications/notification.store';
+import { NotificationStore } from '../../../core/system/notifications/notification.store';
 import { UserProfileRow } from '../../../types';
-import { SeoService } from '../../../core/seo/seo.service';
+import { SeoService } from '../../../core/system/seo/seo.service';
 import { AuthStore } from '../../../core/auth/auth.store';
 import { getThemeMediaUrl } from '../../../core/themes/theme-media';
 

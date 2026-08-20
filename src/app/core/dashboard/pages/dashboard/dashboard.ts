@@ -24,8 +24,8 @@ import {
   SuggestedConnection,
 } from '../../dashboard.service';
 import { ConnectionsService } from '../../../connections/connections.service';
-import { NotificationStore } from '../../../notifications/notification.store';
-import { appwrite } from '../../../appwrite/appwrite.client';
+import { NotificationStore } from '../../../system/notifications/notification.store';
+import { appwrite } from '../../../../shared/infra/appwrite/appwrite.client';
 import {
   CommentService,
   CommentThread,
@@ -213,7 +213,10 @@ export class DashboardPage implements OnDestroy {
     }
   }
 
-  latestCovers(list: { latestAdditions?: string[] }) {
+  latestCovers(list: { title?: string; coverImageUrls?: string[]; latestAdditions?: string[] }) {
+    if (list.coverImageUrls && list.coverImageUrls.length > 0) {
+      return list.coverImageUrls.slice(0, 3).map((url) => ({ gameCoverUrl: url, gameName: list.title ?? '' }));
+    }
     return (list.latestAdditions ?? [])
       .map((item) => {
         try {
@@ -222,7 +225,7 @@ export class DashboardPage implements OnDestroy {
           return null;
         }
       })
-      .filter(Boolean)
+      .filter((item): item is { gameName: string; gameCoverUrl: string } => item !== null)
       .slice(0, 3);
   }
 
@@ -285,18 +288,27 @@ export class DashboardPage implements OnDestroy {
     this.clearCommentReplyError(commentId);
   }
 
-  toggleCommentComposer(item: DashboardFeedItem) {
+  async toggleCommentComposer(item: DashboardFeedItem) {
     if (item.type !== 'comment') return;
+
+    const willOpen = !this.openCommentComposerIds().has(item.$id);
 
     this.openCommentComposerIds.update((ids) => {
       const next = new Set(ids);
-      if (next.has(item.$id)) {
-        next.delete(item.$id);
-      } else {
+      if (willOpen) {
         next.add(item.$id);
+      } else {
+        next.delete(item.$id);
       }
       return next;
     });
+
+    if (willOpen) {
+      this.expandedCommentThreadIds.update((ids) => new Set(ids).add(item.$id));
+      if (!this.commentThread(item.$id)) {
+        await this.loadCommentThread(item);
+      }
+    }
   }
 
   async toggleCommentThread(item: DashboardFeedItem) {

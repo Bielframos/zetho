@@ -1,6 +1,6 @@
 
 import { environment } from '../../../environments/environment';
-import { appwrite } from '../appwrite/appwrite.client';
+import { appwrite } from '../../shared/infra/appwrite/appwrite.client';
 
 export function getThemeMediaUrl(imageId: string) {
   return appwrite.storage.getFilePreview({

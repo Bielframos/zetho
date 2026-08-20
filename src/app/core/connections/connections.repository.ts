@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserProfileRow } from '../../types';
-import { appwrite, Query } from '../appwrite/appwrite.client';
+import { appwrite, Query } from '../../shared/infra/appwrite/appwrite.client';
 import { ConnectionRow } from './connections.types';
 
 const DATABASE_ID = 'app';

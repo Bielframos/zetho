@@ -41,6 +41,7 @@ export interface DashboardFeedItem {
   likedByMe?: boolean;
   saveCount?: number;
   itemCount?: number;
+  coverImageUrls?: string[];
   latestAdditions?: string[];
   status?: FeedGameStatus;
   list?: { $id: string; title: string; slug: string } | null;
@@ -76,6 +77,7 @@ export interface PublicListItem {
   itemCount: number;
   likeCount: number;
   saveCount: number;
+  coverImageUrls?: string[];
   latestAdditions: string[];
   likedByMe: boolean;
   savedByMe: boolean;

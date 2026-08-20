@@ -11,7 +11,7 @@ import { UiInput } from '../../../../shared/ui/input/input';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { AuthStore } from '../../auth.store';
 import { UserProfileService } from '../../../userProfiles/userProfile.service';
-import { appwrite } from '../../../appwrite/appwrite.client';
+import { appwrite } from '../../../../shared/infra/appwrite/appwrite.client';
 import { environment } from '../../../../../environments/environment';
 
 interface InviterPreview {
