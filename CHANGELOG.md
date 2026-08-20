@@ -6,6 +6,16 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.21.2] - 2026-08-20
+
+### Changed
+
+* O campo de resposta a comentários no feed agora conta com uma separação visual mais clara.
+
+### Fixed
+
+* Ao responder a um comentário que já possui respostas, a conversa existente agora é carregada e exibida automaticamente.
+
 ## [1.21.1] - 2026-08-18
 
 ### Changed
