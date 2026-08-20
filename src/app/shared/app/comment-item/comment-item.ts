@@ -1,7 +1,7 @@
 import { NgClass } from '@angular/common';
 import { Component, computed, inject, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { appwrite } from '../../../core/appwrite/appwrite.client';
+import { appwrite } from '../../infra/appwrite/appwrite.client';
 import { CommentsController } from '../../../core/comments/comments.controller';
 import { CommentRow, UserProfileRow } from '../../../types';
 import { RouterLink } from '@angular/router';

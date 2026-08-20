@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProfileWithConnection, UserProfileRow } from '../../types';
-import { appwrite } from '../../core/appwrite/appwrite.client';
+import { appwrite } from '../infra/appwrite/appwrite.client';
 
 @Component({
   selector: 'ui-profile-card',

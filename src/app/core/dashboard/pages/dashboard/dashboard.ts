@@ -25,7 +25,7 @@ import {
 } from '../../dashboard.service';
 import { ConnectionsService } from '../../../connections/connections.service';
 import { NotificationStore } from '../../../notifications/notification.store';
-import { appwrite } from '../../../appwrite/appwrite.client';
+import { appwrite } from '../../../../shared/infra/appwrite/appwrite.client';
 import {
   CommentService,
   CommentThread,

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { appwrite } from '../appwrite/appwrite.client';
+import { appwrite } from '../../shared/infra/appwrite/appwrite.client';
 import { UserProfileRow } from '../userProfiles/userProfile.types';
 import { UserProfileService } from '../userProfiles/userProfile.service';
 import type {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { appwrite, Query } from '../appwrite/appwrite.client';
+import { appwrite, Query } from '../../shared/infra/appwrite/appwrite.client';
 import { GameRow } from './game.types';
-import { StoredRow } from '../appwrite/appwrite.types';
+import { StoredRow } from '../../shared/infra/appwrite/appwrite.types';
 
 const DATABASE_ID = 'app';
 const GAMES_TABLE_ID = 'games';

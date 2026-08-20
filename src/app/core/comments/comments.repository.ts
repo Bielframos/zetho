@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { appwrite, Query } from '../appwrite/appwrite.client';
+import { appwrite, Query } from '../../shared/infra/appwrite/appwrite.client';
 import { CommentRow } from './comment.types';
 
 const TABLE_ID = 'game_comments';

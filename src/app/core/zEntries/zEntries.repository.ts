@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ZEntry, ZEntryRow } from './zEntries.types';
-import { appwrite, Query } from '../appwrite/appwrite.client';
+import { appwrite, Query } from '../../shared/infra/appwrite/appwrite.client';
 
 const Z_ENTRIES_TABLE_ID = 'z_entries';
 const Z_ENTRIES_READ_TABLE_ID = 'z_entries_read';
