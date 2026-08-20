@@ -33,6 +33,14 @@ import type { NewsSummary } from './news.types';
             @if (news().author?.name) {
               <span>por {{ news().author?.name }}</span>
             }
+            @if (news().author?.isAutomated) {
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-gray-3 px-1.5 py-0.5 text-[10px] text-gray-11"
+                title="Conteúdo gerado com apoio de IA"
+              >
+                <i class="ph ph-sparkle text-blue-11" aria-hidden="true"></i> IA
+              </span>
+            }
             @for (tag of news().tags.slice(0, 3); track tag) {
               <span class="text-blue-11">#{{ tag }}</span>
             }

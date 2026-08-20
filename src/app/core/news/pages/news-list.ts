@@ -29,24 +29,20 @@ import { createSsrTaskRunner } from '../../../utils/ssr-task';
           ></span>
           <div>
             <h1 class="text-2xl text-gray-12">Notícias</h1>
-            <p class="text-sm text-gray-11">
-              O que importa no mundo dos jogos.
-            </p>
+            <div class="flex flex-wrap items-center gap-2 text-sm text-gray-11">
+              <span>O que importa no mundo dos jogos.</span>
+              <span class="text-gray-10">·</span>
+              <a
+                routerLink="/politica-editorial"
+                class="inline-flex items-center gap-1 rounded-full border border-gray-6 bg-gray-2/80 px-2 py-0.5 text-[11px] text-gray-11 hover:border-gray-5 hover:text-gray-12 transition-colors"
+                title="Matérias produzidas com apoio de IA a partir de fontes públicas, sob responsabilidade editorial do Zetho."
+              >
+                <i class="ph ph-sparkle text-blue-11" aria-hidden="true"></i>
+                <span>Com apoio de IA</span>
+              </a>
+            </div>
           </div>
         </div>
-
-        <p
-          class="mt-4 flex flex-wrap items-center gap-1.5 rounded-md border border-gray-6 bg-gray-2 px-3 py-2 text-xs text-gray-11"
-        >
-          <i class="ph ph-robot" aria-hidden="true"></i>
-          <span>
-            Matérias produzidas com apoio de IA a partir de fontes públicas,
-            sob responsabilidade editorial do Zetho.
-          </span>
-          <a routerLink="/politica-editorial" class="text-blue-11 hover:underline"
-            >Política Editorial</a
-          >
-        </p>
       </header>
       @if (loading()) {
         <div class="divide-y divide-gray-6">

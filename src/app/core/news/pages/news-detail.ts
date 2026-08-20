@@ -49,29 +49,23 @@ import { createSsrTaskRunner } from '../../../utils/ssr-task';
                 {{ item.subtitle }}
               </p>
             }
-            <p class="mt-5 text-sm text-gray-10">
-              {{ formatDate(item.$createdAt) }}
+            <div class="mt-4 flex flex-wrap items-center gap-2 text-xs text-gray-10">
+              <span>{{ formatDate(item.$createdAt) }}</span>
               @if (item.author?.name) {
-                · por {{ item.author?.name }}
+                <span>· por {{ item.author?.name }}</span>
               }
-            </p>
-
-            @if (item.author?.isAutomated) {
-              <p
-                class="mt-3 flex flex-wrap items-center gap-1.5 rounded-md border border-gray-6 bg-gray-2 px-3 py-2 text-xs text-gray-11"
-              >
-                <i class="ph ph-robot" aria-hidden="true"></i>
-                <span>
-                  Texto produzido por assistente editorial de IA a partir de
-                  fontes públicas, sob responsabilidade editorial do Zetho.
-                </span>
+              @if (item.author?.isAutomated) {
+                <span>·</span>
                 <a
                   routerLink="/politica-editorial"
-                  class="text-blue-11 hover:underline"
-                  >Como fazemos</a
+                  class="inline-flex items-center gap-1 rounded-full border border-gray-6 bg-gray-2/80 px-2 py-0.5 text-[11px] text-gray-11 hover:border-gray-5 hover:text-gray-12 transition-colors"
+                  title="Texto produzido por assistente editorial de IA a partir de fontes públicas, sob responsabilidade editorial do Zetho."
                 >
-              </p>
-            }
+                  <i class="ph ph-sparkle text-blue-11" aria-hidden="true"></i>
+                  <span>Assistente IA</span>
+                </a>
+              }
+            </div>
           </header>
           <div
             class="prose prose-invert prose-sm max-w-none px-4 py-6 text-gray-11 prose-headings:text-gray-12 prose-a:text-blue-11 prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg"
