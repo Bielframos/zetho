@@ -10,7 +10,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "bump": "node scripts/bump-version.js"
   },
   "imports": {
     "#app.css": "./src/styles.css"
