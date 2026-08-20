@@ -188,7 +188,12 @@ export class ListController {
       const list = this.list();
       if (!list) return;
 
-      const updatedList = await this.listService.removeItem(list.$id, item.$id);
+      const updatedList = await this.listService.removeItem(
+        list.$id,
+        item.$id,
+        item.game?.$id,
+        list.latestAdditions,
+      );
 
       this.items.update((state) => state.filter((i) => i.$id !== item.$id));
 
