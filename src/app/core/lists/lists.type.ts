@@ -9,6 +9,7 @@ type ZereiList = {
   itemCount?: number;
   likeCount?: number;
   saveCount?: number;
+  coverImageUrls?: string[];
   latestAdditions?: string[];
   lastOrderKey?: string;
 };

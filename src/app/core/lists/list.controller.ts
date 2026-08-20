@@ -241,6 +241,33 @@ export class ListController {
     }
   }
 
+  async setCoverImage(gameCoverUrl?: string) {
+    try {
+      const list = this.list();
+      if (!list || !gameCoverUrl) return;
+
+      const current = list.coverImageUrls ? [...list.coverImageUrls] : [];
+      const coverImageUrls = current.filter((url) => url !== gameCoverUrl);
+      coverImageUrls.push(gameCoverUrl);
+
+      const updatedList = await this.listService.updateList({
+        listId: list.$id,
+        coverImageUrls: coverImageUrls.slice(-3),
+      });
+
+      this.list.set(updatedList);
+    } catch (e) {
+      const error = e as AppwriteException;
+      console.error(e);
+
+      this.error.set({
+        message: error.message,
+        code: error.code,
+        type: error.type,
+      });
+    }
+  }
+
   async deleteList() {
     try {
       const list = this.list();

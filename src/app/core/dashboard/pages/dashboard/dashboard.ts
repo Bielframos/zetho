@@ -213,7 +213,10 @@ export class DashboardPage implements OnDestroy {
     }
   }
 
-  latestCovers(list: { latestAdditions?: string[] }) {
+  latestCovers(list: { title?: string; coverImageUrls?: string[]; latestAdditions?: string[] }) {
+    if (list.coverImageUrls && list.coverImageUrls.length > 0) {
+      return list.coverImageUrls.slice(0, 3).map((url) => ({ gameCoverUrl: url, gameName: list.title ?? '' }));
+    }
     return (list.latestAdditions ?? [])
       .map((item) => {
         try {
@@ -222,7 +225,7 @@ export class DashboardPage implements OnDestroy {
           return null;
         }
       })
-      .filter(Boolean)
+      .filter((item): item is { gameName: string; gameCoverUrl: string } => item !== null)
       .slice(0, 3);
   }
 

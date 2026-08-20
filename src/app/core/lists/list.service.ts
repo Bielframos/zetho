@@ -74,6 +74,7 @@ export class ListService {
       slug,
       itemCount: 0,
       latestAdditions: [],
+      coverImageUrls: [],
     });
   }
 
@@ -83,6 +84,7 @@ export class ListService {
     description?: string;
     isPublic?: boolean;
     latestAdditions?: string[];
+    coverImageUrls?: string[];
     itemCount?: number;
     lastOrderKey?: string;
   }) {
@@ -91,6 +93,7 @@ export class ListService {
       description: params.description,
       isPublic: params.isPublic,
       latestAdditions: params.latestAdditions,
+      coverImageUrls: params.coverImageUrls,
       itemCount: params.itemCount,
       lastOrderKey: params.lastOrderKey,
     });
