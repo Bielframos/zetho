@@ -185,24 +185,22 @@
         <div
           role="button"
           tabindex="0"
-          [id]="'comment-thread-toggle-' + item.$id"
           class="cursor-pointer text-left transition-colors hover:text-gray-12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-6"
           [attr.aria-label]="
-            isCommentThreadExpanded(item.$id)
-              ? 'Ocultar conversa'
-              : 'Expandir conversa'
+            isCommentExpanded(item.$id)
+              ? 'Recolher comentário'
+              : 'Expandir comentário'
           "
-          [attr.aria-expanded]="isCommentThreadExpanded(item.$id)"
-          [attr.aria-controls]="'comment-thread-' + item.$id"
-          (click)="toggleCommentThread(item)"
-          (keydown.enter)="toggleCommentThread(item)"
+          [attr.aria-expanded]="isCommentExpanded(item.$id)"
+          (click)="toggleCommentExpand(item.$id)"
+          (keydown.enter)="toggleCommentExpand(item.$id)"
           (keydown.space)="
-            $event.preventDefault(); toggleCommentThread(item)
+            $event.preventDefault(); toggleCommentExpand(item.$id)
           "
         >
           <div
             class="prose prose-invert prose-sm prose-gray max-w-none prose-p:font-light"
-            [class.line-clamp-3]="!isCommentThreadExpanded(item.$id)"
+            [class.line-clamp-3]="!isCommentExpanded(item.$id)"
             [innerHTML]="item.content"
           ></div>
         </div>
@@ -250,26 +248,12 @@
                 type="button"
                 class="ui-ghost-btn"
                 data-size="icon"
-                [attr.aria-label]="
-                  isCommentComposerOpen(item.$id)
-                    ? 'Fechar resposta'
-                    : 'Responder'
-                "
-                [attr.title]="
-                  isCommentComposerOpen(item.$id)
-                    ? 'Fechar resposta'
-                    : 'Responder'
-                "
-                [attr.aria-expanded]="isCommentComposerOpen(item.$id)"
-                [attr.aria-controls]="'comment-composer-' + item.$id"
-                (click)="toggleCommentComposer(item)"
+                aria-label="Responder"
+                title="Responder"
+                (click)="openCommentDrawer(item)"
               >
                 <i
-                  [class]="
-                    isCommentComposerOpen(item.$id)
-                      ? 'ph-fill ph-chat-circle text-blue-11'
-                      : 'ph ph-chat-circle'
-                  "
+                  class="ph ph-chat-circle"
                   aria-hidden="true"
                 ></i>
               </button>
@@ -329,146 +313,6 @@
         <footer class="mt-2 flex justify-end">
           <ng-container [ngTemplateOutlet]="voteBar"></ng-container>
         </footer>
-        } @if (item.type === 'comment' && isCommentThreadExpanded(item.$id)) {
-        <section
-          [id]="'comment-thread-' + item.$id"
-          [attr.aria-labelledby]="'comment-thread-toggle-' + item.$id"
-          class="mt-2 border-l-2 border-gray-6 pl-3"
-          aria-live="polite"
-        >
-          @if (isCommentThreadLoading(item.$id)) {
-          <ui-loading
-            fallback="Carregando conversa"
-            size="sm"
-            variant="subtle"
-          ></ui-loading>
-          } @else if (!commentThread(item.$id) && commentThreadError(item.$id))
-          {
-          <div class="flex items-center justify-between gap-3 py-3">
-            <p class="text-sm text-gray-11">
-              {{ commentThreadError(item.$id) }}
-            </p>
-            <button
-              type="button"
-              class="ui-secondary-btn shrink-0"
-              (click)="loadCommentThread(item)"
-            >
-              Tentar novamente
-            </button>
-          </div>
-          } @else if (commentThread(item.$id)) {
-          <div class="flex flex-col divide-y divide-gray-6">
-            @for (reply of commentThreadReplies(item); track reply.$id) {
-            <article
-              class="py-3"
-              [class.opacity-70]="reply.optimistic"
-            >
-              <header class="mb-2 flex items-center gap-2">
-                @if (reply.userProfile.avatarUrl) {
-                <img
-                  [src]="reply.userProfile.avatarUrl"
-                  [alt]="'Avatar de ' + (reply.userProfile.gamertag || 'Jogador')"
-                  class="h-6 w-6 rounded-full object-cover"
-                />
-                } @else {
-                <span
-                  class="flex h-6 w-6 items-center justify-center rounded-full bg-blue-9 text-[10px] font-bold text-white"
-                  aria-hidden="true"
-                >
-                  {{ (reply.userProfile.gamertag || 'J')[0] | uppercase }}
-                </span>
-                }
-                <span class="text-sm font-medium text-gray-12">
-                  {{ reply.userProfile.gamertag || 'Jogador' }}
-                </span>
-                @if (reply.optimistic) {
-                <span class="text-xs text-gray-10">Enviando…</span>
-                }
-              </header>
-              <div
-                class="prose prose-invert prose-sm prose-gray max-w-none prose-p:my-0 prose-p:font-light"
-                [innerHTML]="reply.content"
-              ></div>
-            </article>
-            } @empty {
-            <p class="py-3 text-sm text-gray-11">
-              Não há outras respostas nesta conversa.
-            </p>
-            }
-          </div>
-          }
-        </section>
-        } @if (item.type === 'comment' && isCommentComposerOpen(item.$id)) {
-        <div
-          [id]="'comment-composer-' + item.$id"
-          class="mt-3 border-t border-gray-6 pt-3"
-          aria-live="polite"
-        >
-          @if (authStore.isAuthenticated()) {
-          <form
-            class="flex items-end gap-2"
-            (submit)="$event.preventDefault(); submitCommentReply(item)"
-          >
-            <div class="min-w-0 flex-1">
-              <label [for]="'comment-reply-' + item.$id" class="sr-only">
-                Escreva uma resposta
-              </label>
-              <textarea
-                [id]="'comment-reply-' + item.$id"
-                rows="2"
-                maxlength="350"
-                class="w-full resize-y rounded-lg border border-gray-6 bg-transparent px-3 py-2 text-sm text-gray-12 placeholder:text-gray-10 focus:outline-none focus:ring-2 focus:ring-blue-6 disabled:opacity-50"
-                placeholder="Escreva uma resposta"
-                [value]="commentReplyDraft(item.$id)"
-                [disabled]="isCommentReplySubmitting(item.$id)"
-                [attr.aria-describedby]="
-                  commentReplyError(item.$id)
-                    ? 'comment-reply-error-' + item.$id
-                    : null
-                "
-                (input)="
-                  setCommentReplyDraft(item.$id, $any($event.target).value)
-                "
-              ></textarea>
-              @if (commentReplyError(item.$id)) {
-              <p
-                [id]="'comment-reply-error-' + item.$id"
-                class="mt-1 text-sm text-red-400"
-                role="alert"
-              >
-                {{ commentReplyError(item.$id) }}
-              </p>
-              }
-            </div>
-            <button
-              type="submit"
-              class="ui-primary-btn shrink-0"
-              data-size="icon"
-              aria-label="Enviar resposta"
-              title="Enviar resposta"
-              [disabled]="
-                isCommentReplySubmitting(item.$id) ||
-                !commentReplyDraft(item.$id).trim()
-              "
-            >
-              @if (isCommentReplySubmitting(item.$id)) {
-              <ui-loading [inline]="true" size="sm"></ui-loading>
-              } @else {
-              <i class="ph ph-paper-plane-tilt" aria-hidden="true"></i>
-              }
-            </button>
-          </form>
-          } @else {
-          <p class="text-sm text-gray-11">
-            <a
-              routerLink="/entrar"
-              class="text-blue-11 hover:text-blue-9 hover:underline"
-              >Entre na sua conta</a
-            >
-            para responder.
-          </p>
-          }
-        </div>
         } }
       </article>
       }
@@ -534,5 +378,13 @@
   [item]="entry"
   (closed)="selectedEntry.set(null)"
   (countChanged)="updateEntryCommentCount(entry.$id, $event)"
+/>
+}
+
+@if (selectedComment(); as comment) {
+<ui-entry-comments-drawer
+  [item]="comment"
+  (closed)="selectedComment.set(null)"
+  (countChanged)="updateCommentReplyCount(comment.$id, $event)"
 />
 }
