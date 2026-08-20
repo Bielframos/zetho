@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { AuthStore } from '../auth/auth.store';
-import { NotificationStore } from '../notifications/notification.store';
+import { NotificationStore } from '../system/notifications/notification.store';
 import type { ZEntryRow } from '../../types';
 import {
   WeeklyZCoinLeaderboardResponse,

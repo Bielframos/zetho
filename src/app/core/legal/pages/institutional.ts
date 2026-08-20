@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SeoService } from '../../seo/seo.service';
+import { SeoService } from '../../system/seo/seo.service';
 
 @Component({
   selector: 'app-institutional-page',

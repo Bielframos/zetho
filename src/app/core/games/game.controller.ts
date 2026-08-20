@@ -6,7 +6,7 @@ import { AuthStore } from '../auth/auth.store';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { GameService } from './games.service';
 import { ZCoinsService } from '../zCoins/zcoins.service';
-import { NotificationStore } from '../notifications/notification.store';
+import { NotificationStore } from '../system/notifications/notification.store';
 import { createSsrTaskRunner } from '../../utils/ssr-task';
 import { RatingsService, type RatingRow } from '../ratings/ratings.service';
 

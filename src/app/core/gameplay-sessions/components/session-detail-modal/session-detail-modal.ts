@@ -15,7 +15,7 @@ import {
 } from '../../../../shared/ui/combobox/combobox';
 import { UiModal } from '../../../../shared/ui/modal/modal';
 import { ConnectionsService } from '../../../connections/connections.service';
-import { NotificationStore } from '../../../notifications/notification.store';
+import { NotificationStore } from '../../../system/notifications/notification.store';
 import { GameplaySessionsService } from '../../gameplay-sessions.service';
 import {
   GameplaySession,

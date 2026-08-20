@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SeoService } from '../../seo/seo.service';
+import { SeoService } from '../../system/seo/seo.service';
 import { LegalShell } from '../legal-shell';
 import { LEGAL_CONTACT_EMAIL, LEGAL_UPDATED_AT } from '../legal.constants';
 

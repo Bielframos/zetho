@@ -8,7 +8,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { AuthStore } from '../auth/auth.store';
-import { NotificationStore } from '../notifications/notification.store';
+import { NotificationStore } from '../system/notifications/notification.store';
 import { UiShareCard } from './share-card';
 import { ShareService } from './share.service';
 import {

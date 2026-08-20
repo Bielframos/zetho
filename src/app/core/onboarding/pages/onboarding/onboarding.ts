@@ -11,7 +11,7 @@ import {
   DashboardService,
   SuggestedConnection,
 } from '../../../dashboard/dashboard.service';
-import { NotificationStore } from '../../../notifications/notification.store';
+import { NotificationStore } from '../../../system/notifications/notification.store';
 import { GameWithEntry, ZEntryRow } from '../../../../types';
 import { appwrite } from '../../../../shared/infra/appwrite/appwrite.client';
 

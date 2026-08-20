@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { AuthStore } from '../auth/auth.store';
-import { InAppNotificationStore } from '../notifications/in-app-notification.store';
-import { NotificationStore } from '../notifications/notification.store';
+import { InAppNotificationStore } from '../system/notifications/in-app-notification.store';
+import { NotificationStore } from '../system/notifications/notification.store';
 import { GameplaySessionsRepository } from './gameplay-sessions.repository';
 import {
   CreateSessionDto,

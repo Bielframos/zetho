@@ -8,7 +8,7 @@ import type {
   InviteBonusResponse,
   InviteCodeResponse,
 } from '../userProfiles/userProfile.types';
-import { NotificationStore } from '../notifications/notification.store';
+import { NotificationStore } from '../system/notifications/notification.store';
 import { ProfileTheme } from '../themes/themes.types';
 import { safeSessionStorage } from '../../utils/platform-storage';
 

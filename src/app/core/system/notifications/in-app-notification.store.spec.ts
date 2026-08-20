@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { GameplaySessionsRepository } from '../gameplay-sessions/gameplay-sessions.repository';
+import { GameplaySessionsRepository } from '../../gameplay-sessions/gameplay-sessions.repository';
 import { InAppNotificationStore } from './in-app-notification.store';
 
 describe('InAppNotificationStore', () => {

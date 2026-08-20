@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { AuthStore } from '../../../../auth/auth.store';
-import { NotificationStore } from '../../../../notifications/notification.store';
+import { NotificationStore } from '../../../../system/notifications/notification.store';
 import { UiLoading } from '../../../../../shared/ui/loading';
 import { environment } from '../../../../../../environments/environment';
 

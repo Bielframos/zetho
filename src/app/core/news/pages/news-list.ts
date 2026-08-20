@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { InfiniteScrollDirective } from '../../../shared/ui/infinite-scroll';
 import { UiLoading } from '../../../shared/ui/loading';
 import { UiSkeleton } from '../../../shared/ui/skeleton';
-import { SeoService } from '../../seo/seo.service';
+import { SeoService } from '../../system/seo/seo.service';
 import { NewsItemComponent } from '../news-item';
 import { NewsService } from '../news.service';
 import type { NewsSummary } from '../news.types';

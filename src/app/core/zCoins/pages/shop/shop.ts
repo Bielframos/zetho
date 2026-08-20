@@ -5,7 +5,7 @@ import { ThemesService } from '../../../themes/themes.service';
 import { ProfileTheme } from '../../../themes/themes.types';
 import { AuthStore } from '../../../auth/auth.store';
 import { getThemeMediaUrl } from '../../../themes/theme-media';
-import { NotificationStore } from '../../../notifications/notification.store';
+import { NotificationStore } from '../../../system/notifications/notification.store';
 
 @Component({
   selector: 'z-shop',

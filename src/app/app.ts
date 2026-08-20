@@ -20,18 +20,18 @@ import {
 import { filter } from 'rxjs';
 import { AuthStore } from './core/auth/auth.store';
 import { AppSearchInput } from './shared/app/search-input/search-input';
-import { ToasterComponent } from './core/notifications/toaster.component';
+import { ToasterComponent } from './core/system/notifications/toaster.component';
 import { environment } from '../environments/environment';
 import { ZCoinsService } from './core/zCoins/zcoins.service';
 import { ZCoinBalance } from './shared/ui/z-coin-balance';
 import { ProfileStore } from './core/userProfiles/profile.store';
 import { ProfileLayoutStore } from './shared/app/profile-layout/profile-layout.store';
-import { NotificationStore } from './core/notifications/notification.store';
+import { NotificationStore } from './core/system/notifications/notification.store';
 import { UserProfileRow } from './types';
 import { getThemeMediaUrl } from './core/themes/theme-media';
 
-import { NotificationsSheetComponent } from './core/notifications/notifications-sheet.component';
-import { InAppNotificationStore } from './core/notifications/in-app-notification.store';
+import { NotificationsSheetComponent } from './core/system/notifications/notifications-sheet.component';
+import { InAppNotificationStore } from './core/system/notifications/in-app-notification.store';
 
 @Component({
   selector: 'app-root',

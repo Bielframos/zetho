@@ -10,7 +10,7 @@ import {
   UiComboboxSearch,
 } from '../../../../shared/ui/combobox/combobox';
 import { GameService } from '../../../games/games.service';
-import { NotificationStore } from '../../../notifications/notification.store';
+import { NotificationStore } from '../../../system/notifications/notification.store';
 import {
   CreateSessionDto,
   SessionPrivacy,
