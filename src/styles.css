@@ -101,7 +101,6 @@
 @supports (view-transition-name: route-scope) {
   .route-transition-scope {
     view-transition-name: route-scope;
-    contain: layout;
   }
 
   ::view-transition-group(route-scope) {
