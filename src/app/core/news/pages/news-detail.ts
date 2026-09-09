@@ -1,11 +1,13 @@
 import {
   Component,
+  computed,
   effect,
   inject,
   OnDestroy,
   signal,
   untracked,
 } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -69,7 +71,7 @@ import { createSsrTaskRunner } from '../../../utils/ssr-task';
           </header>
           <div
             class="prose prose-invert prose-sm max-w-none px-4 py-6 text-gray-11 prose-headings:text-gray-12 prose-a:text-blue-11 prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg"
-            [innerHTML]="item.body"
+            [innerHTML]="renderedBody()"
           ></div>
           @if (item.relatedGames.length || item.originalSourceUrl) {
             <footer class="border-t border-gray-6 px-4 py-5">
@@ -116,6 +118,7 @@ export class NewsDetailPage implements OnDestroy {
   private router = inject(Router);
   private service = inject(NewsService);
   private seo = inject(SeoService);
+  private sanitizer = inject(DomSanitizer);
   slug = toSignal(
     this.route.paramMap.pipe(map((params) => params.get('slug'))),
     { initialValue: null },
@@ -123,6 +126,23 @@ export class NewsDetailPage implements OnDestroy {
   private runAsSsrTask = createSsrTaskRunner();
   news = signal<NewsDetail | null>(null);
   loading = signal(true);
+
+  renderedBody = computed<SafeHtml>(() => {
+    const item = this.news();
+    if (!item?.body) return '';
+    const transformed = this.renderYoutube(item.body);
+    return this.sanitizer.bypassSecurityTrustHtml(transformed);
+  });
+
+  private renderYoutube(body: string) {
+    return body.replace(
+      /\[youtube:([a-zA-Z0-9_-]{11})\]/g,
+      (_, id) => `
+        <div data-youtube-video=""><iframe width="840" height="473" src="https://www.youtube.com/embed/${id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" loading="lazy" allowfullscreen></iframe></div>
+    `,
+    );
+  }
+
   constructor() {
     effect(() => {
       const slug = this.slug();
