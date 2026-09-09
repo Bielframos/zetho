@@ -1,5 +1,5 @@
 <main
-  class="relative isolate min-h-full w-full overflow-hidden bg-gray-1 px-5 py-8 text-gray-12 md:px-10 md:py-24"
+  class="relative isolate min-h-full w-full overflow-hidden bg-gray-1 px-5 py-6 text-gray-12 md:px-10 md:py-24"
 >
   <div
     class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[560px] bg-[radial-gradient(circle_at_20%_0%,rgba(62,99,221,0.34),transparent_34%),radial-gradient(circle_at_78%_10%,rgba(247,209,84,0.15),transparent_28%)]"
@@ -7,10 +7,10 @@
   ></div>
 
   <div
-    class="mx-auto grid min-h-full w-full max-w-6xl items-end gap-10 lg:grid-cols-[0.88fr_1.12fr]"
+    class="mx-auto grid min-h-full w-full max-w-6xl items-end gap-6 lg:gap-10 lg:grid-cols-[0.88fr_1.12fr]"
   >
     <section class="max-w-xl">
-      <a routerLink="/" class="inline-flex">
+      <a routerLink="/landing" class="inline-flex">
         <span class="font-display text-[48px] leading-none">zetho</span>
       </a>
 
@@ -23,7 +23,7 @@
         listas que mostram seu gosto de verdade.
       </p>
 
-      <div class="mt-8 grid gap-3">
+      <div class="mt-8 hidden gap-3 lg:grid">
         <div class="flex gap-3 border-y border-gray-6 py-4">
           <span
             class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-3 text-blue-11"
@@ -68,7 +68,7 @@
     </section>
 
     <section
-      class="border-y border-gray-6 bg-gray-2/80 px-4 py-6 backdrop-blur sm:px-6 md:border md:p-8"
+      class="bg-transparent p-0 md:border md:border-gray-6 md:bg-gray-2/80 md:p-8 md:backdrop-blur"
     >
       <header class="mb-8">
         <p class="text-sm uppercase tracking-wide text-blue-11">Cadastro</p>

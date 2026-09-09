@@ -31,7 +31,7 @@ export const userGuard: CanMatchFn = async () => {
   await authStore.ready;
 
   if (!authStore.isAuthenticated()) {
-    return router.parseUrl('/');
+    return router.parseUrl('/landing');
   }
 
   return true;
@@ -44,7 +44,7 @@ export const adminGuard: CanMatchFn = async () => {
   await authStore.ready;
 
   if (!authStore.isAuthenticated()) {
-    return router.parseUrl('/');
+    return router.parseUrl('/landing');
   }
 
   if (!authStore.isAdmin()) {

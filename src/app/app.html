@@ -1,4 +1,6 @@
-@if (usesAppShell()) {
+@if (isSplashRoute()) {
+<router-outlet />
+} @else if (usesAppShell()) {
 <div class="min-h-dvh bg-gray-1 text-gray-12 lg:px-4">
   <div
     class="mx-auto grid min-h-dvh w-full max-w-[1180px] grid-cols-1 lg:grid-cols-[15rem_minmax(0,1fr)_18rem]"
@@ -23,7 +25,7 @@
         </a>
         } @else {
         <a
-          routerLink="/"
+          routerLink="/landing"
           class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
         >
           <i class="ph ph-house"></i>
@@ -404,7 +406,7 @@
       </a>
       } @else {
       <a
-        routerLink="/"
+        routerLink="/landing"
         class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
         aria-label="Início"
       >
@@ -597,7 +599,7 @@
 <div class="flex min-h-dvh flex-col">
   <nav class="relative z-10 w-full py-2 px-4 md:px-10 border-b border-gray-6">
     <div class="flex items-center justify-between gap-4">
-      <a [routerLink]="authStore.isAuthenticated() ? '/dashboard' : '/'">
+      <a [routerLink]="authStore.isAuthenticated() ? '/dashboard' : '/landing'">
         <h3 class="font-display text-[40px] leading-none">zetho</h3>
       </a>
 

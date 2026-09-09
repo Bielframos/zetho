@@ -62,7 +62,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'sem-conexao', renderMode: RenderMode.Prerender },
 
   // Conteúdo público renderizado no servidor.
-  { path: '', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
+  { path: 'landing', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   { path: 'jogo/:slug', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   { path: 'noticias', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   { path: 'noticias/:slug', renderMode: RenderMode.Server, headers: EDGE_CACHE_10_MIN },
@@ -97,6 +97,7 @@ export const serverRoutes: ServerRoute[] = [
 
   // Área logada, admin, autenticação e busca: renderizadas só no cliente.
   // Precisam estar enumeradas porque o catch-all abaixo responde 404.
+  { path: '', renderMode: RenderMode.Client },
   { path: 'changelog', renderMode: RenderMode.Client },
   { path: 'entrar', renderMode: RenderMode.Client },
   { path: 'registrar', renderMode: RenderMode.Client },

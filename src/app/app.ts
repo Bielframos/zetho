@@ -126,6 +126,10 @@ export class App {
     return authRoutes.some((route) => path.startsWith(route));
   }
 
+  isSplashRoute() {
+    return this.currentPath() === '/';
+  }
+
   isOfflineRoute() {
     return this.currentPath().startsWith('/sem-conexao');
   }
@@ -178,6 +182,7 @@ export class App {
   private isAppShellExcludedRoute() {
     const path = this.currentPath();
     const excludedRoutes = [
+      '/landing',
       '/entrar',
       '/registrar',
       '/recuperar-senha',
