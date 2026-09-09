@@ -170,7 +170,13 @@
 
     <!-- Painéis de conteúdo (lazy + keep-alive) -->
     <div uiTabSwipe (swipe)="onSwipe($event)">
-      @if (visitedTabs().has('lobby')) {
+      @if (visitedTabs().has('briefing') && controller.game()) {
+      <ui-game-briefing
+        class="block animate-fade-in-slide"
+        [class.hidden]="activeTab() !== 'briefing'"
+        [gameId]="controller.game()!.$id"
+      ></ui-game-briefing>
+      } @if (visitedTabs().has('lobby')) {
       <ui-game-lobby
         class="block animate-fade-in-slide"
         [class.hidden]="activeTab() !== 'lobby'"

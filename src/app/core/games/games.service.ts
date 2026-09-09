@@ -1,7 +1,7 @@
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
 import type { GameRow, ZEntryRow } from '../../types';
-import type { GameWithEntry, GameMedia, GameHero } from './game.types';
+import type { GameWithEntry, GameMedia, GameHero, GameBriefing } from './game.types';
 import type { SearchFilters } from '../search/search.controller';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { GameStore } from './game.store';
@@ -270,6 +270,44 @@ export class GameService {
     }
 
     return payload as { success: boolean; message?: string };
+  }
+
+  async getGameBriefing(gameId: string): Promise<GameBriefing | null> {
+    try {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      if (this.authStore.isAuthenticated()) {
+        try {
+          const jwt = await this.authStore.getJwt();
+          if (jwt) {
+            headers['Authorization'] = `Bearer ${jwt}`;
+          }
+        } catch {}
+      }
+
+      const fallbackCookie = safeLocalStorage.getItem('cookieFallback');
+      if (fallbackCookie) {
+        headers['x-appwrite-session'] = fallbackCookie;
+      }
+
+      const response = await fetch(
+        new URL(`games/${gameId}/ai-briefing`, environment.zethoApiEndpoint),
+        {
+          method: 'POST',
+          headers,
+        },
+      );
+
+      if (!response.ok) {
+        return null;
+      }
+
+      return (await response.json()) as GameBriefing;
+    } catch {
+      return null;
+    }
   }
 
   async getGame(slug: string) {

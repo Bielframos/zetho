@@ -23,13 +23,21 @@ import { UiZEntryActions } from './modules/z-entry-actions';
 import { UiGameRating } from './modules/game-rating';
 import { UiGameReviews } from './modules/game-reviews';
 import { UiGameNews } from './modules/game-news';
+import { UiGameBriefing } from './modules/game-briefing';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { UiTab, UiTabs, UiTabSwipe } from '../../../../shared/ui/tabs';
 import { UiShareModal } from '../../../share/share-modal';
 import { ShareCardData } from '../../../share/share.types';
 import { RatingsService } from '../../../ratings/ratings.service';
 
-type GameTab = 'lobby' | 'stats' | 'reviews' | 'news' | 'midias' | 'similar';
+type GameTab =
+  | 'briefing'
+  | 'lobby'
+  | 'stats'
+  | 'reviews'
+  | 'news'
+  | 'midias'
+  | 'similar';
 
 @Component({
   selector: 'app-game',
@@ -38,6 +46,7 @@ type GameTab = 'lobby' | 'stats' | 'reviews' | 'news' | 'midias' | 'similar';
     UiZEntryActions,
     RouterLink,
     UiGameHeader,
+    UiGameBriefing,
     UiGameStats,
     UiGameLobby,
     UiGameActions,
@@ -63,8 +72,8 @@ export class GamePage {
   controller = inject(GameController);
   authStore = inject(AuthStore);
 
-  activeTab = signal<GameTab>('lobby');
-  visitedTabs = signal<Set<GameTab>>(new Set<GameTab>(['lobby']));
+  activeTab = signal<GameTab>('briefing');
+  visitedTabs = signal<Set<GameTab>>(new Set<GameTab>(['briefing']));
   myRating = signal<number | null>(null);
 
   shareModal = viewChild<UiShareModal>('shareModal');
@@ -96,6 +105,7 @@ export class GamePage {
 
   tabs = computed<UiTab[]>(() => {
     const list: UiTab[] = [
+      { id: 'briefing', label: 'Briefing' },
       { id: 'lobby', label: 'Lobby' },
       { id: 'stats', label: 'Estatísticas' },
       {

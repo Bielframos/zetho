@@ -6,6 +6,14 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.23.0] - 2026-09-09
+
+### Added
+
+* Nova aba de Briefing por IA na tela de detalhe do jogo (`/jogo/:slug`), posicionada como primeira aba padrão antes do Lobby.
+* Renderização estruturada do briefing inteligente contendo visão geral, destaques da experiência, perfis de jogadores indicados e avisos de conteúdo catalogados.
+* Integração leve e assíncrona no cliente via `POST /games/:gameId/ai-briefing`, mantendo o render inicial do SSR rápido e desacoplando o carregamento inicial dos comentários do Lobby.
+
 ## [1.22.0] - 2026-09-09
 
 ### Added
