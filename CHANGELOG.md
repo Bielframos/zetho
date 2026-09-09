@@ -6,6 +6,21 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.22.0] - 2026-09-09
+
+### Added
+
+* Nova tela de splash centralizada ao carregar a aplicação, resolvendo o estado de autenticação antes de qualquer redirecionamento e evitando flashes da landing page para usuários logados.
+* Rota dedicada `/landing` para a apresentação pública da plataforma, preservando renderização no servidor e otimização para mecanismos de busca.
+
+### Changed
+
+* O fluxo de login e cadastro no mobile agora traz os formulários imediatamente visíveis, reduzindo rolagens desnecessárias e integrando os campos diretamente à superfície da página.
+
+### Fixed
+
+* Corrigida a sobreposição do preço sobre o botão de compra de temas na Zetho Store no mobile, garantindo legibilidade e espaçamento estável em qualquer largura de tela.
+
 ## [1.21.2] - 2026-08-20
 
 ### Changed

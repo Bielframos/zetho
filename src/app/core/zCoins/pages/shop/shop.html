@@ -23,9 +23,9 @@
     } @else {
     <ul class="divide-y divide-gray-6 border-b border-gray-6">
       @for (theme of themes; track theme.$id) {
-      <li class="flex gap-4 min-h-full">
+      <li class="flex min-h-full">
         <div
-          class="relative h-36 overflow-hidden border-b border-gray-6 aspect-square"
+          class="relative h-28 sm:h-36 aspect-square shrink-0 overflow-hidden border-r border-gray-6"
           [style.background-color]="theme.backgroundColor || theme.primaryColor || '#18191b'"
         >
           @if (theme.backgroundImageId) {
@@ -54,50 +54,52 @@
           </div>
         </div>
 
-        <div class="p-4 flex flex-col gap-4 flex-1">
-          <div class="flex-1 relative">
-            <div class="flex items-center gap-1.5 absolute max-md:bottom-0 max-md:left-0 md:right-0">
-              <img src="/z-coin.webp" class="h-5 w-5" alt="Z-Coin" />
-              <span class="text-2xl tabular-nums text-gray-12">
-                {{ theme.price }}
-              </span>
-              <span class="text-sm text-gray-10">Z-Coins</span>
-            </div>
-            
-            <h3 class="text-lg text-gray-12">{{ theme.name }}</h3>
+        <div class="p-3 sm:p-4 flex flex-col justify-between flex-1 min-w-0">
+          <div>
+            <h3 class="text-base sm:text-lg text-gray-12 font-medium">{{ theme.name }}</h3>
 
-            <div class="mt-3 flex gap-2">
+            <div class="mt-2 sm:mt-3 flex gap-2">
               @if (theme.primaryColor) {
               <span
-                class="h-6 w-6 border border-gray-6"
+                class="h-5 w-5 sm:h-6 sm:w-6 border border-gray-6"
                 [style.background-color]="theme.primaryColor"
               ></span>
               } @if (theme.secondaryColor) {
               <span
-                class="h-6 w-6 border border-gray-6"
+                class="h-5 w-5 sm:h-6 sm:w-6 border border-gray-6"
                 [style.background-color]="theme.secondaryColor"
               ></span>
               } @if (theme.tertiaryColor) {
               <span
-                class="h-6 w-6 border border-gray-6"
+                class="h-5 w-5 sm:h-6 sm:w-6 border border-gray-6"
                 [style.background-color]="theme.tertiaryColor"
               ></span>
               }
             </div>
           </div>
 
-          <button
-            (click)="buyTheme(theme)"
-            [disabled]="buyingThemeId === theme.$id || isActiveTheme(theme)"
-            class="ui-primary-btn w-fit disabled:opacity-50 disabled:px-0 ml-auto"
-          >
-            @if (buyingThemeId === theme.$id) {
-            <i class="ph ph-spinner animate-spin"></i>
-            Processando } @else if (isActiveTheme(theme)) {
-            <i class="ph ph-check"></i>
-            Ativo } @else if (ownsTheme(theme)) { Equipar } @else {
-            Comprar }
-          </button>
+          <div class="flex items-center justify-between gap-3 mt-3 pt-2">
+            <div class="flex items-center gap-1.5">
+              <img src="/z-coin.webp" class="h-5 w-5" alt="Z-Coin" />
+              <span class="tabular-nums text-xl sm:text-2xl text-gray-12 font-semibold">
+                {{ theme.price }}
+              </span>
+              <span class="text-xs sm:text-sm text-gray-10">Z-Coins</span>
+            </div>
+
+            <button
+              (click)="buyTheme(theme)"
+              [disabled]="buyingThemeId === theme.$id || isActiveTheme(theme)"
+              class="ui-primary-btn shrink-0 text-sm"
+            >
+              @if (buyingThemeId === theme.$id) {
+              <i class="ph ph-spinner animate-spin"></i>
+              Processando } @else if (isActiveTheme(theme)) {
+              <i class="ph ph-check"></i>
+              Ativo } @else if (ownsTheme(theme)) { Equipar } @else {
+              Comprar }
+            </button>
+          </div>
         </div>
       </li>
       }
