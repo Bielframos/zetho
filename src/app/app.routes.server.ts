@@ -68,6 +68,11 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'noticias/:slug', renderMode: RenderMode.Server, headers: EDGE_CACHE_10_MIN },
   { path: 'reviews', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   { path: 'listas', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
+  {
+    path: 'recomendacoes',
+    renderMode: RenderMode.Server,
+    headers: EDGE_CACHE_5_MIN,
+  },
   { path: 'player/:gamertag', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   {
     path: 'player/:gamertag/listas',
