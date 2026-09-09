@@ -40,6 +40,15 @@
           <i class="ph ph-game-controller"></i>
           <span>Jogatina</span>
         </a>
+        <a
+          routerLink="/recomendacoes"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          ariaCurrentWhenActive="page"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-sparkle" aria-hidden="true"></i
+          ><span>Próximo jogo</span>
+        </a>
         }
 
         <a
@@ -513,6 +522,16 @@
           class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
         >
           <i class="ph ph-game-controller"></i><span>Jogatina</span>
+        </a>
+        <a
+          routerLink="/recomendacoes"
+          routerLinkActive="bg-gray-3 text-gray-12"
+          ariaCurrentWhenActive="page"
+          (click)="closeMobileMenu()"
+          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
+        >
+          <i class="ph ph-sparkle" aria-hidden="true"></i
+          ><span>Próximo jogo</span>
         </a>
         } @if (featureRaffles) {
         <a

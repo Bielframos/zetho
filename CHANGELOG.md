@@ -6,6 +6,18 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.24.0] - 2026-09-09
+
+### Added
+
+* Nova página "Seu próximo jogo", com recomendação personalizada por IA, seleção entre backlog e catálogo, resultado em destaque e histórico paginado de descobertas.
+* Fundo animado exclusivo e responsivo para a experiência de recomendação, com suporte a movimento reduzido e fallback sem WebGL.
+
+### Changed
+
+* A página de recomendações agora informa o custo de 10 zCoins e o limite de uma descoberta por dia, preservando tentativas idempotentes e refletindo o saldo atualizado.
+* A rota de recomendações agora fornece título, descrição, URL canônica e metadados sociais no SSR, incluindo uma imagem dedicada para compartilhamento.
+
 ## [1.23.1] - 2026-09-09
 
 ### Changed

@@ -15,6 +15,7 @@ import { ZCOINS_ROUTES } from './core/zCoins/zcoins.routes';
 import { GAMEPLAY_SESSIONS_ROUTES } from './core/gameplay-sessions/gameplay-sessions.routes';
 import { NEWS_ROUTES } from './core/news/news.routes';
 import { environment } from '../environments/environment';
+import { userGuardWithSsr } from './core/auth/auth.guards';
 
 export const routes: Routes = [
   ...LANDING_ROUTES,
@@ -30,6 +31,15 @@ export const routes: Routes = [
       import('./core/admin/admin.routes').then((m) => m.ADMIN_ROUTES_CHILDREN),
   },
   ...GAMEPLAY_SESSIONS_ROUTES,
+  {
+    path: 'recomendacoes',
+    canMatch: [userGuardWithSsr],
+    title: 'Zetho | Seu próximo jogo',
+    loadComponent: () =>
+      import('./core/game-recommender/game-recommender').then(
+        (m) => m.GameRecommenderPage,
+      ),
+  },
   ...GAME_ROUTES,
   ...NEWS_ROUTES,
   {

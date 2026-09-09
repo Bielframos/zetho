@@ -1,0 +1,266 @@
+<div class="relative isolate min-h-[calc(100dvh-8rem)] overflow-hidden">
+  <div
+    class="absolute inset-x-0 top-0 -z-10 h-[760px] max-h-full"
+    aria-hidden="true"
+  >
+    <app-recommendation-background />
+  </div>
+
+  <section
+    class="mx-auto flex w-full max-w-xl flex-col items-center px-5 pb-12 pt-16 text-center sm:px-8 sm:pt-24"
+    aria-labelledby="recommendation-title"
+  >
+    <span
+      class="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-7/50 bg-gray-1/80 px-3 py-1.5 text-xs text-blue-11"
+    >
+      <i class="ph ph-sparkle" aria-hidden="true"></i> Uma escolha para você
+    </span>
+    <h1
+      id="recommendation-title"
+      class="text-4xl font-medium leading-tight tracking-tight sm:text-5xl"
+    >
+      Seu próximo<br />jogo começa aqui.
+    </h1>
+    <p class="mt-5 max-w-sm text-sm leading-7 text-gray-11">
+      Seus jogos e suas curtidas viram uma nova descoberta. Deixe a gente
+      escolher o que jogar a seguir.
+    </p>
+
+    <fieldset class="mt-9 w-full" [disabled]="generating() || !!pending()">
+      <legend class="mb-3 w-full text-xs text-gray-11">
+        De onde vem sua próxima aventura?
+      </legend>
+      <div class="flex flex-wrap justify-center gap-2">
+        @for (option of scopes; track option.value) {
+        <label class="cursor-pointer">
+          <input
+            type="radio"
+            name="recommendation-scope"
+            class="peer sr-only"
+            [value]="option.value"
+            [checked]="scope() === option.value"
+            (change)="scope.set(option.value)"
+          />
+          <span
+            class="inline-flex min-h-10 items-center rounded-none border border-gray-6 bg-gray-1/80 px-3 text-xs text-gray-11 transition-colors peer-checked:border-blue-8 peer-checked:bg-blue-3 peer-checked:text-blue-11 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-6 peer-disabled:cursor-default"
+            >{{ option.label }}</span
+          >
+        </label>
+        }
+      </div>
+    </fieldset>
+    <p class="mt-3 text-xs text-gray-11">{{ scopeDescription() }}</p>
+
+    <button
+      type="button"
+      class="ui-primary-btn mt-7 min-h-12 w-full max-w-xs justify-center gap-2 focus:ring-2 focus:ring-blue-6 disabled:opacity-50"
+      [disabled]="generating() || (!pending() && (balance() < 10 || dailyLimitReached()))"
+      (click)="generate()"
+      [attr.aria-busy]="generating()"
+    >
+      @if (generating()) {
+      <ui-loading [inline]="true" size="sm" /> Encontrando seu jogo… } @else if
+      (pending()) {
+      <i class="ph ph-arrow-clockwise" aria-hidden="true"></i> Consultar minha
+      recomendação } @else if (dailyLimitReached()) {
+      <i class="ph ph-check" aria-hidden="true"></i> Recomendação de hoje gerada
+      } @else { <i class="ph ph-sparkle" aria-hidden="true"></i> Descobrir meu
+      próximo jogo }
+    </button>
+    <p
+      class="mt-3 flex items-center justify-center gap-1.5 text-xs text-gray-11"
+    >
+      <img src="/z-coin.webp" alt="" class="h-4 w-4" />
+      @if (pending()) { Mesma solicitação, sem cobrança duplicada } @else { 10
+      zCoins por recomendação · limite de 1 por dia }
+    </p>
+    <p class="mt-2 text-xs text-gray-10">
+      Seu saldo: {{ balance() | number:'1.0-0' }} zCoins
+    </p>
+    @if (!pending() && dailyLimitReached()) {
+    <p class="mt-4 text-sm text-gray-11">
+      Você já fez sua descoberta de hoje. Volte amanhã para receber outra.
+    </p>
+    } @else if (!pending() && balance() < 10) {
+    <p class="mt-4 text-sm text-gray-11">
+      Você precisa de 10 zCoins para descobrir um jogo.
+    </p>
+    } @if (error()) {
+    <div
+      role="alert"
+      class="mt-6 w-full rounded-lg border border-amber-700/40 bg-gray-1/95 p-4 text-sm leading-6 text-amber-200"
+    >
+      {{ error() }}
+    </div>
+    }
+  </section>
+
+  <div class="mx-auto w-full max-w-xl px-5 pb-16 sm:px-8">
+    <div aria-live="polite" aria-atomic="true">
+      @if (latest(); as result) {
+      <section
+        class="border-t border-gray-6 py-8 text-center"
+        aria-labelledby="result-title"
+      >
+        <p class="mb-5 text-xs text-blue-11">Sua próxima descoberta</p>
+        <a
+          [routerLink]="['/jogo', result.game.slug]"
+          class="mx-auto block w-36 overflow-hidden rounded-lg border border-gray-6 bg-gray-3 focus:ring-2 focus:ring-blue-6"
+          [attr.aria-label]="'Ver ' + result.game.name"
+        >
+          @if (result.game.coverUrl) {
+          <img
+            [src]="result.game.coverUrl"
+            [alt]="result.game.name"
+            width="144"
+            height="192"
+            class="aspect-[3/4] w-full object-cover"
+          />
+          } @else {
+          <span class="flex aspect-[3/4] items-center justify-center"
+            ><i
+              class="ph ph-game-controller text-4xl text-gray-10"
+              aria-hidden="true"
+            ></i
+          ></span>
+          }
+        </a>
+        <h2 id="result-title" class="mt-5 text-2xl font-medium">
+          <a [routerLink]="['/jogo', result.game.slug]" class="hover:underline"
+            >{{ result.game.name }}</a
+          >
+        </h2>
+        <p class="mt-2 text-xs text-gray-11">
+          {{ result.source === 'library' ? 'Do seu backlog' : 'Fora da sua
+          biblioteca' }}@if (result.game.releaseYear) { · {{
+          result.game.releaseYear }} }@if (result.game.ratingAvg !== null) { · ★
+          {{ result.game.ratingAvg | number:'1.1-1' }} }
+        </p>
+        <p class="mt-5 text-sm leading-7 text-gray-11">{{ result.reason }}</p>
+        <ul
+          class="mt-5 flex flex-wrap justify-center gap-2"
+          aria-label="Por que combina com você"
+        >
+          @for (match of result.matchSignals; track $index) {
+          <li
+            class="rounded-full border border-blue-7/40 bg-blue-3/50 px-3 py-1.5 text-xs text-blue-11"
+          >
+            {{ match }}
+          </li>
+          }
+        </ul>
+        @if (result.basedOnGames.length) {
+        <p class="mt-5 text-xs leading-6 text-gray-10">
+          Inspirado em @for (game of result.basedOnGames; track game.id; let
+          last = $last) {<span class="text-gray-11">{{ game.name }}</span>{{
+          last ? '.' : ', ' }}}
+        </p>
+        }
+        <a
+          [routerLink]="['/jogo', result.game.slug]"
+          class="ui-secondary-btn mt-6 inline-flex gap-2"
+          >Explorar jogo <i class="ph ph-arrow-up-right" aria-hidden="true"></i
+        ></a>
+      </section>
+      }
+    </div>
+
+    <section
+      class="border-t border-gray-6 pt-7"
+      aria-labelledby="history-title"
+    >
+      <div class="mb-6 flex items-center justify-between gap-3">
+        <h2 id="history-title" class="text-base font-medium">
+          Suas descobertas anteriores
+        </h2>
+        <i
+          class="ph ph-clock-counter-clockwise text-gray-10"
+          aria-hidden="true"
+        ></i>
+      </div>
+      <div class="divide-y divide-gray-6">
+        @for (item of previousResults(); track item.id) {
+        <article class="py-4 first:pt-0">
+          <div class="flex items-center gap-4">
+            <a
+              [routerLink]="['/jogo', item.game.slug]"
+              class="w-12 shrink-0 overflow-hidden rounded border border-gray-6 bg-gray-3"
+              [attr.aria-label]="'Ver ' + item.game.name"
+            >
+              @if (item.game.coverUrl) {
+              <img
+                [src]="item.game.coverUrl"
+                alt=""
+                loading="lazy"
+                width="48"
+                height="64"
+                class="aspect-[3/4] w-full object-cover"
+              />
+              } @else {
+              <span class="flex aspect-[3/4] items-center justify-center"
+                ><i
+                  class="ph ph-game-controller text-gray-10"
+                  aria-hidden="true"
+                ></i
+              ></span>
+              }
+            </a>
+            <div class="min-w-0 flex-1">
+              <h3 class="text-sm font-medium">
+                <a
+                  [routerLink]="['/jogo', item.game.slug]"
+                  class="hover:text-blue-11 hover:underline"
+                  >{{ item.game.name }}</a
+                >
+              </h3>
+              <p class="mt-1 text-xs text-gray-10">
+                {{ item.source === 'library' ? 'Do seu backlog' : 'Nova
+                descoberta' }} · {{ item.generatedAt | date:'dd/MM/yyyy' }}
+              </p>
+            </div>
+          </div>
+          <details class="mt-3 text-sm text-gray-11">
+            <summary
+              class="w-fit cursor-pointer text-xs text-blue-11 focus:ring-2 focus:ring-blue-6"
+            >
+              Por que esse jogo?
+            </summary>
+            <p class="mt-3 leading-6">{{ item.reason }}</p>
+            <ul class="mt-3 space-y-1 text-xs">
+              @for (match of item.matchSignals; track $index) {
+              <li>· {{ match }}</li>
+              }
+            </ul>
+          </details>
+        </article>
+        }
+      </div>
+      @if (loadingHistory()) {
+      <ui-loading variant="subtle" fallback="Carregando descobertas…" />
+      } @else if (historyError()) {
+      <div role="alert" class="py-5 text-center text-sm text-gray-11">
+        <p>{{ historyError() }}</p>
+        <button
+          type="button"
+          class="ui-secondary-btn mt-3"
+          (click)="loadHistory()"
+        >
+          Tentar novamente
+        </button>
+      </div>
+      } @else if (!previousResults().length) {
+      <p class="py-7 text-center text-sm leading-6 text-gray-11">
+        {{ latest() ? 'As próximas descobertas ficam guardadas aqui.' : 'Sua
+        próxima aventura ainda é uma surpresa. As recomendações que você gerar
+        ficam guardadas aqui.' }}
+      </p>
+      } @if (nextCursor() && !loadingHistory() && !historyError()) {
+      <div class="mt-5 text-center">
+        <button type="button" class="ui-secondary-btn" (click)="loadHistory()">
+          Ver mais descobertas
+        </button>
+      </div>
+      }
+    </section>
+  </div>
+</div>
