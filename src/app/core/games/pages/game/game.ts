@@ -297,28 +297,6 @@ export class GamePage {
         };
       }
 
-      // Só as críticas de fato renderizadas nesta URL. Emitir markup de
-      // conteúdo que não está visível na página é ação manual de spam
-      // estruturado — pior que não ter markup nenhum.
-      const renderedReviews = this.controller.communityReviews();
-      if (renderedReviews.length) {
-        jsonLd['review'] = renderedReviews.map((review) => ({
-          '@type': 'Review',
-          reviewBody: this.stripHtml(review.content ?? ''),
-          datePublished: review.$createdAt,
-          author: {
-            '@type': 'Person',
-            name: review.profile?.gamertag ?? 'Jogador do Zetho',
-          },
-          reviewRating: {
-            '@type': 'Rating',
-            ratingValue: review.rating,
-            bestRating: 5,
-            worstRating: 0.5,
-          },
-        }));
-      }
-
       jsonLd['breadcrumb'] = {
         '@type': 'BreadcrumbList',
         itemListElement: [
@@ -338,23 +316,6 @@ export class GamePage {
       };
 
       this.seo.setJsonLd('game-page', jsonLd);
-    });
-  }
-
-  /** O `content` das críticas é HTML do Tiptap; `reviewBody` precisa ser texto. */
-  private stripHtml(value: string) {
-    return value
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-  }
-
-  formatReviewDate(value: string) {
-    return new Date(value).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
     });
   }
 

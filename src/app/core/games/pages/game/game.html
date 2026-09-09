@@ -87,61 +87,6 @@
     </div>
     }
 
-    <!--
-      Críticas da comunidade — estáticas, fora das abas e sem `hidden`.
-
-      É o único conteúdo original desta página: o resto (sinopse, capa, gêneros)
-      vem do IGDB e é idêntico ao de dezenas de outros sites. Precisa sair no
-      HTML do servidor e visível, porque conteúdo em aba não visitada nunca
-      chega ao crawler e conteúdo escondido é despriorizado.
-    -->
-    @if (controller.communityReviews().length) {
-    <section
-      id="criticas-da-comunidade"
-      class="border-t-8 border-gray-3 px-4 py-6"
-    >
-      <h2 class="text-xl text-gray-12">
-        Críticas da comunidade sobre {{ controller.game()?.name }}
-      </h2>
-
-      <div class="mt-4 flex flex-col gap-5">
-        @for (review of controller.communityReviews(); track review.$id) {
-        <article class="border-b border-gray-4 pb-5 last:border-b-0 last:pb-0">
-          <header class="flex flex-wrap items-center gap-2 text-sm">
-            @if (review.profile?.gamertag) {
-            <a
-              [routerLink]="['/player', review.profile!.gamertag]"
-              class="text-gray-12 hover:text-blue-11 hover:underline"
-              >{{ review.profile!.gamertag }}</a
-            >
-            } @else {
-            <span class="text-gray-12">Jogador do Zetho</span>
-            }
-
-            <span class="flex items-center gap-1 text-gray-11">
-              <i class="ph-fill ph-star text-amber-300"></i>
-              <span class="tabular-nums">{{ review.rating }}</span>
-            </span>
-
-            <time [attr.datetime]="review.$createdAt" class="text-gray-10">
-              {{ formatReviewDate(review.$createdAt) }}
-            </time>
-          </header>
-
-          @if (review.title) {
-          <h3 class="mt-2 text-base text-gray-12">{{ review.title }}</h3>
-          }
-
-          <div
-            class="prose prose-invert prose-sm mt-2 max-w-none text-gray-11 prose-headings:text-gray-12 prose-a:text-blue-11"
-            [innerHTML]="review.content"
-          ></div>
-        </article>
-        }
-      </div>
-    </section>
-    }
-
     <!-- Barra de tabs (sticky) -->
     <div
       id="tabs-section"

@@ -6,6 +6,13 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.23.1] - 2026-09-09
+
+### Changed
+
+* As reviews da comunidade na página individual de um jogo agora são visualizadas exclusivamente dentro da aba "Reviews", removendo a exibição estática prévia fora das abas.
+* Otimizado o carregamento inicial da página do jogo e SSR ao eliminar chamadas desnecessárias de busca de reviews no controller principal.
+
 ## [1.23.0] - 2026-09-09
 
 ### Added

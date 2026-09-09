@@ -8,7 +8,6 @@ import { GameService } from './games.service';
 import { ZCoinsService } from '../zCoins/zcoins.service';
 import { NotificationStore } from '../system/notifications/notification.store';
 import { createSsrTaskRunner } from '../../utils/ssr-task';
-import { RatingsService, type RatingRow } from '../ratings/ratings.service';
 
 @Injectable({ providedIn: 'root' })
 export class GameController {
@@ -76,23 +75,12 @@ export class GameController {
    */
   private runAsSsrTask = createSsrTaskRunner();
 
-  /**
-   * Críticas exibidas estaticamente na página, fora das abas.
-   *
-   * São o único conteúdo original da página de jogo — o `summary` do IGDB é
-   * idêntico ao de IGDB, Steam e Metacritic. Precisam sair no HTML do servidor
-   * e fora de qualquer aba: conteúdo escondido é despriorizado pelo Google, e
-   * um revisor humano não clica em aba.
-   */
-  readonly communityReviews = signal<RatingRow[]>([]);
-
   constructor(
     private gameService: GameService,
     private zEntryService: ZEntryService,
     private authStore: AuthStore,
     private zCoinsService: ZCoinsService,
     private notification: NotificationStore,
-    private ratingsService: RatingsService,
   ) {}
 
   loadPage(slug: string) {
@@ -121,7 +109,6 @@ export class GameController {
       });
 
       this.game.set(data.game);
-      await this.loadCommunityReviews(data.game?.$id);
       this.zEntry.set(data.zEntry);
       this.similarGames.set(data.similarGames);
       this.medias.set(data.medias);
@@ -134,29 +121,6 @@ export class GameController {
       this.errors.update((state) => ({ ...state, page: e }));
     } finally {
       this.loading.set(false);
-    }
-  }
-
-  /**
-   * Só as críticas com texto entram: nota sem texto não é conteúdo.
-   * Falha aqui nunca derruba a página — a seção simplesmente não aparece.
-   */
-  private async loadCommunityReviews(gameId: string | undefined) {
-    if (!gameId) {
-      this.communityReviews.set([]);
-      return;
-    }
-
-    try {
-      const response = await this.ratingsService.getRatings(gameId, 1, 10);
-      const withText = response.items
-        .filter((item) => (item.content ?? '').trim().length > 0)
-        .sort((a, b) => (b.voteCount ?? 0) - (a.voteCount ?? 0))
-        .slice(0, 3);
-
-      this.communityReviews.set(withText);
-    } catch {
-      this.communityReviews.set([]);
     }
   }
 
