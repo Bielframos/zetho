@@ -63,4 +63,21 @@ type GameHero = {
   type: 'screenshot' | 'art_work';
 };
 
-export type { Game, GameList, GameRow, GameWithEntry, GameMedia, GameHero };
+type GameBriefing = {
+  overview: string;
+  highlights: string[];
+  bestFor: string[];
+  contentWarning: string;
+  generatedAt: string;
+  source: 'generated' | 'stored';
+};
+
+export type {
+  Game,
+  GameList,
+  GameRow,
+  GameWithEntry,
+  GameMedia,
+  GameHero,
+  GameBriefing,
+};
