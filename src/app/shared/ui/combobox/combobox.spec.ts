@@ -7,6 +7,19 @@ import {
 import { UiCombobox, UiComboboxOption } from './combobox';
 
 describe('UiCombobox', () => {
+  it('consumes Escape only while its dropdown is open, preserving a parent dialog', () => {
+    const fixture = create(async () => []);
+    fixture.componentInstance.isOpen.set(true);
+    const firstEscape = new KeyboardEvent('keydown', { key: 'Escape', cancelable: true });
+    fixture.componentInstance.onKeydown(firstEscape);
+    expect(firstEscape.defaultPrevented).toBeTrue();
+    expect(fixture.componentInstance.isOpen()).toBeFalse();
+
+    const secondEscape = new KeyboardEvent('keydown', { key: 'Escape', cancelable: true });
+    fixture.componentInstance.onKeydown(secondEscape);
+    expect(secondEscape.defaultPrevented).toBeFalse();
+  });
+
   beforeEach(() => {
     TestBed.configureTestingModule({ imports: [UiCombobox] });
   });

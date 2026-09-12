@@ -4,126 +4,115 @@
 >
   <div class="border-b border-gray-6 lg:hidden">
     <label class="relative block">
-      <span class="sr-only">Buscar jogos</span>
+      <span class="sr-only">Buscar jogos ou perfis</span>
       <i
         class="ph ph-magnifying-glass pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-11"
+        aria-hidden="true"
       ></i>
       <input
         type="search"
-        class="w-full bg-gray-2 px-4 py-3 pl-11 text-gray-12 placeholder:text-gray-11 focus:outline-none"
-        placeholder="Busque jogos por nome"
+        class="w-full bg-gray-2 px-4 py-3 pl-11 text-gray-12 placeholder:text-gray-11 focus:outline-none focus:ring-2 focus:ring-blue-6"
+        placeholder="Busque jogos ou perfis"
         [formControl]="mobileSearchControl"
       />
     </label>
   </div>
 
   <header
-    class="text-gray-11 font-light flex flex-wrap justify-between gap-4 items-center border-b border-gray-6 p-4"
+    class="flex items-center justify-between gap-3 border-b border-gray-6 p-4"
   >
-    <h2 class="text-2xl text-gray-12">
-      @if (isHypedUpcomingView()) { Jogos mais hypados ainda não lançados }
-      @else if (normalizedQuery()) { Buscando por
-      <span class="font-normal text-gray-12">"{{ normalizedQuery() }}"</span>
-      } @else if (hasActiveFilters()) { Navegando por filtros } @else { Explore
-      por filtros }
-    </h2>
-
-    <div class="flex p-1 rounded-lg border border-gray-6">
-      <button
-        class="px-2 py-1 rounded-md hover:bg-gray-3 cursor-pointer transition-colors"
-        [ngClass]="{'bg-blue-9 hover:bg-blue-10 text-white': searchType() === 'games'}"
-        (click)="setSearchType('games')"
-      >
-        Jogos
-      </button>
-      <button
-        class="px-2 py-1 rounded-md hover:bg-gray-3 cursor-pointer transition-colors disabled:text-gray-10 disabled:pointer-events-none"
-        [disabled]="isHypedUpcomingView()"
-        [ngClass]="{'bg-blue-9 hover:bg-blue-10 text-white': searchType() === 'players'}"
-        (click)="setSearchType('players')"
-      >
-        Perfis
-      </button>
-    </div>
-  </header>
-
-  @if (searchType() === 'games') {
-  <div class="flex flex-wrap items-center gap-2 border-b border-gray-6 p-4">
-    <div class="relative w-full sm:w-auto">
-      <select
-        class="bg-transparent border border-gray-6 text-gray-12 text-sm rounded-lg px-3 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors hover:bg-gray-3 appearance-none w-full sm:w-64"
-        [value]="genre()"
-        (change)="onFilterChange('genre', $any($event.target).value)"
-      >
-        <option value="">Todos os gêneros</option>
-        @for (g of genres(); track g.slug) {
-        <option [value]="g.slug">{{ g.label }}</option>
-        }
-      </select>
-
-      <i class="ph ph-caret-down absolute z-10 right-2 top-1.5"></i>
-    </div>
-
-    <div class="relative w-full sm:w-auto">
-      <select
-        class="relative bg-transparent border border-gray-6 text-gray-12 text-sm rounded-lg px-3 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors hover:bg-gray-3 appearance-none w-full sm:w-64"
-        [value]="year()"
-        (change)="onFilterChange('year', $any($event.target).value)"
-      >
-        <option value="">Todos os anos</option>
-        @for (y of years; track y) {
-        <option [value]="y">{{ y }}</option>
-        }
-      </select>
-
-      <i class="ph ph-caret-down absolute z-10 right-2 top-1.5"></i>
-    </div>
-
-    @if (hasActiveFilters()) {
+    <ui-segmented-control
+      label="Tipo de busca"
+      [options]="searchOptions()"
+      [value]="searchType()"
+      (valueChange)="setSearchType($event)"
+    />
+    @if (searchType() === 'games') {
     <button
-      class="ui-ghost-btn"
-      data-size="icon"
-      (click)="clearFilters()"
-      aria-label="Limpar filtros"
+      type="button"
+      class="ui-secondary-btn gap-2"
+      [class.text-blue-11]="hasActiveFilters()"
+      aria-haspopup="dialog"
+      [attr.aria-expanded]="filtersOpen()"
+      (click)="filtersOpen.set(true)"
     >
-      <i class="ph ph-x"></i>
+      <i class="ph ph-sliders-horizontal" aria-hidden="true"></i> Filtros @if
+      (hasActiveFilters()) {
+      <span
+        class="h-1.5 w-1.5 rounded-full bg-blue-9"
+        aria-label="Filtros ativos"
+      ></span>
+      }
     </button>
     }
-  </div>
-  } @if (!normalizedQuery() && !hasActiveFilters() && !isHypedUpcomingView()) {
-  <header
-    class="my-auto flex flex-wrap gap-6 justify-between border-b border-gray-6 p-4"
-  >
-    <div>
-      <h1 class="text-3xl">Buscando um jogo?</h1>
-
-      <p class="max-w-md mt-2 text-gray-11">
-        Comece digitando o nome do jogo que você deseja encontrar na barra de
-        busca acima.
-      </p>
-    </div>
-
-    <span
-      class="uppercase text-sm text-blue-11 bg-blue-3 px-2 py-1 rounded-full border border-gray-6 w-fit h-fit self-end"
-    >
-      Jogos em alta
-    </span>
   </header>
 
-  <ul class="grid grid-cols-2 gap-px sm:grid-cols-3 lg:grid-cols-4">
-    @for (game of popularGames(); track game.$id) {
-    <li class="flex flex-col">
-      <ui-game-card [game]="game"></ui-game-card>
-    </li>
+  @if (!normalizedQuery() && (searchType() === 'players' || (!hasActiveFilters()
+  && !isHypedUpcomingView()))) {
+  <section
+    class="mx-auto flex min-h-[calc(100dvh-12rem)] w-full max-w-xl flex-col items-center px-5 pb-12 pt-16 text-center sm:px-8 sm:pt-24"
+    aria-labelledby="search-title"
+  >
+    <span
+      class="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-7/50 bg-gray-1 px-3 py-1.5 text-xs text-blue-11"
+      ><i class="ph ph-magnifying-glass" aria-hidden="true"></i> Explore o
+      Zetho</span
+    >
+    <h1
+      id="search-title"
+      class="text-4xl font-medium leading-tight tracking-tight sm:text-5xl"
+    >
+      @if (searchType() === 'games') { Encontre jogos } @else
+      { Encontre jogadores }
+    </h1>
+    <p class="mt-5 max-w-sm text-sm leading-7 text-gray-11">
+      @if (searchType() === 'games') { Busque pelo nome ou explore jogos por
+      gênero, ano e desenvolvedora. } @else { Busque pelo nome de um jogador
+      para conhecer seu perfil e seus jogos. }
+    </p>
+    <form class="mt-9 w-full lg:hidden" (ngSubmit)="submitInitialSearch()">
+      <label class="relative block w-full text-left">
+        <span class="sr-only"
+          >{{ searchType() === 'games' ? 'Nome do jogo' : 'Nome do jogador'
+          }}</span
+        >
+        <i
+          class="ph ph-magnifying-glass pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-11"
+          aria-hidden="true"
+        ></i>
+        <input
+          type="search"
+          class="min-h-12 w-full rounded-lg border border-gray-6 bg-transparent py-3 pl-11 pr-4 text-sm text-gray-12 placeholder:text-gray-10 focus:outline-none focus:ring-2 focus:ring-blue-6"
+          [placeholder]="searchType() === 'games' ? 'Buscar um jogo' : 'Buscar um jogador'"
+          [formControl]="initialSearchControl"
+          [attr.minlength]="minSearchLength"
+          required
+        />
+      </label>
+      <button
+        type="submit"
+        class="ui-primary-btn mt-4 min-h-12 w-full justify-center"
+      >
+        Buscar
+      </button>
+    </form>
+    @if (searchType() === 'games') {
+    <button
+      type="button"
+      class="ui-secondary-btn mt-4 gap-2"
+      (click)="filtersOpen.set(true)"
+    >
+      <i class="ph ph-sliders-horizontal" aria-hidden="true"></i> Explorar jogos
+      por filtros
+    </button>
     }
-  </ul>
+  </section>
   } @else if (!canSearch()) {
-  <p class="text-gray-11 p-4">
+  <p class="p-4 text-gray-11">
     Digite pelo menos {{ minSearchLength }} caracteres para iniciar a busca.
   </p>
   } @else if (activeSearch(); as search) { @if (search.loading()) {
-  <ui-loading></ui-loading>
-  } @else if (search.total() === 0) {
+  <ui-loading></ui-loading> } @else if (search.total() === 0) {
   <p class="p-4 text-gray-11">
     @if (isHypedUpcomingView()) { Nenhum jogo hypado e ainda não lançado foi
     encontrado. } @else if (searchType() === 'games') { Nenhum jogo
@@ -132,9 +121,9 @@
     normalizedQuery() }}"}. }
   </p>
   } @else { @if (searchType() === 'games') {
-  <ul class="grid grid-cols-2 gap-px sm:grid-cols-3 lg:grid-cols-4">
+  <ul class="grid grid-cols-4 gap-px">
     @for (game of gameResults(); track game.$id) {
-    <li class="flex flex-col">
+    <li class="flex min-w-0 flex-col">
       <ui-game-card
         [game]="game"
         [entryStatus]="game.zEntry?.status"
@@ -145,33 +134,93 @@
   } @else {
   <ul class="divide-y divide-gray-6">
     @for (player of playerResults(); track player.$id) {
-    <li>
-      <ui-profile-card [profile]="player"></ui-profile-card>
-    </li>
+    <li><ui-profile-card [profile]="player"></ui-profile-card></li>
     }
   </ul>
   }
-
   <nav
-    class="flex py-4 border-t border-gray-6 w-full justify-center gap-4 items-center"
+    class="flex w-full items-center justify-center gap-4 border-t border-gray-6 py-4"
+    aria-label="Paginação da busca"
   >
     <button
+      type="button"
       (click)="search.prevPage()"
       [disabled]="search.page() <= 1"
       class="ui-secondary-btn"
       data-size="icon"
+      aria-label="Página anterior"
     >
-      <i class="ph ph-caret-left"></i>
+      <i class="ph ph-caret-left" aria-hidden="true"></i>
     </button>
-    <span>Página {{ search.page() }} de {{ search.pageCount() }}</span>
+    <span class="text-sm" aria-live="polite"
+      >Página {{ search.page() }} de {{ search.pageCount() }}</span
+    >
     <button
+      type="button"
       (click)="search.nextPage()"
       [disabled]="search.page() >= search.pageCount()"
       class="ui-secondary-btn"
       data-size="icon"
+      aria-label="Próxima página"
     >
-      <i class="ph ph-caret-right"></i>
+      <i class="ph ph-caret-right" aria-hidden="true"></i>
     </button>
   </nav>
-  }}
+  } }
 </main>
+
+<ui-sidebar [(isOpen)]="filtersOpen" title="Filtros">
+  <div class="flex flex-col gap-6 p-4">
+    <label class="flex flex-col gap-2 text-sm text-gray-11">
+      Gênero
+      <select
+        class="min-h-11 w-full rounded-lg border border-gray-6 bg-gray-1 px-3 text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6"
+        [value]="genre()"
+        (change)="onFilterChange('genre', $any($event.target).value)"
+      >
+        <option value="">Todos os gêneros</option>
+        @for (g of genres(); track g.slug) {
+        <option [value]="g.slug">{{ g.label }}</option>
+        }
+      </select>
+    </label>
+    <label class="flex flex-col gap-2 text-sm text-gray-11">
+      Ano de lançamento
+      <select
+        class="min-h-11 w-full rounded-lg border border-gray-6 bg-gray-1 px-3 text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6"
+        [value]="year()"
+        (change)="onFilterChange('year', $any($event.target).value)"
+      >
+        <option value="">Todos os anos</option>
+        @for (y of years; track y) {
+        <option [value]="y">{{ y }}</option>
+        }
+      </select>
+    </label>
+    <ui-combobox
+      label="Desenvolvedora"
+      placeholder="Buscar desenvolvedora"
+      emptyText="Nenhuma desenvolvedora encontrada."
+      [search]="searchCompanies"
+      [selectedOptions]="selectedDeveloper()"
+      (selectedOptionsChange)="onDeveloperChange($event)"
+    />
+    <div class="flex flex-wrap gap-2 border-t border-gray-6 pt-4">
+      <button
+        type="button"
+        class="ui-primary-btn"
+        (click)="filtersOpen.set(false)"
+      >
+        Ver resultados
+      </button>
+      <button
+        type="button"
+        class="ui-secondary-btn"
+        [disabled]="!hasActiveFilters()"
+        (click)="clearFilters()"
+      >
+        Limpar filtros
+      </button>
+    </div>
+  </div>
+</ui-sidebar>

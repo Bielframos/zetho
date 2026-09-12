@@ -1,3 +1,5 @@
+import { FeedReviewContent } from '../../components/feed-review-content';
+import { FeedReviewVotes } from '../../components/feed-review-votes';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { InfiniteScrollDirective } from '../../../../shared/ui/infinite-scroll';
@@ -16,6 +18,8 @@ const PAGE_SIZE = 12;
   selector: 'app-reviews-feed',
   standalone: true,
   imports: [
+    FeedReviewContent,
+    FeedReviewVotes,
     InfiniteScrollDirective,
     RelativeTimePipe,
     RouterLink,
@@ -39,6 +43,14 @@ export class ReviewsFeedPage {
 
   constructor() {
     void this.loadInitial();
+  }
+
+  updateReviewVoteCount(reviewId: string, voteCount: number) {
+    this.reviews.update((reviews) =>
+      reviews.map((review) =>
+        review.$id === reviewId ? { ...review, voteCount } : review,
+      ),
+    );
   }
 
   retry() {

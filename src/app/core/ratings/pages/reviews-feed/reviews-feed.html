@@ -105,10 +105,7 @@
             <h2 class="text-lg font-medium text-gray-12">{{ review.title }}</h2>
           }
           @if (review.content) {
-            <div
-              class="prose prose-invert prose-sm prose-gray max-w-none text-gray-11 prose-p:font-light"
-              [innerHTML]="review.content"
-            ></div>
+            <ui-feed-review-content [reviewId]="review.$id" [content]="review.content" />
           }
 
           @if (review.game) {
@@ -140,6 +137,13 @@
               </span>
             </a>
           }
+          <footer class="flex justify-end">
+            <ui-feed-review-votes
+              [reviewId]="review.$id"
+              [voteCount]="review.voteCount || 0"
+              (countChanged)="updateReviewVoteCount(review.$id, $event)"
+            />
+          </footer>
         </article>
       }
     </section>

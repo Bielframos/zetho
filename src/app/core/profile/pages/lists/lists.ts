@@ -1,3 +1,4 @@
+import { UiSegmentedControl, UiSegmentOption } from '../../../../shared/ui/segmented-control';
 import { Component, effect, inject, signal } from '@angular/core';
 import { ProfileLayoutStore } from '../../../../shared/app/profile-layout/profile-layout.store';
 import { AppUserLists } from '../../../../shared/app/user-lists/user-lists';
@@ -11,18 +12,22 @@ import { UiListCard } from '../../../../shared/ui/list-card';
 @Component({
   selector: 'app-lists',
   standalone: true,
-  imports: [AppUserLists, AppNewListDialog, UiListCard],
+  imports: [UiSegmentedControl, AppUserLists, AppNewListDialog, UiListCard],
   templateUrl: './lists.html',
 })
 export class ListsPage {
+  readonly listOptions: UiSegmentOption<'minhas' | 'salvas'>[] = [
+    { id: 'minhas', label: 'Criadas' },
+    { id: 'salvas', label: 'Salvas' },
+  ];
   private authStore = inject(AuthStore);
   private profileStore = inject(ProfileStore);
   controller = inject(ListsController);
 
   private dashboardService = inject(DashboardService);
-  
+
   activeTab = signal<'minhas' | 'salvas'>('minhas');
-  
+
   savedLists = signal<any[]>([]);
   savedTotal = signal(0);
   loadingSaved = signal(false);

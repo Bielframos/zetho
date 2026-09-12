@@ -1,3 +1,4 @@
+import { UiSegmentedControl } from '../../shared/ui/segmented-control';
 import {
   Component,
   computed,
@@ -36,7 +37,7 @@ const PREVIEW_MAX_W = 300;
 @Component({
   selector: 'ui-share-modal',
   standalone: true,
-  imports: [UiShareCard],
+  imports: [UiShareCard, UiSegmentedControl],
   template: `
     <dialog
       #dialog
@@ -93,22 +94,12 @@ const PREVIEW_MAX_W = 300;
           <span class="text-xs uppercase tracking-wide text-gray-11"
             >Formato</span
           >
-          <div class="flex gap-1 border border-gray-6 p-1">
-            @for (opt of formats; track opt.id) {
-              <button
-                type="button"
-                class="flex-1 cursor-pointer px-3 py-2 text-sm transition-colors"
-                [class]="
-                  format() === opt.id
-                    ? 'bg-gray-3 text-gray-12'
-                    : 'text-gray-11 hover:text-gray-12'
-                "
-                (click)="format.set(opt.id)"
-              >
-                {{ opt.label }}
-              </button>
-            }
-          </div>
+          <ui-segmented-control
+            label="Formato"
+            [options]="formats"
+            [value]="format()"
+            (valueChange)="format.set($event)"
+          />
         </div>
 
         <!-- Jogos + Layout (apenas para listas) -->
@@ -117,22 +108,12 @@ const PREVIEW_MAX_W = 300;
             <span class="text-xs uppercase tracking-wide text-gray-11"
               >Jogos</span
             >
-            <div class="flex gap-1 border border-gray-6 p-1">
-              @for (n of listCounts; track n) {
-                <button
-                  type="button"
-                  class="flex-1 cursor-pointer px-3 py-2 text-sm transition-colors"
-                  [class]="
-                    listCount() === n
-                      ? 'bg-gray-3 text-gray-12'
-                      : 'text-gray-11 hover:text-gray-12'
-                  "
-                  (click)="listCount.set(n)"
-                >
-                  {{ n }} primeiros
-                </button>
-              }
-            </div>
+            <ui-segmented-control
+              label="Quantidade de jogos"
+              [options]="listCountOptions"
+              [value]="listCount()"
+              (valueChange)="listCount.set($event)"
+            />
           </div>
         }
 
@@ -215,7 +196,7 @@ export class UiShareModal {
   includeRating = signal(false);
   generating = signal(false);
 
-  listCounts = SHARE_LIST_COUNTS;
+  readonly listCountOptions = SHARE_LIST_COUNTS.map((id) => ({ id, label: `${id} primeiros` }));
   areaH = PREVIEW_MAX_H;
 
   zereiHasRating = computed(() => {

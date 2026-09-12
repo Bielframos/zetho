@@ -19,26 +19,12 @@
 
     @if (itsMe) {
       <div class="flex gap-4 items-center">
-        <div class="flex bg-gray-2 p-1 border border-gray-6 w-fit h-[34px]">
-          <button
-            class="px-4 text-sm font-medium transition-colors"
-            [class.bg-gray-3]="activeTab() === 'minhas'"
-            [class.text-white]="activeTab() === 'minhas'"
-            [class.text-gray-11]="activeTab() !== 'minhas'"
-            (click)="activeTab.set('minhas')"
-          >
-            Criadas
-          </button>
-          <button
-            class="px-4 text-sm font-medium transition-colors"
-            [class.bg-gray-3]="activeTab() === 'salvas'"
-            [class.text-white]="activeTab() === 'salvas'"
-            [class.text-gray-11]="activeTab() !== 'salvas'"
-            (click)="activeTab.set('salvas')"
-          >
-            Salvas
-          </button>
-        </div>
+        <ui-segmented-control
+          label="Tipo de lista"
+          [options]="listOptions"
+          [value]="activeTab()"
+          (valueChange)="activeTab.set($event)"
+        />
         <app-new-list-dialog></app-new-list-dialog>
       </div>
     }

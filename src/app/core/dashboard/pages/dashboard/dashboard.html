@@ -181,7 +181,11 @@
             [innerHTML]="item.parentComment.content"
           ></div>
         </div>
-        } @if (item.content) { @if (item.type === 'comment') {
+        } @if (item.type === 'rating' && item.title) {
+        <h3 class="text-lg font-medium text-gray-12">{{ item.title }}</h3>
+        } @if (item.content) { @if (item.type === 'rating') {
+        <ui-feed-review-content [reviewId]="item.$id" [content]="item.content" />
+        } @else if (item.type === 'comment') {
         <div
           role="button"
           tabindex="0"
@@ -265,10 +269,11 @@
             </span>
           </div>
           } @else if (item.type === 'rating') {
-          <div class="flex items-center gap-2 text-sm text-gray-11">
-            <i class="ph ph-arrow-up text-lg text-blue-9"></i>
-            <span class="font-medium">{{ item.voteCount || 0 }} votos</span>
-          </div>
+          <ui-feed-review-votes
+            [reviewId]="item.$id"
+            [voteCount]="item.voteCount || 0"
+            (countChanged)="updateReviewVoteCount(item.$id, $event)"
+          />
           } @else if (item.type === 'status') {
           <div class="flex shrink-0 items-center gap-1 text-sm text-gray-11">
             <button

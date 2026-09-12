@@ -1,4 +1,4 @@
-import { NgClass } from '@angular/common';
+import { UiSegmentedControl, UiSegmentOption } from '../../../../shared/ui/segmented-control';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -7,13 +7,16 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { UiProfileCard } from '../../../../shared/ui/profile-card';
-import { GameRow } from '../../../games/game.types';
+import { GameService } from '../../../games/games.service';
+import {
+  UiCombobox,
+  UiComboboxOption,
+} from '../../../../shared/ui/combobox/combobox';
+import { UiSidebar } from '../../../../shared/ui/sidebar';
 import { GenresCacheService } from '../../../games/genres-cache.service';
 import { SeoService } from '../../../system/seo/seo.service';
-import { ZStatsService } from '../../../zStats/zStats.service';
 import { SearchController } from '../../search.controller';
 import { AuthStore } from '../../../auth/auth.store';
-import { safeSessionStorage } from '../../../../utils/platform-storage';
 
 function buildYearOptions(): string[] {
   const currentYear = new Date().getFullYear();
@@ -27,7 +30,15 @@ function buildYearOptions(): string[] {
 @Component({
   selector: 'app-search-page',
   standalone: true,
-  imports: [UiGameCard, UiLoading, NgClass, UiProfileCard, ReactiveFormsModule],
+  imports: [
+    UiGameCard,
+    UiLoading,
+    UiSegmentedControl,
+    UiProfileCard,
+    ReactiveFormsModule,
+    UiCombobox,
+    UiSidebar,
+  ],
   templateUrl: './search.html',
 })
 export class SearchPage {
@@ -39,7 +50,7 @@ export class SearchPage {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
-  private zStatsService = inject(ZStatsService);
+  private gamesService = inject(GameService);
   private seo = inject(SeoService);
   private genresCache = inject(GenresCacheService);
 
@@ -50,19 +61,35 @@ export class SearchPage {
   year = signal<string>('');
   view = signal<string>('');
   searchType = signal<'games' | 'players'>('games');
-  popularGames = signal<GameRow[]>([]);
+  readonly searchOptions = computed<UiSegmentOption<'games' | 'players'>[]>(() => [
+    { id: 'games', label: 'Jogos' },
+    { id: 'players', label: 'Perfis', disabled: this.isHypedUpcomingView() },
+  ]);
+  developer = signal('');
+  selectedDeveloper = signal<UiComboboxOption[]>([]);
+  filtersOpen = signal(false);
+  readonly searchCompanies = async (
+    query: string,
+  ): Promise<UiComboboxOption[]> =>
+    (await this.gamesService.searchCompanies(query)).map((company) => ({
+      id: company.$id,
+      label: company.name,
+    }));
   mobileSearchControl = new FormControl('', { nonNullable: true });
+  initialSearchControl = new FormControl('', { nonNullable: true });
 
   normalizedQuery = computed(() => this.query().trim());
 
-  hasActiveFilters = computed(() => !!this.genre() || !!this.year());
+  hasActiveFilters = computed(
+    () => !!this.genre() || !!this.year() || !!this.developer(),
+  );
   isHypedUpcomingView = computed(() => this.view() === 'hyped-upcoming');
 
   canSearch = computed(
     () =>
-      this.isHypedUpcomingView() ||
       this.normalizedQuery().length >= this.minSearchLength ||
-      this.hasActiveFilters(),
+      (this.searchType() === 'games' &&
+        (this.isHypedUpcomingView() || this.hasActiveFilters())),
   );
 
   activeSearch = computed(() => {
@@ -78,7 +105,7 @@ export class SearchPage {
     this.seo.apply({
       title: 'Buscar jogos — Zetho',
       description:
-        'Busque jogos por nome, descubra títulos populares e encontre rapidamente o game que você procura no Zetho.',
+        'Busque jogos por nome, filtre por gênero, ano ou desenvolvedora e encontre rapidamente o game que você procura no Zetho.',
       canonical: '/buscar',
       robots: 'noindex,follow',
       ogType: 'website',
@@ -93,48 +120,54 @@ export class SearchPage {
       .subscribe((value) => this.onMobileSearchChange(value));
   }
 
-  async ngOnInit() {
-    await this.genresCache.ensureLoaded();
+  ngOnInit() {
+    void this.genresCache.ensureLoaded();
 
-    const popularGames = safeSessionStorage.getItem('popularGames');
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        this.query.set(params['q'] ?? '');
+        this.genre.set(params['genre'] ?? '');
+        this.year.set(params['year'] ?? '');
+        this.developer.set(params['developer'] ?? '');
+        this.selectedDeveloper.set(
+          this.developer()
+            ? [
+                {
+                  id: this.developer(),
+                  label:
+                    params['developerName'] || 'Desenvolvedora selecionada',
+                },
+              ]
+            : [],
+        );
+        this.view.set(params['view'] ?? '');
+        this.mobileSearchControl.setValue(this.query(), { emitEvent: false });
 
-    if (!popularGames) {
-      const games = await this.zStatsService.getTrendingGames({ total: 8 });
-      safeSessionStorage.setItem('popularGames', JSON.stringify(games));
-      this.popularGames.set(games);
-    } else {
-      this.popularGames.set(JSON.parse(popularGames));
-    }
+        if (this.isHypedUpcomingView()) {
+          this.searchType.set('games');
+        }
 
-    this.route.queryParams.subscribe((params) => {
-      this.query.set(params['q'] ?? '');
-      this.genre.set(params['genre'] ?? '');
-      this.year.set(params['year'] ?? '');
-      this.view.set(params['view'] ?? '');
-      this.mobileSearchControl.setValue(this.query(), { emitEvent: false });
+        const q = this.normalizedQuery();
+        const filters = {
+          genre: this.genre() || undefined,
+          year: this.year() || undefined,
+          developer: this.developer() || undefined,
+          view: this.isHypedUpcomingView()
+            ? ('hyped-upcoming' as const)
+            : undefined,
+        };
+        const hasFilters =
+          !!filters.genre || !!filters.year || !!filters.developer;
+        const hasSpecialView = filters.view === 'hyped-upcoming';
 
-      if (this.isHypedUpcomingView()) {
-        this.searchType.set('games');
-      }
+        if (q.length < this.minSearchLength && !hasFilters && !hasSpecialView) {
+          this.searchController.reset();
+          return;
+        }
 
-      const q = this.normalizedQuery();
-      const filters = {
-        genre: this.genre() || undefined,
-        year: this.year() || undefined,
-        view: this.isHypedUpcomingView()
-          ? ('hyped-upcoming' as const)
-          : undefined,
-      };
-      const hasFilters = !!filters.genre || !!filters.year;
-      const hasSpecialView = filters.view === 'hyped-upcoming';
-
-      if (q.length < this.minSearchLength && !hasFilters && !hasSpecialView) {
-        this.searchController.reset();
-        return;
-      }
-
-      this.searchController.search(q, filters);
-    });
+        this.searchController.search(q, filters);
+      });
   }
 
   setSearchType(type: 'games' | 'players') {
@@ -146,30 +179,39 @@ export class SearchPage {
   }
 
   onFilterChange(type: 'genre' | 'year', value: string) {
-    const params: Record<string, string> = {};
+    this.router.navigate(['/buscar'], {
+      queryParams: { [type]: value || null },
+      queryParamsHandling: 'merge',
+    });
+  }
 
-    const q = this.query();
-    if (q) params['q'] = q;
-
-    const newGenre = type === 'genre' ? value : this.genre();
-    const newYear = type === 'year' ? value : this.year();
-    const view = this.view();
-
-    if (newGenre) params['genre'] = newGenre;
-    if (newYear) params['year'] = newYear;
-    if (view) params['view'] = view;
-
-    this.router.navigate(['/buscar'], { queryParams: params });
+  onDeveloperChange(options: UiComboboxOption[]) {
+    this.selectedDeveloper.set(options);
+    this.router.navigate(['/buscar'], {
+      queryParams: {
+        developer: options[0]?.id || null,
+        developerName: options[0]?.label || null,
+      },
+      queryParamsHandling: 'merge',
+    });
   }
 
   clearFilters() {
-    const params: Record<string, string> = {};
-    const q = this.query();
-    const view = this.view();
-    if (q) params['q'] = q;
-    if (view) params['view'] = view;
+    this.router.navigate(['/buscar'], {
+      queryParams: {
+        genre: null,
+        year: null,
+        developer: null,
+        developerName: null,
+      },
+      queryParamsHandling: 'merge',
+    });
+  }
 
-    this.router.navigate(['/buscar'], { queryParams: params });
+  submitInitialSearch() {
+    const query = this.initialSearchControl.value.trim();
+    if (query.length < this.minSearchLength) return;
+    this.onMobileSearchChange(query);
   }
 
   private onMobileSearchChange(value: string) {

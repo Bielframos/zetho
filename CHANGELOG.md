@@ -6,6 +6,27 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.25.0] - 2026-09-12
+
+### Added
+
+- Votos positivos e negativos diretamente nas reviews do dashboard e do feed da comunidade, com indicação de envio e tratamento de falhas.
+- Prévia de até 400 caracteres nas reviews longas, com controles inline para expandir o conteúdo completo e recolher.
+- Filtro de busca por desenvolvedora com sugestões de empresas e filtros preservados na URL.
+- Sidebar compartilhado para filtros, com sobreposição ao shell, fechamento por Escape e controle do foco.
+
+### Changed
+
+- Busca com 24 resultados por página, quatro capas por linha e estado inicial sem jogos em alta.
+- Cabeçalho da busca simplificado para alternador Jogos/Perfis e filtros; formulário central disponível apenas no mobile.
+- Alternadores compactos compartilhados entre busca, conexões, listas do perfil e compartilhamento.
+- Títulos de busca e Próximo jogo revisados.
+
+### Fixed
+
+- Sugestões do combobox flutuam sobre o conteúdo sem deslocar os controles abaixo.
+- Escape fecha primeiro as sugestões do combobox e depois o sidebar.
+
 ## [1.24.0] - 2026-09-09
 
 ### Added
