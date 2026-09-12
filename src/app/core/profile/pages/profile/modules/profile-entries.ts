@@ -59,7 +59,7 @@ export class UiUserLibGrid {
     try {
       const games = await this.gameRepository.findBySlugs(
         [...SUGGESTED_GAME_SLUGS],
-        ['$id', 'name', 'slug', 'releaseYear', 'coverUrl'],
+        ['$id', 'name', 'slug', 'releaseYear', 'releaseDate', 'coverUrl'],
       );
 
       if (games.length === 0) return;

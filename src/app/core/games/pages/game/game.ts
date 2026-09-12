@@ -163,14 +163,6 @@ export class GamePage {
    * CICLO DE VIDA VIA SIGNAL EFFECTS
    * --------------------------------------------------------- */
   constructor() {
-    // Abre o compartilhamento no momento "Zerei!" (pico emocional).
-    effect(() => {
-      const zeroedCount = this.controller.justZeroed();
-      if (zeroedCount > 0) {
-        untracked(() => this.shareModal()?.open());
-      }
-    });
-
     // Atualiza o estado quando o slug mudar
     effect(() => {
       const slug = this.slug();

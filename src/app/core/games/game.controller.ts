@@ -19,9 +19,6 @@ export class GameController {
   medias = signal<GameMedia[]>([]);
   heroImage = signal<GameHero | null>(null);
   errors = signal<Record<string, any>>({});
-  // Contador incrementado quando o usuário marca um jogo como zerado; a página
-  // observa para abrir o compartilhamento no pico emocional ("Zerei!").
-  justZeroed = signal(0);
   loading = signal(false);
   updating = signal(false);
   notificationsEnabled = signal(false);
@@ -263,14 +260,6 @@ export class GameController {
         ...optimisticEntry,
       });
 
-      // Marcou como zerado (e não estava antes): dispara a celebração/share.
-      if (
-        action === 'updateStatus' &&
-        value === 'completed' &&
-        zEntry?.status !== 'completed'
-      ) {
-        this.justZeroed.update((count) => count + 1);
-      }
     } catch (err) {
       rollbackReward?.();
       this.zEntry.set(zEntry);

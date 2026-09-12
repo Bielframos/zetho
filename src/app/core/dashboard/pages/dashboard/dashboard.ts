@@ -13,6 +13,7 @@ import { RouterLink } from '@angular/router';
 import { UiFeedGame } from './feed-game';
 import { EntryCommentsDrawer } from './entry-comments-drawer';
 import { UiLoading } from '../../../../shared/ui/loading';
+import { UiZethoIcon } from '../../../../shared/ui/zetho-icon';
 import { UiSkeleton } from '../../../../shared/ui/skeleton';
 import { RelativeTimePipe } from '../../../../utils/pipes';
 import { AuthStore } from '../../../auth/auth.store';
@@ -37,7 +38,7 @@ const STATUS_LABELS: Record<FeedGameStatus, string> = {
 };
 
 const STATUS_ICONS: Record<FeedGameStatus, string> = {
-  completed: 'ph-fill ph-trophy',
+  completed: '',
   backlog: 'ph-fill ph-books',
   playing: 'ph-fill ph-game-controller',
   dropped: 'ph-fill ph-x-circle',
@@ -56,6 +57,7 @@ const STATUS_ICONS: Record<FeedGameStatus, string> = {
     EntryCommentsDrawer,
     UiLoading,
     UiSkeleton,
+    UiZethoIcon,
     UpperCasePipe,
   ],
   templateUrl: './dashboard.html',

@@ -114,11 +114,11 @@
             } @else if (item.type === 'list') {
             <span class="text-xs text-gray-11">Lista</span>
             } @else if (item.type === 'status') {
-            <i
-              [class]="statusIcon(item.status)"
-              [class.text-amber-300]="item.status === 'completed'"
-              [class.text-gray-11]="item.status !== 'completed'"
-            ></i>
+            @if (item.status === 'completed') {
+            <ui-zetho-icon class="text-blue-9" />
+            } @else {
+            <i [class]="statusIcon(item.status)" class="text-gray-11"></i>
+            }
             } @else if (item.type === 'list_item') {
             <i class="ph ph-list-plus text-gray-11"></i>
             }
