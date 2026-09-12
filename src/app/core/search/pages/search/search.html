@@ -2,6 +2,7 @@
   class="mx-auto w-full max-w-3xl border-gray-6"
   [class.md:border-x]="!authStore.isAuthenticated()"
 >
+  @if (!showInitialSearch()) {
   <div class="border-b border-gray-6 lg:hidden">
     <label class="relative block">
       <span class="sr-only">Buscar jogos ou perfis</span>
@@ -11,12 +12,14 @@
       ></i>
       <input
         type="search"
-        class="w-full bg-gray-2 px-4 py-3 pl-11 text-gray-12 placeholder:text-gray-11 focus:outline-none focus:ring-2 focus:ring-blue-6"
+        enterkeyhint="search"
+        class="w-full bg-gray-2 px-4 py-3 pl-11 text-base text-gray-12 placeholder:text-gray-11 focus:outline-none focus:ring-2 focus:ring-blue-6"
         placeholder="Busque jogos ou perfis"
         [formControl]="mobileSearchControl"
       />
     </label>
   </div>
+  }
 
   <header
     class="flex items-center justify-between gap-3 border-b border-gray-6 p-4"
@@ -47,8 +50,7 @@
     }
   </header>
 
-  @if (!normalizedQuery() && (searchType() === 'players' || (!hasActiveFilters()
-  && !isHypedUpcomingView()))) {
+  @if (showInitialSearch()) {
   <section
     class="mx-auto flex min-h-[calc(100dvh-12rem)] w-full max-w-xl flex-col items-center px-5 pb-12 pt-16 text-center sm:px-8 sm:pt-24"
     aria-labelledby="search-title"
@@ -70,7 +72,11 @@
       gênero, ano e desenvolvedora. } @else { Busque pelo nome de um jogador
       para conhecer seu perfil e seus jogos. }
     </p>
-    <form class="mt-9 w-full lg:hidden" (ngSubmit)="submitInitialSearch()">
+    <form
+      class="mt-9 w-full lg:hidden"
+      [formGroup]="initialSearchForm"
+      (ngSubmit)="submitInitialSearch()"
+    >
       <label class="relative block w-full text-left">
         <span class="sr-only"
           >{{ searchType() === 'games' ? 'Nome do jogo' : 'Nome do jogador'
@@ -82,9 +88,10 @@
         ></i>
         <input
           type="search"
-          class="min-h-12 w-full rounded-lg border border-gray-6 bg-transparent py-3 pl-11 pr-4 text-sm text-gray-12 placeholder:text-gray-10 focus:outline-none focus:ring-2 focus:ring-blue-6"
+          enterkeyhint="search"
+          class="min-h-12 w-full rounded-lg border border-gray-6 bg-transparent py-3 pl-11 pr-4 text-base text-gray-12 placeholder:text-gray-10 focus:outline-none focus:ring-2 focus:ring-blue-6"
           [placeholder]="searchType() === 'games' ? 'Buscar um jogo' : 'Buscar um jogador'"
-          [formControl]="initialSearchControl"
+          formControlName="query"
           [attr.minlength]="minSearchLength"
           required
         />

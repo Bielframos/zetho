@@ -1,7 +1,7 @@
 import { UiSegmentedControl, UiSegmentOption } from '../../../../shared/ui/segmented-control';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
@@ -77,6 +77,7 @@ export class SearchPage {
     }));
   mobileSearchControl = new FormControl('', { nonNullable: true });
   initialSearchControl = new FormControl('', { nonNullable: true });
+  readonly initialSearchForm = new FormGroup({ query: this.initialSearchControl });
 
   normalizedQuery = computed(() => this.query().trim());
 
@@ -84,6 +85,13 @@ export class SearchPage {
     () => !!this.genre() || !!this.year() || !!this.developer(),
   );
   isHypedUpcomingView = computed(() => this.view() === 'hyped-upcoming');
+
+  readonly showInitialSearch = computed(
+    () =>
+      !this.normalizedQuery() &&
+      (this.searchType() === 'players' ||
+        (!this.hasActiveFilters() && !this.isHypedUpcomingView())),
+  );
 
   canSearch = computed(
     () =>

@@ -6,6 +6,14 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.26.1] - 2026-09-12
+
+### Fixed
+
+- Formulário central de busca no mobile envia o termo sem recarregar a página.
+- Campos de busca com fonte de 16 px para evitar zoom automático ao receber foco no mobile.
+- Campo superior de busca oculto enquanto o formulário central está visível, evitando duplicação.
+
 ## [1.26.0] - 2026-09-12
 
 ### Added
