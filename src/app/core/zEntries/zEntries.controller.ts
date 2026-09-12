@@ -4,14 +4,14 @@ import { combineLatest, distinctUntilChanged, filter, map } from 'rxjs';
 import { GameRepository } from '../games/games.repository';
 import { ZEntryService } from '../zEntries/zEntries.service';
 import { ProfileStore } from '../userProfiles/profile.store';
-import { GameRow, ZEntryRow } from '../../types';
+import { GameWithEntry, ZEntryRow } from '../../types';
 
 @Injectable({ providedIn: 'root' })
 export class ZEntriesController {
   pageSize = 32;
 
   status = signal<Exclude<ZEntryRow['status'], null | undefined>>('completed');
-  entries = signal<(ZEntryRow & { game: GameRow })[]>([]);
+  entries = signal<(ZEntryRow & { game: GameWithEntry })[]>([]);
   offset = signal(0);
   total = signal(0);
   hasMore = signal(true);
@@ -79,7 +79,7 @@ export class ZEntriesController {
 
       if (gameIds.length > 0) {
         const games = await this.gameRepo.findByIds(gameIds, {
-          fields: ['$id', 'name', 'slug', 'releaseYear', 'coverUrl'],
+          fields: ['$id', 'name', 'slug', 'releaseYear', 'releaseDate', 'coverUrl'],
           pageSize: this.pageSize,
         });
 
@@ -88,7 +88,7 @@ export class ZEntriesController {
             ...prev,
             ...entries.rows.map((e) => ({
               ...e,
-              game: games.find((g) => g.$id === e.gameId)!,
+              game: { ...games.find((g) => g.$id === e.gameId)!, zEntry: e },
             })),
           ];
         });

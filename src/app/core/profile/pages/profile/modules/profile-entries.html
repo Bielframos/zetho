@@ -4,7 +4,7 @@
 <ul class="grid grid-cols-4 gap-px">
   @for (entry of controller.entries(); track entry.$id) {
   <li class="flex flex-col">
-    <ui-game-card [game]="entry.game"></ui-game-card>
+    <ui-game-card [game]="entry.game" [showEntryStatus]="false"></ui-game-card>
   </li>
   } @empty { @if (profileStore.itsMe()) {
   <li class="col-span-4 px-4 py-10">

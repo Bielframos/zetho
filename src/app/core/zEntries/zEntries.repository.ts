@@ -94,7 +94,7 @@ export class ZEntriesRepository {
     },
   ) {
     const queries = [
-      Query.select(['$id', 'status', 'gameId']),
+      Query.select(['*']),
       Query.equal('ownerFingerprint', userFingerprint),
       Query.orderDesc('$updatedAt'),
       Query.limit(opts?.pageSize || 12),

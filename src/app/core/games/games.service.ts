@@ -48,7 +48,7 @@ export class GameService {
           );
           return { ...game, zEntry };
         } catch {
-          return { ...game, zEntry: null };
+          return { ...game, zEntry: undefined };
         }
       }),
     );

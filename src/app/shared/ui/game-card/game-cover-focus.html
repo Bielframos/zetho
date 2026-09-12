@@ -1,0 +1,93 @@
+<dialog
+  #dialog
+  class="focus-dialog text-gray-12"
+  [attr.aria-label]="'Registrar ' + game().name"
+  (cancel)="onCancel($event)"
+  (contextmenu)="$event.preventDefault()"
+>
+  <div #scrim class="focus-scrim" aria-hidden="true" (click)="close()"></div>
+  <div class="focus-layout">
+    <div #cover class="focus-cover bg-gray-3" aria-hidden="true">
+      @if (game().coverUrl) {
+      <img
+        [src]="game().coverUrl"
+        alt=""
+        draggable="false"
+        class="h-full w-full object-cover"
+      />
+      } @else {
+      <div
+        class="background-pattern flex h-full items-center justify-center p-4 text-center text-sm"
+      >
+        {{ game().name }}
+      </div>
+      }
+    </div>
+    <div #controls class="focus-controls">
+      <h2 class="line-clamp-2 text-center text-base font-medium">
+        {{ game().name }}
+      </h2>
+      <div
+        class="focus-actions grid grid-cols-2"
+        [attr.aria-busy]="loading() || saving()"
+      >
+        @for (action of actions; track action.status) {
+        <button
+          type="button"
+          class="ui-secondary-btn focus-action"
+          [class.is-selected]="status() === action.status"
+          [attr.data-status]="action.status"
+          [attr.aria-pressed]="status() === action.status"
+          [disabled]="loading() || saving() || unavailable() || loadError() || closing()"
+          (click)="select(action.status)"
+        >
+          @if (action.status === 'completed') {
+          <ui-zetho-icon />
+          } @else {
+          <i [class]="'ph-fill text-xl ' + action.icon" aria-hidden="true"></i>
+          }
+          <span>{{ action.label }}</span>
+          @if (status() === action.status) {
+          <i
+            class="ph ph-check absolute right-2 top-2 text-xs"
+            aria-hidden="true"
+          ></i>
+          }
+        </button>
+        }
+      </div>
+      <div class="focus-feedback" aria-live="polite">
+        @if (loading() || saving()) {
+        <span
+          class="flex items-center justify-center gap-2 text-sm text-gray-11"
+          ><ui-loading [inline]="true" size="sm" />{{ saving() ? 'Salvando…' :
+          'Carregando registro…' }}</span
+        >
+        } @else if (error()) {
+        <p class="text-sm text-red-400">{{ error() }}</p>
+        @if (loadError()) {
+        <button
+          type="button"
+          class="ui-ghost-btn min-h-11 rounded-lg text-sm"
+          [disabled]="closing()"
+          (click)="retryLoad.emit()"
+        >
+          Tentar novamente
+        </button>
+        } } @else if (unavailable()) {
+        <p class="text-sm text-gray-11">
+          Os registros ficam disponíveis após o lançamento.
+        </p>
+        }
+      </div>
+      <button
+        type="button"
+        class="ui-ghost-btn mx-auto min-h-11 rounded-lg"
+        aria-label="Fechar ações do jogo"
+        (click)="close()"
+      >
+        Fechar
+      </button>
+    </div>
+  </div>
+</dialog>

@@ -4,6 +4,7 @@
     [src]="displayGame().coverUrl"
     [alt]="displayGame().name + ' cover'"
     class="h-full w-full object-cover"
+    draggable="false"
   />
   } @else {
   <div class="fallback-cover">
@@ -57,6 +58,19 @@
 </div>
 } @else {
 <a
+  #interactiveCover
+  [class.quick-enabled]="quickEntry.eligible()"
+  [class.cover-pressing]="pressing()"
+  [attr.aria-haspopup]="quickEntry.eligible() ? 'menu' : null"
+  [attr.aria-expanded]="quickEntry.eligible() ? quickActionsOpen() : null"
+  (contextmenu)="onContextMenu($event)"
+  (keydown)="onCoverKeydown($event)"
+  (pointerdown)="onPointerDown($event)"
+  (pointermove)="onPointerMove($event)"
+  (pointerup)="cancelHold()"
+  (pointercancel)="cancelHold()"
+  (pointerleave)="cancelHold()"
+  (dragstart)="cancelHold()"
   [routerLink]="['/jogo', displayGame().slug]"
   class="base-card group relative"
   [style.width.px]="width()"
@@ -77,4 +91,14 @@
   </div>
   }
 </a>
+}
+
+@if (quickActionsOpen()) {
+  <ui-game-quick-actions
+    [game]="displayGame()"
+    [originElement]="cover()!.nativeElement"
+    [mobile]="quickContext()!.mobile"
+    [point]="quickContext()!.point"
+    (closed)="closeQuickActions()"
+  />
 }

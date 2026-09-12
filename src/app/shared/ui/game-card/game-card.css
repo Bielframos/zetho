@@ -25,3 +25,17 @@
     transparent
   );
 }
+
+.quick-enabled {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  transition: transform 180ms cubic-bezier(.2,.8,.2,1);
+}
+.quick-enabled.cover-pressing { transform: scale(.96); }
+.quick-enabled:focus-visible { outline: 2px solid var(--color-blue-6); outline-offset: -2px; }
+@media (prefers-reduced-motion: reduce) {
+  .quick-enabled { transition: none; }
+  .quick-enabled.cover-pressing { transform: none; }
+}

@@ -6,6 +6,26 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.26.0] - 2026-09-12
+
+### Added
+
+- Menu contextual nas capas para registrar Zerei, Biblioteca, Jogando e Dropei sem abrir o jogo, com suporte a mouse e teclado no desktop.
+- Ações por toque prolongado no mobile, com capa animada, scrim e grade compacta de ações com cores por status.
+- Opção de ocultar indicadores de status nas capas, aplicada às listagens do perfil.
+
+### Changed
+
+- Entradas já carregadas na busca e no próprio perfil são reutilizadas no menu, preservando os demais atributos do registro.
+- Logo do Zetho nas ações de zerar e no feed, com a cor da marca.
+- Compartilhamento de jogos disponível apenas por ação explícita do usuário.
+
+### Fixed
+
+- Jogos lançados não são bloqueados quando a projeção da capa omite a data de lançamento.
+- Removido o gatilho persistente que abria o compartilhamento ao acessar outro jogo após zerar.
+- Tratamento de falhas, repetição de consultas, foco e cancelamento de gestos no menu de ações.
+
 ## [1.25.0] - 2026-09-12
 
 ### Added
