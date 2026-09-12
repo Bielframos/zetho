@@ -7,6 +7,7 @@ import { UserProfileService } from '../userProfiles/userProfile.service';
 export type SearchFilters = {
   genre?: string;
   year?: string;
+  developer?: string;
   view?: 'hyped-upcoming';
 };
 
@@ -36,7 +37,7 @@ type SearchResultView<T> = {
   reload: () => Promise<void>;
 };
 
-const DEFAULT_PAGE_SIZE = 12;
+const DEFAULT_PAGE_SIZE = 24;
 
 @Injectable({ providedIn: 'root' })
 export class SearchController {
@@ -93,7 +94,7 @@ export class SearchController {
     pageSize: number = DEFAULT_PAGE_SIZE,
   ) {
     const normalizedQuery = query.trim();
-    const hasFilters = !!filters.genre || !!filters.year;
+    const hasFilters = !!filters.genre || !!filters.year || !!filters.developer;
     const hasSpecialView = filters.view === 'hyped-upcoming';
 
     if (!normalizedQuery && !hasFilters && !hasSpecialView) {
@@ -197,7 +198,7 @@ export class SearchController {
     }));
 
     const filters = this.filters();
-    const hasFilters = !!filters.genre || !!filters.year;
+    const hasFilters = !!filters.genre || !!filters.year || !!filters.developer;
     const isHypedUpcomingView = filters.view === 'hyped-upcoming';
 
     if (!query && !hasFilters && !isHypedUpcomingView) {

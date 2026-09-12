@@ -11,6 +11,8 @@ import { environment } from '../../../environments/environment';
 import { AuthStore } from '../auth/auth.store';
 import { safeLocalStorage } from '../../utils/platform-storage';
 
+export type CompanyOption = { $id: string; name: string; slug: string };
+
 @Injectable({ providedIn: 'root' })
 export class GameService {
   private readonly isServer = isPlatformServer(inject(PLATFORM_ID));
@@ -85,6 +87,14 @@ export class GameService {
     return (await response.json()) as T;
   }
 
+  async searchCompanies(query: string): Promise<CompanyOption[]> {
+    const response = await this.fetchSearchApi<{ results: CompanyOption[] }>(
+      'games/companies',
+      { q: query.trim() || undefined },
+    );
+    return response.results;
+  }
+
   async searchGame(
     query: string,
     opts: {
@@ -94,7 +104,7 @@ export class GameService {
       filters?: SearchFilters;
     },
   ) {
-    const pageSize = opts?.pageSize ?? 12;
+    const pageSize = opts?.pageSize ?? 24;
     const offset = opts?.offset ?? 0;
     const filters = opts?.filters;
 
@@ -120,6 +130,7 @@ export class GameService {
       q: query || undefined,
       genre: parsedGenreId,
       year: filters?.year,
+      developer: filters?.developer,
       page,
       pageSize,
       fingerprint: opts?.fingerprint,

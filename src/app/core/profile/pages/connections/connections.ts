@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { ProfileStore } from '../../../userProfiles/profile.store';
 import { ConnectionsController } from '../../../connections/connections.controller';
-import { NgClass } from '@angular/common';
+import { UiSegmentedControl, UiSegmentOption } from '../../../../shared/ui/segmented-control';
 import { UiProfileCard } from '../../../../shared/ui/profile-card';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { ProfileLayoutStore } from '../../../../shared/app/profile-layout/profile-layout.store';
@@ -10,9 +10,13 @@ import { ProfileLayoutStore } from '../../../../shared/app/profile-layout/profil
   selector: 'app-connections',
   standalone: true,
   templateUrl: './connections.html',
-  imports: [NgClass, UiProfileCard, UiLoading],
+  imports: [UiSegmentedControl, UiProfileCard, UiLoading],
 })
 export class ConnectionsPage {
+  readonly connectionOptions: UiSegmentOption<'followers' | 'following'>[] = [
+    { id: 'followers', label: 'Seguidores' },
+    { id: 'following', label: 'Seguindo' },
+  ];
   private profileStore = inject(ProfileStore);
   controller = inject(ConnectionsController);
 

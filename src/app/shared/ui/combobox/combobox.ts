@@ -79,6 +79,10 @@ export class UiCombobox {
 
   onKeydown(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
+      if (this.isOpen()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
       this.isOpen.set(false);
       return;
     }

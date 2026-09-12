@@ -1,4 +1,4 @@
-<div>
+<div class="relative">
   @if (label()) {
   <label [for]="inputId" class="mb-1.5 block text-sm text-gray-12">
     {{ label() }} @if (required()) {
@@ -97,7 +97,7 @@
   <div
     [id]="listboxId"
     role="listbox"
-    class="discreet-scrollbar mt-1 max-h-56 overflow-y-auto rounded-lg border border-gray-6 bg-gray-2"
+    class="discreet-scrollbar absolute inset-x-0 top-full z-20 mt-1 max-h-56 overflow-y-auto overscroll-contain rounded-lg border border-gray-6 bg-gray-2 shadow-lg"
     [attr.aria-multiselectable]="multiple()"
   >
     @if (query().trim().length < minQueryLength()) {

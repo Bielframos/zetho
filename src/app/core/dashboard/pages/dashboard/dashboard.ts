@@ -1,3 +1,5 @@
+import { FeedReviewContent } from '../../../ratings/components/feed-review-content';
+import { FeedReviewVotes } from '../../../ratings/components/feed-review-votes';
 import {
   afterNextRender,
   Component,
@@ -45,6 +47,8 @@ const STATUS_ICONS: Record<FeedGameStatus, string> = {
   selector: 'app-dashboard',
   standalone: true,
   imports: [
+    FeedReviewContent,
+    FeedReviewVotes,
     RouterLink,
     RelativeTimePipe,
     NgTemplateOutlet,
@@ -109,6 +113,16 @@ export class DashboardPage implements OnDestroy {
       { rootMargin: '600px' },
     );
     this.observer.observe(el);
+  }
+
+  updateReviewVoteCount(reviewId: string, voteCount: number) {
+    this.feed.update((items) =>
+      items.map((item) =>
+        item.type === 'rating' && item.$id === reviewId
+          ? { ...item, voteCount }
+          : item,
+      ),
+    );
   }
 
   statusLabel(status?: FeedGameStatus) {
