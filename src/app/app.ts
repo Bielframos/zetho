@@ -114,6 +114,10 @@ export class App {
     return !this.authStore.isAuthenticated() && !this.isAppShellExcludedRoute();
   }
 
+  isLandingRoute() {
+    return this.currentPath() === '/landing';
+  }
+
   isAuthRoute() {
     const path = this.currentPath();
     const authRoutes = [

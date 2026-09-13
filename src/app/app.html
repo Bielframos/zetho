@@ -626,7 +626,7 @@
       </a>
 
       <div class="flex items-center gap-2">
-        @if (!isAuthRoute() && !isOfflineRoute()) {
+        @if (!isAuthRoute() && !isOfflineRoute() && !isLandingRoute()) {
         <app-z-coin-balance></app-z-coin-balance>
 
         <div class="hidden items-center gap-2 md:flex">
@@ -663,7 +663,7 @@
       </div>
     </div>
 
-    @if (!isAuthRoute() && !isOfflineRoute()) {
+    @if (!isAuthRoute() && !isOfflineRoute() && !isLandingRoute()) {
     <div class="mt-4 md:hidden">
       <app-search-input
         name="mobileSearchInput"

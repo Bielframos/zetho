@@ -6,6 +6,14 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.26.3] - 2026-09-12
+
+### Fixed
+
+- Landing sem a tag promocional, com título menor no mobile.
+- Ações da hero em linha com flex-wrap, botões quadrados padrão e altura uniforme.
+- Busca movida da topbar para a hero, mantendo a navegação para resultados de jogos e jogadores.
+
 ## [1.26.2] - 2026-09-12
 
 ### Fixed

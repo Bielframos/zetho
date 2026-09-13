@@ -5,13 +5,14 @@ import { ZEntryService } from '../../../zEntries/zEntries.service';
 import { UserProfileService } from '../../../userProfiles/userProfile.service';
 import { ZStatsService } from '../../../zStats/zStats.service';
 import { GameRow } from '../../../games/game.types';
+import { AppSearchInput } from '../../../../shared/app/search-input/search-input';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, UiLoading, UiGameCard],
+  imports: [RouterLink, UiLoading, UiGameCard, AppSearchInput],
   templateUrl: './lp.html',
 })
 export class LandingPage {
@@ -19,6 +20,10 @@ export class LandingPage {
     null,
   );
   trendingGames = signal<GameRow[]>([]);
+
+  onSearch(query: string) {
+    void this.router.navigate(['/buscar'], { queryParams: { q: query } });
+  }
 
   constructor(
     private router: Router,
