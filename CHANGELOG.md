@@ -6,6 +6,13 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.26.2] - 2026-09-12
+
+### Fixed
+
+- Acesso à navegação pública pelo botão Explorar o Zetho na landing, com Início e marca direcionando visitantes para Notícias.
+- Z Shop oculta nos menus desktop e mobile para visitantes, com acesso direto à loja protegido por autenticação.
+
 ## [1.26.1] - 2026-09-12
 
 ### Fixed

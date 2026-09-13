@@ -8,7 +8,10 @@
     <aside
       class="sticky top-0 hidden h-dvh overflow-y-auto discreet-scrollbar border-r border-gray-4 px-4 py-4 lg:block"
     >
-      <a routerLink="/dashboard" class="inline-flex">
+      <a
+        [routerLink]="authStore.user() ? '/dashboard' : '/noticias'"
+        class="inline-flex"
+      >
         <h3 class="font-display text-[32px] leading-none px-4">zetho</h3>
       </a>
 
@@ -25,7 +28,7 @@
         </a>
         } @else {
         <a
-          routerLink="/landing"
+          routerLink="/noticias"
           class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
         >
           <i class="ph ph-house"></i>
@@ -99,8 +102,7 @@
           <i class="ph ph-gift"></i>
           <span>Sorteios</span>
         </a>
-        }
-
+        } @if (authStore.user()) {
         <a
           routerLink="/loja"
           routerLinkActive="bg-gray-3 text-gray-12"
@@ -109,8 +111,7 @@
           <i class="ph ph-storefront"></i>
           <span>Z Shop</span>
         </a>
-
-        @if (authStore.user()) {
+        } @if (authStore.user()) {
         <a
           [routerLink]="profileRoute()"
           routerLinkActive="bg-gray-3 text-gray-12"
@@ -415,7 +416,7 @@
       </a>
       } @else {
       <a
-        routerLink="/landing"
+        routerLink="/noticias"
         class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
         aria-label="Início"
       >
@@ -541,7 +542,7 @@
         >
           <i class="ph ph-gift"></i><span>Sorteios</span>
         </a>
-        }
+        } @if (authStore.user()) {
         <a
           routerLink="/loja"
           routerLinkActive="bg-gray-3 text-gray-12"
@@ -549,6 +550,7 @@
         >
           <i class="ph ph-storefront"></i><span>Z Shop</span>
         </a>
+        }
         <a
           routerLink="/noticias"
           routerLinkActive="bg-gray-3 text-gray-12"
@@ -570,9 +572,8 @@
           ariaCurrentWhenActive="page"
           class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
         >
-          <i class="ph ph-list-dashes" aria-hidden="true"></i><span
-            >Listas</span
-          >
+          <i class="ph ph-list-dashes" aria-hidden="true"></i
+          ><span>Listas</span>
         </a>
         <a
           routerLink="/institucional"
@@ -618,7 +619,9 @@
 <div class="flex min-h-dvh flex-col">
   <nav class="relative z-10 w-full py-2 px-4 md:px-10 border-b border-gray-6">
     <div class="flex items-center justify-between gap-4">
-      <a [routerLink]="authStore.isAuthenticated() ? '/dashboard' : '/landing'">
+      <a
+        [routerLink]="authStore.isAuthenticated() ? '/dashboard' : '/noticias'"
+      >
         <h3 class="font-display text-[40px] leading-none">zetho</h3>
       </a>
 
