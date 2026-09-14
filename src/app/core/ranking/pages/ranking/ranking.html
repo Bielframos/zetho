@@ -1,0 +1,279 @@
+<main class="w-full">
+  <header class="border-b border-gray-6 px-4 py-4">
+    <div class="flex items-center gap-3">
+      <span
+        class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6 text-blue-11"
+        aria-hidden="true"
+      >
+        <i class="ph ph-ranking"></i>
+      </span>
+      <div>
+        <h1 class="text-2xl text-gray-12">Rankings</h1>
+        <p class="text-sm text-gray-11">
+          Acompanhe os jogadores com mais Z-Coins acumulados e veja quem zerou mais jogos na sua rede.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Barra de tabs (estilo página de jogo) -->
+  <div class="sticky top-0 z-20 bg-gray-1/95 backdrop-blur-sm">
+    <ui-tabs
+      [tabs]="tabs"
+      [active]="activeTab()"
+      (activeChange)="onTabChange($event)"
+    ></ui-tabs>
+  </div>
+
+  <!-- ABA 1: Z-COINS DA SEMANA -->
+  @if (activeTab() === 'zcoins') {
+    @if (loadingZCoins()) {
+      <section class="p-6">
+        <ui-loading fallback="Carregando placar..."></ui-loading>
+        <div class="text-center text-sm text-gray-11 -mt-2">
+          Buscando os dados mais recentes de Z-Coins.
+        </div>
+      </section>
+    } @else if (errorZCoins()) {
+      <section class="p-6">
+        <div class="p-4 border border-red-7 bg-red-2 text-red-11 text-sm rounded">
+          {{ errorZCoins() }}
+        </div>
+      </section>
+    } @else if (weeklyBoard(); as board) {
+      <section class="divide-y divide-gray-6">
+        <article class="px-4 py-4 flex flex-row justify-between items-center bg-gray-2/50">
+          <div class="flex items-center gap-3">
+            <img
+              src="/animated_z_coin.gif"
+              alt="Zcoin"
+              class="h-9 w-9 rounded-full bg-gray-1 p-1"
+            />
+            <div>
+              <span class="text-sm font-medium text-gray-12">
+                {{ board.totalPlayers }} {{ board.totalPlayers === 1 ? 'jogador' : 'jogadores' }} pontuando
+              </span>
+            </div>
+          </div>
+
+          <div class="text-xs text-gray-11 flex items-center gap-1.5 font-mono">
+            <i class="ph ph-clock text-sm"></i>
+            {{ resetsInString }}
+          </div>
+        </article>
+
+        <ol class="flex flex-col divide-y divide-gray-6 h-fit">
+          @for (leader of board.leaders; track leader.userId) {
+            <li
+              class="p-4 flex items-center gap-4 transition-colors hover:bg-gray-2/70"
+              [class.bg-blue-3]="isCurrentUser(leader.userId)"
+              [class.hover:bg-blue-4]="isCurrentUser(leader.userId)"
+            >
+              <div
+                class="w-12 h-12 shrink-0 rounded-full text-blue-12 bg-blue-4 flex items-center justify-center font-display text-xl overflow-hidden border border-gray-6"
+              >
+                @if (leader.avatarUrl) {
+                  <img
+                    [src]="leader.avatarUrl"
+                    [alt]="leader.gamertag ?? 'Jogador'"
+                    class="w-full h-full object-cover"
+                  />
+                } @else {
+                  <span>{{ leader.gamertag?.charAt(0) ?? '#' }}</span>
+                }
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span
+                    class="text-xs font-mono font-bold tracking-[0.18em] px-2 py-0.5 rounded"
+                    [class.bg-yellow-4]="leader.position === 1"
+                    [class.text-yellow-11]="leader.position === 1"
+                    [class.bg-gray-4]="leader.position === 2"
+                    [class.text-gray-12]="leader.position === 2"
+                    [class.bg-amber-4]="leader.position === 3"
+                    [class.text-amber-11]="leader.position === 3"
+                    [class.text-gray-10]="leader.position > 3"
+                  >
+                    #{{ leader.position }}
+                  </span>
+
+                  <a
+                    [href]="profileUrl(leader.gamertag)"
+                    class="text-base md:text-lg font-medium truncate hover:text-blue-9 transition-colors"
+                  >
+                    {{ leader.gamertag ?? 'Jogador anônimo' }}
+                  </a>
+
+                  @if (isCurrentUser(leader.userId)) {
+                    <span class="rounded-full bg-blue-4 text-blue-11 text-xs px-2 py-0.5 font-medium">
+                      Você
+                    </span>
+                  }
+                </div>
+              </div>
+
+              <div class="text-right shrink-0">
+                <div class="text-[10px] uppercase tracking-[0.24em] text-gray-10">
+                  Z-Coins
+                </div>
+                <div class="text-xl md:text-2xl font-display text-gray-12">
+                  {{ leader.zcoins }}
+                </div>
+              </div>
+            </li>
+          }
+        </ol>
+
+        <footer class="p-4 text-xs text-gray-11 text-center bg-gray-2/30">
+          <span>Próxima sincronização prevista para {{ formatDate(board.nextSyncAt) }}</span>
+        </footer>
+      </section>
+    }
+  }
+
+  <!-- ABA 2: JOGOS ZERADOS (CONEXÕES) -->
+  @if (activeTab() === 'connections') {
+    @if (!isLoggedIn()) {
+      <section class="p-8 max-w-lg mx-auto text-center">
+        <div class="w-16 h-16 rounded-full border border-gray-6 bg-gray-2 flex items-center justify-center mx-auto mb-4">
+          <i class="ph ph-users-three text-3xl text-blue-11"></i>
+        </div>
+        <h2 class="text-xl font-display mb-2">Conecte-se com seus amigos</h2>
+        <p class="text-sm text-gray-11 mb-6">
+          Faça login para ver o ranking de jogos zerados entre as pessoas que você segue e seus seguidores no Zetho.
+        </p>
+        <a
+          routerLink="/entrar"
+          class="inline-flex items-center justify-center gap-2 h-10 px-5 rounded-lg bg-blue-9 text-white font-medium hover:bg-blue-10 transition-colors"
+        >
+          <i class="ph ph-sign-in"></i>
+          <span>Entrar no Zetho</span>
+        </a>
+      </section>
+    } @else if (loadingConnections()) {
+      <section class="p-6">
+        <ui-loading fallback="Carregando conexões..."></ui-loading>
+        <div class="text-center text-sm text-gray-11 -mt-2">
+          Calculando os jogos zerados entre suas conexões.
+        </div>
+      </section>
+    } @else if (errorConnections()) {
+      <section class="p-6">
+        <div class="p-4 border border-red-7 bg-red-2 text-red-11 text-sm rounded">
+          {{ errorConnections() }}
+        </div>
+      </section>
+    } @else if (connectionsBoard(); as board) {
+      <section class="divide-y divide-gray-6">
+        <!-- Banner de posição do usuário -->
+        <article class="p-4 bg-gray-2/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 shrink-0 rounded-full bg-blue-3 border border-blue-6 flex items-center justify-center text-blue-11 font-display">
+              <i class="ph ph-trophy text-lg"></i>
+            </div>
+            <div>
+              <div class="text-sm font-medium text-gray-12">
+                @if (board.currentUserPosition) {
+                  Você está em <span class="text-blue-11 font-bold">#{{ board.currentUserPosition }}</span> entre suas conexões
+                } @else {
+                  Seu placar de conexões
+                }
+              </div>
+              <div class="text-xs text-gray-11">
+                {{ board.totalConnections }} {{ board.totalConnections === 1 ? 'conexão ativa' : 'conexões ativas' }}
+              </div>
+            </div>
+          </div>
+
+          @if (board.totalConnections === 0) {
+            <a
+              routerLink="/dashboard"
+              class="text-xs text-blue-11 hover:underline flex items-center gap-1 self-start sm:self-auto"
+            >
+              <span>Descobrir outros jogadores</span>
+              <i class="ph ph-arrow-right"></i>
+            </a>
+          }
+        </article>
+
+        @if (board.leaders.length === 0) {
+          <div class="p-8 text-center text-gray-11 text-sm">
+            Nenhuma informação encontrada para exibir no momento.
+          </div>
+        } @else {
+          <ol class="flex flex-col divide-y divide-gray-6 h-fit">
+            @for (leader of board.leaders; track leader.userId) {
+              <li
+                class="p-4 flex items-center gap-4 transition-colors hover:bg-gray-2/70"
+                [class.bg-blue-3]="leader.isCurrentUser"
+                [class.hover:bg-blue-4]="leader.isCurrentUser"
+              >
+                <!-- Avatar -->
+                <div
+                  class="w-12 h-12 shrink-0 rounded-full text-blue-12 bg-blue-4 flex items-center justify-center font-display text-xl overflow-hidden border border-gray-6"
+                >
+                  @if (leader.avatarUrl) {
+                    <img
+                      [src]="leader.avatarUrl"
+                      [alt]="leader.gamertag"
+                      class="w-full h-full object-cover"
+                    />
+                  } @else {
+                    <span>{{ leader.gamertag.charAt(0) }}</span>
+                  }
+                </div>
+
+                <!-- Info -->
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span
+                      class="text-xs font-mono font-bold tracking-[0.18em] px-2 py-0.5 rounded"
+                      [class.bg-yellow-4]="leader.position === 1"
+                      [class.text-yellow-11]="leader.position === 1"
+                      [class.bg-gray-4]="leader.position === 2"
+                      [class.text-gray-12]="leader.position === 2"
+                      [class.bg-amber-4]="leader.position === 3"
+                      [class.text-amber-11]="leader.position === 3"
+                      [class.text-gray-10]="leader.position > 3"
+                    >
+                      #{{ leader.position }}
+                    </span>
+
+                    <a
+                      [href]="profileUrl(leader.gamertag)"
+                      class="text-base md:text-lg font-medium truncate hover:text-blue-9 transition-colors"
+                    >
+                      {{ leader.gamertag }}
+                    </a>
+
+                    @if (leader.isCurrentUser) {
+                      <span class="rounded-full bg-blue-4 text-blue-11 text-xs px-2 py-0.5 font-medium">
+                        Você
+                      </span>
+                    }
+                  </div>
+                </div>
+
+                <!-- Contagem de Zerados -->
+                <div class="text-right shrink-0">
+                  <div class="text-[10px] uppercase tracking-[0.24em] text-gray-10">
+                    Zerados
+                  </div>
+                  <div class="text-xl md:text-2xl font-display text-gray-12 flex items-center justify-end gap-1.5">
+                    <ui-zetho-icon class="text-gray-12"></ui-zetho-icon>
+                    <span>{{ leader.completedGames }}</span>
+                  </div>
+                </div>
+              </li>
+            }
+          </ol>
+        }
+
+        <footer class="p-4 text-xs text-gray-11 text-center bg-gray-2/30">
+          <span>Atualizado em tempo real com base nos jogos registrados da sua rede</span>
+        </footer>
+      </section>
+    }
+  }
+</main>

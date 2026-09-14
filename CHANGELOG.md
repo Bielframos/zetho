@@ -6,6 +6,24 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.27.0] - 2026-09-14
+
+### Added
+
+- Novo ranking social de jogos zerados entre conexões (`/ranking`), com alternância fluida por abas (`ui-tabs`) e pódio visual.
+- Destaque da logo do Zetho nas pontuações de zeramento do ranking.
+
+### Changed
+
+- Header da página de rankings alinhado ao padrão visual das páginas de listas (mesma escala tipográfica, espaçamento e sem fonte display).
+- Unificação das pontuações em branco alto contraste (`text-gray-12`) no placar.
+- Rota legada `/zcoins/leaderboard/weekly` redirecionada automaticamente para `/ranking`.
+- Barra de navegação lateral (desktop) e menu inferior (mobile) apontando diretamente para `/ranking`.
+
+### Performance
+
+- Otimização do consumo do placar de Z-Coins e hidratação das entradas.
+
 ## [1.26.3] - 2026-09-12
 
 ### Fixed
