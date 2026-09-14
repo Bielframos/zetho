@@ -12,6 +12,7 @@ import { PROFILE_ROUTES } from './core/profile/profile.routes';
 import { RAFFLES_ROUTES } from './core/raffles/raffles.routes';
 import { SEARCH_ROUTES } from './core/search/search.routes';
 import { ZCOINS_ROUTES } from './core/zCoins/zcoins.routes';
+import { RANKING_ROUTES } from './core/ranking/ranking.routes';
 import { GAMEPLAY_SESSIONS_ROUTES } from './core/gameplay-sessions/gameplay-sessions.routes';
 import { NEWS_ROUTES } from './core/news/news.routes';
 import { environment } from '../environments/environment';
@@ -63,5 +64,6 @@ export const routes: Routes = [
   ...ONBOARDING_ROUTES,
   ...PROFILE_ROUTES,
   ...ZCOINS_ROUTES,
+  ...RANKING_ROUTES,
   ...NOT_FOUND_ROUTES,
 ];

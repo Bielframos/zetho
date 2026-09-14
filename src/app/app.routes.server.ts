@@ -94,6 +94,11 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server,
     headers: EDGE_CACHE_5_MIN,
   },
+  {
+    path: 'ranking',
+    renderMode: RenderMode.Server,
+    headers: EDGE_CACHE_5_MIN,
+  },
 
   // 404 precisa de status HTTP real, não só do visual da página.
   // Sem cache de propósito: uma URL que hoje é 404 costuma ser conteúdo novo

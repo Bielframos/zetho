@@ -6,8 +6,8 @@ import { ShopPage } from './pages/shop/shop';
 export const ZCOINS_ROUTES: Routes = [
   {
     path: 'zcoins/leaderboard/weekly',
-    component: WeeklyLeaderboardPage,
-    title: 'Zetho | Placar semanal de Z-Coins',
+    redirectTo: '/ranking',
+    pathMatch: 'full',
   },
   {
     path: 'loja',
