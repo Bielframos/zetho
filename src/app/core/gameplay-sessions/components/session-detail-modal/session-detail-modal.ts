@@ -535,7 +535,7 @@ export class SessionDetailModalComponent {
   async copyShareLink() {
     try {
       await navigator.clipboard.writeText(
-        `${window.location.origin}/sessions?id=${this.session()?.$id}`,
+        `${window.location.origin}/jogatina/${this.session()?.$id}`,
       );
       this.toastStore.show({
         message: 'Link da Jogatina copiado!',
