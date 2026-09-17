@@ -6,6 +6,17 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.28.0] - 2026-09-17
+
+### Added
+
+- Página pública de Jogatina em `/jogatina/:id`, com detalhes da sessão, participantes confirmados e acesso para visitantes.
+
+### Changed
+
+- Links compartilhados de Jogatinas agora apontam para a página pública e recebem título, descrição, capa do jogo e dados estruturados no HTML renderizado pelo servidor.
+- Visitantes podem consultar Jogatinas públicas e são direcionados para entrar ou criar uma conta antes de solicitar participação.
+
 ## [1.27.0] - 2026-09-14
 
 ### Added

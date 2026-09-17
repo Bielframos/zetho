@@ -74,6 +74,14 @@ export class GameplaySessionsRepository {
     return await this.fetchApi<GameplaySession>(`api/gameplay-sessions/${id}`);
   }
 
+  async getPublicSessionById(id: string): Promise<GameplaySession> {
+    return await this.fetchApi<GameplaySession>(
+      `api/gameplay-sessions/public/${encodeURIComponent(id)}`,
+      {},
+      { auth: this.authStore.isAuthenticated() },
+    );
+  }
+
   async createSession(dto: CreateSessionDto): Promise<GameplaySession> {
     const created = await this.fetchApi<GameplaySession>(
       'api/gameplay-sessions',

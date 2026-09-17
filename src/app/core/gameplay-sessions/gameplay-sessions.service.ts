@@ -1,4 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { createSsrTaskRunner } from '../../utils/ssr-task';
 import { AuthStore } from '../auth/auth.store';
 import { InAppNotificationStore } from '../system/notifications/in-app-notification.store';
 import { NotificationStore } from '../system/notifications/notification.store';
@@ -16,6 +17,7 @@ export class GameplaySessionsService {
   private authStore = inject(AuthStore);
   private toastStore = inject(NotificationStore);
   private inAppStore = inject(InAppNotificationStore);
+  private runAsSsrTask = createSsrTaskRunner();
 
   sessions = signal<GameplaySession[]>([]);
   loading = signal(false);
@@ -25,6 +27,7 @@ export class GameplaySessionsService {
   filter = signal<SessionFilter>('all');
   searchQuery = signal('');
   selectedSession = signal<GameplaySession | null>(null);
+  publicSession = signal<GameplaySession | null>(null);
 
   readonly currentProfile = computed(() => this.authStore.profile());
   readonly currentProfileId = computed(() => this.currentProfile()?.$id ?? '');
@@ -107,6 +110,28 @@ export class GameplaySessionsService {
       return detail;
     } catch (error) {
       this.selectedSession.set(null);
+      this.showError(error, 'Não foi possível carregar a Jogatina.');
+      return null;
+    } finally {
+      this.detailLoading.set(false);
+    }
+  }
+
+  loadPublicSessionDetail(sessionId: string): Promise<GameplaySession | null> {
+    return this.runAsSsrTask(() => this.loadPublicSessionDetailInternal(sessionId));
+  }
+
+  private async loadPublicSessionDetailInternal(
+    sessionId: string,
+  ): Promise<GameplaySession | null> {
+    this.detailLoading.set(true);
+    this.publicSession.set(null);
+    try {
+      const detail = await this.repository.getPublicSessionById(sessionId);
+      this.publicSession.set(detail);
+      return detail;
+    } catch (error) {
+      this.publicSession.set(null);
       this.showError(error, 'Não foi possível carregar a Jogatina.');
       return null;
     } finally {
