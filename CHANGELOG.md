@@ -6,6 +6,12 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.28.1] - 2026-09-17
+
+### Fixed
+
+- Loading compartilhado aparece na posição final, sem deslocamento ou escala de entrada; a rotação da logo respeita a preferência por movimento reduzido.
+
 ## [1.28.0] - 2026-09-17
 
 ### Added
