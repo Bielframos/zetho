@@ -15,7 +15,6 @@ import { Component, input } from '@angular/core';
       [class.text-xs]="size() === 'sm'"
       [class.text-sm]="size() === 'md' || variant() === 'subtle'"
       [class.text-base]="size() === 'lg' && variant() === 'default'"
-      [attr.animate.enter]="inline() ? null : 'enter-animation'"
     >
       <svg
         [attr.width]="iconSize()"
@@ -23,7 +22,7 @@ import { Component, input } from '@angular/core';
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        class="animate-spin"
+        class="motion-safe:animate-spin"
         [class.opacity-70]="variant() === 'subtle'"
       >
         <path
@@ -36,23 +35,6 @@ import { Component, input } from '@angular/core';
         <span class="text-gray-11">{{ fallback() }}</span>
       }
     </div>
-  `,
-  styles: `
-    .enter-animation {
-      animation: slide-and-scale 0.6s;
-    }
-
-    @keyframes slide-and-scale {
-      from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.2);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
   `,
 })
 export class UiLoading {
