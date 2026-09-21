@@ -6,6 +6,22 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.29.0] - 2026-09-21
+
+### Added
+
+- Aba “Minha jogatina” na página de cada jogo para registrar plataforma, tipo de conclusão e horas jogadas; as estatísticas mostram a média comunitária de tempo para zerar.
+- Meta anual de jogos no perfil, com objetivo editável e progresso em porcentagem.
+
+### Changed
+
+- O feed social passa a carregar páginas por cursor para manter a navegação cronológica conforme a timeline cresce.
+- Capas de jogos usam imagens responsivas com carregamento sob demanda e prioridade nas primeiras capas visíveis.
+
+### Fixed
+
+- Nomes de View Transition das capas agora são únicos por seção e registro, evitando conflitos quando o mesmo jogo aparece mais de uma vez na página.
+
 ## [1.28.1] - 2026-09-17
 
 ### Fixed

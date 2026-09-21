@@ -109,7 +109,7 @@
           <ul class="grid grid-cols-3 gap-px">
             @for (game of trendingGames().slice(0, 6); track game.$id) {
             <li class="min-w-0">
-              <ui-game-card [game]="game"></ui-game-card>
+              <ui-game-card [game]="game" transitionScope="landing" [priority]="$index < 4"></ui-game-card>
             </li>
             }
           </ul>

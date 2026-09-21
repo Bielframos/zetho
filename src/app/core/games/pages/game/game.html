@@ -134,6 +134,8 @@
         [gameHypes]="controller.game()?.hypes"
         [isUpcomingRelease]="controller.isUpcomingRelease()"
       ></ui-game-stats>
+      } @if (visitedTabs().has('playthrough')) {
+      <ui-my-playthrough class="block animate-fade-in-slide" [class.hidden]="activeTab() !== 'playthrough'"></ui-my-playthrough>
       } @if (visitedTabs().has('reviews')) {
       <ui-game-reviews
         class="block animate-fade-in-slide"

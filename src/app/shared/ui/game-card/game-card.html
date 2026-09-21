@@ -1,11 +1,29 @@
 <ng-template #cardImg>
   @if (displayGame().coverUrl) {
+  @if (isIgdbCover()) {
   <img
-    [src]="displayGame().coverUrl"
+    [ngSrc]="displayGame().coverUrl"
+    ngSrcset="90w, 180w, 264w, 528w"
+    [sizes]="coverSizes()"
+    [priority]="priority()"
+    width="264"
+    height="374"
     [alt]="displayGame().name + ' cover'"
     class="h-full w-full object-cover"
     draggable="false"
   />
+  } @else {
+  <img
+    [ngSrc]="displayGame().coverUrl"
+    disableOptimizedSrcset
+    [priority]="priority()"
+    width="264"
+    height="374"
+    [alt]="displayGame().name + ' cover'"
+    class="h-full w-full object-cover"
+    draggable="false"
+  />
+  }
   } @else {
   <div class="fallback-cover">
     <h4>
@@ -51,7 +69,7 @@
 <div
   class="base-card"
   [style.width.px]="width()"
-  [style.view-transition-name]="displayGame().$id"
+  [style.view-transition-name]="transitionName()"
 >
   <ng-container [ngTemplateOutlet]="cardImg" />
   <ng-container [ngTemplateOutlet]="entryBadge" />
@@ -74,7 +92,7 @@
   [routerLink]="['/jogo', displayGame().slug]"
   class="base-card group relative"
   [style.width.px]="width()"
-  [style.view-transition-name]="displayGame().$id"
+  [style.view-transition-name]="transitionName()"
   (click)="updateGame()"
 >
   <ng-container [ngTemplateOutlet]="cardImg" />

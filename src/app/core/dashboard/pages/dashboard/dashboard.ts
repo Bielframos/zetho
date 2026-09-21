@@ -72,6 +72,7 @@ export class DashboardPage implements OnDestroy {
   activeFeedScope = signal<FeedScope>('connections');
   loadingFeed = signal(false);
   feedPage = signal(1);
+  feedCursor = signal<string | null>(null);
   hasMoreFeed = signal(false);
   loadingMoreFeed = signal(false);
   updatingCommentVoteIds = signal<Set<string>>(new Set());
@@ -148,6 +149,7 @@ export class DashboardPage implements OnDestroy {
       this.feed.set(res.items);
       this.hasMoreFeed.set(res.hasMore);
       this.feedPage.set(1);
+      this.feedCursor.set(res.nextCursor ?? null);
     } catch (e) {
       console.error(e);
     } finally {
@@ -161,6 +163,7 @@ export class DashboardPage implements OnDestroy {
     this.feed.set([]);
     this.hasMoreFeed.set(false);
     this.feedPage.set(1);
+    this.feedCursor.set(null);
     this.selectedEntry.set(null);
     this.selectedComment.set(null);
     this.expandedCommentIds.set(new Set());
@@ -180,6 +183,7 @@ export class DashboardPage implements OnDestroy {
         nextPage,
         12,
         scope,
+        scope === 'connections' ? this.feedCursor() : null,
       );
       if (
         requestId !== this.feedRequestId ||
@@ -190,6 +194,7 @@ export class DashboardPage implements OnDestroy {
       this.feed.update((prev) => [...prev, ...res.items]);
       this.hasMoreFeed.set(res.hasMore);
       this.feedPage.set(nextPage);
+      this.feedCursor.set(res.nextCursor ?? null);
     } catch (e) {
       console.error(e);
     } finally {
@@ -197,9 +202,15 @@ export class DashboardPage implements OnDestroy {
     }
   }
 
-  latestCovers(list: { title?: string; coverImageUrls?: string[]; latestAdditions?: string[] }) {
+  latestCovers(list: {
+    title?: string;
+    coverImageUrls?: string[];
+    latestAdditions?: string[];
+  }) {
     if (list.coverImageUrls && list.coverImageUrls.length > 0) {
-      return list.coverImageUrls.slice(0, 3).map((url) => ({ gameCoverUrl: url, gameName: list.title ?? '' }));
+      return list.coverImageUrls
+        .slice(0, 3)
+        .map((url) => ({ gameCoverUrl: url, gameName: list.title ?? '' }));
     }
     return (list.latestAdditions ?? [])
       .map((item) => {
@@ -209,7 +220,10 @@ export class DashboardPage implements OnDestroy {
           return null;
         }
       })
-      .filter((item): item is { gameName: string; gameCoverUrl: string } => item !== null)
+      .filter(
+        (item): item is { gameName: string; gameCoverUrl: string } =>
+          item !== null,
+      )
       .slice(0, 3);
   }
 
@@ -240,7 +254,9 @@ export class DashboardPage implements OnDestroy {
   }
 
   commentReplyCount(item: DashboardFeedItem) {
-    return (item as DashboardFeedItem & { replyCount?: number }).replyCount ?? 0;
+    return (
+      (item as DashboardFeedItem & { replyCount?: number }).replyCount ?? 0
+    );
   }
 
   // ------------------------------------------------------------------
@@ -256,16 +272,12 @@ export class DashboardPage implements OnDestroy {
         item.type === 'comment' && item.$id === commentId
           ? {
               ...item,
-              replyCount: Math.max(
-                0,
-                ((item as any).replyCount ?? 0) + delta,
-              ),
+              replyCount: Math.max(0, ((item as any).replyCount ?? 0) + delta),
             }
           : item,
       ),
     );
-    const selected =
-      this.feed().find((item) => item.$id === commentId) ?? null;
+    const selected = this.feed().find((item) => item.$id === commentId) ?? null;
     this.selectedComment.set(selected);
   }
 

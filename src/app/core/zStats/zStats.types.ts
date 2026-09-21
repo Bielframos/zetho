@@ -4,6 +4,8 @@ import { GameRow } from '../games/game.types';
 type ZStats = {
   game: GameRow | string;
   completedCount: number;
+  completedPlaytimeMinutes?: number | null;
+  completedPlaytimeCount?: number | null;
   backlogCount: number;
   droppedCount: number;
   playingCount: number;

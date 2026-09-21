@@ -4,7 +4,7 @@
 <ul class="grid grid-cols-4 gap-px">
   @for (entry of controller.entries(); track entry.$id) {
   <li class="flex flex-col">
-    <ui-game-card [game]="entry.game" [showEntryStatus]="false"></ui-game-card>
+    <ui-game-card [game]="entry.game" transitionScope="library" [transitionItemId]="entry.$id" [priority]="$index < 4" [showEntryStatus]="false"></ui-game-card>
   </li>
   } @empty { @if (profileStore.itsMe()) {
   <li class="col-span-4 px-4 py-10">
@@ -17,7 +17,7 @@
       class="mx-auto flex max-w-xl flex-col items-center gap-6 text-center sm:flex-row sm:text-left"
     >
       <div class="w-28 shrink-0 sm:w-32">
-        <ui-game-card [game]="game"></ui-game-card>
+        <ui-game-card [game]="game" transitionScope="suggestion"></ui-game-card>
       </div>
 
       <div class="flex flex-col items-center sm:items-start">

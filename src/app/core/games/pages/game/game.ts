@@ -19,6 +19,7 @@ import { UiGameLobby } from './modules/game-lobby';
 import { UiGameMedias } from './modules/game-medias';
 import { UiGameSimilar } from './modules/game-similar';
 import { UiGameStats } from './modules/game-stats';
+import { UiMyPlaythrough } from './modules/my-playthrough';
 import { UiZEntryActions } from './modules/z-entry-actions';
 import { UiGameRating } from './modules/game-rating';
 import { UiGameReviews } from './modules/game-reviews';
@@ -34,6 +35,7 @@ type GameTab =
   | 'briefing'
   | 'lobby'
   | 'stats'
+  | 'playthrough'
   | 'reviews'
   | 'news'
   | 'midias'
@@ -48,6 +50,7 @@ type GameTab =
     UiGameHeader,
     UiGameBriefing,
     UiGameStats,
+    UiMyPlaythrough,
     UiGameLobby,
     UiGameActions,
     UiGameMedias,
@@ -108,6 +111,7 @@ export class GamePage {
       { id: 'briefing', label: 'Briefing' },
       { id: 'lobby', label: 'Lobby' },
       { id: 'stats', label: 'Estatísticas' },
+      { id: 'playthrough', label: 'Minha jogatina' },
       {
         id: 'reviews',
         label: 'Reviews',

@@ -17,6 +17,9 @@ export class ZEntriesRepository {
       status?: ZEntryRow['status'] | null;
       liked?: boolean;
       hyped?: boolean;
+      playedPlatform?: string | null;
+      completionType?: string | null;
+      playtimeMinutes?: number | null;
     },
   ) {
     const liked =
@@ -62,6 +65,11 @@ export class ZEntriesRepository {
 
       Object.assign(data, cleanCurrent);
     }
+
+    if (opts && 'playedPlatform' in opts) data.playedPlatform = opts.playedPlatform ?? null;
+    if (opts && 'completionType' in opts) data.completionType = opts.completionType ?? null;
+    if (opts && 'playtimeMinutes' in opts) data.playtimeMinutes = opts.playtimeMinutes ?? null;
+    if (status !== 'completed') data.completionType = null;
 
     return await appwrite.databases.createRow<ZEntryRow>({
       databaseId: 'app',

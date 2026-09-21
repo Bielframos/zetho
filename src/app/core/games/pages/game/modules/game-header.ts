@@ -27,6 +27,8 @@ import { GameStore } from '../../../game.store';
           <div class="w-28 shrink-0 shadow-2xl shadow-gray-1/50 md:w-[150px]">
             <ui-game-card
               [game]="displayGame()!"
+              transitionScope="header"
+              [priority]="true"
               [width]="150"
               readonlyMode
             ></ui-game-card>

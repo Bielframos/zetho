@@ -163,11 +163,17 @@ export class DashboardService {
     page: number = 1,
     pageSize: number = 12,
     scope: FeedScope = 'connections',
-  ): Promise<{ items: DashboardFeedItem[]; hasMore: boolean }> {
+    cursor?: string | null,
+  ): Promise<{
+    items: DashboardFeedItem[];
+    hasMore: boolean;
+    nextCursor?: string | null;
+  }> {
     const url = new URL('dashboard/feed', environment.zethoApiEndpoint);
     url.searchParams.set('page', page.toString());
     url.searchParams.set('pageSize', pageSize.toString());
     url.searchParams.set('scope', scope);
+    if (cursor) url.searchParams.set('cursor', cursor);
     const response = await fetch(url.toString(), {
       headers: await this.getAuthHeaders(),
     });
