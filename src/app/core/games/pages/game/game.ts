@@ -111,7 +111,7 @@ export class GamePage {
       { id: 'briefing', label: 'Briefing' },
       { id: 'lobby', label: 'Lobby' },
       { id: 'stats', label: 'Estatísticas' },
-      { id: 'playthrough', label: 'Minha jogatina' },
+      { id: 'playthrough', label: 'Meu registro' },
       {
         id: 'reviews',
         label: 'Reviews',
@@ -163,13 +163,21 @@ export class GamePage {
     { initialValue: null },
   );
 
+  private readonly viewerKey = computed(() =>
+    JSON.stringify([
+      this.authStore.user()?.$id ?? null,
+      this.authStore.profile()?.fingerprint ?? null,
+    ]),
+  );
+
   /* ---------------------------------------------------------
    * CICLO DE VIDA VIA SIGNAL EFFECTS
    * --------------------------------------------------------- */
   constructor() {
-    // Atualiza o estado quando o slug mudar
+    // Recarrega também após restaurar a sessão, entrar, sair ou trocar de perfil.
     effect(() => {
       const slug = this.slug();
+      this.viewerKey();
       if (!slug) return;
 
       untracked(() => {

@@ -12,6 +12,10 @@
 
     <input
       [type]="type"
+      [attr.min]="min"
+      [attr.max]="max"
+      [attr.step]="step"
+      [class.hide-number-controls]="type === 'number' && hideNumberControls"
       [id]="id || name"
       [name]="name"
       [placeholder]="placeholder"

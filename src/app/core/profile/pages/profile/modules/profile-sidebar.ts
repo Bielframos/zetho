@@ -20,6 +20,7 @@ import { ProfileStore } from '../../../../userProfiles/profile.store';
           <a
             [routerLink]="['/player', profileStore.current()?.gamertag]"
             [queryParams]="{ t: tab.key }"
+            queryParamsHandling="merge"
             class="profile-theme-tab flex gap-2 justify-between w-fit md:w-full whitespace-nowrap pl-4 pr-2 py-2 rounded-lg transition-colors"
           >
             {{ tab.label }}

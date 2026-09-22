@@ -1,9 +1,10 @@
 import { Component, effect, inject, signal } from '@angular/core';
+import { UiSelect, UiSelectOption } from '../../../../../shared/ui/select';
 import { UiLoading } from '../../../../../shared/ui/loading';
 import { UiGameCard } from '../../../../../shared/ui/game-card/game-card';
 import { InfiniteScrollDirective } from '../../../../../shared/ui/infinite-scroll';
 import { ZEntriesController } from '../../../../zEntries/zEntries.controller';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProfileStore } from '../../../../userProfiles/profile.store';
 import { GameRepository } from '../../../../games/games.repository';
 import type { GameRow } from '../../../../../types';
@@ -19,11 +20,33 @@ const SUGGESTED_GAME_SLUGS = [
 @Component({
   selector: 'ui-proflie-entries',
   standalone: true,
-  imports: [UiLoading, UiGameCard, RouterLink, InfiniteScrollDirective],
+  imports: [UiLoading, UiGameCard, RouterLink, InfiniteScrollDirective, UiSelect],
   templateUrl: './profile-entries.html',
 })
 export class UiUserLibGrid {
   private gameRepository = inject(GameRepository);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
+  readonly groupingExpanded = signal(false);
+  readonly groupingOptions: UiSelectOption[] = [
+    { value: 'none', label: 'Recentes · sem agrupamento' },
+    { value: 'release-year', label: 'Ano de lançamento' },
+    { value: 'alphabetical', label: 'Nome (A–Z)' },
+  ];
+
+  toggleGrouping() {
+    this.groupingExpanded.update((expanded) => !expanded);
+  }
+
+  changeGrouping(group: string) {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { group },
+      queryParamsHandling: 'merge',
+    });
+  }
+
   private suggestionLoadedForProfile: string | null = null;
 
   readonly controller = inject(ZEntriesController);
@@ -37,7 +60,9 @@ export class UiUserLibGrid {
       const shouldLoadSuggestion =
         this.profileStore.itsMe() &&
         !this.controller.initialLoading() &&
-        this.controller.offset() > 0 &&
+        this.controller.loaded() &&
+        !this.controller.loadingMore() &&
+        !this.controller.errors()['loadMore'] &&
         this.controller.entries().length === 0;
 
       if (

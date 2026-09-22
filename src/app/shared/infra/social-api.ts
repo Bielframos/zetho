@@ -6,10 +6,23 @@ import { appwrite } from './appwrite/appwrite.client';
 export class SocialApi {
   async request<T>(path: string, method: string, body?: unknown): Promise<T> {
     const jwt = (await appwrite.account.createJWT()).jwt;
+    return this.send<T>(path, method, body, { Authorization: `Bearer ${jwt}` });
+  }
+
+  requestPublic<T>(path: string): Promise<T> {
+    return this.send<T>(path, 'GET', undefined, {});
+  }
+
+  private async send<T>(
+    path: string,
+    method: string,
+    body: unknown,
+    headers: Record<string, string>,
+  ): Promise<T> {
     const response = await fetch(new URL(path, environment.zethoApiEndpoint), {
       method,
       headers: {
-        Authorization: `Bearer ${jwt}`,
+        ...headers,
         ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
       },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
@@ -20,6 +33,6 @@ export class SocialApi {
     }
     if (response.status === 204) return undefined as T;
     const content = await response.text();
-    return content ? JSON.parse(content) as T : undefined as T;
+    return content ? (JSON.parse(content) as T) : (undefined as T);
   }
 }
