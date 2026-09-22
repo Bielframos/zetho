@@ -17,6 +17,19 @@ import {
   standalone: true,
   imports: [FormsModule, NgClass],
   templateUrl: './input.html',
+  styles: [
+    `
+      input.hide-number-controls {
+        appearance: textfield;
+        -moz-appearance: textfield;
+      }
+      input.hide-number-controls::-webkit-inner-spin-button,
+      input.hide-number-controls::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    `,
+  ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -36,6 +49,10 @@ export class UiInput implements ControlValueAccessor {
   @Input({ transform: booleanAttribute }) required = false;
   @Input({ transform: booleanAttribute }) disabled = false;
   @Input() icon = '';
+  @Input() min: number | string | null = null;
+  @Input() max: number | string | null = null;
+  @Input() step: number | string | null = null;
+  @Input({ transform: booleanAttribute }) hideNumberControls = false;
   @Input() variant: 'primary' | 'secondary' = 'primary';
 
   // Valor interno do input

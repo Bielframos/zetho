@@ -1,12 +1,71 @@
+<div class="relative">
+  <div
+    class="border-t-8 border-gray-6"
+    aria-hidden="true"
+  ></div>
+  <button
+    type="button"
+    class="ui-secondary-btn absolute left-1/2 top-1/2 z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-none border-gray-6 bg-gray-1 p-0"
+    data-size="icon"
+    [attr.aria-expanded]="groupingExpanded()"
+    aria-controls="profile-entry-grouping"
+    [attr.aria-label]="groupingExpanded() ? 'Recolher agrupamento' : 'Expandir agrupamento'"
+    (click)="toggleGrouping()"
+  >
+    <i
+      class="ph ph-caret-down transition-transform"
+      [class.rotate-180]="groupingExpanded()"
+      aria-hidden="true"
+    ></i>
+  </button>
+</div>
+<div
+  id="profile-entry-grouping"
+  [hidden]="!groupingExpanded()"
+  class="border-b border-gray-6 px-4 pb-4 pt-6"
+>
+  <div class="flex items-center justify-between gap-4">
+    <label [for]="groupSelect.id" class="shrink-0 text-sm text-gray-11">
+      Agrupar por
+    </label>
+    <ui-select
+      #groupSelect
+      class="w-64 max-w-full"
+      label="Agrupar por"
+      [hideLabel]="true"
+      [options]="groupingOptions"
+      [value]="controller.grouping()"
+      (valueChange)="changeGrouping($event)"
+    ></ui-select>
+  </div>
+</div>
 @if (controller.initialLoading()) {
 <ui-loading></ui-loading>
-} @else if (controller.entries(); as games) {
+} @else if (controller.entries(); as games) { @for (group of
+controller.groups(); track group.key; let firstGroup = $first) {
+<section>
+  @if (group.label) {
+  <h2 class="border-y border-gray-6 px-4 py-3 text-base text-gray-12">
+    {{ group.label }}
+  </h2>
+  }
+  <ul class="grid grid-cols-4 gap-px">
+    @for (entry of group.entries; track entry.$id) {
+    <li class="flex flex-col">
+      <ui-game-card
+        [game]="entry.game"
+        transitionScope="library"
+        [transitionItemId]="entry.$id"
+        [priority]="firstGroup && $index < 4"
+        [showEntryStatus]="false"
+      ></ui-game-card>
+    </li>
+    }
+  </ul>
+</section>
+} @empty { @if (!controller.errors()['loadMore']) {
 <ul class="grid grid-cols-4 gap-px">
-  @for (entry of controller.entries(); track entry.$id) {
-  <li class="flex flex-col">
-    <ui-game-card [game]="entry.game" transitionScope="library" [transitionItemId]="entry.$id" [priority]="$index < 4" [showEntryStatus]="false"></ui-game-card>
-  </li>
-  } @empty { @if (profileStore.itsMe()) {
+  @if (profileStore.itsMe()) {
   <li class="col-span-4 px-4 py-10">
     @if (loadingSuggestion()) {
     <div class="flex min-h-48 items-center justify-center">
@@ -56,9 +115,16 @@
       Este jogador ainda não registrou nenhum jogo.
     </p>
   </li>
-  } }
+  }
 </ul>
-@if (controller.hasMore()) {
+} } @if (controller.errors()['loadMore']) {
+<div class="flex items-center justify-between gap-3 px-4 py-4" role="alert">
+  <p class="text-sm text-gray-11">Não foi possível carregar os jogos.</p>
+  <button class="ui-secondary-btn" (click)="controller.loadEntries()">
+    Tentar novamente
+  </button>
+</div>
+} @else if (controller.hasMore()) {
 <div
   uiInfiniteScroll
   [disabled]="controller.loadingMore() || !controller.hasMore()"

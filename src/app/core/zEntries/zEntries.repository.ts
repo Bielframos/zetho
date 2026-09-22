@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { SocialApi } from '../../shared/infra/social-api';
-import { ZEntryRow } from './zEntries.types';
+import { EntryGrouping, ProfileEntriesPage, ZEntryRow } from './zEntries.types';
 import { appwrite, Query } from '../../shared/infra/appwrite/appwrite.client';
 
 const Z_ENTRIES_READ_TABLE_ID = 'z_entries_read';
@@ -17,6 +17,7 @@ export class ZEntriesRepository {
       status?: ZEntryRow['status'] | null;
       liked?: boolean;
       hyped?: boolean;
+      playedPlatformId?: string | null;
       playedPlatform?: string | null;
       completionType?: string | null;
       playtimeMinutes?: number | null;
@@ -45,25 +46,20 @@ export class ZEntriesRepository {
     userFingerprint: string,
     opts?: {
       status: Exclude<ZEntryRow['status'], null | undefined>;
+      group?: EntryGrouping;
       pageSize?: number;
       offset?: number;
     },
   ) {
-    const queries = [
-      Query.select(['*']),
-      Query.equal('ownerFingerprint', userFingerprint),
-      Query.orderDesc('$updatedAt'),
-      Query.limit(opts?.pageSize || 12),
-      Query.offset(opts?.offset || 0),
-    ];
-
-    if (opts?.status) queries.push(Query.equal('status', opts.status));
-
-    return await appwrite.databases.listRows<ZEntryRow>({
-      databaseId: 'app',
-      tableId: Z_ENTRIES_READ_TABLE_ID,
-      queries,
+    const params = new URLSearchParams({
+      status: opts?.status ?? 'completed',
+      group: opts?.group ?? 'none',
+      limit: String(opts?.pageSize ?? 32),
+      offset: String(opts?.offset ?? 0),
     });
+    return this.api.requestPublic<ProfileEntriesPage>(
+      `profile/${encodeURIComponent(userFingerprint)}/entries?${params}`,
+    );
   }
 
   async countEntries() {

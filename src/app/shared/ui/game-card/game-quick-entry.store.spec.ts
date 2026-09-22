@@ -174,22 +174,42 @@ describe('GameQuickEntryStore', () => {
     ).toBeFalse();
   });
   it('permits a released game with omitted date but rejects a known future year', () => {
-    expect(isQuickEntryAvailable({ ...game, releaseDate: undefined } as unknown as GameWithEntry)).toBeTrue();
-    expect(isQuickEntryAvailable({ ...game, releaseDate: undefined, releaseYear: '2999' } as unknown as GameWithEntry)).toBeFalse();
-    expect(isQuickEntryAvailable({ ...game, releaseDate: null } as unknown as GameWithEntry)).toBeFalse();
+    expect(
+      isQuickEntryAvailable({
+        ...game,
+        releaseDate: undefined,
+      } as unknown as GameWithEntry),
+    ).toBeTrue();
+    expect(
+      isQuickEntryAvailable({
+        ...game,
+        releaseDate: undefined,
+        releaseYear: '2999',
+      } as unknown as GameWithEntry),
+    ).toBeFalse();
+    expect(
+      isQuickEntryAvailable({
+        ...game,
+        releaseDate: null,
+      } as unknown as GameWithEntry),
+    ).toBeFalse();
   });
 
   it('reuses the own-profile entry without forwarding the expanded game to persistence', async () => {
     const controller = new ZEntriesController(
-      { findByIds: async () => [game] } as any,
-      { getUserEntries: async () => ({ rows: [entry], total: 1 }) } as any,
+      {
+        getUserEntries: async () => ({
+          rows: [{ ...entry, game, groupKey: '2026' }],
+          total: 1,
+        }),
+      } as any,
       { profile$: EMPTY, current: () => ({ fingerprint: 'viewer' }) } as any,
       { queryParams: EMPTY } as any,
     );
     await controller.loadEntries();
     const cover = controller.entries()[0].game;
     const loaded = await store.load(cover);
-    expect(loaded).toBe(entry);
+    expect(loaded).toEqual(entry);
     expect(getEntry).not.toHaveBeenCalled();
     await store.save(cover, loaded, 'completed');
     const persisted = createEntryLog.calls.mostRecent().args[2];
@@ -197,5 +217,4 @@ describe('GameQuickEntryStore', () => {
     expect(persisted.hyped).toBeTrue();
     expect('game' in persisted).toBeFalse();
   });
-
 });

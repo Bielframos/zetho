@@ -1,4 +1,16 @@
-import { Component, effect, inject, signal, untracked } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
+import {
+  PlatformsRepository,
+  platformLogo,
+} from '../../../../zEntries/platforms.repository';
+import { UiSelect, UiSelectOption } from '../../../../../shared/ui/select';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '../../../../auth/auth.store';
 import { GameController } from '../../../game.controller';
@@ -7,10 +19,22 @@ import { ZEntryService } from '../../../../zEntries/zEntries.service';
 @Component({
   selector: 'ui-my-playthrough',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, UiSelect],
+  styles: [
+    `
+      .playtime-input {
+        appearance: textfield;
+        -moz-appearance: textfield;
+      }
+      .playtime-input::-webkit-inner-spin-button,
+      .playtime-input::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    `,
+  ],
   template: `
     <section class="p-4 space-y-5">
-      <h2 class="text-xl text-gray-12">Minha jogatina</h2>
       @if (!auth.isAuthenticated()) {
         <p class="text-gray-11">Entre para registrar sua jogatina.</p>
         <a routerLink="/entrar" class="ui-primary-btn">Entrar</a>
@@ -18,51 +42,40 @@ import { ZEntryService } from '../../../../zEntries/zEntries.service';
         <p class="text-gray-11">Carregando sua jogatina...</p>
       } @else {
         <div class="grid gap-4 sm:grid-cols-2">
-          <fieldset class="sm:col-span-2">
-            <legend class="mb-2 text-sm text-gray-11">Plataforma</legend>
-            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              @for (item of platforms; track item.value) {
-                <button
-                  type="button"
-                  class="flex min-h-11 items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm focus:ring-2 focus:ring-blue-6"
-                  [class.border-blue-9]="platform() === item.value"
-                  [class.bg-blue-9/15]="platform() === item.value"
-                  [class.border-gray-6]="platform() !== item.value"
-                  [attr.aria-pressed]="platform() === item.value"
-                  (click)="
-                    platform.set(platform() === item.value ? '' : item.value)
-                  "
-                >
-                  <i
-                    class="ph-fill {{ item.icon }} text-lg"
-                    aria-hidden="true"
-                  ></i>
-                  <span>{{ item.value }}</span>
-                </button>
-              }
-            </div>
-            <p class="mt-1 text-xs text-gray-11">
-              Toque novamente para remover a plataforma.
-            </p>
-          </fieldset>
-          <label class="grid gap-2 text-sm text-gray-11"
-            >Tipo de conclusão
-            <select
-              class="rounded-lg border border-gray-6 bg-gray-2 p-2 text-gray-12 focus:ring-2 focus:ring-blue-6"
-              [disabled]="controller.zEntry()?.status !== 'completed'"
-              [value]="completion()"
-              (change)="completion.set($any($event.target).value)"
-            >
-              <option value="">Não informado</option>
-              @for (item of completions; track item) {
-                <option [value]="item">{{ item }}</option>
-              }
-            </select>
-          </label>
+          <div class="sm:col-span-2">
+            <ui-select
+              label="Plataforma"
+              [options]="platformOptions()"
+              [searchable]="true"
+              [disabled]="platformsLoading() || !!platformsError()"
+              [(value)]="platform"
+            />
+            @if (platformsLoading()) {
+              <p class="mt-2 text-xs text-gray-11">Carregando plataformas…</p>
+            }
+            @if (platformsError()) {
+              <p role="alert" class="mt-2 text-sm text-red-11">
+                {{ platformsError() }}
+              </p>
+              <button
+                type="button"
+                class="ui-ghost-btn"
+                (click)="loadPlatforms()"
+              >
+                Tentar novamente
+              </button>
+            }
+          </div>
+          <ui-select
+            label="Tipo de conclusão"
+            [options]="completionOptions"
+            [disabled]="controller.zEntry()?.status !== 'completed'"
+            [(value)]="completion"
+          />
           <label class="grid gap-2 text-sm text-gray-11"
             >Horas jogadas
             <input
-              class="rounded-lg border border-gray-6 bg-gray-2 p-2 text-gray-12 focus:ring-2 focus:ring-blue-6"
+              class="playtime-input min-h-12 w-full rounded-lg border border-gray-6 bg-gray-2 px-3 py-2 text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6"
               type="number"
               min="0"
               max="35791394"
@@ -98,18 +111,20 @@ import { ZEntryService } from '../../../../zEntries/zEntries.service';
         @if (success()) {
           <p role="status" class="text-sm text-green-11">Jogatina salva.</p>
         }
-        <button
-          class="ui-primary-btn"
-          [disabled]="
-            saving() ||
-            controller.updating() ||
-            !controller.zEntry()?.status ||
-            controller.zEntry()?.status === 'wishlist'
-          "
-          (click)="save()"
-        >
-          {{ saving() ? 'Salvando...' : 'Salvar jogatina' }}
-        </button>
+        <div class="flex justify-end">
+          <button
+            class="ui-primary-btn"
+            [disabled]="
+              saving() ||
+              controller.updating() ||
+              !controller.zEntry()?.status ||
+              controller.zEntry()?.status === 'wishlist'
+            "
+            (click)="save()"
+          >
+            {{ saving() ? 'Salvando...' : 'Salvar jogatina' }}
+          </button>
+        </div>
       }
     </section>
   `,
@@ -124,25 +139,74 @@ export class UiMyPlaythrough {
   platform = signal('');
   completion = signal('');
   hours = signal('');
-  platforms = [
-    { value: 'PC/Steam', icon: 'ph-steam-logo' },
-    { value: 'PS5', icon: 'ph-game-controller' },
-    { value: 'Xbox Series', icon: 'ph-joystick' },
-    { value: 'Nintendo Switch', icon: 'ph-device-tablet' },
-    { value: 'Retro/Emulador', icon: 'ph-cpu' },
-    { value: 'Mobile', icon: 'ph-device-mobile' },
-  ];
+  private readonly platformsRepository = inject(PlatformsRepository);
+  readonly platforms = signal<UiSelectOption[]>([]);
+  readonly platformsLoading = signal(true);
+  readonly platformsError = signal('');
+  private readonly legacyPlatform = signal('');
+  readonly platformOptions = computed<UiSelectOption[]>(() => {
+    const options: UiSelectOption[] = [
+      { value: '', label: 'Não informado' },
+      ...this.platforms(),
+    ];
+    const legacy = this.legacyPlatform();
+    if (legacy)
+      options.push({
+        value: 'legacy:' + legacy,
+        label: legacy,
+        logo: platformLogo(legacy),
+      });
+    const savedId = this.controller.zEntry()?.playedPlatformId;
+    if (savedId && !options.some((option) => option.value === savedId))
+      options.push({ value: savedId, label: 'Plataforma indisponível' });
+    return options;
+  });
+  async loadPlatforms() {
+    this.platformsLoading.set(true);
+    this.platformsError.set('');
+    try {
+      this.platforms.set(await this.platformsRepository.list());
+    } catch {
+      this.platformsError.set('Não foi possível carregar as plataformas.');
+    } finally {
+      this.platformsLoading.set(false);
+    }
+  }
   completions = [
     'Campanha Principal',
     'História + Extras',
     '100%/Platina/Mestre',
   ];
 
+  readonly completionOptions = [
+    { value: '', label: 'Não informado', icon: 'ph-minus-circle' },
+    {
+      value: 'Campanha Principal',
+      label: 'Campanha principal',
+      icon: 'ph-flag-checkered',
+    },
+    {
+      value: 'História + Extras',
+      label: 'História + extras',
+      icon: 'ph-medal',
+    },
+    {
+      value: '100%/Platina/Mestre',
+      label: '100% / Platina / Mestre',
+      icon: 'ph-trophy',
+    },
+  ];
+
   constructor() {
+    void this.loadPlatforms();
     effect(() => {
       const entry = this.controller.zEntry();
       untracked(() => {
-        this.platform.set(entry?.playedPlatform ?? '');
+        this.legacyPlatform.set(entry?.playedPlatform ?? '');
+        this.platform.set(
+          entry?.playedPlatformId ??
+            (entry?.playedPlatform ? 'legacy:' + entry.playedPlatform : ''),
+        );
         this.completion.set(entry?.completionType ?? '');
         this.hours.set(
           entry?.playtimeMinutes == null
@@ -180,7 +244,7 @@ export class UiMyPlaythrough {
     }
     if (
       this.platform() &&
-      !this.platforms.some((item) => item.value === this.platform())
+      !this.platformOptions().some((item) => item.value === this.platform())
     ) {
       this.error.set('Selecione uma plataforma válida.');
       return;
@@ -189,6 +253,17 @@ export class UiMyPlaythrough {
       this.error.set('Selecione um tipo de conclusão válido.');
       return;
     }
+    const platformChanged =
+      this.platform() !==
+      (this.controller.zEntry()?.playedPlatformId ??
+        (this.controller.zEntry()?.playedPlatform
+          ? 'legacy:' + this.controller.zEntry()!.playedPlatform
+          : ''));
+    const platformUpdate = !platformChanged
+      ? {}
+      : this.platform().startsWith('legacy:')
+        ? { playedPlatform: this.platform().slice(7), playedPlatformId: null }
+        : { playedPlatformId: this.platform() || null, playedPlatform: null };
     this.saving.set(true);
     this.error.set('');
     this.success.set(false);
@@ -198,7 +273,7 @@ export class UiMyPlaythrough {
         game.$id,
         this.controller.zEntry(),
         {
-          playedPlatform: this.platform() || null,
+          ...platformUpdate,
           completionType:
             this.controller.zEntry()?.status === 'completed'
               ? this.completion() || null
@@ -210,7 +285,7 @@ export class UiMyPlaythrough {
       if (current)
         this.controller.zEntry.set({
           ...current,
-          playedPlatform: this.platform() || null,
+          ...platformUpdate,
           completionType:
             current.status === 'completed' ? this.completion() || null : null,
           playtimeMinutes: minutes,

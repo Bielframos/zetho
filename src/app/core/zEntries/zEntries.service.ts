@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
 import { ZEntryRow } from '../../types';
+import type { EntryGrouping } from './zEntries.types';
 import { ZEntriesRepository } from './zEntries.repository';
 
 @Injectable({ providedIn: 'root' })
@@ -16,7 +17,7 @@ export class ZEntryService {
   async getUserEntries(
     userFingerprint: string,
     status: Exclude<ZEntryRow['status'], null | undefined>,
-    opts?: { pageSize?: number; offset?: number },
+    opts?: { pageSize?: number; offset?: number; group?: EntryGrouping },
   ) {
     return this.repository.findMany(userFingerprint, { status, ...opts });
   }
@@ -33,7 +34,12 @@ export class ZEntryService {
       | { status: ZEntryRow['status'] | null }
       | { liked?: boolean }
       | { hyped?: boolean }
-      | { playedPlatform?: string | null; completionType?: string | null; playtimeMinutes?: number | null },
+      | {
+          playedPlatformId?: string | null;
+          playedPlatform?: string | null;
+          completionType?: string | null;
+          playtimeMinutes?: number | null;
+        },
   ) {
     const ZEntryLog = await this.repository.createLog(
       userFingerprint,

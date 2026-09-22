@@ -1080,6 +1080,15 @@
           "format": ""
         },
         {
+          "key": "playedPlatformId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
           "key": "playedPlatform",
           "type": "string",
           "required": false,
@@ -1738,6 +1747,14 @@
       "enabled": true,
       "rowSecurity": true,
       "columns": [
+                {
+                    "key": "statusChangedAt",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
         {
           "key": "status",
           "type": "string",
@@ -1775,6 +1792,15 @@
           "required": true,
           "array": false,
           "size": 96,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "playedPlatformId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 36,
           "default": null,
           "encrypt": false
         },

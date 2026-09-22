@@ -84,7 +84,10 @@ export class GameController {
     return this.runAsSsrTask(() => this.loadPageInternal(slug));
   }
 
+  private pageRequestVersion = 0;
+
   private async loadPageInternal(slug: string) {
+    const version = ++this.pageRequestVersion;
     try {
       // Limpar estado anterior para evitar flickering
       this.game.set(null);
@@ -105,19 +108,21 @@ export class GameController {
         fingerprint: profile?.fingerprint,
       });
 
+      if (version !== this.pageRequestVersion) return;
       this.game.set(data.game);
       this.zEntry.set(data.zEntry);
       this.similarGames.set(data.similarGames);
       this.medias.set(data.medias);
       this.heroImage.set(data.heroImage);
     } catch (e) {
+      if (version !== this.pageRequestVersion) return;
       if (e instanceof Error && e.message === 'game_not_found') {
         this.router.navigate(['/404']);
       }
 
       this.errors.update((state) => ({ ...state, page: e }));
     } finally {
-      this.loading.set(false);
+      if (version === this.pageRequestVersion) this.loading.set(false);
     }
   }
 

@@ -6,6 +6,24 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.30.0] - 2026-09-22
+
+### Added
+
+- Agrupamento dos jogos do perfil por ano de lançamento ou nome (A–Z), com ordenação global e carregamento paginado.
+- Select compartilhado com navegação por teclado e busca no catálogo de plataformas.
+
+### Changed
+
+- A listagem do perfil mantém recentes sem agrupamento como padrão, com controles recolhidos sob uma seta central entre meta e jogos.
+- A aba “Meu registro” usa o catálogo de plataformas com ícones e preserva compatibilidade com registros anteriores.
+- Editor da meta anual integrado ao tema do perfil e ao campo numérico compartilhado.
+
+### Fixed
+
+- Respostas antigas deixam de substituir dados após trocar jogo, sessão ou agrupamento.
+- Grupos que atravessam páginas permanecem unidos; falhas de carregamento podem ser repetidas sem pular jogos.
+
 ## [1.29.0] - 2026-09-21
 
 ### Added
