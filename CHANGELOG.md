@@ -16,6 +16,7 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 ### Changed
 
 - O feed social passa a carregar páginas por cursor para manter a navegação cronológica conforme a timeline cresce.
+- Alterações de jogatina, comentários, listas, conexões e perfil passam pela API, com validação centralizada.
 - Capas de jogos usam imagens responsivas com carregamento sob demanda e prioridade nas primeiras capas visíveis.
 
 ### Fixed

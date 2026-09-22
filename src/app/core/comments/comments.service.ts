@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Query, ID } from '../../shared/infra/appwrite/appwrite.client';
+import { Query } from '../../shared/infra/appwrite/appwrite.client';
 import { CommentRow } from '../../types';
 import { CommentInput, CommentsRepository } from './comments.repository';
 
@@ -31,21 +31,11 @@ export class CommentService {
   constructor(private repo: CommentsRepository) {}
 
   async createComment(input: CommentInput) {
-    const comment = await this.repo.create(input);
-
-    if (input.parentId) {
-      await this.repo.incrementReplies(input.parentId);
-    }
-
-    return comment;
+    return this.repo.create(input);
   }
 
   async deleteComment(comment: CommentRow) {
     await this.repo.delete(comment.$id);
-
-    if (comment.parentId) {
-      await this.repo.decrementReplies(comment.parentId);
-    }
   }
 
   async getComments(gameId: string, opts?: GetCommentsOptions) {
@@ -108,33 +98,9 @@ export class CommentService {
 
     const prevVote = comment.votes?.find((v) => v.userId === userId);
 
-    let delta = 0;
-    let persist: () => Promise<any>;
-
-    if (!prevVote) {
-      delta = operation === 'up' ? 1 : -1;
-      persist = () =>
-        this.repo.saveVote(ID.unique(), {
-          type: operation,
-          comment: comment.$id,
-          userId,
-        });
-    } else if (prevVote.type === operation) {
-      delta = operation === 'up' ? -1 : 1;
-      persist = () => this.repo.deleteVote(prevVote.$id);
-    } else {
-      delta = operation === 'up' ? 2 : -2;
-      persist = () =>
-        this.repo.saveVote(prevVote.$id, {
-          type: operation,
-          comment: comment.$id,
-          userId,
-        });
-    }
-
-    await this.repo.incrementVote(comment.$id, delta);
-    await persist();
-
+    const nextVote = prevVote?.type === operation ? null : operation;
+    const result = await this.repo.vote(comment.$id, nextVote);
+    const delta = result.voteCount - (comment.voteCount ?? 0);
     return { delta, operation, prevVote };
   }
 

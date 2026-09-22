@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { SocialApi } from '../../shared/infra/social-api';
 import { UserProfileRow } from '../../types';
 import { appwrite, Query } from '../../shared/infra/appwrite/appwrite.client';
 import { ConnectionRow } from './connections.types';
@@ -9,6 +10,7 @@ const USER_PROFILES_TABLE_ID = 'user_profiles';
 
 @Injectable({ providedIn: 'root' })
 export class ConnectionsRepository {
+  private readonly api = inject(SocialApi);
   async findUnique(
     profileId: string,
     followerId: string,
@@ -88,22 +90,12 @@ export class ConnectionsRepository {
   }
 
   async create(profileId: string, followerId: string): Promise<ConnectionRow> {
-    return await appwrite.databases.createRow({
-      databaseId: DATABASE_ID,
-      tableId: CONNECTIONS_TABLE_ID,
-      rowId: 'unique()',
-      data: {
-        requesterProfileId: followerId,
-        targetProfileId: profileId,
-      },
+    return this.api.request<ConnectionRow>('social/connections', 'POST', {
+      targetProfileId: profileId,
     });
   }
 
   async delete(connectionId: string) {
-    await appwrite.databases.deleteRow({
-      databaseId: DATABASE_ID,
-      tableId: CONNECTIONS_TABLE_ID,
-      rowId: connectionId,
-    });
+    await this.api.request<void>(`social/connections/${encodeURIComponent(connectionId)}`, 'DELETE');
   }
 }

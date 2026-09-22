@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { SocialApi } from '../../shared/infra/social-api';
 import { appwrite, Query } from '../../shared/infra/appwrite/appwrite.client';
 import {
-  GameRow,
-  ZereiList,
   ZereiListItemRow,
   ZereiListRow,
 } from '../../types';
@@ -12,6 +11,8 @@ const LIST_ITEM_TABLE_ID = 'list_items';
 
 @Injectable({ providedIn: 'root' })
 export class ListsRepository {
+  private readonly api = inject(SocialApi);
+
   /* =======================
      Lists
      ======================= */
@@ -24,57 +25,21 @@ export class ListsRepository {
     });
   }
 
-  createList(data: ZereiList) {
-    return appwrite.databases.createRow<ZereiListRow>({
-      databaseId: 'app',
-      tableId: LIST_TABLE_ID,
-      rowId: 'unique()',
-      data,
-    });
+  createList(data: { title: string; description?: string; isPublic?: boolean }) {
+    return this.api.request<ZereiListRow>('social/lists', 'POST', data);
   }
 
   updateList(listId: string, data: Partial<ZereiListRow>) {
-    return appwrite.databases.updateRow<ZereiListRow>({
-      databaseId: 'app',
-      tableId: LIST_TABLE_ID,
-      rowId: listId,
-      data,
-    });
+    const { title, description, isPublic, coverImageUrls } = data;
+    return this.api.request<ZereiListRow>(`social/lists/${encodeURIComponent(listId)}`, 'PATCH', { title, description, isPublic, coverImageUrls });
   }
 
   deleteList(listId: string) {
-    return appwrite.databases.deleteRow({
-      databaseId: 'app',
-      tableId: LIST_TABLE_ID,
-      rowId: listId,
-    });
+    return this.api.request<void>(`social/lists/${encodeURIComponent(listId)}`, 'DELETE');
   }
-
-  incrementItemCount(listId: string, value: number) {
-    return appwrite.databases.incrementRowColumn<ZereiListRow>({
-      databaseId: 'app',
-      tableId: LIST_TABLE_ID,
-      rowId: listId,
-      column: 'itemCount',
-      value,
-    });
-  }
-
-  /* =======================
-     Items
-     ======================= */
 
   createItem(data: { listId: string; gameId: string; orderKey: string }) {
-    return appwrite.databases.createRow<ZereiListItemRow>({
-      databaseId: 'app',
-      tableId: LIST_ITEM_TABLE_ID,
-      rowId: 'unique()',
-      data: {
-        list: data.listId,
-        game: data.gameId,
-        orderKey: data.orderKey,
-      },
-    });
+    return this.api.request<{ updatedList: ZereiListRow; newItem: ZereiListItemRow }>(`social/lists/${encodeURIComponent(data.listId)}/items`, 'POST', { gameId: data.gameId, orderKey: data.orderKey });
   }
 
   listItems(listId: string, limit = 50, offset = 0) {
@@ -91,20 +56,11 @@ export class ListsRepository {
     });
   }
 
-  updateItemOrder(itemId: string, orderKey: string) {
-    return appwrite.databases.updateRow<ZereiListItemRow>({
-      databaseId: 'app',
-      tableId: LIST_ITEM_TABLE_ID,
-      rowId: itemId,
-      data: { orderKey },
-    });
+  updateItemOrder(listId: string, itemId: string, orderKey: string) {
+    return this.api.request<ZereiListItemRow>(`social/lists/${encodeURIComponent(listId)}/items/${encodeURIComponent(itemId)}`, 'PATCH', { orderKey });
   }
 
-  deleteItem(itemId: string) {
-    return appwrite.databases.deleteRow({
-      databaseId: 'app',
-      tableId: LIST_ITEM_TABLE_ID,
-      rowId: itemId,
-    });
+  deleteItem(listId: string, itemId: string) {
+    return this.api.request<ZereiListRow>(`social/lists/${encodeURIComponent(listId)}/items/${encodeURIComponent(itemId)}`, 'DELETE');
   }
 }

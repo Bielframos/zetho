@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { SocialApi } from '../../shared/infra/social-api';
 import { appwrite, Query } from '../../shared/infra/appwrite/appwrite.client';
 import { CommentRow } from './comment.types';
 
@@ -21,38 +22,12 @@ export type VoteAction = {
 
 @Injectable({ providedIn: 'root' })
 export class CommentsRepository {
+  private readonly api = inject(SocialApi);
   async create(input: CommentInput) {
-    return appwrite.databases.createRow<CommentRow>({
-      databaseId: 'app',
-      tableId: 'game_comments',
-      rowId: 'unique()',
-      data: {
-        gameId: input.gameId,
-        userProfile: input.userProfileId as any,
-        content: input.content,
-        parentId: input.parentId,
-        depth: input.depth,
-      },
-    });
-  }
-
-  async incrementReplies(parentId: string) {
-    return appwrite.databases.incrementRowColumn({
-      databaseId: 'app',
-      tableId: 'game_comments',
-      rowId: parentId,
-      column: 'replyCount',
-      value: 1,
-    });
-  }
-
-  async decrementReplies(parentId: string) {
-    return appwrite.databases.incrementRowColumn({
-      databaseId: 'app',
-      tableId: 'game_comments',
-      rowId: parentId,
-      column: 'replyCount',
-      value: -1,
+    return this.api.request<CommentRow>('social/comments', 'POST', {
+      gameId: input.gameId,
+      content: input.content,
+      parentId: input.parentId,
     });
   }
 
@@ -64,38 +39,13 @@ export class CommentsRepository {
     });
   }
 
-  async incrementVote(commentId: string, value: number) {
-    return appwrite.databases.incrementRowColumn({
-      databaseId: 'app',
-      tableId: 'game_comments',
-      rowId: commentId,
-      column: 'voteCount',
-      value,
-    });
-  }
-
-  async saveVote(voteId: string, data: any) {
-    return appwrite.databases.upsertRow({
-      databaseId: 'app',
-      tableId: 'game_comment_votes',
-      rowId: voteId,
-      data,
-    });
-  }
-
-  async deleteVote(voteId: string) {
-    return appwrite.databases.deleteRow({
-      databaseId: 'app',
-      tableId: 'game_comment_votes',
-      rowId: voteId,
-    });
+  async vote(commentId: string, type: 'up' | 'down' | null) {
+    return this.api.request<{ voteCount: number; viewerVote: 'up' | 'down' | null }>(
+      `social/comments/${encodeURIComponent(commentId)}/vote`, 'POST', { type },
+    );
   }
 
   async delete(commentId: string) {
-    return appwrite.databases.deleteRow({
-      databaseId: 'app',
-      tableId: 'game_comments',
-      rowId: commentId,
-    });
+    return this.api.request<void>(`social/comments/${encodeURIComponent(commentId)}`, 'DELETE');
   }
 }
