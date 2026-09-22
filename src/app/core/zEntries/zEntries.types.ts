@@ -8,6 +8,9 @@ type ZEntry = {
   startedAt?: string;
   finishedAt?: string;
   replays?: number;
+  playedPlatform?: string | null;
+  completionType?: string | null;
+  playtimeMinutes?: number | null;
   prevState?: string;
   ownerFingerprint: string;
   likedEver?: boolean;

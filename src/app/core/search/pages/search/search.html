@@ -133,6 +133,8 @@
     <li class="flex min-w-0 flex-col">
       <ui-game-card
         [game]="game"
+        transitionScope="search"
+        [priority]="$index < 4"
         [entryStatus]="game.zEntry?.status"
       ></ui-game-card>
     </li>

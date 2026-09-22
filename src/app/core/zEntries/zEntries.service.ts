@@ -32,7 +32,8 @@ export class ZEntryService {
     opts:
       | { status: ZEntryRow['status'] | null }
       | { liked?: boolean }
-      | { hyped?: boolean },
+      | { hyped?: boolean }
+      | { playedPlatform?: string | null; completionType?: string | null; playtimeMinutes?: number | null },
   ) {
     const ZEntryLog = await this.repository.createLog(
       userFingerprint,

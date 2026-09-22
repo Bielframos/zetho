@@ -1,4 +1,4 @@
-import { NgTemplateOutlet } from '@angular/common';
+import { IMAGE_LOADER, ImageLoaderConfig, NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
 import {
   booleanAttribute,
   Component,
@@ -19,6 +19,14 @@ import { GameRow, GameWithEntry, ZEntry } from '../../../types';
 import { GameCoverMenuCoordinator, UiGameQuickActions } from './game-quick-actions';
 import { GameQuickEntryStore } from './game-quick-entry.store';
 
+export function igdbCoverLoader({ src, width }: ImageLoaderConfig): string {
+  const match = /^(https?:)?\/\/images\.igdb\.com\/igdb\/image\/upload\/t_[^/]+\/(.+)$/i.exec(src);
+  if (!match) return src;
+  if (!width) return src;
+  const size = width <= 90 ? 'cover_small' : width <= 180 ? 'cover_small_2x' : width <= 264 ? 'cover_big' : 'cover_big_2x';
+  return `${match[1] || 'https:'}//images.igdb.com/igdb/image/upload/t_${size}/${match[2]}`;
+}
+
 type EntryStatus = Exclude<ZEntry['status'], 'wishlist' | null | undefined>;
 
 @Component({
@@ -26,7 +34,8 @@ type EntryStatus = Exclude<ZEntry['status'], 'wishlist' | null | undefined>;
   standalone: true,
   templateUrl: './game-card.html',
   styleUrl: './game-card.css',
-  imports: [NgTemplateOutlet, RouterLink, UiGameQuickActions],
+  imports: [NgOptimizedImage, NgTemplateOutlet, RouterLink, UiGameQuickActions],
+  providers: [{ provide: IMAGE_LOADER, useValue: igdbCoverLoader }],
 })
 export class UiGameCard {
   private gameStore = inject(GameStore);
@@ -143,6 +152,17 @@ export class UiGameCard {
 
   game = input.required<GameRow | GameWithEntry>();
   width = input<number>();
+  priority = input(false, { transform: booleanAttribute });
+  transitionScope = input<string>();
+  transitionItemId = input<string>();
+  isIgdbCover = computed(() => /^(https?:)?\/\/images\.igdb\.com\/igdb\/image\/upload\/t_[^/]+\//i.test(this.displayGame().coverUrl || ''));
+  coverSizes = computed(() => this.width() ? `${this.width()}px` : '(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 180px');
+  transitionName = computed(() => {
+    const scope = this.transitionScope();
+    if (!scope) return 'none';
+    const id = this.transitionItemId() || this.displayGame().$id;
+    return `game-${scope.replace(/[^a-zA-Z0-9_-]/g, '-')}-${String(id).replace(/[^a-zA-Z0-9_-]/g, '-')}`;
+  });
   readonlyMode = input(false, { transform: booleanAttribute });
   showEntryStatus = input(true, { transform: booleanAttribute });
   entryStatus = input<ZEntry['status'] | undefined>(undefined);

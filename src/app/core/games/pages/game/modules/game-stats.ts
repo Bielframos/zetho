@@ -57,6 +57,12 @@ import { ZStatsRow } from '../../../../zStats/zStats.types';
           }}</span>
         </div>
 
+        <div class="flex items-center justify-between px-4 py-4 text-gray-11">
+          <span class="text-sm">Média de horas para zerar</span>
+          <span class="text-lg tabular-nums text-gray-12">
+            {{ stats()?.completedPlaytimeCount ? ((stats()!.completedPlaytimeMinutes ?? 0) / stats()!.completedPlaytimeCount! / 60).toFixed(1) + ' h' : 'Sem dados' }}
+          </span>
+        </div>
         <!-- Demais categorias -->
         @for (item of entries; track $index) {
           <div class="flex items-center justify-between px-4 py-4 text-gray-11">

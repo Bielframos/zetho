@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { SocialApi } from '../../shared/infra/social-api';
 import { appwrite, Query } from '../../shared/infra/appwrite/appwrite.client';
 import { UserProfile, UserProfileRow } from '../../types';
 import { normalize } from '../search/search.helpers';
@@ -8,6 +9,7 @@ const DATABASE_ID = 'app';
 
 @Injectable({ providedIn: 'root' })
 export class UserProfileRepository {
+  private readonly api = inject(SocialApi);
   async findByUserId(userId: string): Promise<UserProfileRow | null> {
     const response = await appwrite.databases.listRows<UserProfileRow>({
       databaseId: DATABASE_ID,
@@ -69,12 +71,7 @@ export class UserProfileRepository {
   }
 
   async create(userId: string, gamertag: string): Promise<void> {
-    await appwrite.databases.createRow({
-      databaseId: DATABASE_ID,
-      tableId: TABLE_ID,
-      rowId: 'unique()',
-      data: { userId, gamertag },
-    });
+    await this.api.request<UserProfileRow>('profile', 'POST', { gamertag });
   }
 
   async existsByGamertag(gamertag: string): Promise<boolean> {
@@ -91,12 +88,7 @@ export class UserProfileRepository {
     profileId: string,
     data: Partial<UserProfile>,
   ): Promise<UserProfileRow> {
-    return appwrite.databases.updateRow<UserProfileRow>({
-      databaseId: DATABASE_ID,
-      tableId: TABLE_ID,
-      rowId: profileId,
-      data,
-    });
+    return this.api.request<UserProfileRow>('profile/me', 'PATCH', data);
   }
 
   async count(): Promise<number> {

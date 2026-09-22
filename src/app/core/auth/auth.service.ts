@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { appwrite } from '../../shared/infra/appwrite/appwrite.client';
+import { SocialApi } from '../../shared/infra/social-api';
 import { UserProfileRow } from '../userProfiles/userProfile.types';
 import { UserProfileService } from '../userProfiles/userProfile.service';
 import type {
@@ -11,7 +12,7 @@ import { safeLocalStorage } from '../../utils/platform-storage';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  constructor(private userProfService: UserProfileService) {}
+  constructor(private userProfService: UserProfileService, private socialApi: SocialApi) {}
 
   /**
    * Método de registro para novos usuários
@@ -71,11 +72,7 @@ export class AuthService {
   }
 
   async deleteAccount(profileId: string) {
-    await this.userProfService.updateProfile(profileId, {
-      status: 'pending_deletion',
-      deletedAt: new Date(Date.now()).toISOString(),
-    });
-
+    await this.socialApi.request('profile/me/deletion', 'POST');
     await appwrite.account.updateStatus();
   }
 

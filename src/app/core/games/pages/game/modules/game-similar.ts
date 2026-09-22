@@ -12,6 +12,7 @@ import { GameWithEntry } from '../../../../../types';
         <li>
           <ui-game-card
             [game]="game"
+            transitionScope="similar"
             [entryStatus]="game.zEntry?.status"
           ></ui-game-card>
         </li>

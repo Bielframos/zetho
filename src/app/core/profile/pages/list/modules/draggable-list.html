@@ -19,7 +19,7 @@
       [routerLink]="['/jogo', item.game.slug]"
       class="flex gap-4 items-center flex-1"
     >
-      <ui-game-card [width]="64" [game]="item.game" readonlyMode></ui-game-card>
+      <ui-game-card [width]="64" [game]="item.game" transitionScope="list" [transitionItemId]="item.$id" readonlyMode></ui-game-card>
 
       <span
         class="font-normal font-mono text-gray-11 px-3 rounded-full bg-gray-3 w-fit"
