@@ -12,6 +12,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   NavigationEnd,
+  NavigationStart,
+  NavigationCancel,
+  NavigationError,
   Router,
   RouterLink,
   RouterLinkActive,
@@ -65,6 +68,7 @@ export class App {
   private dailyLoginAttemptedFor = '';
   private notificationsLoadedForProfile = '';
   mobileMenuOpen = signal(false);
+  profileNavigationPending = signal(false);
   profileTabs = [
     {
       key: 'games',
@@ -157,6 +161,18 @@ export class App {
   }
 
   constructor() {
+    this.route.events
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        if (event instanceof NavigationStart)
+          this.profileNavigationPending.set(true);
+        if (
+          event instanceof NavigationEnd ||
+          event instanceof NavigationCancel ||
+          event instanceof NavigationError
+        )
+          this.profileNavigationPending.set(false);
+      });
     this.trackLastOnlineRoute();
     this.registerConnectionWatch();
     this.registerDailyLoginReward();
@@ -233,8 +249,28 @@ export class App {
     if (this.mobileMenuOpen()) this.closeMobileMenu();
   }
 
+  comparisonProfile() {
+    const profile = this.profileStore.current();
+    const path = this.currentPath();
+    if (
+      !this.authStore.isAuthenticated() ||
+      !profile ||
+      this.profileStore.itsMe() ||
+      this.profileNavigationPending() ||
+      path.endsWith('/comparar')
+    )
+      return null;
+    const match = /^\/player\/([^/]+)(?:\/|$)/.exec(path);
+    return match && decodeURIComponent(match[1]) === profile.gamertag
+      ? profile
+      : null;
+  }
+
   isProfileRoute() {
-    return this.currentPath().startsWith('/player/');
+    return (
+      this.currentPath().startsWith('/player/') &&
+      !this.currentPath().endsWith('/comparar')
+    );
   }
 
   get profileSidebarProfile() {

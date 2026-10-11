@@ -39,7 +39,8 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
  * página de um usuário é servida para o próximo.
  */
 const EDGE_CACHE_5_MIN = {
-  'Cache-Control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=86400',
+  'Cache-Control':
+    'public, max-age=0, s-maxage=300, stale-while-revalidate=86400',
 };
 
 /**
@@ -47,7 +48,8 @@ const EDGE_CACHE_5_MIN = {
  * publicado, só o entorno se mexe.
  */
 const EDGE_CACHE_10_MIN = {
-  'Cache-Control': 'public, max-age=0, s-maxage=600, stale-while-revalidate=86400',
+  'Cache-Control':
+    'public, max-age=0, s-maxage=600, stale-while-revalidate=86400',
 };
 
 export const serverRoutes: ServerRoute[] = [
@@ -63,9 +65,21 @@ export const serverRoutes: ServerRoute[] = [
 
   // Conteúdo público renderizado no servidor.
   { path: 'landing', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
-  { path: 'jogo/:slug', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
-  { path: 'noticias', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
-  { path: 'noticias/:slug', renderMode: RenderMode.Server, headers: EDGE_CACHE_10_MIN },
+  {
+    path: 'jogo/:slug',
+    renderMode: RenderMode.Server,
+    headers: EDGE_CACHE_5_MIN,
+  },
+  {
+    path: 'noticias',
+    renderMode: RenderMode.Server,
+    headers: EDGE_CACHE_5_MIN,
+  },
+  {
+    path: 'noticias/:slug',
+    renderMode: RenderMode.Server,
+    headers: EDGE_CACHE_10_MIN,
+  },
   { path: 'reviews', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   { path: 'listas', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   {
@@ -73,7 +87,12 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server,
     headers: EDGE_CACHE_5_MIN,
   },
-  { path: 'player/:gamertag', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
+  { path: 'player/:gamertag/comparar', renderMode: RenderMode.Client },
+  {
+    path: 'player/:gamertag',
+    renderMode: RenderMode.Server,
+    headers: EDGE_CACHE_5_MIN,
+  },
   {
     path: 'player/:gamertag/listas',
     renderMode: RenderMode.Server,

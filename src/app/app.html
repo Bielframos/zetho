@@ -23,6 +23,15 @@
         class="route-transition-scope min-h-dvh pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0"
       >
         <router-outlet />
+        @if (comparisonProfile(); as comparedProfile) {
+        <div class="h-24" aria-hidden="true"></div>
+        <a
+          [routerLink]="['/player', comparedProfile.gamertag, 'comparar']"
+          class="profile-comparison-fab ui-primary-btn min-h-11 gap-2 shadow-lg focus-visible:ring-2 focus-visible:ring-blue-6"
+        >
+          <i class="ph ph-intersect" aria-hidden="true"></i>Comparar comigo
+        </a>
+        }
       </div>
     </main>
 
