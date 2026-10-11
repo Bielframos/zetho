@@ -72,24 +72,11 @@
         }
 
         <div class="relative z-10">
-          @if (authStore.isAuthenticated() && !profileStore.itsMe()) { @if
-          (profile && 'connection' in profile && profile.connection) {
-          <button
-            class="profile-theme-action flex items-center gap-2 justify-center w-full px-4 py-2 transition-colors border-b border-gray-6"
-            (click)="profileStore.followOrUnfollow()"
-          >
-            <i class="ph ph-user-minus text-[16px]"></i>
-            deixar de seguir
-          </button>
-          } @else {
-          <button
-            class="profile-theme-action flex items-center gap-2 justify-center w-full px-4 py-2 transition-colors border-b border-gray-6"
-            (click)="profileStore.followOrUnfollow()"
-          >
-            <i class="ph ph-user-plus text-[16px]"></i>
-            seguir
-          </button>
-          }}
+          @if (authStore.isAuthenticated() && !profileStore.itsMe()) {
+          <div class="flex justify-center px-4 pt-4">
+            <ui-follow-control [profileId]="profile.$id" [gamertag]="profile.gamertag" />
+          </div>
+          }
 
           <header class="flex items-center gap-3 px-4 py-4">
             <img

@@ -4,8 +4,10 @@ import { appwrite } from './appwrite/appwrite.client';
 
 @Injectable({ providedIn: 'root' })
 export class SocialApi {
-  async request<T>(path: string, method: string, body?: unknown): Promise<T> {
+  async request<T>(path: string, method: string, body?: unknown, isCurrent?: () => boolean): Promise<T> {
+    if (isCurrent && !isCurrent()) throw new Error('Sessão alterada.');
     const jwt = (await appwrite.account.createJWT()).jwt;
+    if (isCurrent && !isCurrent()) throw new Error('Sessão alterada.');
     return this.send<T>(path, method, body, { Authorization: `Bearer ${jwt}` });
   }
 

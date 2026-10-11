@@ -1,3 +1,4 @@
+import { FollowControl } from '../../../../shared/ui/follow-control';
 import { SeoService } from '../../../system/seo/seo.service';
 import { FeedReviewContent } from '../../../ratings/components/feed-review-content';
 import { FeedReviewVotes } from '../../../ratings/components/feed-review-votes';
@@ -27,7 +28,6 @@ import {
   FeedGameStatus,
   SuggestedConnection,
 } from '../../dashboard.service';
-import { ConnectionsService } from '../../../connections/connections.service';
 import { NotificationStore } from '../../../system/notifications/notification.store';
 import { appwrite } from '../../../../shared/infra/appwrite/appwrite.client';
 import { OnboardingResume } from '../../../onboarding/onboarding-resume';
@@ -49,7 +49,7 @@ const STATUS_ICONS: Record<FeedGameStatus, string> = {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [
+  imports: [FollowControl,
     OnboardingResume,
     FeedReviewContent,
     FeedReviewVotes,
@@ -68,7 +68,6 @@ const STATUS_ICONS: Record<FeedGameStatus, string> = {
 export class DashboardPage implements OnDestroy {
   authStore = inject(AuthStore);
   dashboardService = inject(DashboardService);
-  private connectionsService = inject(ConnectionsService);
   private notification = inject(NotificationStore);
 
   feed = signal<DashboardFeedItem[]>([]);
@@ -86,7 +85,6 @@ export class DashboardPage implements OnDestroy {
 
   suggestedConnections = signal<SuggestedConnection[]>([]);
   loadingSuggestions = signal(false);
-  followingIds = signal<Set<string>>(new Set());
 
   // Sentinela observada para o carregamento infinito.
   private sentinel = viewChild<ElementRef<HTMLElement>>('sentinel');
@@ -478,31 +476,4 @@ export class DashboardPage implements OnDestroy {
     });
   }
 
-  async followSuggestion(item: SuggestedConnection) {
-    const myProfileId = this.profile?.$id;
-    if (!myProfileId || this.followingIds().has(item.$id)) return;
-
-    this.followingIds.update((set) => new Set(set).add(item.$id));
-    try {
-      await this.connectionsService.followOrUnfollow(item.$id, myProfileId);
-      this.suggestedConnections.update((list) =>
-        list.filter((c) => c.$id !== item.$id),
-      );
-      this.notification.show({
-        message: `Você seguiu ${item.gamertag}!`,
-        type: 'success',
-      });
-    } catch (e) {
-      console.error(e);
-      this.followingIds.update((set) => {
-        const next = new Set(set);
-        next.delete(item.$id);
-        return next;
-      });
-      this.notification.show({
-        message: 'Não foi possível seguir agora.',
-        type: 'error',
-      });
-    }
-  }
 }

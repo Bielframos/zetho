@@ -1,59 +1,40 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { UserProfileRow } from '../../types';
 import { ConnectionsRepository } from './connections.repository';
 import { ConnectionRow } from './connections.types';
 
 @Injectable({ providedIn: 'root' })
 export class ConnectionsService {
-  myConnectionsCache: Record<string, ConnectionRow> = {};
+  readonly revision = signal(0);
 
   constructor(private repository: ConnectionsRepository) {}
 
-  async followOrUnfollow(profileId: string, followerId: string) {
-    let existingConnection: ConnectionRow | null = null;
-
-    try {
-      existingConnection = await this.repository.findUnique(
-        profileId,
-        followerId,
-      );
-
-      if (existingConnection) {
-        await this.repository.delete(existingConnection.$id);
-        delete this.myConnectionsCache[profileId];
-      } else {
-        const connection = await this.repository.create(profileId, followerId);
-        this.myConnectionsCache[profileId] = connection;
-      }
-    } catch (e) {
-      throw new Error(
-        'Ocorreu um erro ao tentar seguir/deixar de seguir este usuário. Por favor, tente novamente mais tarde.',
-      );
+  async setFollowing(profileId: string, followerId: string, following: boolean, isCurrent: () => boolean) {
+    const assertCurrent = () => { if (!isCurrent()) throw new Error('Sessão alterada.'); };
+    assertCurrent();
+    if (!profileId || !followerId || profileId === followerId) throw new Error('Conexão inválida.');
+    let connection: ConnectionRow | null;
+    if (following) {
+      // POST is idempotent: an existing connection is returned, never toggled.
+      connection = await this.repository.create(profileId, followerId, isCurrent);
+    } else {
+      const existing = await this.repository.findUnique(profileId, followerId);
+      assertCurrent();
+      if (existing) await this.repository.delete(existing.$id, isCurrent);
+      connection = null;
     }
+    assertCurrent();
+    this.revision.update(value => value + 1);
+    return connection;
   }
 
   async getConnection(profileId: string, followerId: string) {
-    try {
-      let connection: ConnectionRow | null = null;
-
-      const cachedConnection = this.myConnectionsCache[profileId];
-
-      if (cachedConnection && cachedConnection.targetProfileId === followerId) {
-        connection = cachedConnection;
-      } else {
-        connection = await this.repository.findUnique(profileId, followerId);
-
-        if (connection) {
-          this.myConnectionsCache[profileId] = connection;
-        }
-      }
-
-      return connection;
-    } catch (e) {
-      throw new Error(
-        'Ocorreu um erro ao verificar a conexão. Por favor, tente novamente mais tarde.',
-      );
+    // No target-only cache: reads must belong to the current owner/target pair.
+    const connection = await this.repository.findUnique(profileId, followerId);
+    if (connection && (connection.requesterProfileId !== followerId || connection.targetProfileId !== profileId)) {
+      throw new Error('Conexão incompatível com o perfil.');
     }
+    return connection;
   }
 
   async searchConnections(

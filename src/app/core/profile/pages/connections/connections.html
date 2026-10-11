@@ -11,8 +11,8 @@
         Seguindo }
       </h3>
       <span class="text-gray-11"
-        >{{ controller.total() }} {{ controller.total() === 1 ? "pessoa" :
-        "pessoas" }}</span
+        >@if (controller.errors()['loadMore']) { Contagem indisponível } @else { {{ controller.total() }} {{ controller.total() === 1 ? "pessoa" :
+        "pessoas" }} }</span
       >
     </div>
 
@@ -25,10 +25,13 @@
     />
   </header>
 
+  @if (controller.errors()['loadMore']; as error) {
+    <div class="p-4" role="alert"><p class="text-danger">{{ error }}</p><button class="ui-secondary-btn mt-3" (click)="controller.loadConnections()">Atualizar conexões</button></div>
+  }
   <ol class="flex flex-col">
     @for (profile of controller.profiles(); track profile.$id) {
     <ui-profile-card [profile]="profile"></ui-profile-card>
-    } @empty {
+    } @empty { @if (!controller.errors()['loadMore']) {
     <li
       class="p-10 col-span-2 md:col-span-3 lg:col-span-4 flex flex-col items-center text-center border border-dashed border-gray-6"
     >
@@ -43,12 +46,12 @@
         currentProfile?.gamertag }} seguir alguém, aparecerá aqui. }
       </p>
     </li>
-    }
+    } }
   </ol>
 
-  @if (controller.hasMore()) {
+  @if (controller.hasMore() && !controller.errors()['loadMore']) {
   <footer class="w-full flex justify-center mt-10">
-    <button class="ui-primary-btn" (click)="controller.loadConnections()">
+    <button class="ui-primary-btn" [disabled]="controller.loadingMore()" (click)="controller.loadConnections()">
       Carregar mais
     </button>
   </footer>

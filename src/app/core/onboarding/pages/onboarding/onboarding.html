@@ -350,15 +350,7 @@
             }}
           </p>
         </div>
-        <button
-          class="ui-secondary-btn"
-          [attr.aria-label]="(followingIds().has(person.$id) ? 'Seguindo ' : 'Seguir ') + person.gamertag"
-          [disabled]="followingIds().has(person.$id) || pending().has('follow:' + person.$id)"
-          (click)="follow(person)"
-        >
-          {{ pending().has('follow:' + person.$id) ? 'Seguindo…' :
-          followingIds().has(person.$id) ? 'Seguindo' : 'Seguir' }}
-        </button>
+        <ui-follow-control class="shrink-0" [profileId]="person.$id" [gamertag]="person.gamertag" [compact]="true" />
       </li>
       } @empty {
       <li class="py-4 text-gray-11">

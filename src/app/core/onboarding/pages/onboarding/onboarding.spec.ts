@@ -6,7 +6,6 @@ import { AuthStore } from '../../../auth/auth.store';
 import { GameService } from '../../../games/games.service';
 import { ZEntryService } from '../../../zEntries/zEntries.service';
 import { RatingsService } from '../../../ratings/ratings.service';
-import { ConnectionsService } from '../../../connections/connections.service';
 import { DashboardService } from '../../../dashboard/dashboard.service';
 import { NotificationStore } from '../../../system/notifications/notification.store';
 import { GameWithEntry } from '../../../../types';
@@ -29,10 +28,6 @@ describe('OnboardingPage', () => {
   };
   let search: jasmine.Spy;
   let navigate: jasmine.Spy;
-  let connections: {
-    getConnection: jasmine.Spy;
-    followOrUnfollow: jasmine.Spy;
-  };
   beforeEach(() => {
     localStorage.removeItem(key);
     entries = {
@@ -49,10 +44,6 @@ describe('OnboardingPage', () => {
       getMyRating: jasmine.createSpy().and.resolveTo(null),
       upsertRating: jasmine.createSpy().and.resolveTo({}),
       deleteRating: jasmine.createSpy().and.resolveTo(),
-    };
-    connections = {
-      getConnection: jasmine.createSpy().and.resolveTo(null),
-      followOrUnfollow: jasmine.createSpy().and.resolveTo(),
     };
     search = jasmine.createSpy().and.resolveTo({ rows: [game] });
     navigate = jasmine.createSpy().and.resolveTo(true);
@@ -72,7 +63,6 @@ describe('OnboardingPage', () => {
         { provide: GameService, useValue: { searchGame: search } },
         { provide: ZEntryService, useValue: entries },
         { provide: RatingsService, useValue: ratings },
-        { provide: ConnectionsService, useValue: connections },
         {
           provide: DashboardService,
           useValue: {
@@ -234,10 +224,4 @@ describe('OnboardingPage', () => {
     expect(page.results()).toEqual([]);
   });
 
-  it('does not toggle an already existing connection off when retrying follow', async () => {
-    connections.getConnection.and.resolveTo({ $id: 'connection' });
-    await page.follow({ $id: 'person', gamertag: 'friend' } as any);
-    expect(connections.followOrUnfollow).not.toHaveBeenCalled();
-    expect(page.followingIds().has('person')).toBeTrue();
-  });
 });
