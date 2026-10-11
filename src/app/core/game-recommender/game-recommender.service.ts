@@ -3,7 +3,14 @@ import { environment } from '../../../environments/environment';
 import { AuthStore } from '../auth/auth.store';
 
 export type RecommendationScope = 'any' | 'library' | 'new';
+export interface RecommendationQuota {
+  cost: number;
+  limit: number;
+  remaining: number;
+  nextAvailableAt: string;
+}
 export interface GameRecommendation {
+  quota?: RecommendationQuota;
   id: string;
   source: 'library' | 'new';
   game: {
@@ -23,6 +30,7 @@ export interface GameRecommendation {
   generatedAt: string;
 }
 export interface RecommendationHistory {
+  quota?: RecommendationQuota;
   items: GameRecommendation[];
   nextCursor: string | null;
 }
