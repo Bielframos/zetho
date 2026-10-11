@@ -385,3 +385,28 @@
   }
 }
 
+
+/* Shared native-dialog sheet transitions. Native modal state remains until exit ends. */
+dialog.ui-sheet {
+  transform: translateX(0);
+  opacity: 1;
+  transition: transform 220ms ease, opacity 220ms ease;
+}
+dialog.ui-sheet::backdrop {
+  background: rgb(0 0 0 / 0.7);
+  opacity: 1;
+  transition: opacity 220ms ease;
+}
+dialog.ui-sheet.sheet-closing {
+  transform: translateX(100%);
+  opacity: 0;
+}
+dialog.ui-sheet.sheet-closing::backdrop { opacity: 0; }
+@starting-style {
+  dialog.ui-sheet[open] { transform: translateX(100%); opacity: 0; }
+  dialog.ui-sheet[open]::backdrop { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  dialog.ui-sheet, dialog.ui-sheet::backdrop { transition: none; }
+  dialog.ui-sheet.sheet-closing { transform: none; }
+}
