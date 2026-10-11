@@ -1,3 +1,4 @@
+import { FollowControl } from '../../../../shared/ui/follow-control';
 import {
   Component,
   computed,
@@ -15,7 +16,6 @@ import { AuthStore } from '../../../auth/auth.store';
 import { GameService } from '../../../games/games.service';
 import { ZEntryService } from '../../../zEntries/zEntries.service';
 import { RatingsService } from '../../../ratings/ratings.service';
-import { ConnectionsService } from '../../../connections/connections.service';
 import {
   DashboardService,
   SuggestedConnection,
@@ -29,7 +29,7 @@ import { appwrite } from '../../../../shared/infra/appwrite/appwrite.client';
 @Component({
   selector: 'app-onboarding',
   standalone: true,
-  imports: [AppStartingRating, UiLoading],
+  imports: [FollowControl,AppStartingRating, UiLoading],
   templateUrl: './onboarding.html',
   host: { class: 'block' },
 })
@@ -39,7 +39,6 @@ export class OnboardingPage implements OnInit, OnDestroy {
   private gameService = inject(GameService);
   private zEntryService = inject(ZEntryService);
   private ratingsService = inject(RatingsService);
-  private connectionsService = inject(ConnectionsService);
   private dashboardService = inject(DashboardService);
   private notification = inject(NotificationStore);
   private heading = viewChild<ElementRef<HTMLElement>>('heading');
@@ -76,7 +75,6 @@ export class OnboardingPage implements OnInit, OnDestroy {
   suggestions = signal<SuggestedConnection[]>([]);
   loadingSuggestions = signal(false);
   suggestionsError = signal(false);
-  followingIds = signal<Set<string>>(new Set());
   readonly statusOptions = [
     { value: 'playing', label: 'Jogando' },
     { value: 'wishlist', label: 'Quero jogar' },
@@ -328,52 +326,13 @@ export class OnboardingPage implements OnInit, OnDestroy {
         6,
         this.markedList().map((g) => g.$id),
       );
-      const profileId = this.authStore.profile()?.$id;
-      const followed = await Promise.all(
-        res.items.map(async (person) =>
-          profileId &&
-          (await this.connectionsService.getConnection(person.$id, profileId))
-            ? person.$id
-            : null,
-        ),
-      );
       if (version !== this.suggestionsVersion) return;
       this.suggestions.set(res.items);
-      this.followingIds.set(
-        new Set(followed.filter((id): id is string => !!id)),
-      );
     } catch {
       if (version === this.suggestionsVersion) this.suggestionsError.set(true);
     } finally {
       if (version === this.suggestionsVersion)
         this.loadingSuggestions.set(false);
-    }
-  }
-
-  async follow(item: SuggestedConnection) {
-    const profileId = this.authStore.profile()?.$id;
-    const key = `follow:${item.$id}`;
-    if (
-      !profileId ||
-      this.followingIds().has(item.$id) ||
-      this.pending().has(key)
-    )
-      return;
-    this.setPending(key, true);
-    this.actionError.set('');
-    try {
-      // Check before the toggle endpoint so retries never unfollow an existing connection.
-      if (!(await this.connectionsService.getConnection(item.$id, profileId))) {
-        await this.connectionsService.followOrUnfollow(item.$id, profileId);
-      }
-      this.followingIds.update((ids) => new Set(ids).add(item.$id));
-    } catch {
-      this.actionError.set(
-        `Não foi possível seguir ${item.gamertag}. Tente novamente.`,
-      );
-      this.retryAction = () => this.follow(item);
-    } finally {
-      this.setPending(key, false);
     }
   }
 

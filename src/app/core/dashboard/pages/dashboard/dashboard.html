@@ -355,14 +355,7 @@
               {{ person.sharedCount }} jogo(s) em comum
             </p>
           </a>
-          <button
-            type="button"
-            class="ui-primary-btn"
-            [disabled]="followingIds().has(person.$id)"
-            (click)="followSuggestion(person)"
-          >
-            Seguir
-          </button>
+          <ui-follow-control class="shrink-0" [profileId]="person.$id" [gamertag]="person.gamertag" [compact]="true" />
         </li>
         }
       </ul>

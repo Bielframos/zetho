@@ -1,3 +1,5 @@
+import { ColorModeStore } from './core/system/color-mode/color-mode.store';
+import { FollowControl } from './shared/ui/follow-control';
 import { ProfileThemeContrast } from './shared/ui/profile-theme-contrast';
 import { ColorModeSelector } from './shared/ui/color-mode-selector';
 import { CommonModule, DOCUMENT } from '@angular/common';
@@ -40,7 +42,7 @@ import { InAppNotificationStore } from './core/system/notifications/in-app-notif
 
 @Component({
   selector: 'app-root',
-  imports: [ProfileThemeContrast,
+  imports: [FollowControl,ProfileThemeContrast,
     ColorModeSelector,
     UiSheet,
     AppSearchInput,
@@ -56,6 +58,9 @@ import { InAppNotificationStore } from './core/system/notifications/in-app-notif
   templateUrl: './app.html',
 })
 export class App {
+  // Color listeners must live even on standalone routes without the selector.
+  private readonly colorMode = inject(ColorModeStore);
+
   authStore = inject(AuthStore);
   profileStore = inject(ProfileStore);
   profileLayoutStore = inject(ProfileLayoutStore);
