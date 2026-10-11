@@ -6,6 +6,12 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.33.1] - 2026-10-11
+
+### Fixed
+
+- Botão de notificações no menu acompanha o espaçamento e a altura dos demais itens, sem borda permanente, preservando foco visível e interação por teclado.
+
 ## [1.33.0] - 2026-10-11
 
 ### Added
