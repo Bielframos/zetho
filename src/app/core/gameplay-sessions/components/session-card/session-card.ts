@@ -13,7 +13,7 @@ import { GameplaySession } from '../../gameplay-sessions.types';
         <button
           type="button"
           (click)="clickDetail.emit(session())"
-          class="background-pattern relative h-24 w-[4.5rem] shrink-0 overflow-hidden rounded border border-gray-6 focus:ring-2 focus:ring-blue-6"
+          class="background-pattern relative h-24 w-[4.5rem] shrink-0 overflow-hidden rounded border border-gray-6 focus:ring-2 focus:ring-focus-ring"
           [attr.aria-label]="'Ver detalhes de ' + session().title"
         >
           @if (session().gameCoverUrl) {

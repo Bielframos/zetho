@@ -18,17 +18,17 @@ import {
   template: `
     <label
       [htmlFor]="name()"
-      class="group flex gap-2 items-center cursor-pointer"
+      class="group focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus-ring flex gap-2 items-center cursor-pointer"
     >
       <div
-        class="flex items-center justify-center w-6 aspect-square rounded-sm bg-blue-1/60 border border-gray-6 group-has-checked:bg-blue-9"
+        class="flex items-center justify-center w-6 aspect-square rounded-sm bg-blue-1/60 border border-line-strong group-has-checked:bg-blue-9"
       >
         <i
           class="ph ph-check text-white text-sm hidden group-has-checked:block"
         ></i>
       </div>
 
-      <span class="flex flex-col gap-0.5 text-white">
+      <span class="flex flex-col gap-0.5 text-content">
         {{ label() }}
         @if (description()) {
           <span class="text-gray-11 text-sm">{{ description() }}</span>
@@ -39,7 +39,7 @@ import {
         [id]="name()"
         [name]="name()"
         type="checkbox"
-        class="hidden"
+        class="sr-only"
         [checked]="value"
         (change)="onToggle($event)"
       />

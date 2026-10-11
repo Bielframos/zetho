@@ -104,7 +104,7 @@
           <div class="ml-auto flex items-center gap-2">
             @if (item.type === 'rating') {
             <span class="text-xs text-gray-11">Review</span>
-            <div class="flex items-center gap-1 text-amber-300">
+            <div class="flex items-center gap-1 text-warning">
               <i class="ph-fill ph-star"></i>
               <span class="font-bold text-gray-12 ml-1"
                 >{{ item.rating?.toFixed(1) }}</span
@@ -116,7 +116,7 @@
             <span class="text-xs text-gray-11">Lista</span>
             } @else if (item.type === 'status') {
             @if (item.status === 'completed') {
-            <ui-zetho-icon class="text-blue-9" />
+            <ui-zetho-icon class="text-link" />
             } @else {
             <i [class]="statusIcon(item.status)" class="text-gray-11"></i>
             }
@@ -178,7 +178,7 @@
             }
           </div>
           <div
-            class="prose prose-invert prose-xs prose-gray max-w-none text-sm text-gray-11 prose-p:my-0 line-clamp-2"
+            class="prose  prose-xs  max-w-none text-sm text-gray-11 prose-p:my-0 line-clamp-2"
             [innerHTML]="item.parentComment.content"
           ></div>
         </div>
@@ -190,7 +190,7 @@
         <div
           role="button"
           tabindex="0"
-          class="cursor-pointer text-left transition-colors hover:text-gray-12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-6"
+          class="cursor-pointer text-left transition-colors hover:text-gray-12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
           [attr.aria-label]="
             isCommentExpanded(item.$id)
               ? 'Recolher comentário'
@@ -204,14 +204,14 @@
           "
         >
           <div
-            class="prose prose-invert prose-sm prose-gray max-w-none prose-p:font-light"
+            class="prose  prose-sm  max-w-none prose-p:font-light"
             [class.line-clamp-3]="!isCommentExpanded(item.$id)"
             [innerHTML]="item.content"
           ></div>
         </div>
         } @else {
         <div
-          class="prose prose-invert prose-sm prose-gray max-w-none prose-p:font-light line-clamp-3"
+          class="prose  prose-sm  max-w-none prose-p:font-light line-clamp-3"
           [innerHTML]="item.content"
         ></div>
         } }
@@ -230,7 +230,7 @@
             >
               <i
                 class="ph ph-arrow-up"
-                [class.text-blue-9]="item.viewerVote === 'up'"
+                [class.text-link]="item.viewerVote === 'up'"
               ></i>
             </button>
             <span class="min-w-5 text-center font-medium"
@@ -245,7 +245,7 @@
             >
               <i
                 class="ph ph-arrow-down"
-                [class.text-red-400]="item.viewerVote === 'down'"
+                [class.text-danger]="item.viewerVote === 'down'"
               ></i>
             </button>
             <span class="ml-1 flex items-center">
@@ -286,7 +286,7 @@
               (click)="toggleEntryLike(item.$id)"
             >
               <i
-                [class]="item.likedByMe ? 'ph-fill ph-heart text-red-400' : 'ph ph-heart'"
+                [class]="item.likedByMe ? 'ph-fill ph-heart text-danger' : 'ph ph-heart'"
               ></i>
               <span class="text-xs tabular-nums"
                 >{{ item.likeCount || 0 }}</span

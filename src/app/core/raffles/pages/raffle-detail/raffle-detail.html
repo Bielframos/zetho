@@ -15,7 +15,7 @@
   </section>
   } @else if (loadError()) {
   <section
-    class="border-t border-b border-red-700/40 bg-red-900/20 px-4 py-4 text-red-200"
+    class="border-t border-b border-danger-line bg-danger-bg px-4 py-4 text-danger"
   >
     {{ loadError() }}
   </section>
@@ -39,9 +39,9 @@
           <span
             class="rounded-full px-2 py-0.5 text-xs"
             [class.border]="r.active"
-            [class.border-green-700/40]="r.active"
-            [class.bg-green-900/40]="r.active"
-            [class.text-green-300]="r.active"
+            [class.border-success-line]="r.active"
+            [class.bg-success-bg]="r.active"
+            [class.text-success]="r.active"
             [class.bg-gray-3]="!r.active"
             [class.text-gray-10]="!r.active"
           >
@@ -179,13 +179,13 @@
                 <span class="tabular-nums text-gray-10 line-through">
                   {{ (ticketCount() ?? 1) * r.ticketPrice }} Z-Coins
                 </span>
-                <span class="text-green-300">
+                <span class="text-success">
                   {{ userBonus()!.bonusPercent }}% OFF
                 </span>
               </div>
               <div class="mt-1 flex items-center justify-end gap-1.5">
                 <img src="/z-coin.webp" class="h-5 w-5" alt="Z-Coin" />
-                <span class="text-2xl tabular-nums text-green-300">
+                <span class="text-2xl tabular-nums text-success">
                   {{ discountedTotal() }}
                 </span>
                 <span class="text-sm text-gray-10">Z-Coins</span>
@@ -271,7 +271,7 @@
           [attr.title]="inviteCopied() ? 'Copiado!' : 'Copiar código'"
         >
           <i
-            [class]="'ph text-[16px] ' + (inviteCopied() ? 'ph-check text-green-400' : 'ph-copy')"
+            [class]="'ph text-[16px] ' + (inviteCopied() ? 'ph-check text-success' : 'ph-copy')"
           ></i>
         </button>
       </div>
@@ -362,7 +362,7 @@
 
           @if (entry.won) {
           <span
-            class="shrink-0 rounded-full border border-green-700/40 bg-green-900/40 px-2 py-0.5 text-xs text-green-300"
+            class="shrink-0 rounded-full border border-success-line bg-success-bg px-2 py-0.5 text-xs text-success"
           >
             Ganhou
           </span>
@@ -384,7 +384,7 @@
             <div class="flex flex-wrap gap-1.5">
               @for (n of entry.luckyNumbers!; track n) {
               <span
-                [class]="'flex h-8 w-8 items-center justify-center rounded-full border text-xs font-bold ' + (entry.won && n === entry.drawNumber ? 'bg-green-900/40 border-green-700/40 text-green-300' : 'bg-blue-3 border-blue-5 text-blue-11')"
+                [class]="'flex h-8 w-8 items-center justify-center rounded-full border text-xs font-bold ' + (entry.won && n === entry.drawNumber ? 'bg-success-bg border-success-line text-success' : 'bg-blue-3 border-blue-5 text-blue-11')"
               >
                 {{ n }}
               </span>
@@ -497,7 +497,7 @@
       >
         @if (result.won) {
         <div class="space-y-3">
-          <i class="ph-fill ph-trophy text-[56px] text-yellow-400"></i>
+          <i class="ph-fill ph-trophy text-[56px] text-warning"></i>
           <h3 class="text-2xl text-gray-12">Você ganhou</h3>
           @if (result.wonKey) {
           <div class="border-y border-gray-6 py-3 text-left">

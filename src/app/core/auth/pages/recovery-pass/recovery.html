@@ -3,7 +3,7 @@
   <header class="max-md:mb-10">
     <h1 class="text-3xl">Recupere sua senha</h1>
     <p class="text-gray-11 font-light mt-2">Lembrou da senha? <a routerLink="/entrar"
-        class="text-blue-11 hover:text-blue-9 hover:underline cursor-pointer">Entrar</a>
+        class="text-blue-11 hover:text-link hover:underline cursor-pointer">Entrar</a>
     </p>
   </header>
 
@@ -12,7 +12,7 @@
       variant="secondary" required />
 
     @if (result().message) {
-    <small class="rounded-lg border p-3" [class.border-red-700]="result().error" [class.bg-red-900]="result().error" [class.text-red-300]="result().error" [class.border-green-700]="result().success" [class.bg-green-900]="result().success" [class.text-green-300]="result().success">
+    <small class="rounded-lg border p-3" [class.border-danger-line]="result().error" [class.bg-danger-bg]="result().error" [class.text-danger]="result().error" [class.border-success-line]="result().success" [class.bg-success-bg]="result().success" [class.text-success]="result().success">
       {{ result().message }}
     </small>
     }

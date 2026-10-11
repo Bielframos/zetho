@@ -17,7 +17,7 @@ export interface UiSegmentOption<T extends string | number = string> {
       @for (option of options(); track option.id) {
         <button
           type="button"
-          class="h-6 min-w-0 flex-1 cursor-pointer whitespace-nowrap px-4 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-6 disabled:pointer-events-none disabled:text-gray-10"
+          class="h-6 min-w-0 flex-1 cursor-pointer whitespace-nowrap px-4 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-focus-ring disabled:pointer-events-none disabled:text-gray-10"
           [class.bg-gray-3]="value() === option.id"
           [class.text-gray-12]="value() === option.id"
           [class.hover:bg-gray-4]="value() === option.id"

@@ -67,9 +67,9 @@ export class AppStartingRating {
         ? this.value
         : (this.hoverValue ?? this.value);
     return value >= index + 1
-      ? 'ph-fill ph-star text-amber-300'
+      ? 'ph-fill ph-star text-warning'
       : value >= index + 0.5
-        ? 'ph-fill ph-star-half text-amber-300'
+        ? 'ph-fill ph-star-half text-warning'
         : 'ph ph-star text-gray-8';
   }
 }

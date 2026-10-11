@@ -5,7 +5,8 @@
   [style.--theme-c1]="profileStore.activeTheme()?.primaryColor"
   [style.--theme-c2]="profileStore.activeTheme()?.secondaryColor"
   [style.--theme-c3]="profileStore.activeTheme()?.tertiaryColor"
-  [style.background-color]="profileStore.activeTheme()?.backgroundColor"
+  [profileThemeBackground]="profileStore.activeTheme()?.backgroundColor"
+      [style.background-color]="profileStore.activeTheme()?.backgroundColor"
 >
   <!-- Background Image Mask -->
   @if (profileStore.activeTheme()?.backgroundImageId; as imageId) {

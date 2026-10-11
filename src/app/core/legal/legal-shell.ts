@@ -16,7 +16,7 @@ import { Component, input } from '@angular/core';
       </header>
 
       <article
-        class="prose prose-invert prose-sm max-w-none px-4 py-6 text-gray-11 prose-headings:text-gray-12 prose-a:text-blue-11 prose-a:no-underline hover:prose-a:underline"
+        class="prose  prose-sm max-w-none px-4 py-6 text-gray-11 prose-headings:text-gray-12 prose-a:text-blue-11 prose-a:no-underline hover:prose-a:underline"
       >
         <ng-content />
       </article>

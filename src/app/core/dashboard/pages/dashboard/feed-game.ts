@@ -123,7 +123,7 @@ export interface FeedGame {
             class="flex flex-1 cursor-pointer gap-2 p-4 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12 has-checked:bg-blue-4"
           >
             @if (selectedList()?.$id === list.$id) {
-              <i class="ph-fill ph-radio-button text-blue-9"></i>
+              <i class="ph-fill ph-radio-button text-link"></i>
             } @else {
               <i class="ph ph-circle text-gray-6"></i>
             }

@@ -32,8 +32,8 @@ type ChangelogRelease = {
           <ui-loading fallback="Carregando changelog..."></ui-loading>
         </section>
       } @else if (error()) {
-        <section class="border border-red-700/30 bg-red-900/15 p-6">
-          <p class="text-red-300">{{ error() }}</p>
+        <section class="border border-danger-line bg-danger-bg p-6">
+          <p class="text-danger">{{ error() }}</p>
           <a routerLink="/" class="ui-link mt-3 inline-flex"
             >Voltar para início</a
           >

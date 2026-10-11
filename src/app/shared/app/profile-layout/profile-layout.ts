@@ -1,3 +1,4 @@
+import { ProfileThemeContrast } from '../../ui/profile-theme-contrast';
 import { CommonModule } from '@angular/common';
 import { NgComponentOutlet } from '@angular/common';
 import { Component, computed, effect, inject, OnDestroy } from '@angular/core';
@@ -14,7 +15,7 @@ import { getThemeMediaUrl } from '../../../core/themes/theme-media';
 @Component({
   selector: 'app-profile-layout',
   standalone: true,
-  imports: [RouterLink, RouterOutlet, NgComponentOutlet],
+  imports: [ProfileThemeContrast,RouterLink, RouterOutlet, NgComponentOutlet],
   templateUrl: './profile-layout.html',
 })
 export class AppProfileLayout {

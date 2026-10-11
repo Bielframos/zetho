@@ -42,7 +42,7 @@
             (change)="scope.set(option.value)"
           />
           <span
-            class="inline-flex min-h-10 items-center rounded-none border border-gray-6 bg-gray-1/80 px-3 text-xs text-gray-11 transition-colors peer-checked:border-blue-8 peer-checked:bg-blue-3 peer-checked:text-blue-11 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-6 peer-disabled:cursor-default"
+            class="inline-flex min-h-10 items-center rounded-none border border-gray-6 bg-gray-1/80 px-3 text-xs text-gray-11 transition-colors peer-checked:border-blue-8 peer-checked:bg-blue-3 peer-checked:text-blue-11 peer-focus-visible:ring-2 peer-focus-visible:ring-focus-ring peer-disabled:cursor-default"
             >{{ option.label }}</span
           >
         </label>
@@ -53,7 +53,7 @@
 
     <button
       type="button"
-      class="ui-primary-btn mt-7 min-h-12 w-full max-w-xs justify-center gap-2 focus:ring-2 focus:ring-blue-6 disabled:opacity-50"
+      class="ui-primary-btn mt-7 min-h-12 w-full max-w-xs justify-center gap-2 focus:ring-2 focus:ring-focus-ring disabled:opacity-50"
       [disabled]="generating() || (!pending() && (balance() < recommendationCost() || dailyLimitReached()))"
       (click)="generate()"
       [attr.aria-busy]="generating()"
@@ -92,7 +92,7 @@
     } @if (error()) {
     <div
       role="alert"
-      class="mt-6 w-full rounded-lg border border-amber-700/40 bg-gray-1/95 p-4 text-sm leading-6 text-amber-200"
+      class="mt-6 w-full rounded-lg border border-warning-line bg-gray-1/95 p-4 text-sm leading-6 text-warning"
     >
       {{ error() }}
     </div>
@@ -109,7 +109,7 @@
         <p class="mb-5 text-xs text-blue-11">Sua próxima descoberta</p>
         <a
           [routerLink]="['/jogo', result.game.slug]"
-          class="mx-auto block w-36 overflow-hidden rounded-lg border border-gray-6 bg-gray-3 focus:ring-2 focus:ring-blue-6"
+          class="mx-auto block w-36 overflow-hidden rounded-lg border border-gray-6 bg-gray-3 focus:ring-2 focus:ring-focus-ring"
           [attr.aria-label]="'Ver ' + result.game.name"
         >
           @if (result.game.coverUrl) {
@@ -225,7 +225,7 @@
           </div>
           <details class="mt-3 text-sm text-gray-11">
             <summary
-              class="w-fit cursor-pointer text-xs text-blue-11 focus:ring-2 focus:ring-blue-6"
+              class="w-fit cursor-pointer text-xs text-blue-11 focus:ring-2 focus:ring-focus-ring"
             >
               Por que esse jogo?
             </summary>

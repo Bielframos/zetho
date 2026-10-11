@@ -18,7 +18,7 @@
         variant="secondary"
       />
       @if (igdbIdControl.touched && igdbIdControl.invalid) {
-      <small class="text-red-300 px-4"
+      <small class="text-danger px-4"
         >Informe um ID válido maior que zero.</small
       >
       }
@@ -37,14 +37,14 @@
 
   @if (response(); as result) {
   <div
-    class="mt-4 p-3 rounded-lg border border-green-700/40 bg-green-900/20 text-green-200"
+    class="mt-4 p-3 rounded-lg border border-success-line bg-success-bg text-success"
   >
     <p>{{result.message}}</p>
     <small>ID interno: {{result.gameId}}</small>
   </div>
   } @if (error(); as message) {
   <div
-    class="mt-4 p-3 rounded-lg border border-red-700/40 bg-red-900/20 text-red-200"
+    class="mt-4 p-3 rounded-lg border border-danger-line bg-danger-bg text-danger"
   >
     {{message}}
   </div>

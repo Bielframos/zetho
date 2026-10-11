@@ -26,7 +26,7 @@ import { environment } from '../../../../../../environments/environment';
             <i
               [class]="
                 'ph text-[16px] ' +
-                (inviteCopied() ? 'ph-check text-green-500' : 'ph-copy')
+                (inviteCopied() ? 'ph-check text-success' : 'ph-copy')
               "
             ></i>
           </button>

@@ -11,7 +11,7 @@ Fontes principais:
 
 ## Base Visual
 
-- O produto e um app escuro, com fundo principal `bg-gray-1` e texto primario `text-gray-12`.
+- O produto suporta claro, escuro e sistema. Consulte `docs/color-mode.md` e use tokens semanticos de `src/styles/color-tokens.css`; `gray-*`/`blue-*` sao aliases adaptaveis.
 - Use `text-gray-11` para texto secundario, descricoes, labels e metadados; use `text-gray-10` para informacao ainda mais discreta.
 - Use bordas como estrutura visual: `border-gray-4` no shell e separacoes externas; `border-gray-6` em secoes, modulos internos, listas e controles.
 - Azul e a cor de acao e enfase: `blue-9` para botoes/estado ativo, `blue-10` para hover de botao primario e `blue-11` para links, icones e destaques textuais.
@@ -52,9 +52,9 @@ Fontes principais:
   - `.ui-action-btn` para acoes pequenas em comentarios, listas e chips interativos.
   - `.ui-destructive-btn` para acoes destrutivas.
 - Para botoes icon-only, use `data-size="icon"` e forneca `aria-label` quando o texto nao estiver visivel.
-- Links textuais devem usar `text-blue-11` com `hover:text-blue-9` e, quando fizer sentido, `hover:underline`.
+- Links textuais devem usar `text-blue-11` com `hover:underline` e, quando fizer sentido, `hover:underline`.
 - Navegacao ativa segue `routerLinkActive="bg-gray-3 text-gray-12"` no shell. Em tabs de conteudo, use borda inferior ativa (`border-blue-9`) e texto `text-gray-12`.
-- Inputs e textareas devem ficar escuros ou transparentes, com `border-gray-6`, placeholder `text-gray-10/11` e foco `focus:ring-2 focus:ring-blue-6`.
+- Inputs e textareas devem usar superficies adaptaveis ou transparentes, com `border-line-strong`, placeholder `text-gray-10/11` e foco `focus:ring-2 focus:ring-focus-ring`.
 - Estados disabled devem usar `disabled:pointer-events-none`, `disabled:text-gray-10`, `disabled:bg-transparent` ou `disabled:opacity-50`, conforme o componente existente.
 - Badges e contadores usam `rounded-full`, texto pequeno (`text-xs`) e fundos discretos como `bg-blue-3 text-blue-11`, `bg-gray-3 text-gray-10` ou tons semanticos quando necessario.
 
@@ -63,7 +63,7 @@ Fontes principais:
 - O Dashboard e um feed social unico e cronologico (estilo timeline), em coluna focada (`w-full max-w-2xl mx-auto`), com carregamento infinito. Nao ha mais secoes separadas de descoberta (trending/aguardados) na home.
 - O feed mistura varios tipos de atividade das conexoes: review, comentario, lista, registro de status (`status`: zerou/adicionou a biblioteca/comecou a jogar/abandonou) e adicao de jogo a lista (`list_item`). O tipo de cada item define o corpo renderizado.
 - Feeds usam `flex flex-col divide-y divide-gray-6`; cada item usa `p-4`, avatar `h-8 w-8 rounded-full`, metadados `text-xs text-gray-10` e conteudo em `text-gray-12/11`.
-- A acao do item (verbo) fica na linha do autor para `status` e `list_item` (ex.: "**Fulano** zerou", "**Fulano** adicionou em [Lista]"); review/comentario/lista usam um rotulo discreto a direita. Icone de status a direita, com `text-amber-300` para o marco `completed` (pico) e `text-gray-11` nos demais. **Gotcha:** o `@if` do Angular remove o espaco entre o `<a>` do nome e o `<span>` do verbo — force o espaco com `&nbsp;` dentro do span condicional, senao renderiza "Lottozerou".
+- A acao do item (verbo) fica na linha do autor para `status` e `list_item` (ex.: "**Fulano** zerou", "**Fulano** adicionou em [Lista]"); review/comentario/lista usam um rotulo discreto a direita. Icone de status a direita, com `text-warning` para o marco `completed` (pico) e `text-gray-11` nos demais. **Gotcha:** o `@if` do Angular remove o espaco entre o `<a>` do nome e o `<span>` do verbo — force o espaco com `&nbsp;` dentro do span condicional, senao renderiza "Lottozerou".
 - Avatares sem imagem devem cair para uma bolha `rounded-full bg-blue-9 text-white` com inicial.
 - O preview de game no feed (`ui-feed-game`) e arejado, sem caixa nem bordas: uma coluna com o link do jogo (capa `h-16 w-11 rounded` + nome `group-hover:underline`) e, abaixo, uma linha `flex justify-between` — a esquerda a barra de acoes (`gap-5 text-sm text-gray-11`) com Biblioteca, Desejos e Lista (icone + rotulo, sem fundo nem divisorias, acendem para `text-gray-12` no hover e viram "feito" em `text-blue-11` com `ph-fill`); a direita, um `ng-content` para os controles de engajamento do post. Para comentario/review, a barra de votos (upvote/downvote/contagem) e projetada nesse slot via `ngTemplateOutlet`, dividindo a linha com as acoes do jogo; quando o item nao tem jogo, a mesma barra cai num rodape solto a direita. As acoes de jogo sao otimistas/fire-and-forget (nao carregam o z-entry do espectador) e usam `ZEntryService`/`ListsController`; so aparecem para usuario autenticado. Icone de desejos e `ph-shopping-bag` (o mesmo da tela de game) — nunca o coracao, que e curtida.
 - Carregamento infinito via `IntersectionObserver` sobre uma sentinela no fim da lista; indicador de carga discreto (`ui-loading` inline) enquanto pagina. A janela mesclada tem teto pratico (top ~100 por fonte).
@@ -97,14 +97,14 @@ Fontes principais:
 - Skeleton de conteudo: use `<ui-skeleton>` com dimensoes explicitas.
 - Empty states: texto curto em `text-gray-11`; use icone ou CTA apenas quando isso ajudar a proxima acao.
 - Erros e sucessos devem usar tons semanticos discretos com borda e fundo transluscido, como ja ocorre em telas admin.
-- Preservar foco visivel com `focus:ring-2 focus:ring-blue-6` em botoes e campos.
+- Preservar foco visivel com `focus:ring-2 focus:ring-focus-ring` em botoes e campos.
 
 ## Anti-padroes
 
 - Nao criar hero marketing, layouts de landing page ou secoes promocionais em paginas internas do app.
 - Nao usar gradientes decorativos, blobs, orbs ou ilustracoes SVG como decoracao principal.
 - Nao substituir divisorias estruturais por cards grandes arredondados em areas como dashboard, detalhe de game ou feed.
-- Nao introduzir novas paletas principais. Use os tokens `gray-*` e `blue-*` de `src/styles.css`; cores semanticas devem ser pontuais.
+- Nao introduzir novas paletas principais. Use tokens semanticos de `src/styles/color-tokens.css`; mantenha os aliases existentes quando necessario. Nao use `prose-invert`; rich text recebe tokens globais. Texto normal exige contraste AA 4.5:1, controles/foco 3:1 em ambos modos.
 - Nao criar botao novo se uma classe global existente cobre a necessidade.
 - Nao usar texto explicativo na interface para ensinar o design. O padrao deve aparecer pela composicao, estados e controles familiares.
 - Nao aumentar a tipografia de paineis compactos como se fossem heroes. Reserve tamanhos grandes para marca, titulo do game e numeros de destaque.

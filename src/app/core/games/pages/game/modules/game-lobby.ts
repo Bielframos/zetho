@@ -23,7 +23,7 @@ import { CommentsController } from '../../../../comments/comments.controller';
           name="comment"
           id="comment"
           placeholder="Diga algo sobre este jogo…"
-          class="max-h-[160px] min-h-[64px] w-full border-y border-gray-6 bg-transparent px-4 py-2 font-light text-gray-12 outline-none transition-colors duration-200 ease-in-out placeholder:text-gray-10 focus:ring-2 focus:ring-blue-6 disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11 md:border"
+          class="max-h-[160px] min-h-[64px] w-full border-y border-gray-6 bg-transparent px-4 py-2 font-light text-gray-12 outline-none transition-colors duration-200 ease-in-out placeholder:text-gray-10 focus:ring-2 focus:ring-focus-ring disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11 md:border"
           [formControl]="comment"
           required
         ></textarea>
@@ -32,8 +32,8 @@ import { CommentsController } from '../../../../comments/comments.controller';
           <div>
             <small
               class="transition-colors"
-              [class.text-green-300]="charsCount() > 3 && charsCount() < 350"
-              [class.text-red-300]="charsCount() > 350"
+              [class.text-success]="charsCount() > 3 && charsCount() < 350"
+              [class.text-danger]="charsCount() > 350"
             >
               <span>{{ charsCount() }}</span>
               /350

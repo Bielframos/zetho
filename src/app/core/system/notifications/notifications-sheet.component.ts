@@ -17,7 +17,7 @@ import { NotificationStore } from './notification.store';
     <button
       type="button"
       (click)="toggleSheet()"
-      class="relative flex cursor-pointer items-center justify-center border-gray-6 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-6"
+      class="relative flex cursor-pointer items-center justify-center border-gray-6 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-focus-ring"
       [ngClass]="
         variant() === 'appShell'
           ? 'h-full w-14 border-b border-l bg-gray-1/50 backdrop-blur-lg'
@@ -136,14 +136,14 @@ import { NotificationStore } from './notification.store';
 
                 @if (notif.status === 'accepted') {
                   <span
-                    class="mt-2 inline-flex items-center gap-1 rounded-full bg-green-900/40 px-2 py-0.5 text-xs text-green-300"
+                    class="mt-2 inline-flex items-center gap-1 rounded-full bg-success-bg px-2 py-0.5 text-xs text-success"
                   >
                     <i class="ph ph-check-circle"></i>
                     Convite aceito
                   </span>
                 } @else if (notif.status === 'declined') {
                   <span
-                    class="mt-2 inline-flex items-center gap-1 rounded-full bg-red-900/30 px-2 py-0.5 text-xs text-red-300"
+                    class="mt-2 inline-flex items-center gap-1 rounded-full bg-danger-bg px-2 py-0.5 text-xs text-danger"
                   >
                     <i class="ph ph-x-circle"></i>
                     Convite recusado

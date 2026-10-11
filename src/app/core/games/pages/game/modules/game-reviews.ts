@@ -73,7 +73,7 @@ import { ShareCardData } from '../../../../share/share.types';
               type="text"
               placeholder="Ex: Obra de arte indiscutível!, Bom mas com bugs..."
               maxlength="255"
-              class="border-y border-gray-6 bg-transparent px-4 py-2 font-light text-gray-12 outline-none transition-all duration-200 focus:ring-2 focus:ring-blue-6 md:border"
+              class="border-y border-gray-6 bg-transparent px-4 py-2 font-light text-gray-12 outline-none transition-all duration-200 focus:ring-2 focus:ring-focus-ring md:border"
               [(ngModel)]="editTitle"
             />
           </div>
@@ -82,7 +82,7 @@ import { ShareCardData } from '../../../../share/share.types';
             <div class="flex justify-between items-center">
               <span class="text-sm text-gray-11">Sua crítica:</span>
               @if (editContent().length > 100) {
-                <small class="text-green-400">
+                <small class="text-success">
                   <i class="ph ph-sparkle"></i> Crítica qualificada (+5
                   Z-Coins!)
                 </small>
@@ -139,7 +139,7 @@ import { ShareCardData } from '../../../../share/share.types';
             @if (myRating(); as mine) {
               <div class="flex flex-col gap-3 p-4">
                 <div class="flex items-center gap-2">
-                  <div class="flex text-amber-300">
+                  <div class="flex text-warning">
                     @for (star of getStarsArray(mine.rating); track $index) {
                       <i class="ph-fill ph-star"></i>
                     }
@@ -158,7 +158,7 @@ import { ShareCardData } from '../../../../share/share.types';
                 }
                 @if (mine.content) {
                   <div
-                    class="prose prose-invert prose-gray max-w-none prose-p:font-light"
+                    class="prose   max-w-none prose-p:font-light"
                     [innerHTML]="mine.content"
                   ></div>
                 }
@@ -186,14 +186,14 @@ import { ShareCardData } from '../../../../share/share.types';
                     class="ml-auto flex items-center gap-2 text-sm text-gray-11"
                   >
                     <button
-                      class="hover:text-blue-9 transition-colors"
+                      class="hover:text-link transition-colors"
                       (click)="shareMyReview()"
                       aria-label="Compartilhar crítica"
                     >
                       <i class="ph ph-share-network text-lg"></i>
                     </button>
                     <button
-                      class="hover:text-blue-9 transition-colors"
+                      class="hover:text-link transition-colors"
                       (click)="voteReview(mine, 'up')"
                     >
                       <i class="ph ph-caret-up text-lg"></i>
@@ -202,7 +202,7 @@ import { ShareCardData } from '../../../../share/share.types';
                       mine.voteCount || 0
                     }}</span>
                     <button
-                      class="hover:text-blue-9 transition-colors"
+                      class="hover:text-link transition-colors"
                       (click)="voteReview(mine, 'down')"
                     >
                       <i class="ph ph-caret-down text-lg"></i>
@@ -230,7 +230,7 @@ import { ShareCardData } from '../../../../share/share.types';
             @for (review of ratings(); track review.$id) {
               <div class="flex flex-col gap-3 p-4">
                 <div class="flex items-center gap-2">
-                  <div class="flex text-amber-300">
+                  <div class="flex text-warning">
                     @for (star of getStarsArray(review.rating); track $index) {
                       <i class="ph-fill ph-star"></i>
                     }
@@ -249,7 +249,7 @@ import { ShareCardData } from '../../../../share/share.types';
                 }
                 @if (review.content) {
                   <div
-                    class="prose prose-invert prose-gray max-w-none prose-p:font-light"
+                    class="prose   max-w-none prose-p:font-light"
                     [innerHTML]="review.content"
                   ></div>
                 }
@@ -277,7 +277,7 @@ import { ShareCardData } from '../../../../share/share.types';
                     class="ml-auto flex items-center gap-2 text-sm text-gray-11"
                   >
                     <button
-                      class="hover:text-blue-9 transition-colors"
+                      class="hover:text-link transition-colors"
                       (click)="voteReview(review, 'up')"
                     >
                       <i class="ph ph-caret-up text-lg"></i>
@@ -286,7 +286,7 @@ import { ShareCardData } from '../../../../share/share.types';
                       review.voteCount || 0
                     }}</span>
                     <button
-                      class="hover:text-blue-9 transition-colors"
+                      class="hover:text-link transition-colors"
                       (click)="voteReview(review, 'down')"
                     >
                       <i class="ph ph-caret-down text-lg"></i>

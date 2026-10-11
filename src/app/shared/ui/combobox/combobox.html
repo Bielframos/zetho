@@ -2,13 +2,13 @@
   @if (label()) {
   <label [for]="inputId" class="mb-1.5 block text-sm text-gray-12">
     {{ label() }} @if (required()) {
-    <span class="text-red-300">*</span>
+    <span class="text-danger">*</span>
     }
   </label>
   }
 
   <div
-    class="flex min-h-10 w-full flex-wrap items-center gap-2 rounded-lg border border-gray-6 bg-transparent px-2 py-1.5 transition-colors focus-within:ring-2 focus-within:ring-blue-6"
+    class="flex min-h-10 w-full flex-wrap items-center gap-2 rounded-lg border border-line-strong bg-transparent px-2 py-1.5 transition-colors focus-within:ring-2 focus-within:ring-focus-ring"
     [attr.aria-busy]="loading()"
   >
     @if (!multiple() && selectedOptions()[0]; as selected) { @if
@@ -51,7 +51,7 @@
       <span class="truncate">{{ selected.label }}</span>
       <button
         type="button"
-        class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full hover:bg-blue-4 focus:outline-none focus:ring-2 focus:ring-blue-6"
+        class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full hover:bg-blue-4 focus:outline-none focus:ring-2 focus:ring-focus-ring"
         [attr.aria-label]="'Remover ' + selected.label"
         (click)="removeOption(selected)"
       >
@@ -97,7 +97,7 @@
   <div
     [id]="listboxId"
     role="listbox"
-    class="discreet-scrollbar absolute inset-x-0 top-full z-20 mt-1 max-h-56 overflow-y-auto overscroll-contain rounded-lg border border-gray-6 bg-gray-2 shadow-lg"
+    class="discreet-scrollbar absolute inset-x-0 top-full z-20 mt-1 max-h-56 overflow-y-auto overscroll-contain rounded-lg border border-line-strong bg-gray-2 shadow-lg"
     [attr.aria-multiselectable]="multiple()"
   >
     @if (query().trim().length < minQueryLength()) {
@@ -111,7 +111,7 @@
     <button
       type="button"
       role="option"
-      class="flex w-full items-center gap-3 border-b border-gray-6 p-2 text-left transition-colors last:border-b-0 hover:bg-gray-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-6 disabled:pointer-events-none disabled:opacity-50"
+      class="flex w-full items-center gap-3 border-b border-line-strong p-2 text-left transition-colors last:border-b-0 hover:bg-gray-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-focus-ring disabled:pointer-events-none disabled:opacity-50"
       [class.bg-gray-3]="activeIndex() === index"
       [disabled]="option.disabled"
       [attr.aria-selected]="isSelected(option)"

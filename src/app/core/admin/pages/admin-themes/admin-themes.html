@@ -7,13 +7,13 @@
   <section class="p-4 md:p-6">
     @if (successMessage) {
     <div
-      class="mb-4 p-3 rounded-lg border border-green-700/40 bg-green-900/20 text-green-200 text-sm"
+      class="mb-4 p-3 rounded-lg border border-success-line bg-success-bg text-success text-sm"
     >
       {{ successMessage }}
     </div>
     } @if (errorMessage) {
     <div
-      class="mb-4 p-3 rounded-lg border border-red-700/40 bg-red-900/20 text-red-200 text-sm"
+      class="mb-4 p-3 rounded-lg border border-danger-line bg-danger-bg text-danger text-sm"
     >
       {{ errorMessage }}
     </div>
@@ -44,7 +44,7 @@
             />
             @if (themeForm.controls.name.touched &&
             themeForm.controls.name.invalid) {
-            <small class="text-red-300 px-4">Informe o nome do tema.</small>
+            <small class="text-danger px-4">Informe o nome do tema.</small>
             }
           </div>
 
@@ -55,7 +55,7 @@
             <select
               id="themeType"
               formControlName="type"
-              class="rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors"
+              class="rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-focus-ring transition-colors"
             >
               <option value="game">Jogo</option>
               <option value="color">Cor base</option>
@@ -73,7 +73,7 @@
             />
             @if (themeForm.controls.price.touched &&
             themeForm.controls.price.invalid) {
-            <small class="text-red-300 px-4">Informe um preço válido.</small>
+            <small class="text-danger px-4">Informe um preço válido.</small>
             }
           </div>
         </div>
@@ -145,7 +145,7 @@
                 type="text"
                 formControlName="backgroundColor"
                 placeholder="#000000"
-                class="min-w-0 flex-1 rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors"
+                class="min-w-0 flex-1 rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-focus-ring transition-colors"
               />
             </div>
           </label>
@@ -162,7 +162,7 @@
                 type="text"
                 formControlName="primaryColor"
                 placeholder="#ffffff"
-                class="min-w-0 flex-1 rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors"
+                class="min-w-0 flex-1 rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-focus-ring transition-colors"
               />
             </div>
           </label>
@@ -179,7 +179,7 @@
                 type="text"
                 formControlName="secondaryColor"
                 placeholder="#ffffff"
-                class="min-w-0 flex-1 rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors"
+                class="min-w-0 flex-1 rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-focus-ring transition-colors"
               />
             </div>
           </label>
@@ -196,7 +196,7 @@
                 type="text"
                 formControlName="tertiaryColor"
                 placeholder="#ffffff"
-                class="min-w-0 flex-1 rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors"
+                class="min-w-0 flex-1 rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-focus-ring transition-colors"
               />
             </div>
           </label>

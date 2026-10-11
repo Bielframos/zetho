@@ -76,7 +76,7 @@ import { GameplaySessionsService } from '../../gameplay-sessions.service';
               name="scheduledAt"
               [(ngModel)]="form.scheduledAt"
               [min]="minimumScheduledAt"
-              class="w-full rounded-lg border border-gray-6 bg-transparent px-3 py-2 text-sm text-gray-12 outline-none focus:ring-2 focus:ring-blue-6"
+              class="w-full rounded-lg border border-gray-6 bg-transparent px-3 py-2 text-sm text-gray-12 outline-none focus:ring-2 focus:ring-focus-ring"
               required
             />
           </div>
@@ -92,7 +92,7 @@ import { GameplaySessionsService } from '../../gameplay-sessions.service';
             rows="3"
             [(ngModel)]="form.description"
             placeholder="Requisitos, comunicação ou regras da Jogatina"
-            class="w-full resize-none rounded-lg border border-gray-6 bg-transparent p-3 text-sm text-gray-12 outline-none placeholder:text-gray-10 focus:ring-2 focus:ring-blue-6"
+            class="w-full resize-none rounded-lg border border-gray-6 bg-transparent p-3 text-sm text-gray-12 outline-none placeholder:text-gray-10 focus:ring-2 focus:ring-focus-ring"
           ></textarea>
         </div>
 
