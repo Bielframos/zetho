@@ -1,5 +1,18 @@
-import { UiSegmentedControl, UiSegmentOption } from '../../../../shared/ui/segmented-control';
-import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import {
+  UiSegmentedControl,
+  UiSegmentOption,
+} from '../../../../shared/ui/segmented-control';
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  afterRenderEffect,
+  computed,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -42,6 +55,8 @@ function buildYearOptions(): string[] {
   templateUrl: './search.html',
 })
 export class SearchPage {
+  private readonly searchInput =
+    viewChild<ElementRef<HTMLInputElement>>('searchInput');
   readonly authStore = inject(AuthStore);
   readonly minSearchLength = 3;
   readonly years = buildYearOptions();
@@ -61,10 +76,12 @@ export class SearchPage {
   year = signal<string>('');
   view = signal<string>('');
   searchType = signal<'games' | 'players'>('games');
-  readonly searchOptions = computed<UiSegmentOption<'games' | 'players'>[]>(() => [
-    { id: 'games', label: 'Jogos' },
-    { id: 'players', label: 'Perfis', disabled: this.isHypedUpcomingView() },
-  ]);
+  readonly searchOptions = computed<UiSegmentOption<'games' | 'players'>[]>(
+    () => [
+      { id: 'games', label: 'Jogos' },
+      { id: 'players', label: 'Perfis', disabled: this.isHypedUpcomingView() },
+    ],
+  );
   developer = signal('');
   selectedDeveloper = signal<UiComboboxOption[]>([]);
   filtersOpen = signal(false);
@@ -77,7 +94,9 @@ export class SearchPage {
     }));
   mobileSearchControl = new FormControl('', { nonNullable: true });
   initialSearchControl = new FormControl('', { nonNullable: true });
-  readonly initialSearchForm = new FormGroup({ query: this.initialSearchControl });
+  readonly initialSearchForm = new FormGroup({
+    query: this.initialSearchControl,
+  });
 
   normalizedQuery = computed(() => this.query().trim());
 
@@ -110,6 +129,22 @@ export class SearchPage {
   playerResults = computed(() => this.searchController.players.results());
 
   constructor() {
+    const document = inject(DOCUMENT);
+    afterRenderEffect((onCleanup) => {
+      const input = this.searchInput()?.nativeElement;
+      const controller = new AbortController();
+      const focus = () => {
+        const modal = document.querySelector('dialog[open]');
+        if (modal)
+          modal.addEventListener('close', focus, {
+            once: true,
+            signal: controller.signal,
+          });
+        else input?.focus();
+      };
+      focus();
+      onCleanup(() => controller.abort());
+    });
     this.seo.apply({
       title: 'Buscar jogos — Zetho',
       description:

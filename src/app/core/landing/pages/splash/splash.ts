@@ -21,7 +21,7 @@ export class SplashPage implements OnInit {
     await this.authStore.ready;
 
     if (this.authStore.isAuthenticated()) {
-      void this.router.navigateByUrl('/dashboard', { replaceUrl: true });
+      void this.router.navigateByUrl('/feed', { replaceUrl: true });
     } else {
       void this.router.navigateByUrl('/landing', { replaceUrl: true });
     }

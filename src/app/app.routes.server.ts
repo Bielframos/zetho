@@ -121,6 +121,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'verificacao', renderMode: RenderMode.Client },
   { path: 'comecar', renderMode: RenderMode.Client },
   { path: 'dashboard', renderMode: RenderMode.Client },
+  { path: 'feed', renderMode: RenderMode.Client },
   { path: 'minha-conta', renderMode: RenderMode.Client },
   { path: 'buscar', renderMode: RenderMode.Client },
   { path: 'loja', renderMode: RenderMode.Client },
