@@ -23,6 +23,7 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 - Comparação acompanha troca de perfil e sessão e ignora respostas antigas; resolução de perfis mantém isolamento entre requisições SSR.
 - HTML das notícias é sanitizado antes da renderização, preservando apenas incorporações reconhecidas do YouTube.
 - Histórico atrasado não substitui a cota atual de recomendações.
+- A cota diária se atualiza à meia-noite mesmo quando a página permanece aberta e ociosa.
 
 ## [1.31.0] - 2026-10-11
 
