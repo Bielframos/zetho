@@ -5,7 +5,7 @@ import { FollowStore } from '../../core/connections/follow.store';
 
 @Component({
   selector: 'ui-follow-control',
-  host: { '[style.width]': "compact() ? '132px' : '156px'" },
+  host: { '[style.width]': "variant() === 'icon' ? '44px' : compact() ? '132px' : '156px'" },
   styles: `
     :host { display: block; position: relative; max-width: 100%; min-width: 0; }
     .follow-button { display: flex; align-items: center; justify-content: center; gap: .5rem; width: 100%; min-height: 44px; padding: .5rem; border: 1px solid currentColor; border-radius: .5rem; font-size: .875rem; cursor: pointer; }
@@ -17,6 +17,12 @@ import { FollowStore } from '../../core/connections/follow.store';
     .follow-primary:hover:not(:disabled) { background: var(--blue-10); border-color: var(--blue-10); }
     .follow-secondary { background: var(--gray-2); color: inherit; }
     .follow-secondary:hover:not(:disabled) { text-decoration: underline; background: var(--gray-3); }
+    .follow-icon { width: 44px; height: 44px; border-color: transparent; background: var(--gray-2); color: inherit; }
+    .follow-icon:hover:not(:disabled) { background: var(--gray-3); }
+    .follow-icon.following { background: var(--gray-3); }
+    .follow-icon:disabled { opacity: .65; }
+    .icon-feedback { position: absolute; top: calc(100% + 6px); right: 0; z-index: 40; width: min(210px, calc(100vw - 64px)); padding: .75rem; border: 1px solid currentColor; border-radius: .5rem; background: var(--gray-2); color: inherit; }
+    .icon-feedback .follow-error { margin-top: 0; }
     .follow-menu { position: absolute; z-index: 30; right: 0; top: calc(100% + 6px); width: max(100%, 190px); max-width: calc(100vw - 32px); padding: .5rem; background: var(--gray-2); color: inherit; border: 1px solid currentColor; border-radius: .5rem; }
     .follow-menu button { border-color: transparent; white-space: nowrap; }
     .follow-error { margin-top: .5rem; font-size: .75rem; overflow-wrap: anywhere; }
@@ -27,18 +33,21 @@ import { FollowStore } from '../../core/connections/follow.store';
   template: `
     @if (visible()) {
       <button #trigger type="button" class="follow-button"
-        [class.follow-primary]="state().known && !state().connection"
-        [class.follow-secondary]="!state().known || !!state().connection"
+        [class.follow-primary]="variant() !== 'icon' && state().known && !state().connection"
+        [class.follow-secondary]="variant() !== 'icon' && (!state().known || !!state().connection)"
+        [class.follow-icon]="variant() === 'icon'" [class.following]="!!state().connection"
         [disabled]="!!state().pending || !state().known"
         [attr.aria-label]="buttonLabel() + ' ' + gamertag()"
+        [title]="buttonLabel() + ' ' + gamertag()"
         [attr.aria-busy]="!!state().pending"
-        [attr.aria-expanded]="state().connection ? expanded() : null"
+        [attr.aria-expanded]="variant() !== 'icon' && state().connection ? expanded() : null"
         (click)="activate()">
         @if (state().pending) { <i class="ph ph-circle-notch spinning" aria-hidden="true"></i> }
-        @else if (state().connection && state().known) { <i class="ph ph-check" aria-hidden="true"></i> }
+        @else if (state().connection && state().known) { <i class="ph" [class.ph-user-minus]="variant() === 'icon'" [class.ph-check]="variant() !== 'icon'" aria-hidden="true"></i> }
         @else if (state().known) { <i class="ph ph-user-plus" aria-hidden="true"></i> }
-        {{ buttonLabel() }}
-        @if (state().connection && !state().pending && state().known) { <i class="ph" [class.ph-caret-up]="expanded()" [class.ph-caret-down]="!expanded()" aria-hidden="true"></i> }
+        @else { <i class="ph ph-warning-circle" aria-hidden="true"></i> }
+        @if (variant() !== 'icon') { {{ buttonLabel() }} }
+        @if (variant() !== 'icon' && state().connection && !state().pending && state().known) { <i class="ph" [class.ph-caret-up]="expanded()" [class.ph-caret-down]="!expanded()" aria-hidden="true"></i> }
       </button>
       @if (expanded() && state().known && state().connection && !state().pending) {
         <div class="follow-menu">
@@ -46,8 +55,10 @@ import { FollowStore } from '../../core/connections/follow.store';
         </div>
       }
       @if (state().error) {
+        <div [class.icon-feedback]="variant() === 'icon'">
         <p class="follow-error" role="alert"><i class="ph ph-warning-circle" aria-hidden="true"></i> {{ state().error }}</p>
         <button type="button" class="follow-button follow-secondary" [disabled]="!!state().pending" (click)="retry()">{{ state().known ? 'Atualizar consulta' : 'Verificar novamente' }}</button>
+        </div>
       }
       <span class="sr-only" aria-live="polite" aria-atomic="true">{{ state().announcement }}</span>
     }
@@ -57,6 +68,7 @@ export class FollowControl {
   readonly profileId = input.required<string>();
   readonly gamertag = input.required<string>();
   readonly compact = input(false);
+  readonly variant = input<'default' | 'icon'>('default');
   readonly store = inject(FollowStore);
   private auth = inject(AuthStore);
   private element = inject(ElementRef);
@@ -72,7 +84,7 @@ export class FollowControl {
     if (state.pending === 'unfollow') return 'Removendo…';
     if (state.pending === 'read' && !state.known) return 'Verificando…';
     if (!state.known) return 'Indisponível';
-    return state.connection ? 'Seguindo' : 'Seguir';
+    return state.connection ? (this.variant() === 'icon' ? 'Deixar de seguir' : 'Seguindo') : 'Seguir';
   });
   constructor() {
     effect(() => {
@@ -81,7 +93,9 @@ export class FollowControl {
     });
   }
   activate() {
-    if (this.state().connection) this.expanded.update(value => !value);
+    if (this.state().pending || !this.state().known) return;
+    if (this.state().connection && this.variant() === 'icon') void this.save(false);
+    else if (this.state().connection) this.expanded.update(value => !value);
     else void this.save(true);
   }
   unfollow() { void this.save(false); }

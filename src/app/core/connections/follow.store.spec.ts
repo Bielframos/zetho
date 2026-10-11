@@ -37,6 +37,31 @@ describe('Shared follow state and explicit mutations', () => {
     buttons[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.follow-menu')).toBeNull();
   });
+  it('offers a direct, labelled icon action without changing the default variant', async () => {
+    repository.findUnique.and.resolveTo(row);
+    const fixture = TestBed.createComponent(FollowControl);
+    fixture.componentRef.setInput('profileId', 'peer');
+    fixture.componentRef.setInput('gamertag', 'Peer');
+    fixture.componentRef.setInput('variant', 'icon');
+    fixture.detectChanges(); await fixture.whenStable(); fixture.detectChanges();
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('button');
+    expect(button.getAttribute('aria-label')).toBe('Deixar de seguir Peer');
+    expect(button.title).toBe('Deixar de seguir Peer');
+    expect(button.textContent?.trim()).toBe('');
+    expect(button.hasAttribute('aria-expanded')).toBeFalse();
+    const deletion = deferred(); repository.delete.and.returnValue(deletion.promise);
+    const mutation = spyOn(store, 'setFollowing').and.callThrough();
+    button.click(); button.click(); fixture.detectChanges();
+    await Promise.resolve(); await Promise.resolve();
+    expect(repository.delete).toHaveBeenCalledTimes(1);
+    expect(button.disabled).toBeTrue();
+    expect(fixture.nativeElement.querySelector('.follow-menu')).toBeNull();
+    repository.findUnique.and.resolveTo(null); deletion.resolve(undefined);
+    await mutation.calls.mostRecent().returnValue;
+    await fixture.whenStable(); fixture.detectChanges();
+    expect(button.getAttribute('aria-label')).toBe('Seguir Peer');
+    expect(button.disabled).toBeFalse();
+  });
   it('retains confirmed mutation on refresh failure and retries only the read', async () => {
     await store.ensure('peer'); repository.findUnique.and.rejectWith(new Error('read failed'));
     await store.setFollowing('peer', true);

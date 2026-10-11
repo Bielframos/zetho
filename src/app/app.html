@@ -65,28 +65,18 @@
         }
 
         <div class="relative z-10">
-          @if (authStore.isAuthenticated() && !profileStore.itsMe()) {
-          <div class="flex justify-center px-4 pt-4">
-            <ui-follow-control [profileId]="profile.$id" [gamertag]="profile.gamertag" />
-          </div>
-          }
-
-          <header class="flex items-center gap-3 px-4 py-4">
-            <img
-              [src]="profileStore.avatarUrl()"
-              alt="{{`Avatar do ${profile.gamertag}`}}"
-              class="profile-theme-avatar h-12 w-12 rounded-full bg-blue-12 object-cover"
-            />
-
-            <div class="profile-theme-copy min-w-0">
-              <p class="truncate font-semibold text-gray-12">
-                {{ profileStore.itsMe() ? authStore.user()?.name :
-                profile.gamertag }}
-              </p>
-              <p class="truncate text-sm text-gray-11">
-                @{{ profile.gamertag }}
-              </p>
+          <header class="flex items-center justify-between gap-2 px-4 py-4">
+            <div class="flex min-w-0 items-center gap-3">
+              <img [src]="profileStore.avatarUrl()" alt="{{`Avatar do ${profile.gamertag}`}}"
+                class="profile-theme-avatar h-12 w-12 shrink-0 rounded-full bg-blue-12 object-cover" />
+              <div class="profile-theme-copy min-w-0">
+                <p class="truncate font-semibold text-gray-12">{{ profileStore.itsMe() ? authStore.user()?.name : profile.gamertag }}</p>
+                <p class="truncate text-sm text-gray-11">@{{ profile.gamertag }}</p>
+              </div>
             </div>
+            @if (authStore.isAuthenticated() && !profileStore.itsMe()) {
+              <ui-follow-control class="shrink-0" variant="icon" [profileId]="profile.$id" [gamertag]="profile.gamertag" />
+            }
           </header>
 
           @if (profile.bio; as bio) {

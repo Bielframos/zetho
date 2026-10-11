@@ -1,8 +1,7 @@
-<div class="sticky top-0 z-20 bg-canvas">
-  <div class="flex justify-center">
+<div class="relative">
     <button
       type="button"
-      class="ui-ghost-btn min-h-11 min-w-11 cursor-pointer"
+      class="ui-ghost-btn absolute top-0 left-1/2 -translate-x-1/2 z-20 min-h-11 min-w-11 cursor-pointer bg-canvas text-content shadow-sm"
       data-size="icon"
       [attr.aria-expanded]="groupingExpanded()"
       aria-controls="profile-entry-grouping"
@@ -11,17 +10,16 @@
     >
       <i class="ph ph-caret-down transition-transform" [class.rotate-180]="groupingExpanded()" aria-hidden="true"></i>
     </button>
-  </div>
   <div
     id="profile-entry-grouping"
     [hidden]="!groupingExpanded()"
-    class="border-b border-gray-6 px-4 pb-4 pt-2"
+    class="border-b border-gray-6 bg-canvas px-4 py-3"
   >
     <div class="flex items-center justify-between gap-4">
       <label [for]="groupSelect.id" class="shrink-0 text-sm text-gray-11">Agrupar por</label>
       <ui-select
         #groupSelect
-        class="w-64 max-w-full"
+        class="w-64 max-w-[calc(50%-2rem)]"
         label="Agrupar por"
         [hideLabel]="true"
         [options]="groupingOptions"
@@ -30,7 +28,6 @@
       ></ui-select>
     </div>
   </div>
-</div>
 @if (controller.initialLoading()) {
 <ui-loading></ui-loading>
 } @else if (controller.entries(); as games) { @for (group of
@@ -144,3 +141,5 @@ controller.groups(); track group.key; let firstGroup = $first) {
   </p>
 </div>
 }
+
+</div>
