@@ -1,6 +1,6 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { A11yModule } from '@angular/cdk/a11y';
-import { NgComponentOutlet } from '@angular/common';
+import { NgComponentOutlet, NgTemplateOutlet } from '@angular/common';
 import {
   Component,
   DestroyRef,
@@ -39,6 +39,7 @@ import { InAppNotificationStore } from './core/system/notifications/in-app-notif
     A11yModule,
     AppSearchInput,
     NgComponentOutlet,
+    NgTemplateOutlet,
     NotificationsSheetComponent,
     RouterLink,
     RouterLinkActive,
@@ -81,6 +82,79 @@ export class App {
       icon: 'ph-users-three',
     },
   ];
+
+  get searchShortcut() {
+    return /Mac|iPhone|iPad/.test(
+      this.document.defaultView?.navigator.platform ?? '',
+    )
+      ? '⌘ K'
+      : 'Ctrl K';
+  }
+
+  navigationGroups() {
+    const authenticated = this.authStore.isAuthenticated();
+    return [
+      [
+        ...(authenticated
+          ? [
+              { label: 'Feed', icon: 'ph-house', route: ['/feed'] },
+              {
+                label: 'Meu perfil',
+                icon: 'ph-user-circle',
+                route: this.profileRoute(),
+              },
+            ]
+          : []),
+        { label: 'Buscar', icon: 'ph-magnifying-glass', route: ['/buscar'] },
+      ],
+      [
+        ...(authenticated
+          ? [
+              {
+                label: 'Jogatina',
+                icon: 'ph-game-controller',
+                route: ['/sessions'],
+              },
+              {
+                label: 'Próximo jogo',
+                icon: 'ph-sparkle',
+                route: ['/recomendacoes'],
+              },
+              { label: 'Z Shop', icon: 'ph-storefront', route: ['/loja'] },
+            ]
+          : []),
+        { label: 'Rankings', icon: 'ph-ranking', route: ['/ranking'] },
+        ...(this.featureRaffles
+          ? [{ label: 'Sorteios', icon: 'ph-gift', route: ['/sorteios'] }]
+          : []),
+      ],
+      [
+        { label: 'Reviews', icon: 'ph-star', route: ['/reviews'] },
+        { label: 'Notícias', icon: 'ph-newspaper', route: ['/noticias'] },
+        { label: 'Listas', icon: 'ph-list-dashes', route: ['/listas'] },
+      ],
+    ];
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onSearchShortcut(event: KeyboardEvent) {
+    if (
+      !this.usesAppShell() ||
+      !(event.ctrlKey || event.metaKey) ||
+      event.altKey ||
+      event.key.toLowerCase() !== 'k'
+    )
+      return;
+    event.preventDefault();
+    this.closeMobileMenu();
+    if (this.currentPath() === '/buscar') {
+      this.document
+        .querySelector<HTMLInputElement>('[data-search-input]')
+        ?.focus();
+    } else {
+      void this.route.navigate(['/buscar']);
+    }
+  }
 
   constructor() {
     this.trackLastOnlineRoute();
@@ -140,7 +214,7 @@ export class App {
 
   profileRoute() {
     const gamertag = this.authStore.profile()?.gamertag;
-    return gamertag ? ['/player', gamertag] : ['/dashboard'];
+    return gamertag ? ['/player', gamertag] : ['/feed'];
   }
 
   toggleMobileMenu() {

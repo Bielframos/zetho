@@ -32,7 +32,7 @@ export class LoginPage {
 
     try {
       await this.authStore.login(this.email, this.password);
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/feed']);
     } catch (e: any) {
       if (e.code === 401)
         this.result.set({

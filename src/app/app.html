@@ -9,152 +9,16 @@
       class="sticky top-0 hidden h-dvh overflow-y-auto discreet-scrollbar border-r border-gray-4 px-4 py-4 lg:block"
     >
       <a
-        [routerLink]="authStore.user() ? '/dashboard' : '/noticias'"
+        [routerLink]="authStore.user() ? '/feed' : '/noticias'"
         class="inline-flex"
       >
         <h3 class="font-display text-[32px] leading-none px-4">zetho</h3>
       </a>
 
-      <nav class="mt-8 flex flex-col gap-1">
-        @if (authStore.user()) {
-        <a
-          routerLink="/dashboard"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          [routerLinkActiveOptions]="{ exact: true }"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-house"></i>
-          <span>Dashboard</span>
-        </a>
-        } @else {
-        <a
-          routerLink="/noticias"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-house"></i>
-          <span>Início</span>
-        </a>
-        } @if (authStore.user()) {
-        <a
-          routerLink="/sessions"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-game-controller"></i>
-          <span>Jogatina</span>
-        </a>
-        <a
-          routerLink="/recomendacoes"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          ariaCurrentWhenActive="page"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-sparkle" aria-hidden="true"></i
-          ><span>Próximo jogo</span>
-        </a>
-        }
-
-        <a
-          routerLink="/noticias"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-newspaper"></i>
-          <span>Notícias</span>
-        </a>
-
-        <a
-          routerLink="/reviews"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          ariaCurrentWhenActive="page"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-star" aria-hidden="true"></i>
-          <span>Reviews</span>
-        </a>
-
-        <a
-          routerLink="/listas"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          ariaCurrentWhenActive="page"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-list-dashes" aria-hidden="true"></i>
-          <span>Listas</span>
-        </a>
-
-        <a
-          routerLink="/ranking"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-ranking"></i>
-          <span>Rankings</span>
-        </a>
-
-        @if (featureRaffles) {
-        <a
-          routerLink="/sorteios"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-gift"></i>
-          <span>Sorteios</span>
-        </a>
-        } @if (authStore.user()) {
-        <a
-          routerLink="/loja"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-storefront"></i>
-          <span>Z Shop</span>
-        </a>
-        } @if (authStore.user()) {
-        <a
-          [routerLink]="profileRoute()"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-user-circle"></i>
-          <span>Meu perfil</span>
-        </a>
-        } @else {
-        <a
-          routerLink="/entrar"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-sign-in"></i>
-          <span>Entrar</span>
-        </a>
-        } @if (authStore.isAdmin()) {
-        <a
-          routerLink="/admin"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-shield-star"></i>
-          <span>Admin</span>
-        </a>
-        }
-      </nav>
+      <ng-container *ngTemplateOutlet="mainNavigation" />
     </aside>
 
     <main class="min-w-0 border-gray-4 lg:border-x">
-      <div class="sticky top-0 z-20 hidden h-14 lg:flex">
-        <div class="min-w-0 flex-1">
-          <app-search-input
-            class="block h-full"
-            name="desktopShellSearchInput"
-            variant="appShell"
-            placeholder="Busque um jogo ou player"
-            (search)="onSearch($event)"
-            (focusSearch)="onSearchInputFocus()"
-          />
-        </div>
-        <app-notifications-sheet class="block h-full" variant="appShell" />
-      </div>
-
       <div
         class="route-transition-scope min-h-dvh pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0"
       >
@@ -366,34 +230,7 @@
       </div>
       }
 
-      <nav class="mt-4 flex flex-col gap-1">
-        @if (authStore.user()) {
-        <a
-          routerLink="/minha-conta"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-gear"></i>
-          <span>Minha conta</span>
-        </a>
-        }
-        <a
-          routerLink="/institucional"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-buildings"></i>
-          <span>Institucional</span>
-        </a>
-        <a
-          routerLink="/changelog"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-list-checks"></i>
-          <span>Changelog</span>
-        </a>
-      </nav>
+      <ng-container *ngTemplateOutlet="secondaryNavigation" />
 
       <p class="mt-6 px-3 text-xs text-gray-10">v{{ appVersion }}</p>
     </aside>
@@ -405,11 +242,11 @@
     <div class="mx-auto grid max-w-md grid-cols-5 gap-1">
       @if (authStore.user()) {
       <a
-        routerLink="/dashboard"
+        routerLink="/feed"
         routerLinkActive="bg-gray-3 text-gray-12"
         [routerLinkActiveOptions]="{ exact: true }"
         class="flex h-11 items-center justify-center rounded-lg text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-        aria-label="Dashboard"
+        aria-label="Feed"
       >
         <i class="ph ph-house"></i>
       </a>
@@ -511,102 +348,11 @@
       <div class="mb-4 rounded-lg border border-gray-6 p-3">
         <app-z-coin-balance />
       </div>
-      <app-notifications-sheet class="mb-3 block" variant="menu" />
+
       }
 
-      <nav class="flex flex-col gap-1">
-        @if (authStore.user()) {
-        <a
-          routerLink="/sessions"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-game-controller"></i><span>Jogatina</span>
-        </a>
-        <a
-          routerLink="/recomendacoes"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          ariaCurrentWhenActive="page"
-          (click)="closeMobileMenu()"
-          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-sparkle" aria-hidden="true"></i
-          ><span>Próximo jogo</span>
-        </a>
-        } @if (featureRaffles) {
-        <a
-          routerLink="/sorteios"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-gift"></i><span>Sorteios</span>
-        </a>
-        } @if (authStore.user()) {
-        <a
-          routerLink="/loja"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-storefront"></i><span>Z Shop</span>
-        </a>
-        }
-        <a
-          routerLink="/noticias"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-newspaper"></i><span>Notícias</span>
-        </a>
-        <a
-          routerLink="/reviews"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          ariaCurrentWhenActive="page"
-          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-star" aria-hidden="true"></i><span>Reviews</span>
-        </a>
-        <a
-          routerLink="/listas"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          ariaCurrentWhenActive="page"
-          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-list-dashes" aria-hidden="true"></i
-          ><span>Listas</span>
-        </a>
-        <a
-          routerLink="/institucional"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-buildings"></i><span>Institucional</span>
-        </a>
-        @if (authStore.user()) {
-        <a
-          routerLink="/minha-conta"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-gear"></i><span>Minha conta</span>
-        </a>
-        }
-        <a
-          routerLink="/changelog"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-list-checks"></i><span>Changelog</span>
-        </a>
-        @if (authStore.isAdmin()) {
-        <a
-          routerLink="/admin"
-          routerLinkActive="bg-gray-3 text-gray-12"
-          class="flex items-center gap-3 rounded-lg px-3 py-3 text-gray-11 hover:bg-gray-3 hover:text-gray-12"
-        >
-          <i class="ph ph-shield-star"></i><span>Admin</span>
-        </a>
-        }
-      </nav>
+      <ng-container *ngTemplateOutlet="mainNavigation" />
+      <ng-container *ngTemplateOutlet="secondaryNavigation" />
     </div>
     <p class="border-t border-gray-6 px-4 py-3 text-xs text-gray-10">
       v{{ appVersion }}
@@ -618,9 +364,7 @@
 <div class="flex min-h-dvh flex-col">
   <nav class="relative z-10 w-full py-2 px-4 md:px-10 border-b border-gray-6">
     <div class="flex items-center justify-between gap-4">
-      <a
-        [routerLink]="authStore.isAuthenticated() ? '/dashboard' : '/noticias'"
-      >
+      <a [routerLink]="authStore.isAuthenticated() ? '/feed' : '/noticias'">
         <h3 class="font-display text-[40px] leading-none">zetho</h3>
       </a>
 
@@ -758,3 +502,69 @@
 }
 
 <app-toaster></app-toaster>
+
+<ng-template #mainNavigation>
+  <nav aria-label="Navegação principal" class="mt-6 divide-y divide-gray-4">
+    @for (group of navigationGroups(); track $index) {
+    <div class="flex flex-col gap-1 py-3">
+      @for (item of group; track item.label) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="bg-gray-3 text-gray-12"
+        ariaCurrentWhenActive="page"
+        [routerLinkActiveOptions]="{ exact: item.label === 'Feed' }"
+        (click)="closeMobileMenu()"
+        class="flex items-center gap-3 rounded-lg px-3 py-3 text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12 focus-visible:ring-2 focus-visible:ring-blue-6"
+      >
+        <i class="ph {{ item.icon }}" aria-hidden="true"></i
+        ><span>{{ item.label }}</span> @if (item.label === 'Buscar') {
+        <kbd class="ml-auto hidden text-xs text-gray-10 lg:inline"
+          >{{ searchShortcut }}</kbd
+        >
+        }
+      </a>
+      } @if ($first && authStore.user()) {
+      <app-notifications-sheet variant="menu" /> }
+    </div>
+    }
+  </nav>
+</ng-template>
+<ng-template #secondaryNavigation>
+  <nav class="mt-4 flex flex-col gap-1">
+    @if (authStore.user()) {
+    <a
+      routerLink="/minha-conta"
+      routerLinkActive="bg-gray-3 text-gray-12"
+      class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+    >
+      <i class="ph ph-gear"></i>
+      <span>Minha conta</span>
+    </a>
+    }
+    <a
+      routerLink="/institucional"
+      routerLinkActive="bg-gray-3 text-gray-12"
+      class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+    >
+      <i class="ph ph-buildings"></i>
+      <span>Institucional</span>
+    </a>
+    <a
+      routerLink="/changelog"
+      routerLinkActive="bg-gray-3 text-gray-12"
+      class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+    >
+      <i class="ph ph-list-checks"></i>
+      <span>Changelog</span>
+    </a>
+    @if (authStore.isAdmin()) {
+    <a
+      routerLink="/admin"
+      routerLinkActive="bg-gray-3 text-gray-12"
+      ariaCurrentWhenActive="page"
+      class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-11 hover:bg-gray-3 hover:text-gray-12"
+      ><i class="ph ph-shield-star" aria-hidden="true"></i>Admin</a
+    >
+    }
+  </nav>
+</ng-template>

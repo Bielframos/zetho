@@ -19,7 +19,7 @@ export const guestGuard: CanMatchFn = async () => {
   await authStore.ready;
 
   if (authStore.isAuthenticated()) {
-    return router.parseUrl('/dashboard');
+    return router.parseUrl('/feed');
   }
 
   return true;
@@ -73,7 +73,7 @@ export const adminGuard: CanMatchFn = async () => {
   }
 
   if (!authStore.isAdmin()) {
-    return router.parseUrl('/dashboard');
+    return router.parseUrl('/feed');
   }
 
   return true;
