@@ -6,6 +6,18 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.34.2] - 2026-10-11
+
+### Changed
+
+- Controle de seguir compartilhado entre perfil, Feed e onboarding, com estados Seguir/Seguindo, ação explícita de deixar de seguir e feedback acessível.
+
+### Fixed
+
+- Operações repetidas e respostas de outra conta ou perfil não alteram indevidamente o estado da conexão.
+- Falhas permitem consultar novamente a conexão sem desfazer alterações confirmadas; listas, contadores e foco são atualizados com segurança.
+- Aparência acompanha mudanças do sistema e de outras abas também na entrada direta do onboarding.
+
 ## [1.34.1] - 2026-10-11
 
 ### Changed
