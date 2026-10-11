@@ -1,57 +1,75 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-star-rating',
   standalone: true,
-  imports: [CommonModule],
   templateUrl: './star-rating.html',
-  styles: `
-    .star-rating i {
-      cursor: pointer;
-      font-size: 28px;
-    }
-    .star-rating.readonly i {
-      cursor: default;
-    }
-  `,
 })
 export class AppStartingRating {
-  @Input() value: number = 0;
-  @Input() readonly: boolean = false;
+  @Input() value = 0;
+  @Input() readonly = false;
+  @Input() disabled = false;
+  @Input() label = 'Sua nota';
   @Output() ratingChange = new EventEmitter<number>();
-
   hoverValue: number | null = null;
 
+  private pointerValue(event: MouseEvent, index: number) {
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    return event.clientX - rect.left < rect.width / 2 ? index + 0.5 : index + 1;
+  }
+
   onMouseMove(event: MouseEvent, index: number) {
-    const rect = (event.target as HTMLElement).getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const half = rect.width / 2;
-    this.hoverValue = x < half ? index + 0.5 : index + 1;
+    if (!this.readonly && !this.disabled)
+      this.hoverValue = this.pointerValue(event, index);
   }
 
   onMouseLeave() {
     this.hoverValue = null;
   }
 
-  onClick() {
-    if (this.hoverValue !== null) {
-      this.value = this.hoverValue;
-      this.ratingChange.emit(this.value);
-      this.hoverValue = null;
+  onClick(event: MouseEvent, index: number) {
+    if (this.readonly || this.disabled) return;
+    this.ratingChange.emit(this.pointerValue(event, index));
+    this.hoverValue = null;
+  }
+
+  onKeydown(event: KeyboardEvent) {
+    if (this.readonly || this.disabled) return;
+    let value: number;
+    switch (event.key) {
+      case 'ArrowRight':
+      case 'ArrowUp':
+        value = Math.min(5, this.value + 0.5);
+        break;
+      case 'ArrowLeft':
+      case 'ArrowDown':
+        value = Math.max(0, this.value - 0.5);
+        break;
+      case 'Home':
+      case 'Delete':
+      case 'Backspace':
+        value = 0;
+        break;
+      case 'End':
+        value = 5;
+        break;
+      default:
+        return;
     }
+    event.preventDefault();
+    this.hoverValue = null;
+    this.ratingChange.emit(value);
   }
 
   getStarClass(index: number): string {
-    const currentValue =
-      this.hoverValue !== null ? this.hoverValue : this.value;
-
-    if (currentValue >= index + 1) {
-      return 'ph-fill ph-star text-amber-300';
-    } else if (currentValue >= index + 0.5) {
-      return 'ph-fill ph-star-half text-amber-300';
-    } else {
-      return 'ph ph-star text-gray-8';
-    }
+    const value =
+      this.disabled || this.readonly
+        ? this.value
+        : (this.hoverValue ?? this.value);
+    return value >= index + 1
+      ? 'ph-fill ph-star text-amber-300'
+      : value >= index + 0.5
+        ? 'ph-fill ph-star-half text-amber-300'
+        : 'ph ph-star text-gray-8';
   }
 }

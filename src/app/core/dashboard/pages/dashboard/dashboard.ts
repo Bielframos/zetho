@@ -30,6 +30,7 @@ import {
 import { ConnectionsService } from '../../../connections/connections.service';
 import { NotificationStore } from '../../../system/notifications/notification.store';
 import { appwrite } from '../../../../shared/infra/appwrite/appwrite.client';
+import { OnboardingResume } from '../../../onboarding/onboarding-resume';
 
 const STATUS_LABELS: Record<FeedGameStatus, string> = {
   completed: 'zerou',
@@ -49,6 +50,7 @@ const STATUS_ICONS: Record<FeedGameStatus, string> = {
   selector: 'app-dashboard',
   standalone: true,
   imports: [
+    OnboardingResume,
     FeedReviewContent,
     FeedReviewVotes,
     RouterLink,

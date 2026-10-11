@@ -139,20 +139,16 @@ export class AuthStore {
     gamertag: string,
     inviteCode?: string,
   ) {
-    try {
-      const { user, profile } = await this.authService.register(
-        email,
-        password,
-        name,
-        gamertag,
-        inviteCode,
-      );
+    const { user, profile } = await this.authService.register(
+      email,
+      password,
+      name,
+      gamertag,
+      inviteCode,
+    );
 
-      this.userSignal.set(user);
-      this.profileSignal.set(profile);
-    } catch (e: any) {
-      alert(e.message);
-    }
+    this.userSignal.set(user);
+    this.profileSignal.set(profile);
   }
 
   /**

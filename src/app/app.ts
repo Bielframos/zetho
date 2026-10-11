@@ -226,11 +226,16 @@ export class App {
     const authRoutes = [
       '/entrar',
       '/registrar',
+      '/comecar',
       '/recuperar-senha',
       '/redefinir-senha',
       '/verificacao',
     ];
     return authRoutes.some((route) => path.startsWith(route));
+  }
+
+  isOnboardingRoute() {
+    return this.currentPath() === '/comecar';
   }
 
   isSplashRoute() {
@@ -306,6 +311,7 @@ export class App {
       '/landing',
       '/entrar',
       '/registrar',
+      '/comecar',
       '/recuperar-senha',
       '/redefinir-senha',
       '/verificacao',
