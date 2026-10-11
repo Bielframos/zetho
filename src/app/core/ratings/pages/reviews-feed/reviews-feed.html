@@ -37,10 +37,10 @@
     </div>
   } @else if (error()) {
     <section
-      class="m-4 border border-red-900/60 bg-red-950/20 px-4 py-8 text-center"
+      class="m-4 border border-danger-line bg-danger-bg px-4 py-8 text-center"
       role="alert"
     >
-      <i class="ph ph-warning-circle text-2xl text-red-300" aria-hidden="true"></i>
+      <i class="ph ph-warning-circle text-2xl text-danger" aria-hidden="true"></i>
       <p class="mt-2 text-gray-11">Não foi possível carregar as reviews.</p>
       <button type="button" class="ui-secondary-btn mt-4" (click)="retry()">
         Tentar novamente
@@ -91,7 +91,7 @@
             </div>
 
             <div
-              class="ml-auto flex shrink-0 items-center gap-1 text-amber-300"
+              class="ml-auto flex shrink-0 items-center gap-1 text-warning"
               [attr.aria-label]="'Nota ' + review.rating + ' de 5'"
             >
               <i class="ph-fill ph-star" aria-hidden="true"></i>

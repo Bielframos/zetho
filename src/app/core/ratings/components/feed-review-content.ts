@@ -14,7 +14,7 @@ const PREVIEW_LENGTH = 400;
           <span class="break-words font-light text-gray-11">{{ preview() }}…</span>
         } @else {
           <span
-            class="prose prose-invert prose-sm prose-gray max-w-none break-words text-gray-11 leading-7 prose-p:font-light [&>p:last-child]:inline [&>p:last-child]:mb-0"
+            class="prose  prose-sm  max-w-none break-words text-gray-11 leading-7 prose-p:font-light [&>p:last-child]:inline [&>p:last-child]:mb-0"
             [innerHTML]="content()"
           ></span>
         }
@@ -22,7 +22,7 @@ const PREVIEW_LENGTH = 400;
       @if (isLong()) {
         <button
           type="button"
-          class="ml-1 cursor-pointer rounded-sm text-sm leading-7 text-blue-11 hover:text-blue-9 hover:underline focus:ring-2 focus:ring-blue-6"
+          class="ml-1 cursor-pointer rounded-sm text-sm leading-7 text-blue-11 hover:text-link hover:underline focus:ring-2 focus:ring-focus-ring"
           [attr.aria-expanded]="expanded()"
           [attr.aria-controls]="'feed-review-' + reviewId()"
           (click)="expanded.set(!expanded())"

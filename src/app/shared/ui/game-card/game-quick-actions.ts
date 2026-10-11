@@ -103,7 +103,7 @@ export class GameCoverMenuCoordinator {
                   !!loadError()
                 "
                 style="border-radius: 0"
-                class="w-full items-center text-sm focus:ring-2 focus:ring-inset focus:ring-blue-6"
+                class="w-full items-center text-sm focus:ring-2 focus:ring-inset focus:ring-focus-ring"
                 [class.text-blue-11]="status() === action.key"
                 [attr.aria-label]="
                   action.label +
@@ -127,7 +127,7 @@ export class GameCoverMenuCoordinator {
               </p>
             }
             @if (error()) {
-              <p role="alert" class="px-2 py-2 text-xs text-red-300">
+              <p role="alert" class="px-2 py-2 text-xs text-danger">
                 {{ error() }}
               </p>
               @if (loadError()) {

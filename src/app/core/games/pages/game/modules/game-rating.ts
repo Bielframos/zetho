@@ -15,7 +15,7 @@ import { GameRow } from '../../../game.types';
         'Nota ' + (game()?.ratingAvg ?? '0.0') + ' de 5. Ver avaliações'
       "
     >
-      <i class="ph-fill ph-star text-amber-300"></i>
+      <i class="ph-fill ph-star text-warning"></i>
       <span class="text-lg leading-none tabular-nums">
         {{ game()?.ratingAvg ?? '0.0' }}
       </span>

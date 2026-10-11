@@ -7,8 +7,8 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "theme_color": "#0c111c",
-  "background_color": "#0c111c",
+  "theme_color": "#101113",
+  "background_color": "#101113",
   "icons": [
     {
       "src": "icons/zetho-icon-192x192.png",
@@ -17,7 +17,7 @@
       "purpose": "any"
     },
     {
-      "src": "icons/zetho-icon-512x512.png",
+      "src": "icons/zetho-cion-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"

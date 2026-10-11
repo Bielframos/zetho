@@ -1,3 +1,4 @@
+import { profileForeground, profileReadableBackground } from '../../shared/ui/profile-theme-contrast';
 export type ShareFormat = 'story' | 'square';
 
 export interface ShareGame {
@@ -72,6 +73,7 @@ export const SHARE_DIMENSIONS: Record<
  * paleta blue/gray da marca.
  */
 export interface ShareBackground {
+  foreground?: string;
   id: string;
   label: string;
   css: string;
@@ -107,12 +109,12 @@ export function themeToBackground(
   theme: { backgroundColor?: string; primaryColor?: string } | null | undefined,
 ): ShareBackground | null {
   if (!theme) return null;
-  const bg = theme.backgroundColor || '#101113';
-  const primary = theme.primaryColor || '#3e63dd';
+  const bg = profileReadableBackground(theme.backgroundColor || '#101113');
   return {
     id: 'theme',
     label: 'Meu tema',
-    css: `radial-gradient(130% 80% at 50% 0%, ${primary}55 0%, ${bg} 60%)`,
-    accent: primary,
+    css: bg,
+    foreground: profileForeground(bg),
+    accent: profileForeground(bg),
   };
 }

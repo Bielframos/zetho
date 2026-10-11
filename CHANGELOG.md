@@ -6,6 +6,23 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.34.0] - 2026-10-11
+
+### Added
+
+- Aparência clara, escura ou do sistema com alternador acessível no desktop e mobile, preferência local e sincronização entre abas.
+- Paleta centralizada que adapta superfícies, textos, ações e feedback em toda a interface.
+
+### Fixed
+
+- Contraste e foco de formulários, estados, conteúdo rico e temas personalizados do perfil.
+- Exportações mantêm cores legíveis independentemente do modo da interface.
+- Ícones do manifest e Apple apontam para arquivos disponíveis.
+
+### Changed
+
+- Aparência é aplicada antes da pintura e preservada ao navegar, recarregar ou alternar no app aberto offline; splash instalado mantém cor estática.
+
 ## [1.33.1] - 2026-10-11
 
 ### Fixed

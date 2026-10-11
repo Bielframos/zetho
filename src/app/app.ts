@@ -1,3 +1,5 @@
+import { ProfileThemeContrast } from './shared/ui/profile-theme-contrast';
+import { ColorModeSelector } from './shared/ui/color-mode-selector';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { UiSheet } from './shared/ui/sheet.directive';
 import { NgComponentOutlet, NgTemplateOutlet } from '@angular/common';
@@ -38,7 +40,8 @@ import { InAppNotificationStore } from './core/system/notifications/in-app-notif
 
 @Component({
   selector: 'app-root',
-  imports: [
+  imports: [ProfileThemeContrast,
+    ColorModeSelector,
     UiSheet,
     AppSearchInput,
     NgComponentOutlet,

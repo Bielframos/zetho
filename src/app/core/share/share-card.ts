@@ -23,10 +23,12 @@ type StarKind = 'full' | 'half' | 'empty';
 @Component({
   selector: 'ui-share-card',
   standalone: true,
-  host: { class: 'block' },
+  host: { class: 'block color-mode-fixed-dark' },
   template: `
     <div
       class="relative flex flex-col overflow-hidden text-gray-12"
+      [style.--gray-12]="exportForeground()"
+      [style.--gray-11]="exportForeground()"
       [style.width.px]="dims().width"
       [style.height.px]="dims().height"
       [style.background]="bg().css"
@@ -41,7 +43,7 @@ type StarKind = 'full' | 'half' | 'empty';
         >
         <span
           class="text-xs font-medium uppercase tracking-[0.22em]"
-          [style.color]="bg().accent"
+          [style.color]="exportForeground()"
           >{{ eyebrow() }}</span
         >
       </div>
@@ -67,14 +69,14 @@ type StarKind = 'full' | 'half' | 'empty';
             }
             @if (showRating() && zerei().rating) {
               <div class="mt-1 flex items-center gap-2">
-                <div class="flex gap-0.5 text-xl text-amber-300">
+                <div class="flex gap-0.5 text-xl text-gray-12">
                   @for (star of zereiStars(); track $index) {
                     @if (star === 'full') {
                       <i class="ph-fill ph-star"></i>
                     } @else if (star === 'half') {
                       <i class="ph-fill ph-star-half"></i>
                     } @else {
-                      <i class="ph ph-star text-gray-8"></i>
+                      <i class="ph ph-star text-gray-12"></i>
                     }
                   }
                 </div>
@@ -116,14 +118,14 @@ type StarKind = 'full' | 'half' | 'empty';
                   {{ review().game.releaseYear }}
                 </p>
               }
-              <div class="mt-1 flex gap-1 text-2xl text-amber-300">
+              <div class="mt-1 flex gap-1 text-2xl text-gray-12">
                 @for (star of stars(); track $index) {
                   @if (star === 'full') {
                     <i class="ph-fill ph-star"></i>
                   } @else if (star === 'half') {
                     <i class="ph-fill ph-star-half"></i>
                   } @else {
-                    <i class="ph ph-star text-gray-8"></i>
+                    <i class="ph ph-star text-gray-12"></i>
                   }
                 }
               </div>
@@ -209,6 +211,7 @@ type StarKind = 'full' | 'half' | 'empty';
   `,
 })
 export class UiShareCard {
+  readonly exportForeground = computed(() => this.bg().foreground ?? '#edeef0');
   private share = inject(ShareService);
 
   data = input.required<ShareCardData>();

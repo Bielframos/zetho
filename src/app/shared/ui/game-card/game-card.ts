@@ -178,17 +178,17 @@ export class UiGameCard {
       label: 'Zerei',
     },
     backlog: {
-      bgClass: 'bg-green-400 text-blue-2',
+      bgClass: 'bg-success-bg text-success',
       iconClass: 'ph-fill ph-books',
       label: 'Backlog',
     },
     playing: {
-      bgClass: 'bg-purple-400 text-blue-2',
+      bgClass: 'bg-info-bg text-info',
       iconClass: 'ph-fill ph-game-controller',
       label: 'Jogando',
     },
     dropped: {
-      bgClass: 'bg-red-400 text-blue-2',
+      bgClass: 'bg-danger-bg text-danger',
       iconClass: 'ph-fill ph-x-circle',
       label: 'Dropei',
     },

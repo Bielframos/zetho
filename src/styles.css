@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./styles/color-tokens.css";
 @import "@phosphor-icons/web/fill";
 @import "@phosphor-icons/web/regular";
 @import "@fontsource-variable/readex-pro";
@@ -8,34 +9,6 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  /* Cor primária */
-  --color-blue-1: #0c111c;
-  --color-blue-2: #111725;
-  --color-blue-3: #172448;
-  --color-blue-4: #1d2e61;
-  --color-blue-5: #253974;
-  --color-blue-6: #2e4484;
-  --color-blue-7: #375097;
-  --color-blue-8: #415eb1;
-  --color-blue-9: #3e63dd;
-  --color-blue-10: #5a73ff;
-  --color-blue-11: #93b4ff;
-  --color-blue-12: #d5e2ff;
-
-  /* Cor secundária */
-  --color-gray-1: #101113;
-  --color-gray-2: #18191b;
-  --color-gray-3: #212225;
-  --color-gray-4: #282a2d;
-  --color-gray-5: #2e3135;
-  --color-gray-6: #373a3f;
-  --color-gray-7: #44474e;
-  --color-gray-8: #5c616a;
-  --color-gray-9: #696e77;
-  --color-gray-10: #777b84;
-  --color-gray-11: #b0b4ba;
-  --color-gray-12: #edeef0;
-
   /* Fontes */
   --font-display: "Jersey 10", system-ui;
 
@@ -291,65 +264,65 @@
 .profile-theme-action:hover,
 .profile-theme-chip:hover,
 .profile-theme-tab:hover {
-  background-color: var(--color-gray-3);
-  color: var(--color-gray-12);
+  background-color: var(--gray-3);
+  color: var(--gray-12);
 }
 
 .profile-theme-card.has-theme .profile-theme-action:hover,
 .profile-theme-card.has-theme .profile-theme-chip:hover,
 .profile-theme-card.has-theme .profile-theme-tab:hover {
-  background-color: var(--profile-theme-surface);
-  color: var(--color-gray-12);
+  background-color: var(--profile-readable-surface, var(--gray-3));
+  color: var(--gray-12);
 }
 
 .group[data-active="true"] > .profile-theme-tab {
   border-color: var(--color-blue-9);
-  color: var(--color-gray-12);
+  color: var(--gray-12);
 }
 
 .profile-theme-card.has-theme .group[data-active="true"] > .profile-theme-tab {
-  background-color: var(--profile-theme-surface);
+  background-color: var(--profile-readable-surface, var(--gray-3));
   border-color: var(--profile-theme-accent);
-  color: var(--color-gray-12);
+  color: var(--gray-12);
 }
 
 .profile-theme-card.has-theme
   .group[data-active="true"]
   > .profile-theme-tab:hover {
-  background-color: var(--profile-theme-surface-strong);
+  background-color: var(--profile-readable-surface, var(--gray-3));
 }
 
 .profile-theme-card.has-theme .profile-theme-badge {
-  background-color: var(--profile-theme-surface);
-  color: var(--color-gray-12);
+  background-color: var(--profile-readable-surface, var(--gray-3));
+  color: var(--gray-12);
 }
 
 .profile-theme-card.has-theme .group[data-active="true"] .profile-theme-badge {
-  background-color: var(--profile-theme-surface-strong);
-  color: var(--color-gray-12);
+  background-color: var(--profile-readable-surface, var(--gray-3));
+  color: var(--gray-12);
 }
 /* Componentes */
 @layer components {
   /* Link */
   .ui-link {
-    @apply px-4 py-1 border border-transparent leading-[24px] bg-gray-2 inline-flex gap-2 items-center justify-center text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out;
+    @apply px-4 py-1 border border-transparent leading-[24px] bg-gray-2 inline-flex gap-2 items-center justify-center text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-on-accent focus:outline-none focus:ring-2 focus:ring-focus-ring transition-colors duration-200 ease-in-out;
   }
 
   /* Botões */
   .ui-primary-btn {
-    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center text-gray-12 bg-blue-9 hover:bg-blue-10 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center text-on-accent bg-accent hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-focus-ring transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
   }
 
   .ui-secondary-btn {
-    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-gray-3 text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-gray-3 text-gray-11 hover:bg-blue-9 hover:border-blue-6 hover:text-on-accent focus:outline-none focus:ring-2 focus:ring-focus-ring transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
   }
 
   .ui-ghost-btn {
-    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center text-gray-11 hover:bg-blue-3/70 hover:backdrop-blur-lg hover:text-blue-9 focus:outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center text-gray-11 hover:bg-blue-3/70 hover:backdrop-blur-lg hover:text-link focus:outline-none focus:ring-2 focus:ring-focus-ring transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-10;
   }
 
   .ui-destructive-btn {
-    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-gray-3 text-red-300 hover:bg-red-600 hover:border-red-400 hover:text-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 ease-in-out;
+    @apply px-4 py-1 border border-transparent leading-[24px] cursor-pointer inline-flex gap-2 items-center justify-center bg-danger-bg text-danger hover:bg-danger-bg hover:border-danger-line hover:text-danger focus:outline-none focus:ring-2 focus:ring-focus-ring transition-colors duration-200 ease-in-out;
   }
 
   .ui-action-btn {
@@ -371,7 +344,7 @@
 
   /* Background pattern */
   .background-pattern {
-    background-color: #111725;
+    background-color: var(--color-surface);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='156' viewBox='0 0 100 199'%3E%3Cg fill='%232e4484' fill-opacity='0.25'%3E%3Cpath d='M0 199V0h1v1.99L100 199h-1.12L1 4.22V199H0zM100 2h-.12l-1-2H100v2z'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
   }
 
@@ -406,7 +379,7 @@ dialog.ui-sheet {
   transition: transform 220ms ease, opacity 220ms ease;
 }
 dialog.ui-sheet::backdrop {
-  background: rgb(0 0 0 / 0.7);
+  background: var(--color-overlay);
   opacity: 1;
   transition: opacity 220ms ease;
 }
@@ -422,4 +395,45 @@ dialog.ui-sheet.sheet-closing::backdrop { opacity: 0; }
 @media (prefers-reduced-motion: reduce) {
   dialog.ui-sheet, dialog.ui-sheet::backdrop { transition: none; }
   dialog.ui-sheet.sheet-closing { transform: none; }
+}
+
+/* Rich text follows semantic content, including editor-generated HTML. */
+.prose {
+  --tw-prose-body: var(--color-content-muted);
+  --tw-prose-headings: var(--color-content);
+  --tw-prose-lead: var(--color-content-muted);
+  --tw-prose-links: var(--color-link);
+  --tw-prose-bold: var(--color-content);
+  --tw-prose-counters: var(--color-content-subtle);
+  --tw-prose-bullets: var(--color-content-subtle);
+  --tw-prose-hr: var(--color-line);
+  --tw-prose-quotes: var(--color-content);
+  --tw-prose-quote-borders: var(--color-line-strong);
+  --tw-prose-captions: var(--color-content-muted);
+  --tw-prose-code: var(--color-content);
+  --tw-prose-pre-code: var(--color-content);
+  --tw-prose-pre-bg: var(--color-surface-raised);
+  --tw-prose-th-borders: var(--color-line-strong);
+  --tw-prose-td-borders: var(--color-line);
+}
+
+/* Profile art remains visible around readable text bands. Images never underlay text. */
+.profile-theme-card.has-theme > .relative,
+.profile-theme-card.has-theme > header,
+.profile-theme-card.has-theme > .profile-theme-divider {
+  background-color: var(--profile-readable-surface, var(--theme-bg));
+}
+.profile-theme-card.has-theme .profile-theme-action:hover,
+.profile-theme-card.has-theme .profile-theme-chip:hover,
+.profile-theme-card.has-theme .profile-theme-tab:hover,
+.profile-theme-card.has-theme .group[data-active="true"] > .profile-theme-tab {
+  background-color: var(--profile-readable-surface, var(--theme-bg));
+  text-decoration: underline;
+}
+
+.profile-theme-action:focus-visible,
+.profile-theme-tab:focus-visible,
+.profile-theme-chip:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -3px;
 }

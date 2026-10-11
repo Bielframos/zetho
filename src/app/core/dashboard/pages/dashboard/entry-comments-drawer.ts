@@ -104,7 +104,7 @@ type CommentPage = {
               }}</span>
             </div>
             <div
-              class="mt-1 whitespace-pre-wrap break-words text-sm font-light text-gray-11 prose prose-invert prose-sm prose-gray max-w-none prose-p:my-0"
+              class="mt-1 whitespace-pre-wrap break-words text-sm font-light text-gray-11 prose  prose-sm  max-w-none prose-p:my-0"
               [innerHTML]="parentComment.content"
             ></div>
           </div>
@@ -117,7 +117,7 @@ type CommentPage = {
           name="entryComment"
           [(ngModel)]="newComment"
           maxlength="350"
-          class="min-h-20 max-h-40 w-full rounded-lg border border-gray-6 bg-transparent px-3 py-2 text-sm text-gray-12 outline-none placeholder:text-gray-10 focus:ring-2 focus:ring-blue-6"
+          class="min-h-20 max-h-40 w-full rounded-lg border border-gray-6 bg-transparent px-3 py-2 text-sm text-gray-12 outline-none placeholder:text-gray-10 focus:ring-2 focus:ring-focus-ring"
           [placeholder]="
             isCommentMode()
               ? 'Escreva uma resposta…'
@@ -304,7 +304,7 @@ type CommentPage = {
             @if (canDelete(comment)) {
             <button
               type="button"
-              class="ui-action-btn text-red-300"
+              class="ui-action-btn text-danger"
               data-size="icon"
               aria-label="Excluir comentário"
               [disabled]="deletingIds().has(comment.$id)"
@@ -320,7 +320,7 @@ type CommentPage = {
               name="reply-{{ comment.$id }}"
               [(ngModel)]="replyContent"
               maxlength="350"
-              class="min-h-16 w-full rounded-lg border border-gray-6 bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-6"
+              class="min-h-16 w-full rounded-lg border border-gray-6 bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-focus-ring"
               placeholder="Escreva uma resposta…"
             ></textarea>
             <div class="mt-2 flex justify-end gap-2">

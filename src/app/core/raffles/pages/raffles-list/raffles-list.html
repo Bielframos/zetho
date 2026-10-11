@@ -70,7 +70,7 @@
   </section>
   } @else if (error()) {
   <section
-    class="border-b border-red-700/40 bg-red-900/20 px-4 py-4 text-red-200"
+    class="border-b border-danger-line bg-danger-bg px-4 py-4 text-danger"
   >
     {{ error() }}
   </section>
@@ -92,7 +92,7 @@
   </section>
   } @else if (myKeysError()) {
   <section
-    class="border-b border-red-700/40 bg-red-900/20 px-4 py-4 text-red-200"
+    class="border-b border-danger-line bg-danger-bg px-4 py-4 text-danger"
   >
     {{ myKeysError() }}
   </section>
@@ -206,7 +206,7 @@
                 <div class="flex flex-wrap items-center gap-2">
                   @if (raffle.active) {
                   <span
-                    class="rounded-full border border-green-700/40 bg-green-900/40 px-2 py-0.5 text-xs text-green-300"
+                    class="rounded-full border border-success-line bg-success-bg px-2 py-0.5 text-xs text-success"
                   >
                     Ativo
                   </span>

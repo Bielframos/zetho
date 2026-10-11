@@ -31,7 +31,7 @@ import { SeoService } from '../../system/seo/seo.service';
             <li>
               <a
                 [routerLink]="page.path"
-                class="group flex min-h-20 items-center gap-3 px-4 py-4 transition-colors hover:bg-gray-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-6"
+                class="group flex min-h-20 items-center gap-3 px-4 py-4 transition-colors hover:bg-gray-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-focus-ring"
               >
                 <span
                   class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-gray-6 text-blue-11"

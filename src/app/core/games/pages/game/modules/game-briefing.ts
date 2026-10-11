@@ -77,7 +77,7 @@ import type { GameBriefing } from '../../../game.types';
           <span
             class="inline-flex items-center gap-1.5 rounded-full border border-blue-6/60 bg-blue-3/80 px-2.5 py-1 text-xs font-medium text-blue-11"
           >
-            <i class="ph-fill ph-sparkle text-blue-10" aria-hidden="true"></i>
+            <i class="ph-fill ph-sparkle text-link" aria-hidden="true"></i>
             Briefing Zetho AI
           </span>
           <span class="text-xs font-light text-gray-10">
@@ -144,14 +144,14 @@ import type { GameBriefing } from '../../../game.types';
             </div>
           } @else {
             <div
-              class="flex items-start gap-2.5 rounded-lg border border-amber-500/25 bg-amber-500/10 p-3 text-xs text-amber-200"
+              class="flex items-start gap-2.5 rounded-lg border border-warning-line bg-warning-bg p-3 text-xs text-warning"
             >
               <i
-                class="ph-fill ph-warning mt-0.5 shrink-0 text-base text-amber-300"
+                class="ph-fill ph-warning mt-0.5 shrink-0 text-base text-warning"
                 aria-hidden="true"
               ></i>
               <div class="flex flex-col gap-0.5">
-                <strong class="font-medium text-amber-100">Aviso de Conteúdo</strong>
+                <strong class="font-medium text-warning">Aviso de Conteúdo</strong>
                 <p class="leading-relaxed opacity-90">{{ b.contentWarning }}</p>
               </div>
             </div>

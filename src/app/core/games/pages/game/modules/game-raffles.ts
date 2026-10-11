@@ -45,7 +45,7 @@ import { RaffleItem } from '../../../../raffles/raffle.types';
                   >
                     @if (raffle.active) {
                       <span
-                        class="rounded-full bg-green-900/40 border border-green-700/40 text-green-300 px-2 py-0.5"
+                        class="rounded-full bg-success-bg border border-success-line text-success px-2 py-0.5"
                       >
                         Ativo
                       </span>

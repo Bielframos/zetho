@@ -36,7 +36,7 @@
       </section>
     } @else if (errorZCoins()) {
       <section class="p-6">
-        <div class="p-4 border border-red-7 bg-red-2 text-red-11 text-sm rounded">
+        <div class="p-4 border border-danger-line bg-danger-bg text-danger text-sm rounded">
           {{ errorZCoins() }}
         </div>
       </section>
@@ -87,12 +87,12 @@
                 <div class="flex items-center gap-2 flex-wrap">
                   <span
                     class="text-xs font-mono font-bold tracking-[0.18em] px-2 py-0.5 rounded"
-                    [class.bg-yellow-4]="leader.position === 1"
-                    [class.text-yellow-11]="leader.position === 1"
+                    [class.bg-warning-bg]="leader.position === 1"
+                    [class.text-warning]="leader.position === 1"
                     [class.bg-gray-4]="leader.position === 2"
                     [class.text-gray-12]="leader.position === 2"
-                    [class.bg-amber-4]="leader.position === 3"
-                    [class.text-amber-11]="leader.position === 3"
+                    [class.bg-warning-bg]="leader.position === 3"
+                    [class.text-warning]="leader.position === 3"
                     [class.text-gray-10]="leader.position > 3"
                   >
                     #{{ leader.position }}
@@ -100,7 +100,7 @@
 
                   <a
                     [href]="profileUrl(leader.gamertag)"
-                    class="text-base md:text-lg font-medium truncate hover:text-blue-9 transition-colors"
+                    class="text-base md:text-lg font-medium truncate hover:text-link transition-colors"
                   >
                     {{ leader.gamertag ?? 'Jogador anônimo' }}
                   </a>
@@ -160,7 +160,7 @@
       </section>
     } @else if (errorConnections()) {
       <section class="p-6">
-        <div class="p-4 border border-red-7 bg-red-2 text-red-11 text-sm rounded">
+        <div class="p-4 border border-danger-line bg-danger-bg text-danger text-sm rounded">
           {{ errorConnections() }}
         </div>
       </section>
@@ -229,12 +229,12 @@
                   <div class="flex items-center gap-2 flex-wrap">
                     <span
                       class="text-xs font-mono font-bold tracking-[0.18em] px-2 py-0.5 rounded"
-                      [class.bg-yellow-4]="leader.position === 1"
-                      [class.text-yellow-11]="leader.position === 1"
+                      [class.bg-warning-bg]="leader.position === 1"
+                      [class.text-warning]="leader.position === 1"
                       [class.bg-gray-4]="leader.position === 2"
                       [class.text-gray-12]="leader.position === 2"
-                      [class.bg-amber-4]="leader.position === 3"
-                      [class.text-amber-11]="leader.position === 3"
+                      [class.bg-warning-bg]="leader.position === 3"
+                      [class.text-warning]="leader.position === 3"
                       [class.text-gray-10]="leader.position > 3"
                     >
                       #{{ leader.position }}
@@ -242,7 +242,7 @@
 
                     <a
                       [href]="profileUrl(leader.gamertag)"
-                      class="text-base md:text-lg font-medium truncate hover:text-blue-9 transition-colors"
+                      class="text-base md:text-lg font-medium truncate hover:text-link transition-colors"
                     >
                       {{ leader.gamertag }}
                     </a>

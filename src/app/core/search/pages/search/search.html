@@ -15,7 +15,7 @@
         data-search-input
         type="search"
         enterkeyhint="search"
-        class="w-full bg-gray-2 px-4 py-3 pl-11 text-base text-gray-12 placeholder:text-gray-11 focus:outline-none focus:ring-2 focus:ring-blue-6"
+        class="w-full bg-gray-2 px-4 py-3 pl-11 text-base text-gray-12 placeholder:text-gray-11 focus:outline-none focus:ring-2 focus:ring-focus-ring"
         placeholder="Busque jogos ou perfis"
         [formControl]="mobileSearchControl"
       />
@@ -93,7 +93,7 @@
           data-search-input
           type="search"
           enterkeyhint="search"
-          class="min-h-12 w-full rounded-lg border border-gray-6 bg-transparent py-3 pl-11 pr-4 text-base text-gray-12 placeholder:text-gray-10 focus:outline-none focus:ring-2 focus:ring-blue-6"
+          class="min-h-12 w-full rounded-lg border border-gray-6 bg-transparent py-3 pl-11 pr-4 text-base text-gray-12 placeholder:text-gray-10 focus:outline-none focus:ring-2 focus:ring-focus-ring"
           [placeholder]="searchType() === 'games' ? 'Buscar um jogo' : 'Buscar um jogador'"
           formControlName="query"
           [attr.minlength]="minSearchLength"
@@ -187,7 +187,7 @@
     <label class="flex flex-col gap-2 text-sm text-gray-11">
       Gênero
       <select
-        class="min-h-11 w-full rounded-lg border border-gray-6 bg-gray-1 px-3 text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6"
+        class="min-h-11 w-full rounded-lg border border-gray-6 bg-gray-1 px-3 text-gray-12 focus:outline-none focus:ring-2 focus:ring-focus-ring"
         [value]="genre()"
         (change)="onFilterChange('genre', $any($event.target).value)"
       >
@@ -200,7 +200,7 @@
     <label class="flex flex-col gap-2 text-sm text-gray-11">
       Ano de lançamento
       <select
-        class="min-h-11 w-full rounded-lg border border-gray-6 bg-gray-1 px-3 text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6"
+        class="min-h-11 w-full rounded-lg border border-gray-6 bg-gray-1 px-3 text-gray-12 focus:outline-none focus:ring-2 focus:ring-focus-ring"
         [value]="year()"
         (change)="onFilterChange('year', $any($event.target).value)"
       >

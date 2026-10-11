@@ -74,17 +74,17 @@ export class UiZEntryActions {
   activeClasses = {
     completed: 'bg-blue-9 text-white hover:bg-blue-10',
     backlog:
-      'bg-green-400 text-white hover:text-green-300 hover:bg-transparent',
+      'bg-success-bg text-success hover:text-success hover:bg-transparent',
     playing:
-      'bg-purple-400 text-white hover:text-purple-300 hover:bg-transparent',
-    dropped: 'bg-red-400 text-white hover:text-red-300 hover:bg-transparent',
+      'bg-info-bg text-info hover:text-info hover:bg-transparent',
+    dropped: 'bg-danger-bg text-danger hover:text-danger hover:bg-transparent',
   };
 
   inactiveClasses = {
     completed: 'text-gray-11 hover:bg-blue-9 hover:text-white',
-    backlog: 'text-gray-11 hover:text-green-300 hover:bg-green-600/10',
-    playing: 'text-gray-11 hover:text-purple-300 hover:bg-purple-600/10',
-    dropped: 'text-gray-11 hover:text-red-300 hover:bg-red-600/10',
+    backlog: 'text-gray-11 hover:text-success hover:bg-success-bg',
+    playing: 'text-gray-11 hover:text-info hover:bg-info-bg',
+    dropped: 'text-gray-11 hover:text-danger hover:bg-danger-bg',
   };
 
   isCoolingDown = false;

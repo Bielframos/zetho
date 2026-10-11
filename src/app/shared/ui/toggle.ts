@@ -22,10 +22,11 @@ import {
       <button
         type="button"
         role="switch"
+        [attr.aria-label]="label() || 'Alternar'"
         [attr.aria-checked]="isChecked()"
         [class.bg-blue-9]="isChecked()"
         [class.bg-gray-8]="!isChecked()"
-        class="relative w-14 h-8 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-9"
+        class="relative w-14 h-8 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-focus-ring"
         (click)="onToggle()"
       >
         <span
@@ -41,7 +42,7 @@ import {
       </button>
 
       @if (label()) {
-        <label class="text-white cursor-pointer select-none">
+        <label class="text-content cursor-pointer select-none">
           {{ label() }}
         </label>
       }
