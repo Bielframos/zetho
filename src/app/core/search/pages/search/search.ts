@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import {
   UiSegmentedControl,
   UiSegmentOption,
@@ -128,7 +129,22 @@ export class SearchPage {
   playerResults = computed(() => this.searchController.players.results());
 
   constructor() {
-    afterRenderEffect(() => this.searchInput()?.nativeElement.focus());
+    const document = inject(DOCUMENT);
+    afterRenderEffect((onCleanup) => {
+      const input = this.searchInput()?.nativeElement;
+      const controller = new AbortController();
+      const focus = () => {
+        const modal = document.querySelector('dialog[open]');
+        if (modal)
+          modal.addEventListener('close', focus, {
+            once: true,
+            signal: controller.signal,
+          });
+        else input?.focus();
+      };
+      focus();
+      onCleanup(() => controller.abort());
+    });
     this.seo.apply({
       title: 'Buscar jogos — Zetho',
       description:
