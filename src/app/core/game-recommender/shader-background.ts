@@ -1,5 +1,6 @@
 import {
   afterNextRender,
+  afterRenderEffect,
   Component,
   DestroyRef,
   ElementRef,
@@ -7,6 +8,7 @@ import {
   NgZone,
   viewChild,
 } from '@angular/core';
+import { ColorModeStore } from '../system/color-mode/color-mode.store';
 
 const VERTEX = `attribute vec2 a_position;
 void main() { gl_Position = vec4(a_position, 0.0, 1.0); }`;
@@ -15,6 +17,8 @@ void main() { gl_Position = vec4(a_position, 0.0, 1.0); }`;
 const FRAGMENT = `precision highp float;
 uniform float u_time;
 uniform vec2 u_resolution;
+uniform vec3 u_base;
+uniform vec3 u_accent;
 float bayer2(vec2 p) { return p.y < 1.0 ? p.x * 2.0 : 3.0 - p.x * 2.0; }
 float bayerDither(vec2 p) {
   vec2 cell = mod(floor(p / 4.0), 4.0);
@@ -31,7 +35,7 @@ void main() {
   vec3 color = 0.5 + 0.5 * cos(s + vec3(0.2, 0.5, 0.9));
   float gray = dot(color, vec3(0.299, 0.587, 0.114));
   float bw = step(bayerDither(pc), gray);
-  gl_FragColor = vec4(mix(vec3(0.067, 0.067, 0.075), vec3(0.243, 0.388, 0.867), bw), 1.0);
+  gl_FragColor = vec4(mix(u_base, u_accent, bw), 1.0);
 }`;
 
 @Component({
@@ -44,10 +48,10 @@ void main() {
       display: block;
       pointer-events: none;
       overflow: hidden;
-      opacity: 0.2;
+      opacity: var(--recommendation-opacity);
       background: radial-gradient(
         ellipse at top,
-        var(--color-blue-5),
+        var(--recommendation-accent),
         transparent 70%
       );
       mask-image: linear-gradient(to bottom, #000, #000 45%, transparent 100%);
@@ -65,12 +69,21 @@ export class RecommendationBackground {
   private readonly destroy = inject(DestroyRef);
   private readonly zone = inject(NgZone);
 
+  private readonly mode = inject(ColorModeStore);
+  private updatePalette?: () => void;
+
   constructor() {
+    afterRenderEffect(() => {
+      this.mode.effective();
+      this.zone.runOutsideAngular(() => this.updatePalette?.());
+    });
     afterNextRender(() => this.zone.runOutsideAngular(() => this.initialize()));
   }
 
   private initialize() {
     const canvas = this.canvas().nativeElement;
+    // Keep the CSS fallback visible until GPU compilation/linking succeeds.
+    canvas.style.opacity = '0';
     const gl = canvas.getContext('webgl', {
       antialias: false,
       alpha: false,
@@ -123,17 +136,29 @@ export class RecommendationBackground {
     gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
     const time = gl.getUniformLocation(program, 'u_time');
     const resolution = gl.getUniformLocation(program, 'u_resolution');
+    const base = gl.getUniformLocation(program, 'u_base');
+    const accent = gl.getUniformLocation(program, 'u_accent');
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     let frame = 0;
     let lastDraw = 0;
     let lost = false;
     const start = performance.now();
     const draw = (now: number) => {
-      if (lost) return;
+      if (lost || document.hidden) return;
       gl.uniform1f(time, reducedMotion.matches ? 0 : (now - start) / 2000);
       gl.uniform2f(resolution, canvas.width, canvas.height);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     };
+    this.updatePalette = () => {
+      if (lost) return;
+      // Read the already applied pre-paint/runtime palette, never the store's SSR default.
+      const styles = getComputedStyle(canvas);
+      gl.uniform3fv(base, shaderColor(styles.getPropertyValue('--recommendation-base')));
+      gl.uniform3fv(accent, shaderColor(styles.getPropertyValue('--recommendation-accent')));
+      if (!document.hidden) draw(performance.now());
+    };
+    this.updatePalette();
+    canvas.style.opacity = '1';
     const tick = (now: number) => {
       if (now - lastDraw >= 1000 / 30) {
         draw(now);
@@ -166,6 +191,7 @@ export class RecommendationBackground {
     resume();
     this.destroy.onDestroy(() => {
       cancelAnimationFrame(frame);
+      this.updatePalette = undefined;
       resize.disconnect();
       reducedMotion.removeEventListener('change', resume);
       document.removeEventListener('visibilitychange', resume);
@@ -175,4 +201,11 @@ export class RecommendationBackground {
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     });
   }
+}
+
+/** Palette tokens are hexadecimal sRGB values; WebGL expects normalized channels. */
+export function shaderColor(color: string): Float32Array {
+  const value = color.trim().replace('#', '');
+  const hex = value.length === 3 ? [...value].map((channel) => channel + channel).join('') : value;
+  return new Float32Array([0, 2, 4].map((offset) => parseInt(hex.slice(offset, offset + 2), 16) / 255));
 }
