@@ -22,6 +22,7 @@ const SUGGESTED_GAME_SLUGS = [
   standalone: true,
   imports: [UiLoading, UiGameCard, RouterLink, InfiniteScrollDirective, UiSelect],
   templateUrl: './profile-entries.html',
+  host: { class: 'block' },
 })
 export class UiUserLibGrid {
   private gameRepository = inject(GameRepository);
