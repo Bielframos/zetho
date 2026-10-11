@@ -114,14 +114,18 @@ describe('GameRecommenderPage', () => {
   });
 
   it('does not charge or request a recommendation with insufficient displayed balance', async () => {
-    profile.set({ zcoinBalance: 9 });
+    profile.set({ zcoinBalance: 4 });
     await page.generate();
     expect(api.suggest).not.toHaveBeenCalled();
   });
 
   it('makes the daily limit clear and prevents another request after loading today history', async () => {
     api.history.and.resolveTo({
-      items: [{ ...result, generatedAt: new Date().toISOString() }],
+      items: Array.from({ length: 5 }, (_, i) => ({
+        ...result,
+        id: `today-${i}`,
+        generatedAt: new Date().toISOString(),
+      })),
       nextCursor: null,
     });
 
@@ -130,6 +134,58 @@ describe('GameRecommenderPage', () => {
 
     expect(page.dailyLimitReached()).toBeTrue();
     expect(api.suggest).not.toHaveBeenCalled();
+  });
+
+  it('allows a recommendation with exactly five coins and only one prior use', async () => {
+    profile.set({ zcoinBalance: 5 });
+    api.history.and.resolveTo({
+      items: [result],
+      nextCursor: null,
+      quota: {
+        cost: 5,
+        limit: 5,
+        remaining: 4,
+        nextAvailableAt: new Date(Date.now() + 86400000).toISOString(),
+      },
+    });
+    api.suggest.and.resolveTo(result);
+    await page.loadHistory();
+    await page.generate();
+    expect(api.suggest).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not let an older history response overwrite a newer quota', async () => {
+    let resolveHistory!: (value: any) => void;
+    api.history.and.returnValue(
+      new Promise((resolve) => (resolveHistory = resolve)),
+    );
+    const loading = page.loadHistory();
+    const quota = {
+      cost: 5,
+      limit: 5,
+      remaining: 3,
+      nextAvailableAt: new Date(Date.now() + 86400000).toISOString(),
+    };
+    api.suggest.and.resolveTo({ ...result, quota });
+    await page.generate();
+    resolveHistory({
+      items: [],
+      nextCursor: null,
+      quota: { ...quota, remaining: 4 },
+    });
+    await loading;
+    expect(page.remainingUses()).toBe(3);
+  });
+
+  it('renews the quota after the server day boundary', () => {
+    page.quota.set({
+      cost: 5,
+      limit: 5,
+      remaining: 0,
+      nextAvailableAt: new Date(Date.now() - 1000).toISOString(),
+    });
+    expect(page.remainingUses()).toBe(5);
+    expect(page.dailyLimitReached()).toBeFalse();
   });
 
   it('handles the server daily-limit response as terminal for the attempt', async () => {
@@ -142,7 +198,7 @@ describe('GameRecommenderPage', () => {
 
     expect(page.pending()).toBeNull();
     expect(page.dailyLimitReached()).toBeTrue();
-    expect(page.error()).toContain('recomendação de hoje');
+    expect(page.error()).toContain('cinco recomendações de hoje');
   });
 
   it('allows a new key after a terminal provider failure', async () => {
