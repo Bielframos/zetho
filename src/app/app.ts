@@ -1,5 +1,5 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { A11yModule } from '@angular/cdk/a11y';
+import { UiSheet } from './shared/ui/sheet.directive';
 import { NgComponentOutlet, NgTemplateOutlet } from '@angular/common';
 import {
   Component,
@@ -39,7 +39,7 @@ import { InAppNotificationStore } from './core/system/notifications/in-app-notif
 @Component({
   selector: 'app-root',
   imports: [
-    A11yModule,
+    UiSheet,
     AppSearchInput,
     NgComponentOutlet,
     NgTemplateOutlet,
@@ -64,6 +64,7 @@ export class App {
   private notification = inject(NotificationStore);
   private inAppNotifications = inject(InAppNotificationStore);
   private document = inject(DOCUMENT);
+  private searchFocusTimer?: ReturnType<typeof setTimeout>;
   private lastOnlineRoute = '/';
   private dailyLoginAttemptedFor = '';
   private notificationsLoadedForProfile = '';
@@ -150,11 +151,22 @@ export class App {
     )
       return;
     event.preventDefault();
+    const openSheets = this.document.querySelectorAll<HTMLDialogElement>(
+      'dialog.ui-sheet[open]',
+    );
+    openSheets.forEach((panel) =>
+      panel.dispatchEvent(new Event('cancel', { cancelable: true })),
+    );
     this.closeMobileMenu();
     if (this.currentPath() === '/buscar') {
-      this.document
-        .querySelector<HTMLInputElement>('[data-search-input]')
-        ?.focus();
+      clearTimeout(this.searchFocusTimer);
+      const focusSearch = () =>
+        this.document
+          .querySelector<HTMLInputElement>('[data-search-input]')
+          ?.focus();
+      if (openSheets.length)
+        this.searchFocusTimer = setTimeout(focusSearch, 230);
+      else focusSearch();
     } else {
       void this.route.navigate(['/buscar']);
     }
@@ -173,6 +185,7 @@ export class App {
         )
           this.profileNavigationPending.set(false);
       });
+    this.destroyRef.onDestroy(() => clearTimeout(this.searchFocusTimer));
     this.trackLastOnlineRoute();
     this.registerConnectionWatch();
     this.registerDailyLoginReward();
@@ -236,17 +249,10 @@ export class App {
   toggleMobileMenu() {
     const open = !this.mobileMenuOpen();
     this.mobileMenuOpen.set(open);
-    this.document.body.style.overflow = open ? 'hidden' : '';
   }
 
   closeMobileMenu() {
     this.mobileMenuOpen.set(false);
-    this.document.body.style.overflow = '';
-  }
-
-  @HostListener('document:keydown.escape')
-  closeMobileMenuOnEscape() {
-    if (this.mobileMenuOpen()) this.closeMobileMenu();
   }
 
   comparisonProfile() {

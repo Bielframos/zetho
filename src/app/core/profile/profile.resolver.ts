@@ -4,7 +4,7 @@ import { ProfileStore } from '../userProfiles/profile.store';
 import { AuthStore } from '../auth/auth.store';
 import { inject } from '@angular/core';
 
-let latestResolution = 0;
+const resolutions = new WeakMap<ProfileStore, number>();
 
 export const profileResolver: ResolveFn<string> = async (route, state) => {
   const router = inject(Router);
@@ -16,7 +16,8 @@ export const profileResolver: ResolveFn<string> = async (route, state) => {
 
   const gamertag = route.paramMap.get('gamertag')!;
 
-  const resolution = ++latestResolution;
+  const resolution = (resolutions.get(profileStore) ?? 0) + 1;
+  resolutions.set(profileStore, resolution);
   profileStore.set(null);
 
   try {
@@ -28,7 +29,7 @@ export const profileResolver: ResolveFn<string> = async (route, state) => {
 
     const profile = await profileService.getProfileByGamertag(gamertag);
 
-    if (resolution !== latestResolution) return gamertag;
+    if (resolution !== resolutions.get(profileStore)) return gamertag;
 
     if (!profile) {
       router.navigate(['/404']);
@@ -36,7 +37,7 @@ export const profileResolver: ResolveFn<string> = async (route, state) => {
 
     profileStore.set(profile);
   } catch (e) {
-    if (resolution !== latestResolution) return gamertag;
+    if (resolution !== resolutions.get(profileStore)) return gamertag;
     profileStore.set(null);
     router.navigate(['/404']);
   }

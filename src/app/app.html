@@ -320,19 +320,11 @@
     </div>
   </nav>
 
-  @if (mobileMenuOpen()) {
-  <div
-    class="fixed inset-0 z-40 bg-black/70 lg:hidden"
-    aria-hidden="true"
-    (click)="closeMobileMenu()"
-  ></div>
-  <aside
-    class="fixed inset-y-0 right-0 z-40 flex w-full max-w-sm flex-col border-l border-gray-4 bg-gray-1 lg:hidden"
-    role="dialog"
-    aria-modal="true"
+  <dialog
+    uiSheet
+    [(sheetOpen)]="mobileMenuOpen"
+    class="fixed inset-y-0 left-auto right-0 z-40 m-0 h-dvh max-h-none w-full max-w-sm flex-col border-0 border-l border-gray-4 bg-gray-1 p-0 text-gray-12 open:flex"
     aria-labelledby="mobile-menu-title"
-    cdkTrapFocus
-    [cdkTrapFocusAutoCapture]="true"
   >
     <header
       class="flex items-center justify-between border-b border-gray-6 p-4"
@@ -366,8 +358,7 @@
     <p class="border-t border-gray-6 px-4 py-3 text-xs text-gray-10">
       v{{ appVersion }}
     </p>
-  </aside>
-  }
+  </dialog>
 </div>
 } @else {
 <div class="flex min-h-dvh flex-col">
