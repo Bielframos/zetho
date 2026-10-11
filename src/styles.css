@@ -386,6 +386,19 @@
 }
 
 
+.profile-comparison-fab {
+  position: fixed;
+  z-index: 20;
+  right: 1rem;
+  bottom: calc(5rem + env(safe-area-inset-bottom));
+}
+@media (min-width: 1024px) {
+  .profile-comparison-fab {
+    right: calc(max(1rem, (100vw - 1180px) / 2) + 19rem);
+    bottom: 1rem;
+  }
+}
+
 /* Shared native-dialog sheet transitions. Native modal state remains until exit ends. */
 dialog.ui-sheet {
   transform: translateX(0);
