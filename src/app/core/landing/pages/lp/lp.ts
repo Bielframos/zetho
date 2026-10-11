@@ -37,7 +37,7 @@ export class LandingPage {
     // effect, o redirecionamento acontece quando o sinal de fato mudar.
     effect(() => {
       if (this.authStore.isAuthenticated()) {
-        void this.router.navigateByUrl('/dashboard');
+        void this.router.navigateByUrl('/feed');
       }
     });
 

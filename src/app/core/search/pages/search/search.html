@@ -3,7 +3,7 @@
   [class.md:border-x]="!authStore.isAuthenticated()"
 >
   @if (!showInitialSearch()) {
-  <div class="border-b border-gray-6 lg:hidden">
+  <div class="border-b border-gray-6">
     <label class="relative block">
       <span class="sr-only">Buscar jogos ou perfis</span>
       <i
@@ -11,6 +11,8 @@
         aria-hidden="true"
       ></i>
       <input
+        #searchInput
+        data-search-input
         type="search"
         enterkeyhint="search"
         class="w-full bg-gray-2 px-4 py-3 pl-11 text-base text-gray-12 placeholder:text-gray-11 focus:outline-none focus:ring-2 focus:ring-blue-6"
@@ -64,8 +66,8 @@
       id="search-title"
       class="text-4xl font-medium leading-tight tracking-tight sm:text-5xl"
     >
-      @if (searchType() === 'games') { Encontre jogos } @else
-      { Encontre jogadores }
+      @if (searchType() === 'games') { Encontre jogos } @else { Encontre
+      jogadores }
     </h1>
     <p class="mt-5 max-w-sm text-sm leading-7 text-gray-11">
       @if (searchType() === 'games') { Busque pelo nome ou explore jogos por
@@ -73,7 +75,7 @@
       para conhecer seu perfil e seus jogos. }
     </p>
     <form
-      class="mt-9 w-full lg:hidden"
+      class="mt-9 w-full"
       [formGroup]="initialSearchForm"
       (ngSubmit)="submitInitialSearch()"
     >
@@ -87,6 +89,8 @@
           aria-hidden="true"
         ></i>
         <input
+          #searchInput
+          data-search-input
           type="search"
           enterkeyhint="search"
           class="min-h-12 w-full rounded-lg border border-gray-6 bg-transparent py-3 pl-11 pr-4 text-base text-gray-12 placeholder:text-gray-10 focus:outline-none focus:ring-2 focus:ring-blue-6"

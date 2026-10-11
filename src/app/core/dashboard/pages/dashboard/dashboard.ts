@@ -1,3 +1,4 @@
+import { SeoService } from '../../../system/seo/seo.service';
 import { FeedReviewContent } from '../../../ratings/components/feed-review-content';
 import { FeedReviewVotes } from '../../../ratings/components/feed-review-votes';
 import {
@@ -95,6 +96,13 @@ export class DashboardPage implements OnDestroy {
   }
 
   constructor() {
+    inject(SeoService).apply({
+      title: 'Feed — Zetho',
+      canonical: '/feed',
+      robots: 'noindex,follow',
+      description:
+        'Acompanhe jogos, reviews e novidades dos jogadores que você segue.',
+    });
     void this.loadFeed();
     void this.loadSuggestedConnections();
 

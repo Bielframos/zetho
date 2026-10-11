@@ -61,7 +61,7 @@ export class WeeklyLeaderboardPage {
   }
 
   profileUrl(gamertag: string | null) {
-    return gamertag ? `/player/${encodeURIComponent(gamertag)}` : '/dashboard';
+    return gamertag ? `/player/${encodeURIComponent(gamertag)}` : '/feed';
   }
 
   formatDate(value: string | null) {

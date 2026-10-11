@@ -139,7 +139,7 @@ export class RankingPage implements OnInit, OnDestroy {
   }
 
   profileUrl(gamertag: string | null): string {
-    return gamertag ? `/player/${encodeURIComponent(gamertag)}` : '/dashboard';
+    return gamertag ? `/player/${encodeURIComponent(gamertag)}` : '/feed';
   }
 
   formatDate(value: string | null): string {
