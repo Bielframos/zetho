@@ -2,13 +2,11 @@ import { Injectable } from '@angular/core';
 import { UserProfile, UserProfileRow } from '../../types';
 import { UserProfileRepository } from './userProfile.repository';
 import { extractKeywords } from '../search/search.helpers';
-import { ConnectionsService } from '../connections/connections.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserProfileService {
   constructor(
     private repository: UserProfileRepository,
-    private connectionsService: ConnectionsService,
   ) {}
 
   async getProfileByUserId(userId: string): Promise<UserProfileRow | null> {
@@ -68,12 +66,4 @@ export class UserProfileService {
     };
   }
 
-  async toggleFollow(profileId: string, followerId: string) {
-    const connection = await this.connectionsService.followOrUnfollow(
-      profileId,
-      followerId,
-    );
-
-    return connection;
-  }
 }

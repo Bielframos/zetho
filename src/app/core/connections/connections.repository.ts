@@ -89,13 +89,13 @@ export class ConnectionsRepository {
     return { rows: profiles.rows, total: connections.total };
   }
 
-  async create(profileId: string, followerId: string): Promise<ConnectionRow> {
+  async create(profileId: string, followerId: string, isCurrent?: () => boolean): Promise<ConnectionRow> {
     return this.api.request<ConnectionRow>('social/connections', 'POST', {
       targetProfileId: profileId,
-    });
+    }, isCurrent);
   }
 
-  async delete(connectionId: string) {
-    await this.api.request<void>(`social/connections/${encodeURIComponent(connectionId)}`, 'DELETE');
+  async delete(connectionId: string, isCurrent?: () => boolean) {
+    await this.api.request<void>(`social/connections/${encodeURIComponent(connectionId)}`, 'DELETE', undefined, isCurrent);
   }
 }

@@ -1,3 +1,4 @@
+import { FollowControl } from '../../ui/follow-control';
 import { ProfileThemeContrast } from '../../ui/profile-theme-contrast';
 import { CommonModule } from '@angular/common';
 import { NgComponentOutlet } from '@angular/common';
@@ -15,7 +16,7 @@ import { getThemeMediaUrl } from '../../../core/themes/theme-media';
 @Component({
   selector: 'app-profile-layout',
   standalone: true,
-  imports: [ProfileThemeContrast,RouterLink, RouterOutlet, NgComponentOutlet],
+  imports: [FollowControl,ProfileThemeContrast,RouterLink, RouterOutlet, NgComponentOutlet],
   templateUrl: './profile-layout.html',
 })
 export class AppProfileLayout {
