@@ -234,7 +234,9 @@
   isolation: isolate;
 }
 .profile-theme-card.has-theme { border-color: var(--profile-theme-border); }
-.profile-theme-art { overflow: hidden; opacity: .5; }
+.profile-theme-art { overflow: hidden; border-radius: inherit; opacity: .5; }
+/* Error recovery may extend beyond a short profile; only artwork needs clipping. */
+.profile-theme-card:has(ui-follow-control .icon-feedback) { overflow: visible; z-index: 30; }
 .profile-theme-card.has-theme .profile-theme-copy {
   background: var(--profile-readable-surface);
   color: var(--gray-12);

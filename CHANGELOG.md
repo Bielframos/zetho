@@ -6,6 +6,14 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.34.5] - 2026-10-11
+
+### Fixed
+
+- Ação de seguir/deixar de seguir integrada à linha de identificação do perfil, com ícone discreto e estados acessíveis; sugestões do Feed e onboarding preservadas.
+- Expansor do agrupamento sobreposto à biblioteca sem reservar altura acima dos jogos ou interceptar cliques fora do botão.
+- Feedback e recuperação de erros de seguir permanecem visíveis em perfis curtos.
+
 ## [1.34.4] - 2026-10-11
 
 ### Fixed
