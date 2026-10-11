@@ -6,6 +6,13 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.34.3] - 2026-10-11
+
+### Fixed
+
+- Controle de agrupamento da biblioteca permanece centralizado no topo durante a rolagem, sem a borda grossa e o deslocamento da antiga busca fixa.
+- Painel de agrupamento preserva seleção, foco e acessibilidade com espaçamento adequado no desktop e mobile.
+
 ## [1.34.2] - 2026-10-11
 
 ### Changed
