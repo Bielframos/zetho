@@ -229,77 +229,57 @@
 }
 
 .profile-theme-card {
-  --profile-theme-bg: var(--theme-bg, var(--color-gray-2));
-  --profile-theme-accent: var(--theme-c1, var(--color-blue-9));
-  --profile-theme-accent-strong: var(--theme-c2, var(--profile-theme-accent));
-  --profile-theme-accent-muted: var(--theme-c3, var(--profile-theme-accent));
-  --profile-theme-border: color-mix(
-    in srgb,
-    var(--profile-theme-accent-strong) 58%,
-    var(--color-gray-6)
-  );
-  --profile-theme-surface: color-mix(
-    in srgb,
-    var(--profile-theme-accent) 18%,
-    transparent
-  );
-  --profile-theme-surface-strong: color-mix(
-    in srgb,
-    var(--profile-theme-accent) 30%,
-    transparent
-  );
+  --profile-theme-bg: var(--theme-bg, var(--gray-2));
+  --profile-theme-border: var(--profile-border-color, var(--gray-6));
+  isolation: isolate;
 }
-
-.profile-theme-card.has-theme {
-  border-color: var(--profile-theme-border);
+.profile-theme-card.has-theme { border-color: var(--profile-theme-border); }
+.profile-theme-art { overflow: hidden; opacity: .5; }
+.profile-theme-card.has-theme .profile-theme-copy {
+  background: var(--profile-readable-surface);
+  color: var(--gray-12);
+  padding: .125rem .375rem;
+  box-decoration-break: clone;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
-
+.profile-theme-card.has-theme ui-follow-control {
+  background: var(--profile-readable-surface);
+  box-shadow: 0 0 0 4px var(--profile-readable-surface);
+  border-radius: .5rem;
+}
+.profile-theme-card.has-theme .profile-theme-surface {
+  background: var(--profile-readable-surface);
+}
 .profile-theme-card.has-theme .profile-theme-divider,
 .profile-theme-card.has-theme .profile-theme-action,
 .profile-theme-card.has-theme .profile-theme-avatar,
-.profile-theme-card.has-theme .profile-theme-chip {
-  border-color: var(--profile-theme-border);
-}
-
+.profile-theme-card.has-theme .profile-theme-chip { border-color: var(--profile-theme-border); }
+.profile-theme-card.has-theme .profile-theme-avatar { background: var(--profile-readable-surface); }
 .profile-theme-action:hover,
 .profile-theme-chip:hover,
-.profile-theme-tab:hover {
-  background-color: var(--gray-3);
-  color: var(--gray-12);
-}
-
+.profile-theme-tab:hover { background-color: var(--gray-3); color: var(--gray-12); }
+.profile-theme-card.has-theme .profile-theme-action,
+.profile-theme-card.has-theme .profile-theme-chip,
+.profile-theme-card.has-theme .profile-theme-tab { background-color: var(--profile-readable-surface); color: var(--gray-12); }
 .profile-theme-card.has-theme .profile-theme-action:hover,
 .profile-theme-card.has-theme .profile-theme-chip:hover,
-.profile-theme-card.has-theme .profile-theme-tab:hover {
-  background-color: var(--profile-readable-surface, var(--gray-3));
-  color: var(--gray-12);
-}
-
-.group[data-active="true"] > .profile-theme-tab {
-  border-color: var(--color-blue-9);
-  color: var(--gray-12);
-}
-
+.profile-theme-card.has-theme .profile-theme-tab:hover { background-color: var(--gray-3); text-decoration: underline; }
+.group[data-active="true"] > .profile-theme-tab { border-color: var(--color-blue-9); color: var(--gray-12); }
 .profile-theme-card.has-theme .group[data-active="true"] > .profile-theme-tab {
-  background-color: var(--profile-readable-surface, var(--gray-3));
-  border-color: var(--profile-theme-accent);
-  color: var(--gray-12);
+  background-color: var(--profile-accent-surface);
+  border-color: var(--profile-theme-border);
+  color: var(--profile-accent-content);
 }
-
-.profile-theme-card.has-theme
-  .group[data-active="true"]
-  > .profile-theme-tab:hover {
-  background-color: var(--profile-readable-surface, var(--gray-3));
-}
-
 .profile-theme-card.has-theme .profile-theme-badge {
-  background-color: var(--profile-readable-surface, var(--gray-3));
-  color: var(--gray-12);
+  background-color: var(--profile-badge-surface);
+  color: var(--profile-badge-content);
 }
-
-.profile-theme-card.has-theme .group[data-active="true"] .profile-theme-badge {
-  background-color: var(--profile-readable-surface, var(--gray-3));
-  color: var(--gray-12);
+.profile-theme-action:focus-visible,
+.profile-theme-tab:focus-visible,
+.profile-theme-chip:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -3px; }
+.profile-theme-card.has-theme .group[data-active="true"] > .profile-theme-tab:focus-visible {
+  outline-color: var(--profile-accent-content);
 }
 /* Componentes */
 @layer components {
@@ -415,25 +395,4 @@ dialog.ui-sheet.sheet-closing::backdrop { opacity: 0; }
   --tw-prose-pre-bg: var(--color-surface-raised);
   --tw-prose-th-borders: var(--color-line-strong);
   --tw-prose-td-borders: var(--color-line);
-}
-
-/* Profile art remains visible around readable text bands. Images never underlay text. */
-.profile-theme-card.has-theme > .relative,
-.profile-theme-card.has-theme > header,
-.profile-theme-card.has-theme > .profile-theme-divider {
-  background-color: var(--profile-readable-surface, var(--theme-bg));
-}
-.profile-theme-card.has-theme .profile-theme-action:hover,
-.profile-theme-card.has-theme .profile-theme-chip:hover,
-.profile-theme-card.has-theme .profile-theme-tab:hover,
-.profile-theme-card.has-theme .group[data-active="true"] > .profile-theme-tab {
-  background-color: var(--profile-readable-surface, var(--theme-bg));
-  text-decoration: underline;
-}
-
-.profile-theme-action:focus-visible,
-.profile-theme-tab:focus-visible,
-.profile-theme-chip:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: -3px;
 }
