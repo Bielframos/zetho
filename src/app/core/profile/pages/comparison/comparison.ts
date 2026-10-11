@@ -1,6 +1,8 @@
 import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { UiSegmentedControl, UiSegmentOption } from '../../../../shared/ui/segmented-control';
+import { UiZethoIcon } from '../../../../shared/ui/zetho-icon';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { AuthStore } from '../../../auth/auth.store';
 import { ZEntryService } from '../../../zEntries/zEntries.service';
@@ -15,7 +17,7 @@ import {
 
 @Component({
   selector: 'app-profile-comparison',
-  imports: [RouterLink, UiLoading],
+  imports: [RouterLink, UiLoading, UiSegmentedControl, UiZethoIcon],
   templateUrl: './comparison.html',
 })
 export class ProfileComparisonPage {
@@ -39,6 +41,13 @@ export class ProfileComparisonPage {
   readonly wishlisted = signal(new Set<string>());
   readonly saving = signal(new Set<string>());
   readonly actionErrors = signal<Record<string, string>>({});
+  readonly orders: readonly UiSegmentOption<ComparisonOrder>[] = [
+    { id: 'similar', label: 'Notas parecidas' },
+    { id: 'different', label: 'Maiores diferenças' },
+  ];
+  private readonly ratingNumber = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 });
+  formatRating(rating: number) { return this.ratingNumber.format(rating); }
+
   readonly tabs: { key: ComparisonView; label: string }[] = [
     { key: 'common', label: 'Jogos em comum' },
     { key: 'opinions', label: 'Opiniões em comum' },

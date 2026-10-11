@@ -2,9 +2,10 @@
   <header class="border-b border-gray-6 p-4">
     <a
       [routerLink]="['/player', gamertag()]"
-      class="text-sm text-blue-11 hover:underline"
-      >Voltar ao perfil de {{ gamertag() }}</a
-    >
+      class="ui-ghost-btn min-h-11 min-w-11 cursor-pointer"
+      data-size="icon"
+      [attr.aria-label]="'Voltar ao perfil de ' + gamertag()"
+    ><i class="ph ph-arrow-left" aria-hidden="true"></i></a>
     <h1 class="mt-3 text-2xl">Comparar gostos</h1>
     <p class="mt-2 text-sm text-gray-11">Você e {{ gamertag() }}</p>
   </header>
@@ -26,23 +27,13 @@
     }
   </nav>
   @if (view() === 'opinions') {
-  <div class="flex flex-wrap gap-2 border-b border-gray-6 p-4">
-    <button
-      type="button"
-      class="ui-secondary-btn"
-      [attr.aria-pressed]="order() === 'similar'"
-      (click)="change(view(), 'similar')"
-    >
-      Notas parecidas
-    </button>
-    <button
-      type="button"
-      class="ui-secondary-btn"
-      [attr.aria-pressed]="order() === 'different'"
-      (click)="change(view(), 'different')"
-    >
-      Maiores diferenças
-    </button>
+  <div class="border-b border-gray-6 p-4">
+    <ui-segmented-control
+      label="Ordenação das opiniões"
+      [options]="orders"
+      [value]="order()"
+      (valueChange)="change(view(), $event)"
+    />
   </div>
   } @if (loading()) {
   <div class="p-8" role="status" aria-label="Carregando comparação">
@@ -70,42 +61,49 @@
   </p>
   <div class="divide-y divide-gray-6">
     @for (row of data.rows; track row.game.id) {
-    <article class="p-4">
+    <article>
       <a
         [routerLink]="['/jogo', row.game.slug]"
-        class="flex items-center gap-3 hover:text-blue-11 focus-visible:ring-2 focus-visible:ring-focus-ring"
+        class="flex min-w-0 items-center justify-center gap-3 border-b border-gray-6 p-4 hover:text-link focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring"
       >
         @if (row.game.coverUrl) {
         <img
           [src]="row.game.coverUrl"
           alt=""
-          class="h-16 w-12 rounded object-cover"
+          class="h-16 w-12 shrink-0 rounded object-cover"
           loading="lazy"
         />
         }
-        <h2 class="font-medium">{{ row.game.name }}</h2>
+        <h2 class="min-w-0 wrap-anywhere text-center font-medium">{{ row.game.name }}</h2>
       </a>
-      <dl class="mt-3 grid grid-cols-2 gap-3 text-sm">
-        <div>
-          <dt class="text-gray-11">{{ data.me.gamertag }} (você)</dt>
-          <dd>{{ status(row.me.status) }}</dd>
-          <dd>
-            {{ row.me.rating === null ? 'Sem nota' : row.me.rating + ' / 5' }}
+      <dl class="grid grid-cols-2 divide-x divide-gray-6 text-center text-sm">
+        @for (player of [{ identity: data.me, entry: row.me, mine: true }, { identity: data.other, entry: row.other, mine: false }]; track player.identity.id) {
+        <div class="min-w-0 p-4">
+          <dt class="wrap-anywhere text-gray-11">{{ player.identity.gamertag }}{{ player.mine ? ' (você)' : '' }}</dt>
+          <dd class="mt-2 flex items-center justify-center gap-2">
+            @switch (player.entry.status) {
+              @case ('completed') { <ui-zetho-icon /> }
+              @case ('backlog') { <i class="ph-fill ph-books shrink-0" aria-hidden="true"></i> }
+              @case ('playing') { <i class="ph-fill ph-game-controller shrink-0" aria-hidden="true"></i> }
+              @case ('dropped') { <i class="ph-fill ph-x-circle shrink-0" aria-hidden="true"></i> }
+              @case ('wishlist') { <i class="ph ph-shopping-bag shrink-0" aria-hidden="true"></i> }
+            }
+            <span>{{ status(player.entry.status) }}</span>
+          </dd>
+          <dd class="mt-1">
+            @if (player.entry.rating === null) { Sem nota } @else {
+              <span class="sr-only">Nota {{ formatRating(player.entry.rating) }} de 5</span>
+              <span aria-hidden="true" class="inline-flex items-center gap-1 tabular-nums">{{ formatRating(player.entry.rating) }} <i class="ph-fill ph-star text-warning"></i></span>
+            }
           </dd>
         </div>
-        <div>
-          <dt class="text-gray-11">{{ data.other.gamertag }}</dt>
-          <dd>{{ status(row.other.status) }}</dd>
-          <dd>
-            {{ row.other.rating === null ? 'Sem nota' : row.other.rating + ' /
-            5' }}
-          </dd>
-        </div>
+        }
       </dl>
       @if (view() === 'discoveries') {
+      <div class="px-4 pb-4">
       <button
         type="button"
-        class="ui-secondary-btn mt-4 min-h-11"
+        class="ui-secondary-btn min-h-11"
         [disabled]="saving().has(row.game.id) || wishlisted().has(row.game.id)"
         (click)="addToWishlist(row)"
       >
@@ -118,7 +116,9 @@
       <p class="mt-2 text-sm text-danger" role="alert">
         {{ actionErrors()[row.game.id] }}
       </p>
-      } }
+      }
+      </div>
+      }
     </article>
     }
   </div>
