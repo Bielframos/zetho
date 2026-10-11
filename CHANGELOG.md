@@ -6,6 +6,18 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.34.6] - 2026-10-11
+
+### Fixed
+
+- Temas personalizados recuperam transparências, máscara da imagem e herança da versão anterior ao modo claro, removendo fundos indevidos em textos e controles.
+- Paleta equipada permanece independente da aparência global; temas claros recebem ajuste de texto e temas somente com imagem conservam o canvas histórico.
+- Popup de recuperação de erro mantém texto e foco legíveis nos perfis personalizados.
+
+### Changed
+
+- Seletor de aparência visualmente menor e alinhado à esquerda, mantendo nomes acessíveis e alvos de toque de 44 px.
+
 ## [1.34.5] - 2026-10-11
 
 ### Fixed

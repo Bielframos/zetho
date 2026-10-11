@@ -4,7 +4,7 @@ A preferência `light | dark | system` fica somente no navegador, na chave `zeth
 
 `public/color-mode.js` é o contrato único de normalização, resolução e aplicação, compartilhado pelo script bloqueante anterior ao CSS e pelo store Angular. Ele define `data-color-mode`, `color-scheme` e `theme-color`. O store se inicializa em `afterNextRender`: SSR e a primeira hidratação mantêm o mesmo DOM e seleção inicial; dados do navegador não entram no HTML/cache do servidor. Sem JavaScript, a media query CSS aplica a preferência do SO. Os listeners são únicos por injector e removidos no destroy.
 
-O alternador Claro/Escuro/Sistema aparece no menu desktop/mobile e fora do shell (autenticação/páginas públicas). São botões nativos com `aria-pressed`, legend e foco visível. A seleção não recarrega a rota.
+O alternador Claro/Escuro/Sistema aparece no menu desktop/mobile e fora do shell (autenticação/páginas públicas). Usa ícones em área visual de 28 px, alvos de toque de 44 px e grupo de 132 px alinhado à esquerda. São botões nativos com `aria-pressed`, legend invisível e foco visível. A seleção não recarrega a rota.
 
 ## Tokens
 
@@ -25,7 +25,7 @@ Não use hexadecimal avulso para cores de interface nem branco sobre status clar
 ## Exceções deliberadas
 
 - Capas, avatares, screenshots e artes conservam as cores. Texto sobre mídia recebe overlay/superfície estável.
-- Temas comprados do perfil são independentes do modo global. `ProfileThemeContrast` cria contexto local com fundo personalizado e texto preto/branco por luminância; áreas textuais são opacas para não depender da imagem. A decoração permanece ao redor dessas áreas. Estados hover e foco preservam esse contexto. O admin gera cores hex opacas (#RGB/#RRGGBB); valores legados em outros formatos conservam a arte, mas áreas de leitura e exportação usam canvas escuro seguro.
+- Temas equipados do perfil conservam a aplicação anterior ao modo global (referência `1bfc6c1`, release 1.33.1): transparências de 18%/30%, bordas com 58% da cor secundária e imagem mascarada, com opacidade .5 no card desktop e .4 no mobile/card de conta. A paleta histórica é isolada no próprio contexto; não existem placas adicionadas a nome, bio, chips ou botões. Em fundos personalizados claros, apenas o foreground muda para preto por legibilidade. A composição de layout de #131 permanece. O popup de erro de conexão preserva sua superfície escura e recebe texto/foco próprios claros, sem alterar o estado normal. Temas removidos limpam classe e propriedades locais. Temas somente com imagem mantêm o canvas histórico `#101113` como base da região inteira, sem superfícies por elemento. Dados e imagens equipados não são alterados.
 - Exportações usam `.color-mode-fixed-dark` para presets escuros e foreground calculado em fundos personalizados. Assim a escolha global não muda o PNG. Fundos customizados são sólidos na exportação para garantir contraste; estrelas cheias/vazias usam forma, além da cor.
 - Sombras, scrims, overlay de mídia, cores de marca e presets exportáveis são valores fixos intencionais. Não são novas paletas de interface.
 
@@ -63,3 +63,7 @@ Dados autenticados na matriz visual são fixtures em memória com rede externa b
 - `--recommendation-base`, `--recommendation-accent` e `--recommendation-opacity` controlam o shader e seu fallback. Uniforms são atualizados após aplicar o modo, mantendo programa, observer e loop existentes. Movimento reduzido recebe um quadro ao mudar a paleta; páginas ocultas retomam uma única animação.
 - `--game-card-hover-scrim` mantém o overlay de capa escuro: opacidade .90 no modo escuro e .66 no claro. Nome/ano usam `text-on-media`; sobre capa branca opaca, a região textual tem contraste mínimo aproximado de 7.3:1.
 - Chromium com fixtures: shader em desktop/mobile e ambos modos, vinte trocas com um programa, SO em Sistema, movimento reduzido, seletor por teclado e persistência após reload. Perfis próprios/de terceiros com/sem tema e arte de alto contraste: 24 combinações sem overflow; foco local de 2 px e limpeza do contexto ao remover tema. Rede autenticada permanece simulada.
+
+### Restauração histórica (#136)
+
+A revisão #136 substitui as superfícies por grupos e os preenchimentos sólidos introduzidos em #125 pela composição histórica, preservando apenas correções independentes de concorrência, foco, shader e capas. [Comparação histórica, capturas e medições](qa/profile-theme-inheritance/README.md).
