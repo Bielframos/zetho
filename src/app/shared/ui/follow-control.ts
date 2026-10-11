@@ -17,11 +17,11 @@ import { FollowStore } from '../../core/connections/follow.store';
     .follow-primary:hover:not(:disabled) { background: var(--blue-10); border-color: var(--blue-10); }
     .follow-secondary { background: var(--gray-2); color: inherit; }
     .follow-secondary:hover:not(:disabled) { text-decoration: underline; background: var(--gray-3); }
-    .follow-icon { width: 44px; height: 44px; border-color: transparent; background: var(--gray-2); color: inherit; }
-    .follow-icon:hover:not(:disabled) { background: var(--gray-3); }
-    .follow-icon.following { background: var(--gray-3); }
+    .follow-icon { width: 44px; height: 44px; border-color: transparent; background: var(--follow-icon-background, var(--gray-2)); color: inherit; }
+    .follow-icon:hover:not(:disabled) { background: var(--follow-icon-hover, var(--gray-3)); }
+    .follow-icon.following { background: var(--follow-icon-active, var(--gray-3)); }
     .follow-icon:disabled { opacity: .65; }
-    .icon-feedback { position: absolute; top: calc(100% + 6px); right: 0; z-index: 40; width: min(210px, calc(100vw - 64px)); padding: .75rem; border: 1px solid currentColor; border-radius: .5rem; background: var(--gray-2); color: inherit; }
+    .icon-feedback { position: absolute; top: calc(100% + 6px); right: 0; z-index: 40; width: min(210px, calc(100vw - 64px)); padding: .75rem; border: 1px solid currentColor; border-radius: .5rem; background: var(--gray-2); color: var(--follow-feedback-content, inherit); }
     .icon-feedback .follow-error { margin-top: 0; }
     .follow-menu { position: absolute; z-index: 30; right: 0; top: calc(100% + 6px); width: max(100%, 190px); max-width: calc(100vw - 32px); padding: .5rem; background: var(--gray-2); color: inherit; border: 1px solid currentColor; border-radius: .5rem; }
     .follow-menu button { border-color: transparent; white-space: nowrap; }

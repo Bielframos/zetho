@@ -12,7 +12,7 @@
   <!-- Background Image Mask -->
   @if (profileStore.activeTheme()?.backgroundImageId; as imageId) {
   <div
-    class="profile-theme-art absolute inset-0 z-0 pointer-events-none" aria-hidden="true"
+    class="profile-theme-art profile-theme-art-muted absolute inset-0 z-0 pointer-events-none" aria-hidden="true"
   >
     <img [src]="getMediaUrl(imageId)" class="w-full h-full object-cover" alt="" />
   </div>
@@ -23,7 +23,7 @@
       <div class="flex min-w-0 items-center gap-3">
         <img [src]="profileStore.avatarUrl()" alt="{{`Avatar do ${profile?.gamertag}`}}"
           class="profile-theme-avatar rounded-full w-12 h-12 shrink-0 object-cover border border-gray-6" />
-        <div class="profile-theme-copy min-w-0">
+        <div class="min-w-0">
           <h3 class="truncate font-semibold">{{profile?.gamertag}}</h3>
         </div>
       </div>
@@ -38,7 +38,7 @@
     </div>
 
     @if (profile?.bio; as bio) {
-    <p class="profile-theme-copy text-gray-11">{{bio}}</p>
+    <p class="text-gray-11">{{bio}}</p>
     } @if (hasSocialNicks) {
     <div class="flex flex-wrap gap-2 justify-center mt-2">
       <!-- Perfil da Steam -->
@@ -130,7 +130,7 @@
     }
   </ul>
 
-  <div class="profile-theme-surface relative z-10">
+  <div class="relative z-10">
     <ng-container *ngComponentOutlet="layoutStore.sidebarComponent()"></ng-container>
   </div>
 </aside>
