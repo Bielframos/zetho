@@ -6,6 +6,18 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.34.4] - 2026-10-11
+
+### Fixed
+
+- Temas equipados preservam arte e cores do perfil nos modos claro e escuro, com contraste local e proteção contra respostas de temas anteriores.
+- Fundo animado de Próximo jogo acompanha mudanças de aparência sem reiniciar o shader e mantém fallback quando WebGL falha.
+- Hover das capas usa sombra escura com texto legível em ambos os modos.
+
+### Changed
+
+- Seletor de aparência compacto com ícones acessíveis para Claro, Escuro e Sistema.
+
 ## [1.34.3] - 2026-10-11
 
 ### Fixed
