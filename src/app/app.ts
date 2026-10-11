@@ -261,6 +261,7 @@ export class App {
     if (
       !this.authStore.isAuthenticated() ||
       !profile ||
+      !this.authStore.profile() ||
       this.profileStore.itsMe() ||
       this.profileNavigationPending() ||
       path.endsWith('/comparar')

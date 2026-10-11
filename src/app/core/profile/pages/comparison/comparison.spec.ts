@@ -30,7 +30,7 @@ describe('Profile comparison FAB visibility', () => {
     const context = {
       currentPath: () => path,
       profileNavigationPending: () => pending,
-      authStore: { isAuthenticated: () => authenticated },
+      authStore: { isAuthenticated: () => authenticated, profile: () => ({ $id: 'me' }) },
       profileStore: { current: () => profile, itsMe: () => mine },
     } as unknown as App;
     const visible = () => App.prototype.comparisonProfile.call(context);
