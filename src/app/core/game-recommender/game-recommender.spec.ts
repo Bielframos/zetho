@@ -1,5 +1,5 @@
-import { signal } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+import { computed, signal } from '@angular/core';
+import { fakeAsync, tick, TestBed } from '@angular/core/testing';
 import { AuthStore } from '../auth/auth.store';
 import { SeoService } from '../system/seo/seo.service';
 import { GameRecommenderPage } from './game-recommender';
@@ -187,6 +187,22 @@ describe('GameRecommenderPage', () => {
     expect(page.remainingUses()).toBe(5);
     expect(page.dailyLimitReached()).toBeFalse();
   });
+
+  it('reactively unlocks an idle page at the server reset boundary', fakeAsync(() => {
+    page.quota.set({
+      cost: 5,
+      limit: 5,
+      remaining: 0,
+      nextAvailableAt: new Date(Date.now() + 1000).toISOString(),
+    });
+    const disabled = computed(() => page.dailyLimitReached());
+    TestBed.flushEffects();
+    expect(disabled()).toBeTrue();
+    tick(1001);
+    expect(disabled()).toBeFalse();
+    expect(page.remainingUses()).toBe(5);
+    TestBed.resetTestingModule();
+  }));
 
   it('handles the server daily-limit response as terminal for the attempt', async () => {
     const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
