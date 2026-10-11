@@ -24,6 +24,10 @@
   --blue-10: #3659c9;
   --blue-11: #93b4ff;
   --blue-12: #d5e2ff;
+  --recommendation-base: var(--gray-1);
+  --recommendation-accent: var(--blue-9);
+  --recommendation-opacity: .2;
+  --game-card-hover-scrim: rgb(0 0 0 / .9);
   color-scheme: dark;
   --focus-ring: #93b4ff;
   --line-strong: #737b88;
@@ -65,6 +69,10 @@
   --blue-10: #274ba9;
   --blue-11: #234fad;
   --blue-12: #172c60;
+  --recommendation-base: var(--gray-1);
+  --recommendation-accent: var(--blue-9);
+  --recommendation-opacity: .12;
+  --game-card-hover-scrim: rgb(0 0 0 / .66);
   color-scheme: light;
   --focus-ring: #315bc8;
   --line-strong: #737b88;
@@ -107,6 +115,10 @@
   --blue-10: #274ba9;
   --blue-11: #234fad;
   --blue-12: #172c60;
+  --recommendation-base: var(--gray-1);
+  --recommendation-accent: var(--blue-9);
+  --recommendation-opacity: .12;
+  --game-card-hover-scrim: rgb(0 0 0 / .66);
   color-scheme: light;
   --focus-ring: #315bc8;
   --line-strong: #737b88;

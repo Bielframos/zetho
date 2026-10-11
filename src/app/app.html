@@ -49,24 +49,17 @@
         [style.--theme-c2]="profileStore.activeTheme()?.secondaryColor"
         [style.--theme-c3]="profileStore.activeTheme()?.tertiaryColor"
         [profileThemeBackground]="profileStore.activeTheme()?.backgroundColor"
+        [profileThemePalette]="profileStore.activeTheme()"
       [style.background-color]="profileStore.activeTheme()?.backgroundColor"
       >
         <!-- Background Image Mask -->
         @if (profileStore.activeTheme()?.backgroundImageId; as imageId) {
         <div
-          class="absolute inset-0 right-0 w-full z-0 opacity-50 pointer-events-none"
-          style="
-            mask-image: linear-gradient(to bottom, transparent, black 60%);
-            -webkit-mask-image: linear-gradient(
-              to bottom,
-              transparent,
-              black 60%
-            );
-          "
+          class="profile-theme-art absolute inset-0 z-0 pointer-events-none" aria-hidden="true"
         >
           <img
             [src]="getMediaUrl(imageId)"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover" alt=""
           />
         </div>
         }
@@ -85,7 +78,7 @@
               class="profile-theme-avatar h-12 w-12 rounded-full bg-blue-12 object-cover"
             />
 
-            <div class="min-w-0">
+            <div class="profile-theme-copy min-w-0">
               <p class="truncate font-semibold text-gray-12">
                 {{ profileStore.itsMe() ? authStore.user()?.name :
                 profile.gamertag }}
@@ -98,10 +91,10 @@
 
           @if (profile.bio; as bio) {
           <div class="profile-theme-divider border-t border-gray-6 px-4 py-3">
-            <p class="text-sm">{{ bio }}</p>
+            <p class="profile-theme-copy text-sm">{{ bio }}</p>
           </div>
           } @if (profileStore.itsMe()) {
-          <div class="profile-theme-divider border-t border-gray-6 py-3">
+          <div class="profile-theme-surface profile-theme-divider border-t border-gray-6 py-3">
             <app-z-coin-balance></app-z-coin-balance>
           </div>
           } @if (profileSidebarHasSocialNicks) {
@@ -152,7 +145,7 @@
             }
           </ul>
 
-          <div class="py-2">
+          <div class="profile-theme-surface py-2">
             <ng-container
               *ngComponentOutlet="profileLayoutStore.sidebarComponent()"
             ></ng-container>
@@ -168,23 +161,16 @@
         [style.--theme-c2]="authStore.activeTheme()?.secondaryColor"
         [style.--theme-c3]="authStore.activeTheme()?.tertiaryColor"
         [profileThemeBackground]="authStore.activeTheme()?.backgroundColor"
+        [profileThemePalette]="authStore.activeTheme()"
       [style.background-color]="authStore.activeTheme()?.backgroundColor"
       >
         @if (authStore.activeTheme()?.backgroundImageId; as imageId) {
         <div
-          class="absolute inset-0 right-0 w-full z-0 opacity-40 pointer-events-none"
-          style="
-            mask-image: linear-gradient(to bottom, transparent, black 60%);
-            -webkit-mask-image: linear-gradient(
-              to bottom,
-              transparent,
-              black 60%
-            );
-          "
+          class="profile-theme-art absolute inset-0 z-0 pointer-events-none" aria-hidden="true"
         >
           <img
             [src]="getMediaUrl(imageId)"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover" alt=""
           />
         </div>
         }
@@ -202,7 +188,7 @@
               />
             </a>
 
-            <div class="min-w-0">
+            <div class="profile-theme-copy min-w-0">
               <p class="truncate font-semibold text-gray-12">
                 {{ authStore.user()?.name }}
               </p>
@@ -212,7 +198,7 @@
             </div>
           </div>
 
-          <div class="profile-theme-divider mt-4 border-t border-gray-6 py-3">
+          <div class="profile-theme-surface profile-theme-divider mt-4 border-t border-gray-6 py-3">
             <app-z-coin-balance></app-z-coin-balance>
           </div>
         </div>

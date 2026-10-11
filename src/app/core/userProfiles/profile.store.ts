@@ -18,27 +18,23 @@ export class ProfileStore {
       if (target) untracked(() => { void this.follows.ensure(target); });
     });
 
-    effect(() => {
+    effect((onCleanup) => {
       const currentProfile = this._current();
-
-      if (currentProfile?.activeThemeId) {
-        appwrite.databases
-          .getRow<any>({
-            databaseId: 'app',
-            tableId: 'profile_themes',
-            rowId: currentProfile.activeThemeId,
-          })
-          .then((theme) => {
-            if (this._current()?.$id === currentProfile.$id) {
-              this._activeTheme.set(theme as ProfileTheme);
-            }
-          })
-          .catch(() => {
-            this._activeTheme.set(null);
-          });
-      } else {
-        this._activeTheme.set(null);
-      }
+      const themeId = currentProfile?.activeThemeId;
+      let current = true;
+      onCleanup(() => { current = false; });
+      // Never display another profile's (or previous equipment's) artwork while loading.
+      this._activeTheme.set(null);
+      if (!themeId) return;
+      appwrite.databases.getRow<any>({
+        databaseId: 'app', tableId: 'profile_themes', rowId: themeId,
+      }).then((theme) => {
+        if (current && this._current()?.$id === currentProfile.$id &&
+            this._current()?.activeThemeId === themeId) this._activeTheme.set(theme as ProfileTheme);
+      }).catch(() => {
+        if (current && this._current()?.$id === currentProfile.$id &&
+            this._current()?.activeThemeId === themeId) this._activeTheme.set(null);
+      });
     });
   }
 
