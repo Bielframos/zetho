@@ -5,6 +5,7 @@ import {
   inject,
   OnDestroy,
   signal,
+  SecurityContext,
   untracked,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -51,7 +52,9 @@ import { createSsrTaskRunner } from '../../../utils/ssr-task';
                 {{ item.subtitle }}
               </p>
             }
-            <div class="mt-4 flex flex-wrap items-center gap-2 text-xs text-gray-10">
+            <div
+              class="mt-4 flex flex-wrap items-center gap-2 text-xs text-gray-10"
+            >
               <span>{{ formatDate(item.$createdAt) }}</span>
               @if (item.author?.name) {
                 <span>· por {{ item.author?.name }}</span>
@@ -69,6 +72,27 @@ import { createSsrTaskRunner } from '../../../utils/ssr-task';
               }
             </div>
           </header>
+          @if (editorialImage(); as image) {
+            <figure class="border-b border-gray-6 px-4 py-4">
+              <img
+                [src]="image.url"
+                [alt]="image.alt"
+                class="h-auto max-h-[32rem] w-full object-contain"
+                decoding="async"
+                (error)="imageFailed.set(true)"
+              />
+              <figcaption class="mt-2 text-xs text-gray-10">
+                Imagem: {{ image.credit }} ·
+                <a
+                  [href]="image.sourceUrl"
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  class="text-blue-11 hover:underline"
+                  >Fonte</a
+                >
+              </figcaption>
+            </figure>
+          }
           <div
             class="prose prose-invert prose-sm max-w-none px-4 py-6 text-gray-11 prose-headings:text-gray-12 prose-a:text-blue-11 prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg"
             [innerHTML]="renderedBody()"
@@ -126,11 +150,48 @@ export class NewsDetailPage implements OnDestroy {
   private runAsSsrTask = createSsrTaskRunner();
   news = signal<NewsDetail | null>(null);
   loading = signal(true);
+  readonly imageFailed = signal(false);
+  readonly editorialImage = computed(() => {
+    const image = this.news()?.mainImage;
+    if (
+      this.imageFailed() ||
+      !image?.url ||
+      !image.alt?.trim() ||
+      !image.credit?.trim() ||
+      !image.sourceUrl
+    )
+      return null;
+    try {
+      const url = new URL(image.url);
+      const source = new URL(image.sourceUrl);
+      if (
+        url.protocol !== 'https:' ||
+        source.protocol !== 'https:' ||
+        url.username ||
+        source.username
+      )
+        return null;
+      return {
+        url: url.href,
+        alt: image.alt,
+        credit: image.credit,
+        sourceUrl: source.href,
+      };
+    } catch {
+      return null;
+    }
+  });
 
   renderedBody = computed<SafeHtml>(() => {
     const item = this.news();
     if (!item?.body) return '';
-    const transformed = this.renderYoutube(item.body);
+    // Preserve only known YouTube embeds as safe placeholders before sanitizing legacy HTML.
+    const source = item.body.replace(
+      /<iframe\b[^>]*\bsrc=["']https:\/\/www\.youtube\.com\/embed\/([a-zA-Z0-9_-]{11})["'][^>]*>[\s\S]*?<\/iframe>/gi,
+      '[youtube:$1]',
+    );
+    const cleaned = this.sanitizer.sanitize(SecurityContext.HTML, source) ?? '';
+    const transformed = this.renderYoutube(cleaned);
     return this.sanitizer.bypassSecurityTrustHtml(transformed);
   });
 
@@ -157,6 +218,7 @@ export class NewsDetailPage implements OnDestroy {
   private async loadInternal(slug: string) {
     this.loading.set(true);
     this.news.set(null);
+    this.imageFailed.set(false);
     try {
       const news = await this.service.findBySlug(slug);
       if (!news) {
@@ -200,6 +262,7 @@ export class NewsDetailPage implements OnDestroy {
       });
     } catch {
       this.news.set(null);
+      this.imageFailed.set(false);
     } finally {
       this.loading.set(false);
     }
