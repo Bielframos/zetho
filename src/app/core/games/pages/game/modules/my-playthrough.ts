@@ -54,7 +54,7 @@ import { ZEntryService } from '../../../../zEntries/zEntries.service';
               <p class="mt-2 text-xs text-gray-11">Carregando plataformas…</p>
             }
             @if (platformsError()) {
-              <p role="alert" class="mt-2 text-sm text-red-11">
+              <p role="alert" class="mt-2 text-sm text-danger">
                 {{ platformsError() }}
               </p>
               <button
@@ -75,7 +75,7 @@ import { ZEntryService } from '../../../../zEntries/zEntries.service';
           <label class="grid gap-2 text-sm text-gray-11"
             >Horas jogadas
             <input
-              class="playtime-input min-h-12 w-full rounded-lg border border-gray-6 bg-gray-2 px-3 py-2 text-gray-12 focus:outline-none focus:ring-2 focus:ring-blue-6"
+              class="playtime-input min-h-12 w-full rounded-lg border border-gray-6 bg-gray-2 px-3 py-2 text-gray-12 focus:outline-none focus:ring-2 focus:ring-focus-ring"
               type="number"
               min="0"
               max="35791394"
@@ -103,13 +103,13 @@ import { ZEntryService } from '../../../../zEntries/zEntries.service';
         @if (error()) {
           <p
             role="alert"
-            class="rounded-lg border border-red-6 bg-red-3/30 p-3 text-sm text-red-11"
+            class="rounded-lg border border-danger-line bg-danger-bg p-3 text-sm text-danger"
           >
             {{ error() }}
           </p>
         }
         @if (success()) {
-          <p role="status" class="text-sm text-green-11">Jogatina salva.</p>
+          <p role="status" class="text-sm text-success">Jogatina salva.</p>
         }
         <div class="flex justify-end">
           <button

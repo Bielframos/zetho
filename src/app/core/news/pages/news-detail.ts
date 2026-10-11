@@ -94,7 +94,7 @@ import { createSsrTaskRunner } from '../../../utils/ssr-task';
             </figure>
           }
           <div
-            class="prose prose-invert prose-sm max-w-none px-4 py-6 text-gray-11 prose-headings:text-gray-12 prose-a:text-blue-11 prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg"
+            class="prose  prose-sm max-w-none px-4 py-6 text-gray-11 prose-headings:text-gray-12 prose-a:text-blue-11 prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg"
             [innerHTML]="renderedBody()"
           ></div>
           @if (item.relatedGames.length || item.originalSourceUrl) {

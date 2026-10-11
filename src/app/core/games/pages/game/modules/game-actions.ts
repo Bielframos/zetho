@@ -20,7 +20,7 @@ import { ZereiListRow } from '../../../../lists/lists.type';
       [aria-label]="gameController.zEntry()?.liked ? 'Descurtir' : 'Curtir'"
     >
       @if (gameController.zEntry()?.liked) {
-        <i class="ph-fill ph-heart text-red-400"></i>
+        <i class="ph-fill ph-heart text-danger"></i>
       } @else {
         <i class="ph ph-heart"></i>
       }
@@ -35,7 +35,7 @@ import { ZereiListRow } from '../../../../lists/lists.type';
         [aria-label]="gameController.zEntry()?.hyped ? 'Remover hype' : 'Hypar'"
       >
         @if (gameController.zEntry()?.hyped) {
-          <i class="ph-fill ph-fire text-orange-400"></i>
+          <i class="ph-fill ph-fire text-warning"></i>
         } @else {
           <i class="ph ph-fire"></i>
         }
@@ -55,7 +55,7 @@ import { ZereiListRow } from '../../../../lists/lists.type';
       "
     >
       @if (gameController.notificationsEnabled()) {
-        <i class="ph-fill ph-bell-ringing text-blue-9"></i>
+        <i class="ph-fill ph-bell-ringing text-link"></i>
       } @else {
         <i class="ph ph-bell"></i>
       }
@@ -73,7 +73,7 @@ import { ZereiListRow } from '../../../../lists/lists.type';
       data-size="icon"
     >
       @if (gameController.zEntry()?.status === 'wishlist') {
-        <i class="ph-fill ph-shopping-bag-open text-blue-9"></i>
+        <i class="ph-fill ph-shopping-bag-open text-link"></i>
       } @else {
         <i class="ph ph-shopping-bag"></i>
       }
@@ -110,7 +110,7 @@ import { ZereiListRow } from '../../../../lists/lists.type';
             class="flex flex-1 cursor-pointer gap-2 p-4 text-gray-11 transition-colors has-checked:bg-blue-4 hover:bg-gray-3 hover:text-gray-12"
           >
             @if (selectedList()?.$id === list.$id) {
-              <i class="ph-fill ph-radio-button text-blue-9"></i>
+              <i class="ph-fill ph-radio-button text-link"></i>
             } @else {
               <i class="ph ph-circle text-gray-6"></i>
             }

@@ -29,7 +29,7 @@
         <div class="h-24" aria-hidden="true"></div>
         <a
           [routerLink]="['/player', comparedProfile.gamertag, 'comparar']"
-          class="profile-comparison-fab ui-primary-btn min-h-11 gap-2 shadow-lg focus-visible:ring-2 focus-visible:ring-blue-6"
+          class="profile-comparison-fab ui-primary-btn min-h-11 gap-2 shadow-lg focus-visible:ring-2 focus-visible:ring-focus-ring"
         >
           <i class="ph ph-intersect" aria-hidden="true"></i>Comparar comigo
         </a>
@@ -48,7 +48,8 @@
         [style.--theme-c1]="profileStore.activeTheme()?.primaryColor"
         [style.--theme-c2]="profileStore.activeTheme()?.secondaryColor"
         [style.--theme-c3]="profileStore.activeTheme()?.tertiaryColor"
-        [style.background-color]="profileStore.activeTheme()?.backgroundColor"
+        [profileThemeBackground]="profileStore.activeTheme()?.backgroundColor"
+      [style.background-color]="profileStore.activeTheme()?.backgroundColor"
       >
         <!-- Background Image Mask -->
         @if (profileStore.activeTheme()?.backgroundImageId; as imageId) {
@@ -179,7 +180,8 @@
         [style.--theme-c1]="authStore.activeTheme()?.primaryColor"
         [style.--theme-c2]="authStore.activeTheme()?.secondaryColor"
         [style.--theme-c3]="authStore.activeTheme()?.tertiaryColor"
-        [style.background-color]="authStore.activeTheme()?.backgroundColor"
+        [profileThemeBackground]="authStore.activeTheme()?.backgroundColor"
+      [style.background-color]="authStore.activeTheme()?.backgroundColor"
       >
         @if (authStore.activeTheme()?.backgroundImageId; as imageId) {
         <div
@@ -441,7 +443,7 @@
       class="flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-sm text-gray-11"
       aria-label="Rodapé"
     >
-      <a routerLink="/sobre" class="text-sm hover:text-blue-9 hover:underline">
+      <a routerLink="/sobre" class="text-sm hover:text-link hover:underline">
         Sobre
       </a>
 
@@ -449,7 +451,7 @@
 
       <a
         routerLink="/contato"
-        class="text-sm hover:text-blue-9 hover:underline"
+        class="text-sm hover:text-link hover:underline"
       >
         Contato
       </a>
@@ -458,14 +460,14 @@
 
       <a
         routerLink="/politica-editorial"
-        class="text-sm hover:text-blue-9 hover:underline"
+        class="text-sm hover:text-link hover:underline"
       >
         Política Editorial
       </a>
 
       <span>•</span>
 
-      <a routerLink="/termos" class="text-sm hover:text-blue-9 hover:underline">
+      <a routerLink="/termos" class="text-sm hover:text-link hover:underline">
         Termos
       </a>
 
@@ -473,7 +475,7 @@
 
       <a
         routerLink="/privacidade"
-        class="text-sm hover:text-blue-9 hover:underline"
+        class="text-sm hover:text-link hover:underline"
       >
         Privacidade
       </a>
@@ -482,20 +484,21 @@
 
       <a
         routerLink="/changelog"
-        class="text-sm hover:text-blue-9 hover:underline"
+        class="text-sm hover:text-link hover:underline"
       >
         Changelog
       </a>
 
       @if (authStore.isAdmin()) {
       <span>•</span>
-      <a routerLink="/admin" class="text-sm hover:text-blue-9 hover:underline">
+      <a routerLink="/admin" class="text-sm hover:text-link hover:underline">
         Admin
       </a>
       }
 
       <span>•</span>
 
+      <ui-color-mode-selector />
       <span>v{{ appVersion }}</span>
     </nav>
   </footer>
@@ -516,7 +519,7 @@
         ariaCurrentWhenActive="page"
         [routerLinkActiveOptions]="{ exact: item.label === 'Feed' }"
         (click)="closeMobileMenu()"
-        class="flex items-center gap-3 rounded-lg px-3 py-3 text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12 focus-visible:ring-2 focus-visible:ring-blue-6"
+        class="flex items-center gap-3 rounded-lg px-3 py-3 text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12 focus-visible:ring-2 focus-visible:ring-focus-ring"
       >
         <i class="ph {{ item.icon }}" aria-hidden="true"></i
         ><span>{{ item.label }}</span> @if (item.label === 'Buscar') {
@@ -532,6 +535,7 @@
   </nav>
 </ng-template>
 <ng-template #secondaryNavigation>
+  <ui-color-mode-selector />
   <nav class="mt-4 flex flex-col gap-1">
     @if (authStore.user()) {
     <a

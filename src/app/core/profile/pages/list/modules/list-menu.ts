@@ -52,7 +52,7 @@ import { ListController } from '../../../../lists/list.controller';
           </div>
 
           <div ngMenuItem value="Excluir lista" (click)="handleDeleteList()">
-            <i class="ph ph-trash text-red-300" aria-hidden="true"> </i>
+            <i class="ph ph-trash text-danger" aria-hidden="true"> </i>
             <span class="label">Excluir lista</span>
           </div>
         </ng-template>
@@ -92,7 +92,7 @@ import { ListController } from '../../../../lists/list.controller';
             <textarea
               name="listDescription"
               placeholder="Uma lista com os 100 melhores jogos de todos os tempos, selecionados com muito carinho."
-              class="border rounded-lg px-4 w-full py-2 font-light bg-blue-1/60 border-gray-6 placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11 min-h-[80px] max-h-[160px] mb-4"
+              class="border rounded-lg px-4 w-full py-2 font-light bg-blue-1/60 border-gray-6 placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-focus-ring transition-colors duration-200 ease-in-out disabled:border-gray-3 disabled:bg-transparent disabled:text-gray-11 min-h-[80px] max-h-[160px] mb-4"
               formControlName="listDescription"
             ></textarea>
 

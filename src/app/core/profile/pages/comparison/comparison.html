@@ -15,7 +15,7 @@
     @for (tab of tabs; track tab.key) {
     <button
       type="button"
-      class="shrink-0 border-b-2 px-3 py-4 text-sm focus-visible:ring-2 focus-visible:ring-blue-6"
+      class="shrink-0 border-b-2 px-3 py-4 text-sm focus-visible:ring-2 focus-visible:ring-focus-ring"
       [class.border-blue-9]="view() === tab.key"
       [class.border-transparent]="view() !== tab.key"
       [attr.aria-pressed]="view() === tab.key"
@@ -73,7 +73,7 @@
     <article class="p-4">
       <a
         [routerLink]="['/jogo', row.game.slug]"
-        class="flex items-center gap-3 hover:text-blue-11 focus-visible:ring-2 focus-visible:ring-blue-6"
+        class="flex items-center gap-3 hover:text-blue-11 focus-visible:ring-2 focus-visible:ring-focus-ring"
       >
         @if (row.game.coverUrl) {
         <img
@@ -115,7 +115,7 @@
         à lista de desejos' }}
       </button>
       @if (actionErrors()[row.game.id]) {
-      <p class="mt-2 text-sm text-red-11" role="alert">
+      <p class="mt-2 text-sm text-danger" role="alert">
         {{ actionErrors()[row.game.id] }}
       </p>
       } }

@@ -28,13 +28,13 @@
         aria-label="Curtir lista"
       >
         <i
-          [class]="socialState()?.likedByMe ? 'ph-fill ph-heart text-red-400' : 'ph ph-heart'"
+          [class]="socialState()?.likedByMe ? 'ph-fill ph-heart text-danger' : 'ph ph-heart'"
         ></i>
       </button>
       <button
         type="button"
         class="flex h-9 w-9 cursor-pointer items-center justify-center border border-gray-6 hover:bg-gray-3"
-        [class.text-blue-9]="socialState()?.savedByMe"
+        [class.text-link]="socialState()?.savedByMe"
         (click)="toggleSave()"
         aria-label="Salvar lista"
       >

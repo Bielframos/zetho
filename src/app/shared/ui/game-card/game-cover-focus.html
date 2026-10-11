@@ -64,7 +64,7 @@
           'Carregando registro…' }}</span
         >
         } @else if (error()) {
-        <p class="text-sm text-red-400">{{ error() }}</p>
+        <p class="text-sm text-danger">{{ error() }}</p>
         @if (loadError()) {
         <button
           type="button"

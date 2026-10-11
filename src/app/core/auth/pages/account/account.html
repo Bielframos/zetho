@@ -10,7 +10,7 @@
 
     @if (!authStore.user()?.emailVerification) {
     <div
-      class="mt-6 p-4 flex flex-col border border-amber-400/40 bg-amber-400/10"
+      class="mt-6 p-4 flex flex-col border border-warning-line bg-warning-bg"
     >
       <h4 class="font-medium text-lg mb-2 w-full">E-mail não verificado</h4>
       <span class="text-gray-11"
@@ -18,11 +18,11 @@
       >
       <div class="flex items-end justify-between gap-4">
         @if (mailVerification().sended) {
-        <small class="text-red text-green-300"
+        <small class="text-red text-success"
           >Confira sua caixa de e-mail.</small
         >
         } @else if (mailVerification().error) {
-        <small class="text-red text-red-300"
+        <small class="text-red text-danger"
           >Erro ao enviar e-mail de verificação.</small
         >
         }
@@ -92,7 +92,7 @@
       />
 
       @if (name.errors?.['invalidName']) {
-      <small class="text-red px-4 text-red-300 -mt-2">O nome é inválido</small>
+      <small class="text-red px-4 text-danger -mt-2">O nome é inválido</small>
       }
       <button
         type="submit"
@@ -120,14 +120,14 @@
           @if(gamertag.pending) {
           <ui-loading [inline]="true" size="sm"></ui-loading>
           } @else if(gamertag.errors?.['gamertagTaken'] && gamertag.dirty) {
-          <i class="ph ph-x-circle text-md text-red-600"></i>
+          <i class="ph ph-x-circle text-md text-danger"></i>
           } @else if(gamertag.valid && gamertag.dirty) {
-          <i class="ph ph-check-circle text-md text-green-600"></i>
+          <i class="ph ph-check-circle text-md text-success"></i>
           }
         </div>
 
         @if (gamertag.errors?.['invalidGamertagFormat']) {
-        <small class="text-red px-4 text-red-300"
+        <small class="text-red px-4 text-danger"
           >Use apenas letras, números e _</small
         >
         }
@@ -155,7 +155,7 @@
         name="bio"
         id="bio"
         placeholder="Diga algo sobre você…"
-        class="mt-1.5 rounded-lg px-4 w-full py-2 font-light border border-gray-6 bg-transparent placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors duration-200 ease-in-out disabled:bg-transparent min-h-[64px] max-h-[160px]"
+        class="mt-1.5 rounded-lg px-4 w-full py-2 font-light border border-gray-6 bg-transparent placeholder:text-gray-10 text-gray-12 outline-none focus:ring-2 focus:ring-focus-ring transition-colors duration-200 ease-in-out disabled:bg-transparent min-h-[64px] max-h-[160px]"
         [formControl]="bio"
         maxlength="128"
         required
@@ -165,8 +165,8 @@
         <div>
           <small
             class="transition-colors"
-            [class.text-green-300]="bioCharsCount() > 0 && bioCharsCount() < 128"
-            [class.text-red-300]="bioCharsCount() > 350"
+            [class.text-success]="bioCharsCount() > 0 && bioCharsCount() < 128"
+            [class.text-danger]="bioCharsCount() > 350"
           >
             <span>{{ bioCharsCount() }}</span>
             /128
@@ -309,7 +309,7 @@
     <div class="flex flex-col gap-4 w-full">
       @if (isThemesLoading()) {
       <div class="flex justify-center py-8">
-        <i class="ph ph-spinner animate-spin text-3xl text-blue-9"></i>
+        <i class="ph ph-spinner animate-spin text-3xl text-link"></i>
       </div>
       } @else {
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gray-6">
@@ -387,7 +387,7 @@
     <h2 class="text-2xl">Zona de risco</h2>
   </header>
 
-  <section class="p-4 flex flex-col bg-red-950/10">
+  <section class="p-4 flex flex-col bg-danger-bg">
     <h4 class="font-medium text-lg mb-2 w-full">Excluir minha conta</h4>
     <span class="text-gray-11">
       Ao excluir sua conta todos os seus dados e registros serão perdidos.
@@ -423,7 +423,7 @@
       required
     ></ui-input>
     } @else {
-    <div class="mt-6 p-4 border border-amber-400/40 bg-amber-400/10">
+    <div class="mt-6 p-4 border border-warning-line bg-warning-bg">
       <p>
         Sua conta será <strong>permanentemente excluída</strong>. todos os seus
         dados e conquistas no Zetho serão perdidos sem possibilidade de
@@ -437,25 +437,25 @@
       </p>
       <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <li class="flex items-center gap-2 p-2 rounded-lg border border-gray-6">
-          <span class="font-bold text-blue-9"
+          <span class="font-bold text-link"
             >{{ authStore.profile()?.totalsCompleted }}</span
           >
           <span>Jogos zerados</span>
         </li>
         <li class="flex items-center gap-2 p-2 rounded-lg border border-gray-6">
-          <span class="font-bold text-purple-400"
+          <span class="font-bold text-info"
             >{{ authStore.profile()?.totalsPlaying }}</span
           >
           <span>Jogando</span>
         </li>
         <li class="flex items-center gap-2 p-2 rounded-lg border border-gray-6">
-          <span class="font-bold text-green-400"
+          <span class="font-bold text-success"
             >{{ authStore.profile()?.totalsBacklog }}</span
           >
           <span>Na backlog</span>
         </li>
         <li class="flex items-center gap-2 p-2 rounded-lg border border-gray-6">
-          <span class="font-bold text-red-400"
+          <span class="font-bold text-danger"
             >{{ authStore.profile()?.totalsDropped }}</span
           >
           <span>Abandonados</span>

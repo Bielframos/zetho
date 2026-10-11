@@ -35,7 +35,7 @@
           />
           @if ( raffleForm.controls.gameId.touched &&
           raffleForm.controls.gameId.invalid ) {
-          <small class="text-red-300 px-4">Informe o ID do jogo.</small>
+          <small class="text-danger px-4">Informe o ID do jogo.</small>
           }
         </div>
 
@@ -46,7 +46,7 @@
           <select
             id="rewardPolicy"
             [formControl]="raffleForm.controls.rewardPolicy"
-            class="rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-blue-6 transition-colors"
+            class="rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 outline-none focus:ring-2 focus:ring-focus-ring transition-colors"
           >
             <option value="one_key">Primeiro a chegar</option>
             <option value="all_keys">Até esgotarem as chaves</option>
@@ -90,7 +90,7 @@
           [formControl]="raffleForm.controls.keysText"
           placeholder="XXXX-YYYY-ZZZZ,steam&#10;AAAA-BBBB-CCCC,playstation"
           rows="5"
-          class="rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 font-mono text-sm outline-none focus:ring-2 focus:ring-blue-6 transition-colors resize-y"
+          class="rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 font-mono text-sm outline-none focus:ring-2 focus:ring-focus-ring transition-colors resize-y"
         ></textarea>
       </div>
       }
@@ -121,16 +121,16 @@
 
       @if (createResult(); as result) {
       <div
-        class="p-3 rounded-lg border border-green-700/40 bg-green-900/20 text-green-200"
+        class="p-3 rounded-lg border border-success-line bg-success-bg text-success"
       >
         Sorteio criado com sucesso.
-        <small class="block mt-0.5 text-green-300/70"
+        <small class="block mt-0.5 text-success"
           >ID: {{ result.$id }}</small
         >
       </div>
       } @if (createError(); as msg) {
       <div
-        class="p-3 rounded-lg border border-red-700/40 bg-red-900/20 text-red-200"
+        class="p-3 rounded-lg border border-danger-line bg-danger-bg text-danger"
       >
         {{ msg }}
       </div>
@@ -158,12 +158,12 @@
 
     @if (activateError(); as msg) {
     <div
-      class="mt-4 p-3 rounded-lg border border-red-700/40 bg-red-900/20 text-red-200 text-sm"
+      class="mt-4 p-3 rounded-lg border border-danger-line bg-danger-bg text-danger text-sm"
     >
       {{ msg }}
     </div>
     } @if (listError()) {
-    <p class="mt-4 text-red-300 text-sm">{{ listError() }}</p>
+    <p class="mt-4 text-danger text-sm">{{ listError() }}</p>
     } @else if (listLoading() && raffles().length === 0) {
     <div class="mt-4">
       <ui-loading fallback="Carregando..."></ui-loading>
@@ -201,7 +201,7 @@
           <div class="flex items-center gap-2 flex-wrap self-end">
             @if (raffle.active) {
             <span
-              class="rounded-full bg-green-900/40 border border-green-700/40 text-green-300 text-xs px-2 py-0.5"
+              class="rounded-full bg-success-bg border border-success-line text-success text-xs px-2 py-0.5"
             >
               Ativo
             </span>
@@ -251,7 +251,7 @@
               (input)="addKeysText.set($any($event.target).value)"
               placeholder="XXXX-YYYY-ZZZZ,steam&#10;AAAA-BBBB-CCCC,playstation"
               rows="4"
-              class="rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 font-mono text-sm outline-none focus:ring-2 focus:ring-blue-6 transition-colors resize-y"
+              class="rounded-lg border border-gray-6 bg-transparent px-3 py-2.5 text-gray-12 font-mono text-sm outline-none focus:ring-2 focus:ring-focus-ring transition-colors resize-y"
             ></textarea>
           </div>
 
@@ -279,9 +279,9 @@
           </div>
 
           @if (addKeysResult(); as msg) {
-          <p class="text-green-300 text-sm">{{ msg }}</p>
+          <p class="text-success text-sm">{{ msg }}</p>
           } @if (addKeysError(); as msg) {
-          <p class="text-red-300 text-sm">{{ msg }}</p>
+          <p class="text-danger text-sm">{{ msg }}</p>
           }
         </div>
         }

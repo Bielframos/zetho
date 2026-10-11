@@ -19,9 +19,9 @@ import { NotificationStore } from './notification.store';
           [class.animate-toast-in]="!n.closing"
           [class.animate-toast-out]="n.closing"
           [ngClass]="{
-            'border-t-green-400': n.type === 'success',
+            'border-t-success-line': n.type === 'success',
             'border-t-blue-9': n.type === 'info',
-            'border-t-red-400': n.type === 'error',
+            'border-t-danger-line': n.type === 'error',
           }"
         >
           @if (n.type !== 'error') {

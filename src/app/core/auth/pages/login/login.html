@@ -39,7 +39,7 @@
         </div>
         <div class="flex gap-3 border-b border-gray-6 pb-4">
           <span
-            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-3 text-[#f7d154]"
+            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-3 text-warning"
           >
             <i class="ph-fill ph-star"></i>
           </span>
@@ -52,7 +52,7 @@
         </div>
         <div class="flex gap-3 border-b border-gray-6 pb-4">
           <span
-            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-3 text-green-300"
+            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-3 text-success"
           >
             <i class="ph-fill ph-ranking"></i>
           </span>
@@ -76,7 +76,7 @@
           Novo por aqui?
           <a
             routerLink="/registrar"
-            class="text-blue-11 transition-colors hover:text-blue-9 hover:underline"
+            class="text-blue-11 transition-colors hover:text-link hover:underline"
             >Crie seu perfil gamer</a
           >.
         </p>
@@ -106,14 +106,14 @@
 
         <a
           routerLink="/recuperar-senha"
-          class="-mt-1 self-end text-sm text-blue-11 transition-colors hover:text-blue-9 hover:underline"
+          class="-mt-1 self-end text-sm text-blue-11 transition-colors hover:text-link hover:underline"
         >
           Esqueceu sua senha?
         </a>
 
         @if (result().message) {
         <small
-          class="rounded-lg border border-red-700/40 bg-red-900/20 p-3 text-red-300"
+          class="rounded-lg border border-danger-line bg-danger-bg p-3 text-danger"
         >
           {{ result().message }}
         </small>
@@ -121,7 +121,7 @@
 
         <button
           type="submit"
-          class="mt-2 inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-blue-9 px-5 text-base font-medium text-white transition-colors hover:bg-blue-10 focus:outline-none focus:ring-2 focus:ring-blue-6 disabled:pointer-events-none disabled:bg-gray-5 disabled:text-gray-10"
+          class="mt-2 inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-blue-9 px-5 text-base font-medium text-white transition-colors hover:bg-blue-10 focus:outline-none focus:ring-2 focus:ring-focus-ring disabled:pointer-events-none disabled:bg-gray-5 disabled:text-gray-10"
           [disabled]="isLoading()"
         >
           @if (isLoading()) {

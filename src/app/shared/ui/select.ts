@@ -45,7 +45,7 @@ export interface UiSelectOption {
         [disabled]="disabled()"
         (click)="toggle()"
         (keydown)="onKeydown($event)"
-        class="flex min-h-12 w-full items-center gap-3 rounded-lg border border-gray-6 bg-gray-2 px-3 py-2 text-left text-sm text-gray-12 transition-colors hover:border-gray-8 focus:outline-none focus:ring-2 focus:ring-blue-6 disabled:cursor-not-allowed disabled:opacity-50"
+        class="flex min-h-12 w-full items-center gap-3 rounded-lg border border-line-strong bg-gray-2 px-3 py-2 text-left text-sm text-gray-12 transition-colors hover:border-gray-8 focus:outline-none focus:ring-2 focus:ring-focus-ring disabled:cursor-not-allowed disabled:opacity-50"
       >
         @if (selected()?.logo; as logo) {
           <span
@@ -68,7 +68,7 @@ export interface UiSelectOption {
       </button>
       @if (open() && !disabled()) {
         <div
-          class="absolute inset-x-0 top-full z-30 mt-2 overflow-hidden rounded-lg border border-gray-6 bg-gray-2 shadow-xl"
+          class="absolute inset-x-0 top-full z-30 mt-2 overflow-hidden rounded-lg border border-line-strong bg-gray-2 shadow-xl"
         >
           @if (searchable()) {
             <input
@@ -86,7 +86,7 @@ export interface UiSelectOption {
               (keydown)="onKeydown($event)"
               placeholder="Buscar plataforma…"
               autocomplete="off"
-              class="w-full border-b border-gray-6 bg-transparent px-3 py-3 text-sm text-gray-12 outline-none focus:ring-2 focus:ring-inset focus:ring-blue-6"
+              class="w-full border-b border-line-strong bg-transparent px-3 py-3 text-sm text-gray-12 outline-none focus:ring-2 focus:ring-inset focus:ring-focus-ring"
             />
           }
           <div

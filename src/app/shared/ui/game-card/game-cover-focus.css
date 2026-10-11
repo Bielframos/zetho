@@ -28,7 +28,7 @@
 .focus-scrim {
   position: fixed;
   inset: 0;
-  background: rgb(0 0 0 / 0.82);
+  background: var(--color-media-overlay);
 }
 .focus-layout {
   position: relative;
@@ -56,6 +56,11 @@
   gap: 16px;
   width: min(100%, clamp(180px, 34dvh, 280px));
   pointer-events: auto;
+  padding: 16px;
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-content);
 }
 .focus-actions { @apply overflow-hidden border border-gray-6 bg-gray-2; }
 .focus-action {
@@ -63,15 +68,41 @@
 }
 .focus-action:nth-child(odd) { @apply border-r border-gray-6; }
 .focus-action:nth-child(-n + 2) { @apply border-b border-gray-6; }
-.focus-action[data-status='completed']:hover { @apply bg-blue-9 text-white; }
-.focus-action[data-status='backlog']:hover { @apply bg-green-600/10 text-green-300; }
-.focus-action[data-status='playing']:hover { @apply bg-purple-600/10 text-purple-300; }
-.focus-action[data-status='dropped']:hover { @apply bg-red-600/10 text-red-300; }
-.focus-action.is-selected[data-status='completed'] { @apply bg-blue-9 text-white hover:bg-blue-10; }
-.focus-action.is-selected[data-status='backlog'] { @apply bg-green-400 text-white hover:bg-transparent hover:text-green-300; }
-.focus-action.is-selected[data-status='playing'] { @apply bg-purple-400 text-white hover:bg-transparent hover:text-purple-300; }
-.focus-action.is-selected[data-status='dropped'] { @apply bg-red-400 text-white hover:bg-transparent hover:text-red-300; }
-.focus-action:focus-visible { outline: 2px solid var(--color-blue-6); outline-offset: -3px; }
+.focus-action[data-status='completed'] {
+  --status-bg: var(--color-accent);
+  --status-content: var(--color-on-accent);
+}
+.focus-action[data-status='backlog'] {
+  --status-bg: var(--color-success-bg);
+  --status-content: var(--color-success);
+}
+.focus-action[data-status='playing'] {
+  --status-bg: var(--color-info-bg);
+  --status-content: var(--color-info);
+}
+.focus-action[data-status='dropped'] {
+  --status-bg: var(--color-danger-bg);
+  --status-content: var(--color-danger);
+}
+.focus-action:hover:not(:disabled),
+.focus-action.is-selected {
+  background: var(--status-bg);
+  color: var(--status-content);
+}
+/* Selection remains explicit via the existing check icon and aria-pressed. */
+.focus-action:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: -4px;
+}
+.focus-action[data-status='completed']:is(:hover, .is-selected):focus-visible {
+  outline-color: var(--color-on-accent);
+}
+.focus-feedback p {
+  color: var(--color-content-muted);
+}
+.focus-feedback p.text-red-400 {
+  color: var(--color-danger);
+}
 .focus-action:active:not(:disabled) > :not(.absolute) { transform: scale(.94); }
 .focus-feedback {
   min-height: 20px;

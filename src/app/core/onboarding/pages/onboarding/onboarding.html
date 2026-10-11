@@ -55,7 +55,7 @@
   } @else { @if (actionError()) {
   <div
     role="alert"
-    class="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-red-6 bg-red-3/30 p-3 text-sm"
+    class="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-danger-line bg-danger-bg p-3 text-sm"
   >
     <p class="flex-1">{{ actionError() }}</p>
     <button class="ui-secondary-btn" [disabled]="busy()" (click)="retry()">
@@ -101,7 +101,7 @@
             >
             <select
               [id]="'saved-' + game.$id"
-              class="mt-2 min-h-11 max-w-full rounded-lg border border-gray-6 bg-gray-2 px-2 text-sm focus:ring-2 focus:ring-blue-6"
+              class="mt-2 min-h-11 max-w-full rounded-lg border border-gray-6 bg-gray-2 px-2 text-sm focus:ring-2 focus:ring-focus-ring"
               [disabled]="pending().has(game.$id)"
               (change)="onStatusChange(game, $event)"
             >
@@ -139,7 +139,7 @@
         type="search"
         autocomplete="off"
         placeholder="Ex.: Minecraft, Stardew Valley…"
-        class="min-h-11 w-full rounded-lg border border-gray-6 bg-transparent px-3 text-gray-12 placeholder:text-gray-10 focus:outline-none focus:ring-2 focus:ring-blue-6"
+        class="min-h-11 w-full rounded-lg border border-gray-6 bg-transparent px-3 text-gray-12 placeholder:text-gray-10 focus:outline-none focus:ring-2 focus:ring-focus-ring"
         [value]="query()"
         (input)="onQueryInput($any($event.target).value)"
       />
@@ -181,7 +181,7 @@
           >
           <select
             [id]="'result-' + game.$id"
-            class="mt-2 min-h-11 w-full rounded-lg border border-gray-6 bg-gray-2 px-1 text-xs focus:ring-2 focus:ring-blue-6"
+            class="mt-2 min-h-11 w-full rounded-lg border border-gray-6 bg-gray-2 px-1 text-xs focus:ring-2 focus:ring-focus-ring"
             [disabled]="pending().has(game.$id)"
             (change)="onStatusChange(game, $event)"
           >
