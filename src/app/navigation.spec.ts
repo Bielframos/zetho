@@ -96,3 +96,18 @@ describe('Global search shortcut', () => {
     input.remove();
   });
 });
+
+describe('Onboarding navigation shell', () => {
+  it('uses a focused shell only on the onboarding route', () => {
+    expect(
+      App.prototype.isOnboardingRoute.call({
+        currentPath: () => '/comecar',
+      } as unknown as App),
+    ).toBeTrue();
+    expect(
+      App.prototype.isOnboardingRoute.call({
+        currentPath: () => '/feed',
+      } as unknown as App),
+    ).toBeFalse();
+  });
+});

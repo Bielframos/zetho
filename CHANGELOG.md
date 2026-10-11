@@ -6,6 +6,25 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.33.0] - 2026-10-11
+
+### Added
+
+- Sugestões de jogos no onboarding, com opções para registrar jogos em andamento, desejos e jogos zerados.
+- Retomada dos primeiros passos por usuário neste navegador, com acesso pelo feed e recarga dos registros salvos.
+- Conclusão do onboarding com resumo da estante e acesso à categoria dos jogos adicionados.
+
+### Changed
+
+- Primeiros passos ganham navegação focada, etapas identificadas e opções explícitas para pular avaliações, conexões ou configurar depois.
+- Avaliação por estrelas passa a aceitar toque e teclado, com identificação acessível da nota.
+
+### Fixed
+
+- Remover um jogo no onboarding atualiza o registro salvo; notas permanecem consistentes ao voltar de etapa.
+- Falhas de busca, salvamento e sugestões oferecem mensagens e nova tentativa; operações pendentes evitam avanços prematuros.
+- Falhas de cadastro retornam ao formulário em vez de avançar indevidamente para o onboarding.
+
 ## [1.32.0] - 2026-10-11
 
 ### Added
