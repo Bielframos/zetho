@@ -18,37 +18,27 @@
   </div>
   }
 
-  <header
-    class="profile-theme-divider flex flex-col items-center w-full gap-2 px-2 pb-6 border-b border-gray-6 relative z-10"
-  >
-    @if (profileStore.itsMe()) {
-    <div class="flex justify-end w-full pt-2">
-      <a
-        routerLink="/minha-conta"
-        class="profile-theme-action ui-action-btn border-none!"
-        aria-label="Minha conta"
-        data-size="icon"
-      >
-        <i class="ph ph-gear text-[16px]"></i>
-      </a>
-    </div>
-    } @else if (authStore.isAuthenticated()) {
-      @if (profile; as person) {
-      <div class="flex justify-center w-full py-2">
-        <ui-follow-control [profileId]="person.$id" [gamertag]="person.gamertag" />
+  <header class="profile-theme-divider flex flex-col w-full gap-3 px-4 py-4 border-b border-gray-6 relative z-20">
+    <div class="flex items-center justify-between gap-3">
+      <div class="flex min-w-0 items-center gap-3">
+        <img [src]="profileStore.avatarUrl()" alt="{{`Avatar do ${profile?.gamertag}`}}"
+          class="profile-theme-avatar rounded-full w-12 h-12 shrink-0 object-cover border border-gray-6" />
+        <div class="profile-theme-copy min-w-0">
+          <h3 class="truncate font-semibold">{{profile?.gamertag}}</h3>
+        </div>
       </div>
+      @if (profileStore.itsMe()) {
+        <a routerLink="/minha-conta" class="profile-theme-action ui-action-btn border-none! shrink-0"
+          aria-label="Minha conta" data-size="icon"><i class="ph ph-gear text-[16px]"></i></a>
+      } @else if (authStore.isAuthenticated()) {
+        @if (profile; as person) {
+          <ui-follow-control class="shrink-0" variant="icon" [profileId]="person.$id" [gamertag]="person.gamertag" />
+        }
       }
-    }
-
-    <img
-      [src]="profileStore.avatarUrl()"
-      alt="{{`Avatar do ${profile?.gamertag}`}}"
-      class="profile-theme-avatar rounded-full w-24 h-24 object-cover border border-gray-6"
-    />
-    <h3 class="profile-theme-copy text-xl text-center">{{profile?.gamertag}}</h3>
+    </div>
 
     @if (profile?.bio; as bio) {
-    <p class="profile-theme-copy text-center text-gray-11">{{bio}}</p>
+    <p class="profile-theme-copy text-gray-11">{{bio}}</p>
     } @if (hasSocialNicks) {
     <div class="flex flex-wrap gap-2 justify-center mt-2">
       <!-- Perfil da Steam -->
