@@ -6,6 +6,24 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.32.0] - 2026-10-11
+
+### Added
+
+- FAB “Comparar comigo” nos perfis de outros jogadores, com jogos em comum, diferenças entre avaliações e descobertas paginadas.
+- Adição de descobertas à lista de desejos, preservando jogos já registrados.
+- Exibição responsiva de imagens editoriais com texto alternativo e crédito quando aprovadas; imagens sem atribuição ou indisponíveis usam a apresentação sem imagem.
+
+### Changed
+
+- Próximo jogo passa a custar 5 Zcoins por recomendação e permite 5 usos diários, com cota e próxima liberação informadas pela API.
+
+### Fixed
+
+- Comparação acompanha troca de perfil e sessão e ignora respostas antigas; resolução de perfis mantém isolamento entre requisições SSR.
+- HTML das notícias é sanitizado antes da renderização, preservando apenas incorporações reconhecidas do YouTube.
+- Histórico atrasado não substitui a cota atual de recomendações.
+
 ## [1.31.0] - 2026-10-11
 
 ### Changed
