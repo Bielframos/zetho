@@ -1,0 +1,34 @@
+[
+  {
+    "width": 390,
+    "mode": "light",
+    "bg": "rgb(16, 17, 19)",
+    "fg": "rgb(237, 238, 240)",
+    "chip": "rgba(0, 0, 0, 0)",
+    "image": true
+  },
+  {
+    "width": 390,
+    "mode": "dark",
+    "bg": "rgb(16, 17, 19)",
+    "fg": "rgb(237, 238, 240)",
+    "chip": "rgba(0, 0, 0, 0)",
+    "image": true
+  },
+  {
+    "width": 1440,
+    "mode": "light",
+    "bg": "rgb(16, 17, 19)",
+    "fg": "rgb(237, 238, 240)",
+    "chip": "rgba(0, 0, 0, 0)",
+    "image": true
+  },
+  {
+    "width": 1440,
+    "mode": "dark",
+    "bg": "rgb(16, 17, 19)",
+    "fg": "rgb(237, 238, 240)",
+    "chip": "rgba(0, 0, 0, 0)",
+    "image": true
+  }
+]
