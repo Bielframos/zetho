@@ -28,3 +28,5 @@ Enter na ação social executou um POST simulado e atualizou a ação para “De
 O erro de conexão em um perfil mobile sem bio/social foi exercitado. O feedback inicialmente ultrapassava 12 px da borda do card; o clipping agora fica na arte e o card permite overflow somente enquanto apresenta esse feedback. Mensagem e botão de recuperação permanecem completos acima da biblioteca. Não há reserva de altura no estado normal.
 
 Validação automatizada: 136 testes passaram, incluindo a variante de ícone (ação explícita, nome acessível, bloqueio de repetição) e as garantias anteriores de sessão, concorrência, reconciliação e recuperação de foco.
+
+Matriz complementar: biblioteca vazia em 8 combinações (2 larguras × 2 modos × com/sem tema), sem overflow e com topo inalterado ao ocultar o expansor; biblioteca populada durante scroll em ambos os modos/larguras. QA independente do erro em perfil curto cobriu outras 8 combinações: botão de recuperação e borda inferior receberam hit tests; a reconciliação realizou 1 GET simulado e 0 escritas, removendo o painel. Build de produção passou com SSR e 7 rotas prerenderizadas sobre a base 1.34.4.
