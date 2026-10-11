@@ -17,12 +17,12 @@ import { NotificationStore } from './notification.store';
     <button
       type="button"
       (click)="toggleSheet()"
-      class="relative flex items-center justify-center border-gray-6 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-6"
+      class="relative flex cursor-pointer items-center justify-center border-gray-6 text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-6"
       [ngClass]="
         variant() === 'appShell'
           ? 'h-full w-14 border-b border-l bg-gray-1/50 backdrop-blur-lg'
           : variant() === 'menu'
-            ? 'h-12 w-full justify-start gap-3 rounded-lg border px-3'
+            ? 'w-full justify-start gap-3 rounded-lg px-3 py-3 text-sm'
             : 'h-12 w-12 rounded-full border bg-gray-1/95 shadow-lg backdrop-blur'
       "
       aria-label="Notificações"
