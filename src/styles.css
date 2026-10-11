@@ -430,3 +430,10 @@ dialog.ui-sheet.sheet-closing::backdrop { opacity: 0; }
   background-color: var(--profile-readable-surface, var(--theme-bg));
   text-decoration: underline;
 }
+
+.profile-theme-action:focus-visible,
+.profile-theme-tab:focus-visible,
+.profile-theme-chip:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -3px;
+}
