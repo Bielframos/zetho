@@ -20,6 +20,12 @@ export interface NewsSummary {
 }
 
 export interface NewsDetail extends NewsSummary {
+  mainImage?: {
+    url?: string;
+    alt?: string;
+    credit?: string;
+    sourceUrl?: string;
+  } | null;
   body: string;
   originalSourceUrl: string | null;
   relatedGames: Array<{

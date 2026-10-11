@@ -54,7 +54,7 @@
     <button
       type="button"
       class="ui-primary-btn mt-7 min-h-12 w-full max-w-xs justify-center gap-2 focus:ring-2 focus:ring-blue-6 disabled:opacity-50"
-      [disabled]="generating() || (!pending() && (balance() < 10 || dailyLimitReached()))"
+      [disabled]="generating() || (!pending() && (balance() < recommendationCost() || dailyLimitReached()))"
       (click)="generate()"
       [attr.aria-busy]="generating()"
     >
@@ -63,27 +63,31 @@
       (pending()) {
       <i class="ph ph-arrow-clockwise" aria-hidden="true"></i> Consultar minha
       recomendação } @else if (dailyLimitReached()) {
-      <i class="ph ph-check" aria-hidden="true"></i> Recomendação de hoje gerada
-      } @else { <i class="ph ph-sparkle" aria-hidden="true"></i> Descobrir meu
+      <i class="ph ph-check" aria-hidden="true"></i> Limite diário atingido }
+      @else { <i class="ph ph-sparkle" aria-hidden="true"></i> Descobrir meu
       próximo jogo }
     </button>
     <p
       class="mt-3 flex items-center justify-center gap-1.5 text-xs text-gray-11"
     >
       <img src="/z-coin.webp" alt="" class="h-4 w-4" />
-      @if (pending()) { Mesma solicitação, sem cobrança duplicada } @else { 10
-      zCoins por recomendação · limite de 1 por dia }
+      @if (pending()) { Mesma solicitação, sem cobrança duplicada } @else { {{
+      recommendationCost() }} zCoins por recomendação · limite de {{
+      quota()?.limit ?? 5 }} por dia }
     </p>
     <p class="mt-2 text-xs text-gray-10">
-      Seu saldo: {{ balance() | number:'1.0-0' }} zCoins
+      {{ remainingUses() }} usos restantes hoje · Seu saldo: {{ balance() |
+      number:'1.0-0' }} zCoins
     </p>
     @if (!pending() && dailyLimitReached()) {
     <p class="mt-4 text-sm text-gray-11">
-      Você já fez sua descoberta de hoje. Volte amanhã para receber outra.
+      Você já usou suas cinco recomendações de hoje. @if (quota(); as
+      currentQuota) { Disponível novamente em {{ currentQuota.nextAvailableAt |
+      date:"dd/MM HH:mm" }}. } @else { Volte amanhã para receber outras. }
     </p>
-    } @else if (!pending() && balance() < 10) {
+    } @else if (!pending() && balance() < recommendationCost()) {
     <p class="mt-4 text-sm text-gray-11">
-      Você precisa de 10 zCoins para descobrir um jogo.
+      Você precisa de {{ recommendationCost() }} zCoins para descobrir um jogo.
     </p>
     } @if (error()) {
     <div

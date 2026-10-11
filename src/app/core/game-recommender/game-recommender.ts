@@ -1,5 +1,13 @@
-import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { DatePipe, DecimalPipe, isPlatformBrowser } from '@angular/common';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  PLATFORM_ID,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '../auth/auth.store';
 import { SeoService } from '../system/seo/seo.service';
@@ -9,6 +17,7 @@ import {
   GameRecommenderService,
   RecommendationError,
   RecommendationScope,
+  RecommendationQuota,
 } from './game-recommender.service';
 import { RecommendationBackground } from './shader-background';
 
@@ -41,6 +50,9 @@ export class GameRecommenderPage implements OnInit {
   readonly history = signal<GameRecommendation[]>([]);
   readonly nextCursor = signal<string | null>(null);
   readonly pending = signal<PendingAttempt | null>(null);
+  private quotaEpoch = 0;
+  readonly quota = signal<RecommendationQuota | null>(null);
+  readonly recommendationCost = computed(() => this.quota()?.cost ?? 5);
   readonly dailyLimitAvailableAt = signal<string | null>(null);
   readonly balance = computed(() =>
     Number(this.auth.profile()?.zcoinBalance ?? 0),
@@ -74,6 +86,32 @@ export class GameRecommenderPage implements OnInit {
       this.scopes.find((option) => option.value === this.scope())!.description,
   );
 
+  private readonly clock = signal(Date.now());
+
+  constructor() {
+    if (isPlatformBrowser(inject(PLATFORM_ID))) {
+      effect((onCleanup) => {
+        this.clock();
+        const now = Date.now();
+        const serverReset = Date.parse(
+          this.quota()?.nextAvailableAt ?? this.dailyLimitAvailableAt() ?? '',
+        );
+        const nextMidnight =
+          Date.parse(`${this.dateInSaoPaulo(new Date(now))}T00:00:00-03:00`) +
+          86_400_000;
+        const reset =
+          Number.isFinite(serverReset) && serverReset > now
+            ? serverReset
+            : nextMidnight;
+        const timer = setTimeout(
+          () => this.clock.set(Date.now()),
+          Math.max(1, reset - now),
+        );
+        onCleanup(() => clearTimeout(timer));
+      });
+    }
+  }
+
   ngOnInit() {
     this.seo.apply({
       title: 'Descubra seu próximo jogo com a Zetho',
@@ -94,11 +132,14 @@ export class GameRecommenderPage implements OnInit {
   async generate() {
     if (
       this.generating() ||
-      (!this.pending() && (this.balance() < 10 || this.dailyLimitReached()))
+      (!this.pending() &&
+        (this.balance() < this.recommendationCost() ||
+          this.dailyLimitReached()))
     )
       return;
     const owner = this.auth.user()?.$id;
     if (!owner) return;
+    this.quotaEpoch++;
     this.generating.set(true);
     this.error.set('');
     const attempt = this.pending() ?? {
@@ -113,6 +154,8 @@ export class GameRecommenderPage implements OnInit {
       if (this.auth.user()?.$id !== owner) return;
       this.pending.set(null);
       this.latest.set(result);
+      this.quota.set(result.quota ?? null);
+      this.dailyLimitAvailableAt.set(null);
       this.mergeHistory([result]);
       this.auth.setZcoinBalance(result.balance);
     } catch (error) {
@@ -127,9 +170,18 @@ export class GameRecommenderPage implements OnInit {
         error.code === 'GAME_RECOMMENDATION_DAILY_LIMIT'
       ) {
         this.dailyLimitAvailableAt.set(error.nextAvailableAt ?? null);
+        this.quota.set({
+          cost: this.recommendationCost(),
+          limit: 5,
+          remaining: 0,
+          nextAvailableAt:
+            error.nextAvailableAt ??
+            new Date(Date.now() + 60_000).toISOString(),
+        });
       }
       this.error.set(this.errorMessage(status));
     } finally {
+      this.quotaEpoch++;
       this.generating.set(false);
     }
   }
@@ -138,12 +190,15 @@ export class GameRecommenderPage implements OnInit {
     if (this.loadingHistory()) return;
     const owner = this.auth.user()?.$id;
     if (!owner) return;
+    const quotaEpoch = this.quotaEpoch;
     this.loadingHistory.set(true);
     this.historyError.set('');
     try {
       const result = await this.api.history(this.nextCursor());
       if (this.auth.user()?.$id !== owner) return;
       this.mergeHistory(result.items);
+      if (quotaEpoch === this.quotaEpoch && !this.generating())
+        this.quota.set(result.quota ?? null);
       this.nextCursor.set(result.nextCursor);
     } catch {
       this.historyError.set('Não foi possível carregar seu histórico.');
@@ -163,6 +218,7 @@ export class GameRecommenderPage implements OnInit {
   }
 
   dailyLimitReached() {
+    this.clock();
     const availableAt = this.dailyLimitAvailableAt();
     if (availableAt) {
       const availableTime = Date.parse(availableAt);
@@ -170,12 +226,27 @@ export class GameRecommenderPage implements OnInit {
         return true;
       }
     }
+    return this.remainingUses() === 0;
+  }
+
+  remainingUses() {
+    this.clock();
+    const quota = this.quota();
+    if (quota) {
+      return Date.now() >= Date.parse(quota.nextAvailableAt)
+        ? quota.limit
+        : quota.remaining;
+    }
     const today = this.dateInSaoPaulo(new Date());
-    return [this.latest(), ...this.history()].some(
-      (item) =>
-        item !== null &&
-        this.dateInSaoPaulo(new Date(item.generatedAt)) === today,
+    const ids = new Set(
+      [this.latest(), ...this.history()]
+        .filter(
+          (item) =>
+            item && this.dateInSaoPaulo(new Date(item.generatedAt)) === today,
+        )
+        .map((item) => item!.id),
     );
+    return Math.max(0, 5 - ids.size);
   }
 
   private dateInSaoPaulo(date: Date) {
@@ -233,7 +304,7 @@ export class GameRecommenderPage implements OnInit {
           ? 'Seu backlog está vazio. Adicione jogos à biblioteca ou escolha outra opção.'
           : 'Não encontramos jogos disponíveis para esta seleção. Experimente outra opção.';
       case 429:
-        return 'Você já gerou sua recomendação de hoje. Uma nova descoberta estará disponível amanhã.';
+        return 'Você já usou suas cinco recomendações de hoje. Novas descobertas estarão disponíveis amanhã.';
       case 502:
         return 'Não foi possível concluir a recomendação. Se houve uma reserva de zCoins, ela será estornada automaticamente.';
       default:

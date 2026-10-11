@@ -1,0 +1,146 @@
+<section class="w-full text-gray-12">
+  <header class="border-b border-gray-6 p-4">
+    <a
+      [routerLink]="['/player', gamertag()]"
+      class="text-sm text-blue-11 hover:underline"
+      >Voltar ao perfil de {{ gamertag() }}</a
+    >
+    <h1 class="mt-3 text-2xl">Comparar gostos</h1>
+    <p class="mt-2 text-sm text-gray-11">Você e {{ gamertag() }}</p>
+  </header>
+  <nav
+    aria-label="Visões da comparação"
+    class="flex overflow-x-auto border-b border-gray-6"
+  >
+    @for (tab of tabs; track tab.key) {
+    <button
+      type="button"
+      class="shrink-0 border-b-2 px-3 py-4 text-sm focus-visible:ring-2 focus-visible:ring-blue-6"
+      [class.border-blue-9]="view() === tab.key"
+      [class.border-transparent]="view() !== tab.key"
+      [attr.aria-pressed]="view() === tab.key"
+      (click)="change(tab.key)"
+    >
+      {{ tab.label }}
+    </button>
+    }
+  </nav>
+  @if (view() === 'opinions') {
+  <div class="flex flex-wrap gap-2 border-b border-gray-6 p-4">
+    <button
+      type="button"
+      class="ui-secondary-btn"
+      [attr.aria-pressed]="order() === 'similar'"
+      (click)="change(view(), 'similar')"
+    >
+      Notas parecidas
+    </button>
+    <button
+      type="button"
+      class="ui-secondary-btn"
+      [attr.aria-pressed]="order() === 'different'"
+      (click)="change(view(), 'different')"
+    >
+      Maiores diferenças
+    </button>
+  </div>
+  } @if (loading()) {
+  <div class="p-8" role="status" aria-label="Carregando comparação">
+    <ui-loading />
+  </div>
+  } @else if (error()) {
+  <div class="p-6 text-sm text-gray-11" role="alert">
+    <p>{{ error() }}</p>
+    @if (auth.isAuthenticated()) {
+    <button type="button" class="ui-secondary-btn mt-4" (click)="load()">
+      Tentar novamente
+    </button>
+    } @else { <a routerLink="/entrar" class="ui-primary-btn mt-4">Entrar</a> }
+  </div>
+  } @else if (result(); as data) { @if (!data.rows.length) {
+  <p class="p-6 text-sm text-gray-11">
+    @switch (view()) { @case ('opinions') { Vocês ainda não têm avaliações em
+    comum. Explore os jogos em comum ou as descobertas. } @case ('discoveries')
+    { Nenhuma descoberta disponível por enquanto. } @default { Nenhum jogo em
+    comum por enquanto. Experimente as outras visões. } }
+  </p>
+  } @else {
+  <p class="border-b border-gray-6 px-4 py-3 text-sm text-gray-11">
+    {{ data.total }} jogos · {{ data.me.gamertag }} e {{ data.other.gamertag }}
+  </p>
+  <div class="divide-y divide-gray-6">
+    @for (row of data.rows; track row.game.id) {
+    <article class="p-4">
+      <a
+        [routerLink]="['/jogo', row.game.slug]"
+        class="flex items-center gap-3 hover:text-blue-11 focus-visible:ring-2 focus-visible:ring-blue-6"
+      >
+        @if (row.game.coverUrl) {
+        <img
+          [src]="row.game.coverUrl"
+          alt=""
+          class="h-16 w-12 rounded object-cover"
+          loading="lazy"
+        />
+        }
+        <h2 class="font-medium">{{ row.game.name }}</h2>
+      </a>
+      <dl class="mt-3 grid grid-cols-2 gap-3 text-sm">
+        <div>
+          <dt class="text-gray-11">{{ data.me.gamertag }} (você)</dt>
+          <dd>{{ status(row.me.status) }}</dd>
+          <dd>
+            {{ row.me.rating === null ? 'Sem nota' : row.me.rating + ' / 5' }}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-gray-11">{{ data.other.gamertag }}</dt>
+          <dd>{{ status(row.other.status) }}</dd>
+          <dd>
+            {{ row.other.rating === null ? 'Sem nota' : row.other.rating + ' /
+            5' }}
+          </dd>
+        </div>
+      </dl>
+      @if (view() === 'discoveries') {
+      <button
+        type="button"
+        class="ui-secondary-btn mt-4 min-h-11"
+        [disabled]="saving().has(row.game.id) || wishlisted().has(row.game.id)"
+        (click)="addToWishlist(row)"
+      >
+        <i class="ph ph-shopping-bag" aria-hidden="true"></i>
+        {{ saving().has(row.game.id) ? 'Adicionando…' :
+        wishlisted().has(row.game.id) ? 'Já está na sua biblioteca' : 'Adicionar
+        à lista de desejos' }}
+      </button>
+      @if (actionErrors()[row.game.id]) {
+      <p class="mt-2 text-sm text-red-11" role="alert">
+        {{ actionErrors()[row.game.id] }}
+      </p>
+      } }
+    </article>
+    }
+  </div>
+  } @if (data.total > data.limit || offset() > 0) {
+  <nav
+    aria-label="Paginação da comparação"
+    class="flex justify-between border-t border-gray-6 p-4"
+  >
+    <button
+      class="ui-secondary-btn"
+      [disabled]="offset() === 0"
+      (click)="change(view(), order(), offset() - data.limit)"
+    >
+      Anterior
+    </button>
+    <button
+      class="ui-secondary-btn"
+      [disabled]="offset() + data.limit >= data.total"
+      (click)="change(view(), order(), offset() + data.limit)"
+    >
+      Próxima
+    </button>
+  </nav>
+  } }
+</section>
