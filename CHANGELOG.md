@@ -6,6 +6,18 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.34.1] - 2026-10-11
+
+### Changed
+
+- Comparação de gostos apresenta jogos centralizados e jogadores em colunas iguais, com divisórias, ícones de status e notas acompanhadas de uma estrela.
+- Ordenação de opiniões usa seletor segmentado e retorno ao perfil ganha botão de seta acessível.
+
+### Fixed
+
+- Notas fracionárias usam formato brasileiro e mantêm a descrição acessível da escala; ausência de nota continua explícita.
+- Layout comparativo acomoda nomes longos e jogos sem capa no desktop e mobile.
+
 ## [1.34.0] - 2026-10-11
 
 ### Added
