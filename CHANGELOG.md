@@ -6,6 +6,23 @@ Seguindo o formato "Keep a Changelog" e o versionamento semântico.
 
 ## [Unreleased]
 
+## [1.31.0] - 2026-10-11
+
+### Changed
+
+- Dashboard passa a se chamar Feed, com rota `/feed` e redirecionamento dos links antigos preservando parâmetros e fragmentos.
+- Navegação desktop e mobile organizada em grupos de acesso principal, funcionalidades e conteúdo, com divisores discretos.
+- Busca unificada na página `/buscar`, com foco automático e atalhos Ctrl + K e Cmd + K; notificações ficam no primeiro grupo do menu.
+- Sheets de filtros, notificações e menu mobile usam animações de entrada e saída, foco modal, restauração de rolagem e suporte a movimento reduzido.
+
+### Removed
+
+- Meta do ano deixa de aparecer nos perfis e de consultar a API. Biblioteca, histórico, estatísticas, conquistas e registros legados são preservados.
+
+### Fixed
+
+- O input de busca recebe foco após o fechamento de menus ou sheets, inclusive ao navegar usando o atalho.
+
 ## [1.30.0] - 2026-09-22
 
 ### Added
