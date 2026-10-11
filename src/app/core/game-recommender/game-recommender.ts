@@ -1,5 +1,13 @@
-import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { DatePipe, DecimalPipe, isPlatformBrowser } from '@angular/common';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  PLATFORM_ID,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '../auth/auth.store';
 import { SeoService } from '../system/seo/seo.service';
@@ -77,6 +85,32 @@ export class GameRecommenderPage implements OnInit {
     () =>
       this.scopes.find((option) => option.value === this.scope())!.description,
   );
+
+  private readonly clock = signal(Date.now());
+
+  constructor() {
+    if (isPlatformBrowser(inject(PLATFORM_ID))) {
+      effect((onCleanup) => {
+        this.clock();
+        const now = Date.now();
+        const serverReset = Date.parse(
+          this.quota()?.nextAvailableAt ?? this.dailyLimitAvailableAt() ?? '',
+        );
+        const nextMidnight =
+          Date.parse(`${this.dateInSaoPaulo(new Date(now))}T00:00:00-03:00`) +
+          86_400_000;
+        const reset =
+          Number.isFinite(serverReset) && serverReset > now
+            ? serverReset
+            : nextMidnight;
+        const timer = setTimeout(
+          () => this.clock.set(Date.now()),
+          Math.max(1, reset - now),
+        );
+        onCleanup(() => clearTimeout(timer));
+      });
+    }
+  }
 
   ngOnInit() {
     this.seo.apply({
@@ -184,6 +218,7 @@ export class GameRecommenderPage implements OnInit {
   }
 
   dailyLimitReached() {
+    this.clock();
     const availableAt = this.dailyLimitAvailableAt();
     if (availableAt) {
       const availableTime = Date.parse(availableAt);
@@ -195,6 +230,7 @@ export class GameRecommenderPage implements OnInit {
   }
 
   remainingUses() {
+    this.clock();
     const quota = this.quota();
     if (quota) {
       return Date.now() >= Date.parse(quota.nextAvailableAt)
