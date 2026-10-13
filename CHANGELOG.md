@@ -1,721 +1,487 @@
 # CHANGELOG
 
-Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
-
-Seguindo o formato "Keep a Changelog" e o versionamento semântico.
+Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+## [1.34.7] - 2026-10-13
+
+### Melhorias
+
+- Melhorias na interface e na experiência de uso do seletor de aparência no celular e no computador.
+- O histórico de versões ficou mais simples e fácil de consultar.
+
 ## [1.34.6] - 2026-10-11
 
-### Fixed
+### Melhorias
 
-- Temas personalizados recuperam transparências, máscara da imagem e herança da versão anterior ao modo claro, removendo fundos indevidos em textos e controles.
-- Paleta equipada permanece independente da aparência global; temas claros recebem ajuste de texto e temas somente com imagem conservam o canvas histórico.
-- Popup de recuperação de erro mantém texto e foco legíveis nos perfis personalizados.
-
-### Changed
-
-- Seletor de aparência visualmente menor e alinhado à esquerda, mantendo nomes acessíveis e alvos de toque de 44 px.
+- Melhorias na interface e na experiência de uso dos temas de perfil e do seletor de aparência.
 
 ## [1.34.5] - 2026-10-11
 
-### Fixed
+### Melhorias
 
-- Ação de seguir/deixar de seguir integrada à linha de identificação do perfil, com ícone discreto e estados acessíveis; sugestões do Feed e onboarding preservadas.
-- Expansor do agrupamento sobreposto à biblioteca sem reservar altura acima dos jogos ou interceptar cliques fora do botão.
-- Feedback e recuperação de erros de seguir permanecem visíveis em perfis curtos.
+- Melhorias na interface e na experiência de uso dos perfis e da biblioteca.
 
 ## [1.34.4] - 2026-10-11
 
-### Fixed
+### Melhorias
 
-- Temas equipados preservam arte e cores do perfil nos modos claro e escuro, com contraste local e proteção contra respostas de temas anteriores.
-- Fundo animado de Próximo jogo acompanha mudanças de aparência sem reiniciar o shader e mantém fallback quando WebGL falha.
-- Hover das capas usa sombra escura com texto legível em ambos os modos.
-
-### Changed
-
-- Seletor de aparência compacto com ícones acessíveis para Claro, Escuro e Sistema.
+- Melhorias visuais nos temas de perfil, nas capas dos jogos e na escolha de aparência.
 
 ## [1.34.3] - 2026-10-11
 
-### Fixed
+### Melhorias
 
-- Controle de agrupamento da biblioteca permanece centralizado no topo durante a rolagem, sem a borda grossa e o deslocamento da antiga busca fixa.
-- Painel de agrupamento preserva seleção, foco e acessibilidade com espaçamento adequado no desktop e mobile.
+- Melhorias na organização e na experiência de uso da biblioteca.
 
 ## [1.34.2] - 2026-10-11
 
-### Changed
+### Melhorias
 
-- Controle de seguir compartilhado entre perfil, Feed e onboarding, com estados Seguir/Seguindo, ação explícita de deixar de seguir e feedback acessível.
-
-### Fixed
-
-- Operações repetidas e respostas de outra conta ou perfil não alteram indevidamente o estado da conexão.
-- Falhas permitem consultar novamente a conexão sem desfazer alterações confirmadas; listas, contadores e foco são atualizados com segurança.
-- Aparência acompanha mudanças do sistema e de outras abas também na entrada direta do onboarding.
+- Melhorias na experiência de seguir jogadores e na adaptação da aparência do aplicativo.
 
 ## [1.34.1] - 2026-10-11
 
-### Changed
+### Melhorias
 
-- Comparação de gostos apresenta jogos centralizados e jogadores em colunas iguais, com divisórias, ícones de status e notas acompanhadas de uma estrela.
-- Ordenação de opiniões usa seletor segmentado e retorno ao perfil ganha botão de seta acessível.
-
-### Fixed
-
-- Notas fracionárias usam formato brasileiro e mantêm a descrição acessível da escala; ausência de nota continua explícita.
-- Layout comparativo acomoda nomes longos e jogos sem capa no desktop e mobile.
+- A comparação entre jogadores ficou mais clara e fácil de usar.
 
 ## [1.34.0] - 2026-10-11
 
-### Added
+### Novidades
 
-- Aparência clara, escura ou do sistema com alternador acessível no desktop e mobile, preferência local e sincronização entre abas.
-- Paleta centralizada que adapta superfícies, textos, ações e feedback em toda a interface.
+- Agora você pode escolher entre as aparências clara, escura ou definida pelo sistema.
 
-### Fixed
+### Melhorias
 
-- Contraste e foco de formulários, estados, conteúdo rico e temas personalizados do perfil.
-- Exportações mantêm cores legíveis independentemente do modo da interface.
-- Ícones do manifest e Apple apontam para arquivos disponíveis.
-
-### Changed
-
-- Aparência é aplicada antes da pintura e preservada ao navegar, recarregar ou alternar no app aberto offline; splash instalado mantém cor estática.
+- Melhorias de interface, acessibilidade e consistência visual em todo o aplicativo.
 
 ## [1.33.1] - 2026-10-11
 
-### Fixed
+### Melhorias
 
-- Botão de notificações no menu acompanha o espaçamento e a altura dos demais itens, sem borda permanente, preservando foco visível e interação por teclado.
+- Melhorias na interface e na experiência de uso das notificações.
 
 ## [1.33.0] - 2026-10-11
 
-### Added
+### Novidades
 
-- Sugestões de jogos no onboarding, com opções para registrar jogos em andamento, desejos e jogos zerados.
-- Retomada dos primeiros passos por usuário neste navegador, com acesso pelo feed e recarga dos registros salvos.
-- Conclusão do onboarding com resumo da estante e acesso à categoria dos jogos adicionados.
+- Os primeiros passos agora ajudam novos jogadores a montar a estante e descobrir perfis para seguir.
 
-### Changed
+### Melhorias
 
-- Primeiros passos ganham navegação focada, etapas identificadas e opções explícitas para pular avaliações, conexões ou configurar depois.
-- Avaliação por estrelas passa a aceitar toque e teclado, com identificação acessível da nota.
-
-### Fixed
-
-- Remover um jogo no onboarding atualiza o registro salvo; notas permanecem consistentes ao voltar de etapa.
-- Falhas de busca, salvamento e sugestões oferecem mensagens e nova tentativa; operações pendentes evitam avanços prematuros.
-- Falhas de cadastro retornam ao formulário em vez de avançar indevidamente para o onboarding.
+- Melhorias na experiência de cadastro e introdução ao Zetho.
 
 ## [1.32.0] - 2026-10-11
 
-### Added
+### Novidades
 
-- FAB “Comparar comigo” nos perfis de outros jogadores, com jogos em comum, diferenças entre avaliações e descobertas paginadas.
-- Adição de descobertas à lista de desejos, preservando jogos já registrados.
-- Exibição responsiva de imagens editoriais com texto alternativo e crédito quando aprovadas; imagens sem atribuição ou indisponíveis usam a apresentação sem imagem.
+- Agora você pode comparar gostos com outros jogadores e descobrir jogos pelos perfis.
+- Notícias agora podem exibir imagens relacionadas ao conteúdo.
 
-### Changed
+### Melhorias
 
-- Próximo jogo passa a custar 5 Zcoins por recomendação e permite 5 usos diários, com cota e próxima liberação informadas pela API.
-
-### Fixed
-
-- Comparação acompanha troca de perfil e sessão e ignora respostas antigas; resolução de perfis mantém isolamento entre requisições SSR.
-- HTML das notícias é sanitizado antes da renderização, preservando apenas incorporações reconhecidas do YouTube.
-- Histórico atrasado não substitui a cota atual de recomendações.
-- A cota diária se atualiza à meia-noite mesmo quando a página permanece aberta e ociosa.
+- Melhorias nas recomendações de “Seu próximo jogo”.
 
 ## [1.31.0] - 2026-10-11
 
-### Changed
+### Novidades
 
-- Dashboard passa a se chamar Feed, com rota `/feed` e redirecionamento dos links antigos preservando parâmetros e fragmentos.
-- Navegação desktop e mobile organizada em grupos de acesso principal, funcionalidades e conteúdo, com divisores discretos.
-- Busca unificada na página `/buscar`, com foco automático e atalhos Ctrl + K e Cmd + K; notificações ficam no primeiro grupo do menu.
-- Sheets de filtros, notificações e menu mobile usam animações de entrada e saída, foco modal, restauração de rolagem e suporte a movimento reduzido.
+- A busca ganhou uma página própria e um atalho rápido pelo teclado.
 
-### Removed
+### Melhorias
 
-- Meta do ano deixa de aparecer nos perfis e de consultar a API. Biblioteca, histórico, estatísticas, conquistas e registros legados são preservados.
-
-### Fixed
-
-- O input de busca recebe foco após o fechamento de menus ou sheets, inclusive ao navegar usando o atalho.
+- O Dashboard agora se chama Feed e a navegação foi reorganizada no celular e no computador.
+- Melhorias gerais de interface e experiência de uso.
 
 ## [1.30.0] - 2026-09-22
 
-### Added
+### Novidades
 
-- Agrupamento dos jogos do perfil por ano de lançamento ou nome (A–Z), com ordenação global e carregamento paginado.
-- Select compartilhado com navegação por teclado e busca no catálogo de plataformas.
+- A biblioteca pode ser organizada por ano de lançamento ou nome.
 
-### Changed
+### Melhorias
 
-- A listagem do perfil mantém recentes sem agrupamento como padrão, com controles recolhidos sob uma seta central entre meta e jogos.
-- A aba “Meu registro” usa o catálogo de plataformas com ícones e preserva compatibilidade com registros anteriores.
-- Editor da meta anual integrado ao tema do perfil e ao campo numérico compartilhado.
-
-### Fixed
-
-- Respostas antigas deixam de substituir dados após trocar jogo, sessão ou agrupamento.
-- Grupos que atravessam páginas permanecem unidos; falhas de carregamento podem ser repetidas sem pular jogos.
+- Melhorias na organização do perfil e na escolha de plataformas.
 
 ## [1.29.0] - 2026-09-21
 
-### Added
+### Novidades
 
-- Aba “Minha jogatina” na página de cada jogo para registrar plataforma, tipo de conclusão e horas jogadas; as estatísticas mostram a média comunitária de tempo para zerar.
-- Meta anual de jogos no perfil, com objetivo editável e progresso em porcentagem.
+- A área “Minha jogatina” ganhou novos detalhes sobre plataforma, conclusão e tempo de jogo.
 
-### Changed
+### Melhorias
 
-- O feed social passa a carregar páginas por cursor para manter a navegação cronológica conforme a timeline cresce.
-- Alterações de jogatina, comentários, listas, conexões e perfil passam pela API, com validação centralizada.
-- Capas de jogos usam imagens responsivas com carregamento sob demanda e prioridade nas primeiras capas visíveis.
-
-### Fixed
-
-- Nomes de View Transition das capas agora são únicos por seção e registro, evitando conflitos quando o mesmo jogo aparece mais de uma vez na página.
+- Melhorias de desempenho e interface no Feed e nos perfis.
 
 ## [1.28.1] - 2026-09-17
 
-### Fixed
+### Melhorias
 
-- Loading compartilhado aparece na posição final, sem deslocamento ou escala de entrada; a rotação da logo respeita a preferência por movimento reduzido.
+- Melhorias visuais e de acessibilidade durante os carregamentos.
 
 ## [1.28.0] - 2026-09-17
 
-### Added
+### Novidades
 
-- Página pública de Jogatina em `/jogatina/:id`, com detalhes da sessão, participantes confirmados e acesso para visitantes.
+- Jogatinas ganharam páginas públicas que também podem ser acessadas por visitantes.
 
-### Changed
+### Melhorias
 
-- Links compartilhados de Jogatinas agora apontam para a página pública e recebem título, descrição, capa do jogo e dados estruturados no HTML renderizado pelo servidor.
-- Visitantes podem consultar Jogatinas públicas e são direcionados para entrar ou criar uma conta antes de solicitar participação.
+- Links de Jogatinas ficaram mais informativos ao serem compartilhados.
 
 ## [1.27.0] - 2026-09-14
 
-### Added
+### Novidades
 
-- Novo ranking social de jogos zerados entre conexões (`/ranking`), com alternância fluida por abas (`ui-tabs`) e pódio visual.
-- Destaque da logo do Zetho nas pontuações de zeramento do ranking.
+- Novo ranking de jogos zerados entre suas conexões.
 
-### Changed
+### Melhorias
 
-- Header da página de rankings alinhado ao padrão visual das páginas de listas (mesma escala tipográfica, espaçamento e sem fonte display).
-- Unificação das pontuações em branco alto contraste (`text-gray-12`) no placar.
-- Rota legada `/zcoins/leaderboard/weekly` redirecionada automaticamente para `/ranking`.
-- Barra de navegação lateral (desktop) e menu inferior (mobile) apontando diretamente para `/ranking`.
-
-### Performance
-
-- Otimização do consumo do placar de Z-Coins e hidratação das entradas.
+- Melhorias na interface, navegação e carregamento dos rankings.
 
 ## [1.26.3] - 2026-09-12
 
-### Fixed
+### Melhorias
 
-- Landing sem a tag promocional, com título menor no mobile.
-- Ações da hero em linha com flex-wrap, botões quadrados padrão e altura uniforme.
-- Busca movida da topbar para a hero, mantendo a navegação para resultados de jogos e jogadores.
+- Melhorias na interface mobile e na experiência de busca.
 
 ## [1.26.2] - 2026-09-12
 
-### Fixed
+### Melhorias
 
-- Acesso à navegação pública pelo botão Explorar o Zetho na landing, com Início e marca direcionando visitantes para Notícias.
-- Z Shop oculta nos menus desktop e mobile para visitantes, com acesso direto à loja protegido por autenticação.
+- Melhorias na navegação de visitantes e no acesso à Z Shop.
 
 ## [1.26.1] - 2026-09-12
 
-### Fixed
+### Melhorias
 
-- Formulário central de busca no mobile envia o termo sem recarregar a página.
-- Campos de busca com fonte de 16 px para evitar zoom automático ao receber foco no mobile.
-- Campo superior de busca oculto enquanto o formulário central está visível, evitando duplicação.
+- Melhorias na experiência de busca em celulares.
 
 ## [1.26.0] - 2026-09-12
 
-### Added
+### Novidades
 
-- Menu contextual nas capas para registrar Zerei, Biblioteca, Jogando e Dropei sem abrir o jogo, com suporte a mouse e teclado no desktop.
-- Ações por toque prolongado no mobile, com capa animada, scrim e grade compacta de ações com cores por status.
-- Opção de ocultar indicadores de status nas capas, aplicada às listagens do perfil.
+- As capas dos jogos ganharam ações rápidas para atualizar sua biblioteca.
+- Agora você pode ocultar os indicadores de status nas capas do perfil.
 
-### Changed
+### Melhorias
 
-- Entradas já carregadas na busca e no próprio perfil são reutilizadas no menu, preservando os demais atributos do registro.
-- Logo do Zetho nas ações de zerar e no feed, com a cor da marca.
-- Compartilhamento de jogos disponível apenas por ação explícita do usuário.
-
-### Fixed
-
-- Jogos lançados não são bloqueados quando a projeção da capa omite a data de lançamento.
-- Removido o gatilho persistente que abria o compartilhamento ao acessar outro jogo após zerar.
-- Tratamento de falhas, repetição de consultas, foco e cancelamento de gestos no menu de ações.
+- Melhorias gerais de interface e experiência de uso das capas e do compartilhamento.
 
 ## [1.25.0] - 2026-09-12
 
-### Added
+### Novidades
 
-- Votos positivos e negativos diretamente nas reviews do dashboard e do feed da comunidade, com indicação de envio e tratamento de falhas.
-- Prévia de até 400 caracteres nas reviews longas, com controles inline para expandir o conteúdo completo e recolher.
-- Filtro de busca por desenvolvedora com sugestões de empresas e filtros preservados na URL.
-- Sidebar compartilhado para filtros, com sobreposição ao shell, fechamento por Escape e controle do foco.
+- Reviews podem receber votos diretamente no Feed.
+- A busca ganhou novos filtros e uma experiência mais completa.
 
-### Changed
+### Melhorias
 
-- Busca com 24 resultados por página, quatro capas por linha e estado inicial sem jogos em alta.
-- Cabeçalho da busca simplificado para alternador Jogos/Perfis e filtros; formulário central disponível apenas no mobile.
-- Alternadores compactos compartilhados entre busca, conexões, listas do perfil e compartilhamento.
-- Títulos de busca e Próximo jogo revisados.
-
-### Fixed
-
-- Sugestões do combobox flutuam sobre o conteúdo sem deslocar os controles abaixo.
-- Escape fecha primeiro as sugestões do combobox e depois o sidebar.
+- Melhorias de interface e navegação na busca, nas listas e nas conexões.
 
 ## [1.24.0] - 2026-09-09
 
-### Added
+### Novidades
 
-* Nova página "Seu próximo jogo", com recomendação personalizada por IA, seleção entre backlog e catálogo, resultado em destaque e histórico paginado de descobertas.
-* Fundo animado exclusivo e responsivo para a experiência de recomendação, com suporte a movimento reduzido e fallback sem WebGL.
+- Nova página “Seu próximo jogo”, com recomendações personalizadas e histórico de descobertas.
 
-### Changed
+### Melhorias
 
-* A página de recomendações agora informa o custo de 10 zCoins e o limite de uma descoberta por dia, preservando tentativas idempotentes e refletindo o saldo atualizado.
-* A rota de recomendações agora fornece título, descrição, URL canônica e metadados sociais no SSR, incluindo uma imagem dedicada para compartilhamento.
+- Melhorias na apresentação e no compartilhamento das recomendações.
 
 ## [1.23.1] - 2026-09-09
 
-### Changed
+### Melhorias
 
-* As reviews da comunidade na página individual de um jogo agora são visualizadas exclusivamente dentro da aba "Reviews", removendo a exibição estática prévia fora das abas.
-* Otimizado o carregamento inicial da página do jogo e SSR ao eliminar chamadas desnecessárias de busca de reviews no controller principal.
+- As reviews da comunidade foram reunidas na página de cada jogo.
+- Melhorias de desempenho nas páginas dos jogos.
 
 ## [1.23.0] - 2026-09-09
 
-### Added
+### Novidades
 
-* Nova aba de Briefing por IA na tela de detalhe do jogo (`/jogo/:slug`), posicionada como primeira aba padrão antes do Lobby.
-* Renderização estruturada do briefing inteligente contendo visão geral, destaques da experiência, perfis de jogadores indicados e avisos de conteúdo catalogados.
-* Integração leve e assíncrona no cliente via `POST /games/:gameId/ai-briefing`, mantendo o render inicial do SSR rápido e desacoplando o carregamento inicial dos comentários do Lobby.
+- As páginas dos jogos ganharam um briefing com informações úteis sobre cada experiência.
 
 ## [1.22.0] - 2026-09-09
 
-### Added
+### Novidades
 
-* Nova tela de splash centralizada ao carregar a aplicação, resolvendo o estado de autenticação antes de qualquer redirecionamento e evitando flashes da landing page para usuários logados.
-* Rota dedicada `/landing` para a apresentação pública da plataforma, preservando renderização no servidor e otimização para mecanismos de busca.
+- O Zetho ganhou uma nova página pública de apresentação.
 
-### Changed
+### Melhorias
 
-* O fluxo de login e cadastro no mobile agora traz os formulários imediatamente visíveis, reduzindo rolagens desnecessárias e integrando os campos diretamente à superfície da página.
-
-### Fixed
-
-* Corrigida a sobreposição do preço sobre o botão de compra de temas na Zetho Store no mobile, garantindo legibilidade e espaçamento estável em qualquer largura de tela.
+- Melhorias na interface de entrada, cadastro e Zetho Store.
 
 ## [1.21.2] - 2026-08-20
 
-### Changed
+### Melhorias
 
-* O campo de resposta a comentários no feed agora conta com uma separação visual mais clara.
-
-### Fixed
-
-* Ao responder a um comentário que já possui respostas, a conversa existente agora é carregada e exibida automaticamente.
+- Melhorias na interface e na experiência de responder a comentários.
 
 ## [1.21.1] - 2026-08-18
 
-### Changed
+### Melhorias
 
-* Reviews da comunidade agora possuem uma separação visual mais clara entre as publicações.
-* O destaque de comentários ficou mais discreto e integrado ao restante da interface.
-* No dashboard, o botão de comentário agora abre diretamente o campo de resposta.
-* Listas públicas vazias agora possuem uma apresentação mais clara e consistente.
-
-### Fixed
-
-* Responder a um comentário no dashboard não recarrega mais a conversa antes de abrir o campo de resposta.
-* Corrigida a contagem de respostas exibida nos comentários.
+- Melhorias na interface e na experiência de uso de reviews, comentários e listas públicas.
 
 ## [1.21.0] - 2026-08-18
 
-### Added
+### Novidades
 
-* Novo feed público de críticas da comunidade em `/reviews`, com carregamento contínuo conforme você navega.
-* Nova área de descoberta de listas públicas em `/listas`, exibindo autor, jogos adicionados, curtidas e salvamentos.
-* Nova página institucional em `/institucional`, reunindo informações sobre o projeto, políticas e canais de contato.
-* Comentários do feed agora podem ser expandidos e respondidos diretamente no card.
-* Links para comentários específicos agora abrem diretamente a conversa correspondente na página do jogo.
+- Novas áreas públicas para descobrir reviews, listas e informações sobre o Zetho.
+- Agora você pode acompanhar e responder conversas diretamente pelo Feed.
 
-### Changed
+### Melhorias
 
-* A navegação desktop e mobile ganhou atalhos para Críticas, Listas e a área Institucional.
-* Cards de comentários no feed agora priorizam as ações relacionadas à própria conversa.
-* Notificações de respostas agora levam diretamente ao comentário relacionado.
-
-### Fixed
-
-* Comentários acessados por links agora são encontrados corretamente mesmo em conversas maiores.
-* Corrigidos casos em que comentários podiam aparecer duplicados.
+- Melhorias gerais de navegação e experiência nos comentários.
 
 ## [1.20.0] - 2026-08-13
 
-### Added
+### Novidades
 
-* As páginas públicas do Zetho agora aparecem de forma mais completa em mecanismos de busca e ao serem compartilhadas.
-* Novas páginas institucionais de Privacidade, Termos, Política Editorial, Sobre e Contato, acessíveis pelo rodapé.
-* A página de cada jogo agora possui uma seção fixa de "Críticas da comunidade", destacando avaliações da comunidade.
-* As matérias de notícias agora informam quando foram produzidas com apoio de IA e apresentam acesso à fonte original.
+- Novas páginas institucionais e mais informações sobre reviews e notícias.
 
-### Changed
+### Melhorias
 
-* Melhoramos a forma como páginas de jogos e notícias são apresentadas em mecanismos de busca.
-* O carregamento inicial das páginas de jogos ficou mais rápido.
-* O acesso ao aplicativo ficou mais fluido para usuários que já estão autenticados.
-
-### Fixed
-
-* URLs inexistentes agora exibem corretamente uma página de conteúdo não encontrado.
-* Corrigidos redirecionamentos indevidos durante a restauração da sessão.
-* Reduzidas alterações visuais inesperadas durante o primeiro carregamento das páginas.
-* Páginas protegidas agora aguardam corretamente a identificação do usuário antes de redirecioná-lo.
-* Corrigidos conflitos entre o modo offline e páginas carregadas normalmente.
+- Melhorias de desempenho, compartilhamento e experiência de navegação.
 
 ## [1.19.0] - 2026-08-12
 
-### Added
+### Novidades
 
-* Nova página de notícias com carregamento contínuo e recuperação em caso de falha.
-* Cada notícia agora possui uma página própria com fonte original e jogos relacionados.
-* Nova aba de notícias nas páginas dos jogos, reunindo matérias relacionadas ao título.
+- Nova área de notícias, com páginas próprias e conteúdos relacionados aos jogos.
 
-### Changed
+### Melhorias
 
-* A navegação desktop e mobile agora oferece acesso direto à seção de notícias.
-* As barras de rolagem agora seguem o estilo visual do Zetho.
-* Compartilhamentos de páginas sem imagem agora apresentam informações mais adequadas ao conteúdo exibido.
-
-### Fixed
-
-* O carregamento de novas notícias volta a funcionar normalmente após uma falha.
-* Melhorada a separação visual entre as matérias da listagem.
+- Melhorias na navegação, no compartilhamento e na experiência de leitura.
 
 ## [1.18.1] - 2026-08-05
 
-### Added
+### Novidades
 
-* Curtidas e comentários agora estão disponíveis em registros de jogos publicados no feed.
-* Comentários podem receber respostas em sequência, formando conversas.
-* Nova aba "Meus registros" para acompanhar suas publicações e os comentários recebidos.
-* Novo menu mobile reunindo atalhos adicionais sem sobrecarregar a navegação inferior.
+- Publicações do Feed ganharam curtidas, comentários e conversas em sequência.
+- Nova área “Meus registros” e novo menu para celulares.
 
-### Changed
+### Melhorias
 
-* A navegação inferior mobile agora concentra cinco destinos principais: Início, Buscar, Placar semanal, Perfil e Menu.
-* As ações das publicações foram compactadas para funcionar melhor em telas menores.
-* Curtidas agora possuem uma apresentação visual consistente em todo o aplicativo.
-* Notificações de comentários agora levam diretamente ao conteúdo relacionado.
-
-### Fixed
-
-* Melhorado o acesso aos controles de voto e às ações do feed em celulares com telas menores.
+- Melhorias gerais de interface e experiência no Feed mobile.
 
 ## [1.18.0] - 2026-07-29
 
-### Added
+### Novidades
 
-* Nova área autenticada de Jogatinas para descobrir encontros públicos, acompanhar participações e criar sessões públicas, privadas ou por convite.
-* Convites para jogatinas podem ser enviados diretamente às suas conexões, com definição de vagas, data, descrição e jogo relacionado.
-* Nova central de notificações internas com contador, marcação de leitura e opção de exclusão.
+- Nova área de Jogatinas para criar encontros e convidar suas conexões.
+- Nova central de notificações dentro do Zetho.
 
-### Changed
+### Melhorias
 
-* As notificações são atualizadas automaticamente ao entrar no aplicativo e ao abrir a central.
-* A área de Jogatinas fica disponível apenas para usuários autenticados.
-* O fluxo de criação de jogatinas agora valida melhor datas, horários e quantidade de participantes.
-
-### Fixed
-
-* Ações realizadas na central de notificações agora se recuperam corretamente quando ocorre uma falha.
+- Melhorias na experiência de criação de Jogatinas e uso das notificações.
 
 ## [1.17.0] - 2026-07-21
 
-### Added
+### Novidades
 
-* Novo onboarding "Monte sua estante" para ajudar novos usuários a registrar jogos concluídos, avaliar títulos e encontrar jogadores para seguir.
-* Novo módulo de compartilhamento para criar imagens da sua biblioteca, listas ou jogos concluídos, com formatos para story e publicação quadrada.
-* Convites para o Zetho agora podem ser enviados por link, facilitando a conexão entre quem convida e quem entra.
-* Nova sugestão de jogadores com gostos parecidos, baseada em jogos avaliados em comum.
-* A opção de hype agora aparece apenas para jogos que ainda não foram lançados.
+- Novo onboarding “Monte sua estante”, sugestões de jogadores e convites por link.
+- Agora você pode criar imagens para compartilhar sua biblioteca, listas e jogos concluídos.
 
-### Changed
+### Melhorias
 
-* O dashboard foi reformulado como um feed social contínuo reunindo atividades das suas conexões.
-* Jogos exibidos no feed agora possuem ações rápidas para adicionar à biblioteca, aos desejos ou a uma lista.
-* A página dos jogos foi redesenhada e organizada em abas para facilitar a navegação.
-* As estatísticas dos jogos agora possuem uma área própria e uma apresentação mais simples.
-* A aba de Mídias foi redesenhada para destacar vídeos e imagens e facilitar a exploração da galeria.
-* Os carregamentos do dashboard agora acompanham melhor o formato real do conteúdo.
-* As ações de compartilhar, curtir e salvar foram padronizadas visualmente.
-* A lista de seguidores e pessoas seguidas agora possui uma apresentação mais simples.
-* Sorteios foram temporariamente removidos da navegação.
+- O Feed, as páginas dos jogos e outras áreas ganharam uma nova experiência de navegação.
 
 ## [1.16.1] - 2026-07-13
 
-### Changed
+### Melhorias
 
-* Perfis ainda sem registros agora apresentam mensagens mais úteis e amigáveis.
-* A apresentação dos estados vazios do perfil foi simplificada.
+- Perfis vazios ficaram mais claros e amigáveis.
 
 ## [1.16.0] - 2026-07-12
 
-### Changed
+### Melhorias
 
-* A biblioteca de jogos do perfil agora carrega novos títulos automaticamente conforme você rola a página.
+- A biblioteca agora carrega mais jogos automaticamente durante a navegação.
 
 ## [1.15.0] - 2026-07-12
 
-### Added
+### Novidades
 
-* No celular, o saldo de Z-Coins agora fica sempre visível em um botão flutuante.
-* Usuários administradores ganharam um acesso dedicado à área administrativa no celular.
+- O saldo de Z-Coins ganhou acesso rápido no celular.
 
-### Changed
+### Melhorias
 
-* No celular, modais e caixas de diálogo agora aproveitam melhor o espaço disponível na tela.
-
-### Fixed
-
-* Tocar novamente em um status de jogo já selecionado agora remove corretamente esse status.
+- Melhorias na interface mobile e na atualização dos status dos jogos.
 
 ## [1.14.0] - 2026-07-08
 
-### Added
+### Novidades
 
-* Agora é possível ativar ou desativar notificações por e-mail diretamente nas páginas dos jogos.
-* Respostas exibidas no feed agora mostram também o comentário anterior para facilitar o acompanhamento da conversa.
-* Comentários podem receber votos positivos e negativos diretamente pelo dashboard.
+- Agora você pode configurar notificações por e-mail nas páginas dos jogos.
+- Comentários ganharam mais contexto e opções de voto.
 
-### Fixed
+### Melhorias
 
-* Melhorada a indicação visual dos votos selecionados.
-* Corrigidos problemas que podiam ocorrer ao votar repetidamente em um comentário.
+- Melhorias gerais na experiência de conversas e votações.
 
 ## [1.13.0] - 2026-06-25
 
-### Added
+### Novidades
 
-* Nova aba "Salvas" na seção de Listas do perfil, reunindo todas as listas de outros usuários que você salvou.
-* Caso uma compra de tema não seja concluída, os Z-Coins utilizados são devolvidos automaticamente.
+- Nova área para reunir as listas de outros jogadores que você salvou.
 
-### Changed
+### Melhorias
 
-* Temas adquiridos e ativos agora aparecem mais rapidamente na página de Conta.
-* Melhorias na interface da Loja de Temas.
+- Melhorias na experiência de compra e uso de temas.
 
 ## [1.11.0] - 2026-06-23
 
-### Changed
+### Melhorias
 
-* Interface renovada e modernizada para melhorar a navegação e a acessibilidade.
-* Páginas de login e registro redesenhadas.
-* Visitantes agora podem explorar mais áreas do Zetho antes de criar uma conta.
-* Melhorias nas páginas de busca, perfil, tela inicial e navegação geral.
+- Interface renovada para melhorar a navegação, a acessibilidade e a experiência de visitantes.
 
 ## [1.10.0] - 2026-06-15
 
-### Added
+### Novidades
 
-* Nova seção de Destaques da Comunidade no dashboard, reunindo comentários e avaliações recentes.
-* Publicações agora mostram há quanto tempo foram feitas.
-* Corrigida a exibição do nome e da foto do autor em comentários recentes.
+- Nova seção de destaques da comunidade no Feed.
+
+### Melhorias
+
+- Melhorias na apresentação das publicações e de seus autores.
 
 ## [1.9.1] - 2026-06-13
 
-### Added
+### Melhorias
 
-* Melhorada a apresentação das avaliações e do carregamento da nota dos jogos.
+- Melhorias na apresentação das avaliações dos jogos.
 
 ## [1.9.0] - 2026-05-22
 
-### Added
+### Novidades
 
-* Introduzidos os sorteios no Zetho como nova forma de participação e premiação.
-* Adicionado o sistema de convites para facilitar a entrada de novos usuários.
+- Sorteios e convites chegaram ao Zetho.
 
 ## [1.8.0] - 2026-05-22
 
-### Added
+### Novidades
 
-* Introduzidos os Z-Coins, a moeda virtual de recompensas do Zetho.
-* O saldo de Z-Coins agora aparece no perfil.
-* Algumas atividades dentro do aplicativo passam a conceder Z-Coins.
-* Novo placar semanal destacando os usuários mais ativos da comunidade.
+- Chegaram os Z-Coins e o placar semanal da comunidade.
 
 ## [1.7.1] - 2026-05-06
 
-### Changed
+### Novidades
 
-* Novo padrão de cores aplicado em toda a interface para reforçar a identidade visual do Zetho.
+- O Gazetho chegou ao Zetho.
 
-### Added
+### Melhorias
 
-* Chegada do Gazetho ao Zetho.
+- Nova identidade de cores em toda a interface.
 
 ## [1.7.0] - 2026-04-25
 
-### Added
+### Novidades
 
-* Nova seção `Mídias` nas páginas dos jogos.
-* As páginas dos jogos agora podem destacar screenshots ou artes do título no plano de fundo.
-* Nova galeria interativa para explorar imagens dos jogos.
+- As páginas dos jogos ganharam uma área de mídias e uma nova galeria de imagens.
 
 ## [1.6.0] - 2026-04-24
 
-### Added
+### Novidades
 
-* Novo recurso de `hypes` para marcar os jogos que você mais aguarda.
-* Nova seção no dashboard para descobrir grandes lançamentos.
-* Novas estatísticas mostram quais jogos são mais aguardados pela comunidade.
+- Agora você pode marcar seus jogos mais aguardados e descobrir grandes lançamentos.
 
 ## [1.5.0] - 2026-03-19
 
-### Added
+### Novidades
 
-* Novo atalho para iniciar uma busca diretamente pelo campo de pesquisa.
+- A busca ganhou novos filtros e atalhos para encontrar jogos mais rapidamente.
 
-### Changed
+### Melhorias
 
-* A busca de jogos agora aceita filtros combinados de gênero e ano.
-* Os gêneros exibidos nas páginas dos jogos agora podem ser usados diretamente como filtros.
-* A navegação ficou mais rápida durante o carregamento das informações.
+- Melhorias de desempenho e navegação.
 
 ## [1.4.2] - 2026-03-13
 
-### Changed
+### Melhorias
 
-* As telas internas foram redesenhadas para facilitar o uso no celular.
+- Melhorias na interface e na experiência de uso em celulares.
 
 ## [1.4.1] - 2026-03-09
 
-### Changed
+### Melhorias
 
-* Textos e fontes foram ajustados para melhorar a leitura em telas menores.
+- Melhorias de leitura e interface em telas menores.
 
 ## [1.4.0] - 2026-03-09
 
-### Added
+### Novidades
 
-* O Zetho agora pode ser instalado diretamente no celular ou computador.
-* Nova tela informa quando você está sem conexão com a internet.
+- O Zetho agora pode ser instalado no celular ou computador e avisa quando você está sem conexão.
 
-### Changed
+### Melhorias
 
-* A página de conexões ficou mais simples de navegar no celular.
+- Melhorias na experiência mobile da página de conexões.
 
 ## [1.3.2] - 2026-03-08
 
-### Fixed
+### Melhorias
 
-* Corrigido um problema que impedia a abertura de algumas listas de jogos.
+- Melhorias na estabilidade das listas de jogos.
 
 ## [1.3.1] - 2026-03-07
 
-### Fixed
+### Melhorias
 
-* Ao sair da conta, suas informações agora são removidas corretamente da sessão.
-* Visitantes não autenticados não veem mais ações de seguir usuários.
+- Melhorias de privacidade e experiência ao entrar ou sair da conta.
 
 ## [1.3.0] - 2026-03-07
 
-### Added
+### Novidades
 
-* A busca agora encontra jogadores e perfis além de jogos.
-* Comentários no `Game Lobby` ganharam acesso rápido ao perfil do autor.
-* Agora você pode seguir outros jogadores e ser seguido.
-* Nova página dedicada a seguidores e pessoas que você segue.
+- A busca agora encontra jogadores, e você pode seguir perfis e acompanhar suas conexões.
 
-### Changed
+### Melhorias
 
-* Alternar entre resultados de jogos e perfis não perde mais sua posição na busca.
-* Comentários no `Game Lobby` agora exibem a foto do jogador.
-* O perfil agora carrega mais rapidamente.
+- Melhorias na interface e no desempenho de perfis, busca e comentários.
 
 ## [1.2.1] - 2026-03-01
 
-### Added
+### Melhorias
 
-* As capas agora mostram etiquetas indicando o status de lançamento dos jogos.
-
-### Changed
-
-* Melhorada a experiência de adicionar jogos às listas.
+- Melhorias na apresentação das capas e na experiência de adicionar jogos às listas.
 
 ## [1.2.0] - 2026-02-23
 
-### Added
+### Novidades
 
-* Páginas de jogos e perfis agora são públicas e podem ser compartilhadas com pessoas que ainda não possuem conta.
-* Melhorada a apresentação do Zetho em mecanismos de busca e em links compartilhados nas redes sociais.
+- Páginas de jogos e perfis agora podem ser acessadas e compartilhadas publicamente.
 
-### Changed
+### Melhorias
 
-* Visitantes agora recebem orientações mais claras sobre os benefícios de criar uma conta.
-
-### Fixed
-
-* Corrigidas páginas públicas que solicitavam login indevidamente.
-* Ações que exigem autenticação agora informam corretamente quando é necessário entrar na conta.
-
-### Security
-
-* Reforçada a proteção das ações disponíveis apenas para usuários autenticados.
+- Melhorias na experiência de visitantes e na proteção das áreas da conta.
 
 ## [1.1.0] - 2026-02-20
 
-### Added
+### Novidades
 
-* Adicione uma foto ao seu perfil.
-* Atualize seu endereço de e-mail.
-* Exclua sua conta diretamente pelo Zetho.
-* Nova página de aviso para jogos ou perfis que não forem encontrados.
-* Adicione uma biografia ao perfil.
-* Conecte suas contas Xbox, Steam e PlayStation ao perfil.
-* Novas confirmações visuais informam quando suas ações são concluídas.
+- Novas opções para personalizar o perfil, gerenciar a conta e conectar outras plataformas.
 
-### Changed
+### Melhorias
 
-* Visual renovado na página inicial.
-* Visual renovado e mais limpo na página de buscas.
+- A página inicial e a busca ganharam uma interface renovada.
 
 ## [1.0.2] - 2026-02-19
 
-### Added
+### Novidades
 
-* Sistema de criação de conta e login integrado ao Zetho.
+- Criação de conta e login chegaram ao Zetho.
 
-### Changed
+### Melhorias
 
-* Melhorias na estabilidade e segurança da sessão do usuário.
+- Melhorias gerais de estabilidade e segurança.
 
 ## [1.0.0] - 2026-02-06
 
-### Added
+### Novidades
 
-* Lançamento inicial do Zetho! 🎉
-* Crie sua conta com segurança.
-* Crie e personalize seu perfil de jogador.
-* Explore, busque e descubra novos jogos.
-* Crie listas de jogos, edite e compartilhe.
-* Participe da comunidade comentando no Game Lobby.
-* Acompanhe suas atividades e estatísticas pelo dashboard.
+- Lançamento inicial do Zetho! 🎉
+- Crie seu perfil, descubra jogos, organize listas e participe da comunidade.

@@ -23,7 +23,7 @@ type ChangelogRelease = {
       <header class="border-b border-gray-6 p-4">
         <h1 class="text-3xl md:text-4xl">Changelog</h1>
         <p class="text-gray-11 mt-2">
-          Histórico de mudanças do Zetho, organizado por versão.
+          Veja o que chegou de novo e o que melhorou no Zetho.
         </p>
       </header>
 
@@ -45,31 +45,33 @@ type ChangelogRelease = {
       } @else {
         <section class="divide-y divide-gray-6">
           @for (release of releases(); track release.version) {
-            <article
-              class="p-5 md:p-6"
-              [class]="
-                release.isCurrent
-                  ? 'p-5 md:p-6 bg-blue-3/25'
-                  : 'p-5 md:p-6'
-              "
+            <details
+              [open]="release.isCurrent"
+              [class.current-release]="release.isCurrent"
             >
-              <header
-                class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-4 border-b border-gray-6"
+              <summary
+                class="flex cursor-pointer list-none items-center justify-between gap-3 p-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-6 md:p-6"
               >
                 <div class="flex items-center gap-2 flex-wrap">
                   <h2 class="text-2xl leading-none">v{{ release.version }}</h2>
                   @if (release.isCurrent) {
-                    <span class="rounded-full bg-blue-3 text-blue-11 text-xs px-2 py-0.5">Atual</span>
+                    <span
+                      class="rounded-full bg-blue-3 text-blue-11 text-xs px-2 py-0.5"
+                      >Atual</span
+                    >
                   }
                 </div>
 
-                <span class="text-sm text-gray-11">{{ release.date }}</span>
-              </header>
+                <div class="flex items-center gap-3 text-sm text-gray-11">
+                  <span>{{ release.date }}</span>
+                  <i class="ph ph-caret-down caret" aria-hidden="true"></i>
+                </div>
+              </summary>
 
-              <div class="grid gap-4">
+              <div class="grid gap-6 px-5 pb-6 md:px-6">
                 @for (section of release.sections; track section.title) {
                   <section>
-                    <h3 class="text-gray-11 mb-3 font-mono">
+                    <h3 class="mb-3 text-sm font-semibold text-blue-11">
                       {{ section.title }}
                     </h3>
 
@@ -84,7 +86,7 @@ type ChangelogRelease = {
                   </section>
                 }
               </div>
-            </article>
+            </details>
           }
         </section>
       }
@@ -96,11 +98,27 @@ type ChangelogRelease = {
       min-height: 100%;
     }
 
+    details.current-release {
+      background: color-mix(in srgb, var(--color-blue-3) 25%, transparent);
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .caret {
+      transition: transform 150ms ease;
+    }
+
+    details[open] .caret {
+      transform: rotate(180deg);
+    }
+
     .changelog-item {
       position: relative;
       padding-left: 1rem;
       color: var(--color-gray-12);
-      line-height: 1.45;
+      line-height: 1.6;
     }
 
     .changelog-item::before {
@@ -197,7 +215,7 @@ export class ChangelogPage {
         continue;
       }
 
-      const itemMatch = line.match(/^-\s+(.+)$/);
+      const itemMatch = line.match(/^[-*]\s+(.+)$/);
       if (itemMatch && currentSection) {
         currentSection.items.push(itemMatch[1]);
         continue;

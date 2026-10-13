@@ -50,16 +50,18 @@
         [style.--theme-c3]="profileStore.activeTheme()?.tertiaryColor"
         [profileThemeBackground]="profileStore.activeTheme()?.backgroundColor"
         [profileThemePalette]="profileStore.activeTheme()"
-      [style.background-color]="profileStore.activeTheme()?.backgroundColor"
+        [style.background-color]="profileStore.activeTheme()?.backgroundColor"
       >
         <!-- Background Image Mask -->
         @if (profileStore.activeTheme()?.backgroundImageId; as imageId) {
         <div
-          class="profile-theme-art absolute inset-0 z-0 pointer-events-none" aria-hidden="true"
+          class="profile-theme-art absolute inset-0 z-0 pointer-events-none"
+          aria-hidden="true"
         >
           <img
             [src]="getMediaUrl(imageId)"
-            class="w-full h-full object-cover" alt=""
+            class="w-full h-full object-cover"
+            alt=""
           />
         </div>
         }
@@ -67,15 +69,28 @@
         <div class="relative z-10">
           <header class="flex items-center justify-between gap-2 px-4 py-4">
             <div class="flex min-w-0 items-center gap-3">
-              <img [src]="profileStore.avatarUrl()" alt="{{`Avatar do ${profile.gamertag}`}}"
-                class="profile-theme-avatar h-12 w-12 shrink-0 rounded-full bg-blue-12 object-cover" />
+              <img
+                [src]="profileStore.avatarUrl()"
+                alt="{{`Avatar do ${profile.gamertag}`}}"
+                class="profile-theme-avatar h-12 w-12 shrink-0 rounded-full bg-blue-12 object-cover"
+              />
               <div class="min-w-0">
-                <p class="truncate font-semibold text-gray-12">{{ profileStore.itsMe() ? authStore.user()?.name : profile.gamertag }}</p>
-                <p class="truncate text-sm text-gray-11">@{{ profile.gamertag }}</p>
+                <p class="truncate font-semibold text-gray-12">
+                  {{ profileStore.itsMe() ? authStore.user()?.name :
+                  profile.gamertag }}
+                </p>
+                <p class="truncate text-sm text-gray-11">
+                  @{{ profile.gamertag }}
+                </p>
               </div>
             </div>
             @if (authStore.isAuthenticated() && !profileStore.itsMe()) {
-              <ui-follow-control class="shrink-0" variant="icon" [profileId]="profile.$id" [gamertag]="profile.gamertag" />
+            <ui-follow-control
+              class="shrink-0"
+              variant="icon"
+              [profileId]="profile.$id"
+              [gamertag]="profile.gamertag"
+            />
             }
           </header>
 
@@ -152,15 +167,17 @@
         [style.--theme-c3]="authStore.activeTheme()?.tertiaryColor"
         [profileThemeBackground]="authStore.activeTheme()?.backgroundColor"
         [profileThemePalette]="authStore.activeTheme()"
-      [style.background-color]="authStore.activeTheme()?.backgroundColor"
+        [style.background-color]="authStore.activeTheme()?.backgroundColor"
       >
         @if (authStore.activeTheme()?.backgroundImageId; as imageId) {
         <div
-          class="profile-theme-art profile-theme-art-muted absolute inset-0 z-0 pointer-events-none" aria-hidden="true"
+          class="profile-theme-art profile-theme-art-muted absolute inset-0 z-0 pointer-events-none"
+          aria-hidden="true"
         >
           <img
             [src]="getMediaUrl(imageId)"
-            class="w-full h-full object-cover" alt=""
+            class="w-full h-full object-cover"
+            alt=""
           />
         </div>
         }
@@ -412,10 +429,7 @@
 
       <span>•</span>
 
-      <a
-        routerLink="/contato"
-        class="text-sm hover:text-link hover:underline"
-      >
+      <a routerLink="/contato" class="text-sm hover:text-link hover:underline">
         Contato
       </a>
 
@@ -498,42 +512,54 @@
   </nav>
 </ng-template>
 <ng-template #secondaryNavigation>
-  <ui-color-mode-selector />
-  <nav class="mt-4 flex flex-col gap-1">
+  <nav
+    class="mt-4 flex flex-wrap items-center gap-1 border-t border-line pt-3 lg:flex-col lg:items-stretch lg:border-0 lg:pt-0"
+    aria-label="Navegação auxiliar"
+  >
     @if (authStore.user()) {
     <a
       routerLink="/minha-conta"
       routerLinkActive="bg-gray-3 text-gray-12"
-      class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+      aria-label="Minha conta"
+      title="Minha conta"
+      class="flex size-11 items-center justify-center gap-3 rounded-lg text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring lg:h-auto lg:w-full lg:justify-start lg:px-3 lg:py-2"
     >
       <i class="ph ph-gear"></i>
-      <span>Minha conta</span>
+      <span class="sr-only lg:not-sr-only">Minha conta</span>
     </a>
     }
     <a
       routerLink="/institucional"
       routerLinkActive="bg-gray-3 text-gray-12"
-      class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+      aria-label="Institucional"
+      title="Institucional"
+      class="flex size-11 items-center justify-center gap-3 rounded-lg text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring lg:h-auto lg:w-full lg:justify-start lg:px-3 lg:py-2"
     >
       <i class="ph ph-buildings"></i>
-      <span>Institucional</span>
+      <span class="sr-only lg:not-sr-only">Institucional</span>
     </a>
     <a
       routerLink="/changelog"
       routerLinkActive="bg-gray-3 text-gray-12"
-      class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
+      aria-label="Changelog"
+      title="Changelog"
+      class="flex size-11 items-center justify-center gap-3 rounded-lg text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring lg:h-auto lg:w-full lg:justify-start lg:px-3 lg:py-2"
     >
       <i class="ph ph-list-checks"></i>
-      <span>Changelog</span>
+      <span class="sr-only lg:not-sr-only">Changelog</span>
     </a>
     @if (authStore.isAdmin()) {
     <a
       routerLink="/admin"
       routerLinkActive="bg-gray-3 text-gray-12"
       ariaCurrentWhenActive="page"
-      class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-11 hover:bg-gray-3 hover:text-gray-12"
-      ><i class="ph ph-shield-star" aria-hidden="true"></i>Admin</a
+      aria-label="Admin"
+      title="Admin"
+      class="flex size-11 items-center justify-center gap-3 rounded-lg text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring lg:h-auto lg:w-full lg:justify-start lg:px-3 lg:py-2"
+      ><i class="ph ph-shield-star" aria-hidden="true"></i
+      ><span class="sr-only lg:not-sr-only">Admin</span></a
     >
     }
+    <ui-color-mode-selector class="ml-auto lg:ml-0 lg:px-1" />
   </nav>
 </ng-template>

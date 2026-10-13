@@ -1,18 +1,21 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 // Caminhos dos arquivos a serem atualizados
-const rootDir = path.resolve(__dirname, '..');
-const packageJsonPath = path.join(rootDir, 'package.json');
-const envProdPath = path.join(rootDir, 'src/environments/environment.ts');
-const envDevPath = path.join(rootDir, 'src/environments/environment.development.ts');
-const changelogPath = path.join(rootDir, 'CHANGELOG.md');
+const rootDir = path.resolve(__dirname, "..");
+const packageJsonPath = path.join(rootDir, "package.json");
+const envProdPath = path.join(rootDir, "src/environments/environment.ts");
+const envDevPath = path.join(
+  rootDir,
+  "src/environments/environment.development.ts",
+);
+const changelogPath = path.join(rootDir, "CHANGELOG.md");
 
 function getTodayISO() {
   const now = new Date();
   const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
@@ -29,16 +32,18 @@ function parseSemver(version) {
 function calculateNextVersion(currentVersion, bumpType) {
   const parsed = parseSemver(currentVersion);
   if (!parsed) {
-    throw new Error(`Versão atual inválida no package.json: "${currentVersion}"`);
+    throw new Error(
+      `Versão atual inválida no package.json: "${currentVersion}"`,
+    );
   }
 
-  if (bumpType === 'patch') {
+  if (bumpType === "patch") {
     return `${parsed.major}.${parsed.minor}.${parsed.patch + 1}`;
   }
-  if (bumpType === 'minor') {
+  if (bumpType === "minor") {
     return `${parsed.major}.${parsed.minor + 1}.0`;
   }
-  if (bumpType === 'major') {
+  if (bumpType === "major") {
     return `${parsed.major + 1}.0.0`;
   }
   if (parseSemver(bumpType)) {
@@ -46,35 +51,35 @@ function calculateNextVersion(currentVersion, bumpType) {
   }
 
   throw new Error(
-    `Tipo de bump inválido: "${bumpType}". Use "patch", "minor", "major" ou uma versão no formato "x.y.z".`
+    `Tipo de bump inválido: "${bumpType}". Use "patch", "minor", "major" ou uma versão no formato "x.y.z".`,
   );
 }
 
 function updatePackageJson(targetVersion) {
-  const content = fs.readFileSync(packageJsonPath, 'utf8');
+  const content = fs.readFileSync(packageJsonPath, "utf8");
   const updated = content.replace(
     /"version":\s*"[^"]+"/,
-    `"version": "${targetVersion}"`
+    `"version": "${targetVersion}"`,
   );
-  fs.writeFileSync(packageJsonPath, updated, 'utf8');
+  fs.writeFileSync(packageJsonPath, updated, "utf8");
   console.log(`  ✓ package.json -> "${targetVersion}"`);
 }
 
 function updateEnvironmentFile(filePath, targetVersion) {
   if (!fs.existsSync(filePath)) return;
-  let content = fs.readFileSync(filePath, 'utf8');
+  let content = fs.readFileSync(filePath, "utf8");
   const updated = content.replace(
     /appVersion:\s*'[^']+'/,
-    `appVersion: '${targetVersion}'`
+    `appVersion: '${targetVersion}'`,
   );
-  fs.writeFileSync(filePath, updated, 'utf8');
+  fs.writeFileSync(filePath, updated, "utf8");
   const relativePath = path.relative(rootDir, filePath);
   console.log(`  ✓ ${relativePath} -> '${targetVersion}'`);
 }
 
 function updateChangelog(targetVersion) {
   if (!fs.existsSync(changelogPath)) return;
-  let content = fs.readFileSync(changelogPath, 'utf8');
+  let content = fs.readFileSync(changelogPath, "utf8");
   const today = getTodayISO();
   const versionHeader = `## [${targetVersion}] - ${today}`;
 
@@ -83,27 +88,42 @@ function updateChangelog(targetVersion) {
     return;
   }
 
-  if (content.includes('## [Unreleased]')) {
+  if (content.includes("## [Unreleased]")) {
     content = content.replace(
-      '## [Unreleased]',
-      `## [Unreleased]\n\n${versionHeader}`
+      "## [Unreleased]",
+      `## [Unreleased]\n\n${versionHeader}`,
     );
   } else {
     // Insere logo abaixo do cabeçalho principal se não houver [Unreleased]
     content = content.replace(
       /# CHANGELOG\s*\n/,
-      `# CHANGELOG\n\n## [Unreleased]\n\n${versionHeader}\n`
+      `# CHANGELOG\n\n## [Unreleased]\n\n${versionHeader}\n`,
     );
   }
 
-  fs.writeFileSync(changelogPath, content, 'utf8');
+  fs.writeFileSync(changelogPath, content, "utf8");
   console.log(`  ✓ CHANGELOG.md -> adicionada seção ${versionHeader}`);
+}
+
+function validateUnreleasedChangelog() {
+  if (!fs.existsSync(changelogPath)) return;
+
+  const content = fs.readFileSync(changelogPath, "utf8");
+  const unreleased = content.match(
+    /## \[Unreleased\]([\s\S]*?)(?=\n## \[[^\]]+\]|$)/,
+  );
+
+  if (!unreleased || !/^\s*[-*]\s+.+$/m.test(unreleased[1])) {
+    throw new Error(
+      "Adicione ao menos uma mudança percebida pelo usuário em CHANGELOG.md antes de criar uma versão. Consulte docs/changelog.md.",
+    );
+  }
 }
 
 function main() {
   const arg = process.argv[2];
 
-  if (!arg || arg === '--help' || arg === '-h') {
+  if (!arg || arg === "--help" || arg === "-h") {
     console.log(`
 Uso do Script de Bump de Versão:
   node scripts/bump-version.js <patch | minor | major | x.y.z> [sync]
@@ -118,16 +138,21 @@ Exemplos:
     process.exit(0);
   }
 
-  const pkgContent = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  const pkgContent = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
   const currentVersion = pkgContent.version;
 
   let targetVersion;
-  if (arg === 'sync') {
+  if (arg === "sync") {
     targetVersion = currentVersion;
-    console.log(`\nSincronizando versão atual (${currentVersion}) em todos os arquivos do app...\n`);
+    console.log(
+      `\nSincronizando versão atual (${currentVersion}) em todos os arquivos do app...\n`,
+    );
   } else {
     targetVersion = calculateNextVersion(currentVersion, arg);
-    console.log(`\nIncrementando versão: ${currentVersion} ➔ ${targetVersion}\n`);
+    validateUnreleasedChangelog();
+    console.log(
+      `\nIncrementando versão: ${currentVersion} ➔ ${targetVersion}\n`,
+    );
   }
 
   updatePackageJson(targetVersion);

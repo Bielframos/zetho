@@ -57,3 +57,7 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Changelog
+
+Antes de preparar uma versão, registre em `CHANGELOG.md` apenas mudanças percebidas por quem usa o Zetho. Consulte [docs/changelog.md](docs/changelog.md) para as categorias, o formato e os critérios editoriais.
