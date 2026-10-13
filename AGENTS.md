@@ -1,119 +1,64 @@
-# Padroes de Redesign do Zetho
+# Zetho — instruções para agentes
 
-Este guia documenta os padroes visuais aplicados no `AppShell`, no `Dashboard` e na pagina individual de game. Use-o ao redesenhar outras telas Angular/Tailwind para manter consistencia com a experiencia atual.
+Frontend do Zetho: biblioteca de jogos, avaliações, perfis e comunidade. Angular com componentes standalone, signals, Tailwind e SSR. O repositório chama-se Zetho; o diretório de build ainda é `dist/zerei`.
 
-Fontes principais:
+## Começar e verificar
 
-- `src/app/app.html`
-- `src/app/core/dashboard/pages/dashboard/dashboard.html`
-- `src/app/core/games/pages/game/game.html`
-- `src/styles.css`
+Execute os comandos na raiz deste repositório. Use o Node de `.node-version` e a versão de pnpm de `package.json`; mantenha `pnpm-lock.yaml` como lockfile.
 
-## Base Visual
+| Objetivo | Comando |
+| --- | --- |
+| Instalar dependências | `pnpm install --frozen-lockfile` |
+| Preparar configuração pública | `pnpm configure` |
+| Desenvolvimento | `pnpm start` |
+| Testes de configuração | `pnpm test:tooling` |
+| Testes Angular | `pnpm test:ci` |
+| Teste focado, exemplo | `pnpm test:ci --include=src/app/core/dashboard/pages/dashboard/entry-comments-pages.store.spec.ts` |
+| Build de produção e SSR | `pnpm build` |
+| Segredos nos arquivos atuais | `pnpm secrets:check` (requer Gitleaks; aceita `GITLEAKS_BIN`) |
 
-- O produto suporta claro, escuro e sistema. Use tokens semanticos de `src/styles/color-tokens.css`; `gray-*`/`blue-*` sao aliases adaptaveis.
-- Use `text-gray-11` para texto secundario, descricoes, labels e metadados; use `text-gray-10` para informacao ainda mais discreta.
-- Use bordas como estrutura visual: `border-gray-4` no shell e separacoes externas; `border-gray-6` em secoes, modulos internos, listas e controles.
-- Azul e a cor de acao e enfase: `blue-9` para botoes/estado ativo, `blue-10` para hover de botao primario e `blue-11` para links, icones e destaques textuais.
-- O corpo usa `Readex Pro Variable`; reserve `font-display` para a marca `zetho` e momentos muito pontuais de identidade.
-- Prefira `rounded-lg` para controles, navegacao, chips e modais pequenos. Evite raios grandes em areas estruturais do app.
-- Use Phosphor Icons (`ph` e `ph-fill`) para acoes e navegacao. O tamanho base dos icones vem de `src/styles.css`; ajuste com `text-[...]` apenas quando o modulo pedir destaque.
+- Siga [README.md](README.md) para configurar uma instância própria. Crie `.env` a partir de `.env.example` apenas se ainda não existir; preserve a configuração local.
+- Os testes Angular precisam de Chrome/Chromium; em Linux, use `CHROME_BIN=/usr/bin/chromium` se necessário.
+- `start`, `build` e `test` geram `src/environments/environment.generated.ts`. Não edite nem versione esse arquivo. Para chamar `pnpm ng` diretamente, execute `pnpm configure` antes.
+- Não há script `lint` neste pacote. Não invente comandos de validação nem acrescente ferramentas para satisfazer um comando inexistente.
 
-## Layout E Shell
+## Onde alterar
 
-- O `AppShell` autenticado usa `min-h-dvh bg-gray-1 text-gray-12` e centraliza tudo em `max-w-[1180px]`.
-- No desktop, preserve a grade de tres colunas: sidebar esquerda `15rem`, conteudo fluido e sidebar direita `18rem` (`lg:grid-cols-[15rem_minmax(0,1fr)_18rem]`).
-- Sidebars desktop devem ser `sticky top-0 h-dvh`, com bordas verticais `border-r` ou `border-l` em `border-gray-4`.
-- O conteudo principal fica em `main` com `min-w-0` e bordas laterais no desktop (`lg:border-x`).
-- A busca global no shell e sticky, transluzida e com blur (`bg-gray-1/50`, `backdrop-blur-lg`, `border-b`).
-- No mobile, use header sticky no topo e bottom nav fixa. A navegacao inferior deve ter botoes icon-only com area de toque estavel (`h-11`) e estado ativo `bg-gray-3 text-gray-12`.
-- Para paginas dentro do shell, prefira wrappers como `w-full max-w-5xl mx-auto` quando a tela for feed/dashboard; deixe paginas de detalhe ocuparem a largura do conteudo e organizarem modulos em faixas.
+- `src/app/core`: funcionalidades e serviços por domínio. Mantenha regras e estado próximos à funcionalidade responsável.
+- `src/app/shared`: componentes e infraestrutura reutilizáveis; extraia para cá quando houver uso compartilhado real.
+- `src/app/app.config.ts`, `app.config.browser.ts` e `app.config.server.ts`: fronteiras entre configuração comum, navegador e servidor.
+- `src/environments` e `scripts/configure-environment.js`: configuração pública permitida no bundle.
+- `src/styles.css` e `src/styles/color-tokens.css`: estilos compartilhados e tokens de aparência.
 
-## Composicao De Paginas
+## Contratos e comportamento
 
-- Estruture telas como faixas e secoes full-width. Use bordas e divisorias para hierarquia, em vez de empilhar cards decorativos.
-- Padroes de separacao recorrentes:
-  - `border-b border-gray-6` para separar cabecalhos e conteudo.
-  - `border-y border-gray-6` para blocos informativos horizontais.
-  - `border-t-8 border-gray-6` ou `border-y-8 border-gray-6` para quebras fortes entre grandes modulos.
-  - `divide-y divide-gray-6` para feeds e listas.
-  - `divide-y-8 divide-gray-6` para listas de chamadas com separacao mais editorial.
-- Nao coloque cards dentro de cards. Reserve cards para itens repetidos, modais, unidades compactas de conteudo e componentes existentes como `ui-game-card`.
-- Use grid compacto para capas e colecoes: `grid-cols-3` no mobile e colunas responsivas no desktop quando houver muitos games.
-- Prefira headers de secao com `px-4 py-4`, icone em caixa `h-11 w-11 border border-gray-6`, titulo `text-2xl` e subtitulo apenas quando necessario.
-- Use `animate-fade-in-slide` somente para entrada de blocos ou troca de conteudo. Nao aplique animacoes a cada item pequeno de uma lista longa.
+- Preserve a separação entre componentes de apresentação, estado e acesso a dados. Para módulos grandes, extraia responsabilidades coesas; evite serviços genéricos que acumulem domínios.
+- Escritas sociais passam pela API. Reaproveite os serviços existentes; não contorne autenticação/permissões com chamadas diretas ao Appwrite.
+- Código executado em SSR não deve acessar `window`, `document` ou APIs do navegador sem a proteção já usada no projeto. Preserve o isolamento de dados entre requisições e sessões.
+- Em consultas paginadas, preserve inserções e remoções durante carregamentos. Invalide respostas antigas ao trocar item, perfil ou sessão, inclusive no ciclo A → B → A; uma chave de entidade sozinha não basta.
+- Ao mudar contratos da API, confira DTOs, consumidores e testes nos dois repositórios. Não presuma que ambos serão publicados simultaneamente.
+- Mantenha a sanitização de notícias e as restrições de conteúdo incorporado. Firebase Analytics é opcional; o app deve funcionar sem suas credenciais.
 
-## Interacoes E Controles
+## Interface
 
-- Use classes globais de botao antes de criar novas combinacoes:
-  - `.ui-primary-btn` para acao principal.
-  - `.ui-secondary-btn` para acao secundaria.
-  - `.ui-ghost-btn` para acoes discretas e icon-only.
-  - `.ui-action-btn` para acoes pequenas em comentarios, listas e chips interativos.
-  - `.ui-destructive-btn` para acoes destrutivas.
-- Para botoes icon-only, use `data-size="icon"` e forneca `aria-label` quando o texto nao estiver visivel.
-- Links textuais devem usar `text-blue-11` com `hover:underline` e, quando fizer sentido, `hover:underline`.
-- Navegacao ativa segue `routerLinkActive="bg-gray-3 text-gray-12"` no shell. Em tabs de conteudo, use borda inferior ativa (`border-blue-9`) e texto `text-gray-12`.
-- Inputs e textareas devem usar superficies adaptaveis ou transparentes, com `border-line-strong`, placeholder `text-gray-10/11` e foco `focus:ring-2 focus:ring-focus-ring`.
-- Estados disabled devem usar `disabled:pointer-events-none`, `disabled:text-gray-10`, `disabled:bg-transparent` ou `disabled:opacity-50`, conforme o componente existente.
-- Badges e contadores usam `rounded-full`, texto pequeno (`text-xs`) e fundos discretos como `bg-blue-3 text-blue-11`, `bg-gray-3 text-gray-10` ou tons semanticos quando necessario.
+Antes de alterar HTML, estilos ou interação, leia [.github/UI_GUIDELINES.md](.github/UI_GUIDELINES.md). O guia preserva as convenções do shell, feed, jogos e componentes existentes.
 
-## Padroes Do Dashboard
+- Reutilize componentes `ui-*`, classes de botão e tokens semânticos; preserve os modos claro, escuro e sistema.
+- Verifique teclado, foco, estados de carregamento/erro/vazio e tamanhos mobile/desktop. Compare visualmente com as telas de referência do guia quando mudar a apresentação.
+- Mantenha o texto da interface em português e evite expor detalhes internos ao usuário.
 
-- O Dashboard e um feed social unico e cronologico (estilo timeline), em coluna focada (`w-full max-w-2xl mx-auto`), com carregamento infinito. Nao ha mais secoes separadas de descoberta (trending/aguardados) na home.
-- O feed mistura varios tipos de atividade das conexoes: review, comentario, lista, registro de status (`status`: zerou/adicionou a biblioteca/comecou a jogar/abandonou) e adicao de jogo a lista (`list_item`). O tipo de cada item define o corpo renderizado.
-- Feeds usam `flex flex-col divide-y divide-gray-6`; cada item usa `p-4`, avatar `h-8 w-8 rounded-full`, metadados `text-xs text-gray-10` e conteudo em `text-gray-12/11`.
-- A acao do item (verbo) fica na linha do autor para `status` e `list_item` (ex.: "**Fulano** zerou", "**Fulano** adicionou em [Lista]"); review/comentario/lista usam um rotulo discreto a direita. Icone de status a direita, com `text-warning` para o marco `completed` (pico) e `text-gray-11` nos demais. **Gotcha:** o `@if` do Angular remove o espaco entre o `<a>` do nome e o `<span>` do verbo — force o espaco com `&nbsp;` dentro do span condicional, senao renderiza "Lottozerou".
-- Avatares sem imagem devem cair para uma bolha `rounded-full bg-blue-9 text-white` com inicial.
-- O preview de game no feed (`ui-feed-game`) e arejado, sem caixa nem bordas: uma coluna com o link do jogo (capa `h-16 w-11 rounded` + nome `group-hover:underline`) e, abaixo, uma linha `flex justify-between` — a esquerda a barra de acoes (`gap-5 text-sm text-gray-11`) com Biblioteca, Desejos e Lista (icone + rotulo, sem fundo nem divisorias, acendem para `text-gray-12` no hover e viram "feito" em `text-blue-11` com `ph-fill`); a direita, um `ng-content` para os controles de engajamento do post. Para comentario/review, a barra de votos (upvote/downvote/contagem) e projetada nesse slot via `ngTemplateOutlet`, dividindo a linha com as acoes do jogo; quando o item nao tem jogo, a mesma barra cai num rodape solto a direita. As acoes de jogo sao otimistas/fire-and-forget (nao carregam o z-entry do espectador) e usam `ZEntryService`/`ListsController`; so aparecem para usuario autenticado. Icone de desejos e `ph-shopping-bag` (o mesmo da tela de game) — nunca o coracao, que e curtida.
-- Carregamento infinito via `IntersectionObserver` sobre uma sentinela no fim da lista; indicador de carga discreto (`ui-loading` inline) enquanto pagina. A janela mesclada tem teto pratico (top ~100 por fonte).
-- Empty states devem ser simples e diretos, normalmente `text-gray-11`, sem composicao de card pesada; o estado vazio do feed sugere jogadores com gostos parecidos.
+## Validação proporcional
 
-## Padroes Da Pagina De Game
+- Para lógica ou correções de regressão, execute os testes afetados e adicione cobertura do comportamento quando necessário. Evite testes que só reproduzem a implementação.
+- Antes de entregar alterações de código para merge, execute `pnpm test:tooling`, `pnpm test:ci` e `pnpm build`, como no CI. Testes com mocks não comprovam integração com Appwrite real.
+- Para mudanças somente em Markdown, confira comandos, caminhos, links locais e `git diff --check`; não é necessário repetir o build.
+- Informe o que foi validado e qualquer limitação real. Não apresente teste não executado como aprovado.
 
-- A pagina de game e uma tela de detalhe imersiva, nao um dashboard de cards.
-- Quando houver imagem hero, use uma camada absoluta no topo, com `background-size: cover`, opacidade baixa e mascara vertical para desaparecer no fundo. A imagem deve ser decorativa (`aria-hidden="true"`) e nao bloquear interacao.
-- O header do game e uma banda horizontal alinhada a esquerda (perfil social): capa `ui-game-card` em `readonlyMode` a esquerda (`w-24` no mobile, `[width]="150"` no desktop), a direita o titulo como heroi (`text-3xl md:text-5xl`, `leading-[1.05]`), uma linha de metadados sempre visivel (`ano · desenvolvedor · generos` em `text-sm text-gray-11`, generos como links) e as acoes ghost no topo-direito. So o resumo longo (em `font-light leading-7`) e a data de lancamento ficam no disclosure recolhivel. Nunca exponha IDs ou dados de sistema na UI.
-- O titulo do jogo e sempre o maior elemento do header. A nota agregada e uma linha de score compacta estilo Letterboxd (`ui-game-rating`): numero `text-3xl tabular-nums` + estrelas readonly agrupados, seguidos de contagem e do CTA `Ver avaliacoes →` na mesma linha. Nunca deixe a nota maior que o titulo. No mobile, uma nota compacta fica sempre visivel na barra sticky.
-- Acoes do game ficam em botoes ghost icon-only compostos no header (topo-direito) quando o usuario esta autenticado.
-- Modulos abaixo do header: status/entry actions e uma barra de tabs sticky. Todo o resto (incluindo as estatisticas, que sao uma lista de uma coluna com `divide-y`, nunca grid) e conteudo de tab (Lobby como default, Estatisticas, Reviews, Midias, "Talvez voce goste"), sem headers de secao empilhados.
-- Tabs usam container `border-t-8 border-b border-gray-6 px-4`, botoes com `py-4`, borda inferior de 2px e estado ativo em `border-blue-9 text-gray-12`.
-- A area de midias e uma aba dedicada: o trailer (ou, na ausencia dele, a primeira screenshot) e o destaque em largura total no topo (`aspect-video`, `border-b border-gray-6`); abaixo, todas as demais screenshots ficam sempre visiveis num grid (`grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-px bg-gray-6`), sem botao de "ver galeria" escondendo conteudo. Cada thumbnail abre o lightbox em tela cheia ao clicar. Videos e imagens preenchem o espaco com `aspect-video`, `object-cover` e hover de zoom leve.
-- Lightbox deve ser tela cheia com `dialog`, backdrop escuro, botoes icon-only e imagem `object-contain`.
-- Para jogos sem login ou ainda nao lancados, use blocos informativos centralizados com icone grande, titulo curto, texto `text-gray-11` e CTA quando aplicavel.
+## Configuração, contribuição e manutenção
 
-## Game Cards E Listas
-
-- `ui-game-card` e a unidade padrao para capas. Ele deve manter proporcao visual de capa, overflow hidden e badge absoluto no canto superior direito.
-- Se houver capa, mostre a imagem em largura total e use overlay no hover com gradiente para revelar nome e ano.
-- Se nao houver capa, use fallback com `background-pattern`, layout centralizado e proporcao `3 / 4`.
-- Badges de status devem ser pequenos, circulares, absolutos e acessiveis via `aria-label`/`title`.
-- List cards usam capas sobrepostas, sombra discreta e hover `bg-gray-3`; listas vazias usam `background-pattern`, borda tracejada `border-dashed border-gray-6` e icone de adicao.
-- Ao listar muitos games, use grids densos e previsiveis, evitando espacamento excessivo e composicoes de landing page.
-
-## Estados Obrigatorios
-
-- Loading de pagina ou secao: use `<ui-loading>`. Para loading inline em botoes, use `<ui-loading [inline]="true" size="sm">`.
-- Skeleton de conteudo: use `<ui-skeleton>` com dimensoes explicitas.
-- Empty states: texto curto em `text-gray-11`; use icone ou CTA apenas quando isso ajudar a proxima acao.
-- Erros e sucessos devem usar tons semanticos discretos com borda e fundo transluscido, como ja ocorre em telas admin.
-- Preservar foco visivel com `focus:ring-2 focus:ring-focus-ring` em botoes e campos.
-
-## Anti-padroes
-
-- Nao criar hero marketing, layouts de landing page ou secoes promocionais em paginas internas do app.
-- Nao usar gradientes decorativos, blobs, orbs ou ilustracoes SVG como decoracao principal.
-- Nao substituir divisorias estruturais por cards grandes arredondados em areas como dashboard, detalhe de game ou feed.
-- Nao introduzir novas paletas principais. Use tokens semanticos de `src/styles/color-tokens.css`; mantenha os aliases existentes quando necessario. Nao use `prose-invert`; rich text recebe tokens globais. Texto normal exige contraste AA 4.5:1, controles/foco 3:1 em ambos modos.
-- Nao criar botao novo se uma classe global existente cobre a necessidade.
-- Nao usar texto explicativo na interface para ensinar o design. O padrao deve aparecer pela composicao, estados e controles familiares.
-- Nao aumentar a tipografia de paineis compactos como se fossem heroes. Reserve tamanhos grandes para marca, titulo do game e numeros de destaque.
-
-## Checklist Para Redesenhar Outra Pagina
-
-1. Confirme se a pagina esta dentro do `AppShell` e respeita a largura/grade existente.
-2. Use `gray-1` como fundo, `gray-12` para texto principal e `gray-11/10` para apoio.
-3. Organize a tela em secoes full-width com bordas `gray-6`, nao em pilhas de cards.
-4. Reaproveite botoes globais, Phosphor Icons, `ui-loading`, `ui-skeleton`, `ui-game-card` e componentes compartilhados.
-5. Garanta estados de loading, vazio, disabled, hover, focus e responsividade mobile.
-6. Compare visualmente com Dashboard e pagina de game antes de finalizar.
+- Tudo que entra na configuração `PUBLIC_*` é visível aos visitantes. Nunca inclua chaves de servidor, `.env`, dados de usuários ou dumps em código, logs ou commits.
+- O build da Vercel exige as quatro variáveis públicas descritas no README. Não remova essa validação nem restaure endpoints da instância oficial como fallback para forks.
+- Siga [CONTRIBUTING.md](CONTRIBUTING.md) e [SECURITY.md](SECURITY.md). Preserve a licença [AGPL-3.0-only](LICENSE) e os avisos de terceiros.
+- Não sobrescreva trabalho local ou de outros agentes. Mantenha alterações focadas e evite reformatação ampla.
+- Atualize `CHANGELOG.md` para mudanças percebidas pelo usuário; registre novas entradas em `Unreleased`, salvo orientação explícita sobre a versão. Use `scripts/bump-version.js` para sincronizar versões quando uma release for solicitada.
+- Mantenha este arquivo sincronizado com scripts e arquitetura. Instruções específicas de uma área pertencem a um guia referenciado ou a um `AGENTS.md` mais próximo dela; não duplique regras em `CLAUDE.md`.
