@@ -6,10 +6,12 @@ import {
   HostListener,
   inject,
   input,
+  OnChanges,
   OnDestroy,
   OnInit,
   output,
   signal,
+  SimpleChanges,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -28,17 +30,15 @@ import {
   CommentThread,
 } from '../../../comments/comments.service';
 import { CommentRow } from '../../../../types';
-
-type CommentPage = {
-  items: EntryComment[];
-  page: number;
-  hasMore: boolean;
-  loading: boolean;
-};
+import {
+  CommentPage,
+  EntryCommentsPagesStore,
+} from './entry-comments-pages.store';
 
 @Component({
   selector: 'ui-entry-comments-drawer',
   standalone: true,
+  providers: [EntryCommentsPagesStore],
   imports: [
     A11yModule,
     CommonModule,
@@ -85,31 +85,31 @@ type CommentPage = {
       </header>
 
       @if (isCommentMode() && commentThreadParent(); as parentComment) {
-      <div class="border-b border-gray-6 p-4">
-        <div class="flex items-start gap-2">
-          <img
-            [src]="avatar(toEntryComment(parentComment))"
-            alt=""
-            class="h-8 w-8 shrink-0 rounded-full bg-gray-3 object-cover"
-          />
-          <div class="min-w-0 flex-1">
-            <div class="flex items-center gap-2 text-xs">
-              <a
-                [routerLink]="['/player', parentComment.userProfile.gamertag]"
-                class="font-medium text-gray-12 hover:underline"
-                >{{ parentComment.userProfile.gamertag || 'Jogador' }}</a
-              >
-              <span class="text-gray-10">{{
-                parentComment.$createdAt | relativeTime
-              }}</span>
+        <div class="border-b border-gray-6 p-4">
+          <div class="flex items-start gap-2">
+            <img
+              [src]="avatar(toEntryComment(parentComment))"
+              alt=""
+              class="h-8 w-8 shrink-0 rounded-full bg-gray-3 object-cover"
+            />
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 text-xs">
+                <a
+                  [routerLink]="['/player', parentComment.userProfile.gamertag]"
+                  class="font-medium text-gray-12 hover:underline"
+                  >{{ parentComment.userProfile.gamertag || 'Jogador' }}</a
+                >
+                <span class="text-gray-10">{{
+                  parentComment.$createdAt | relativeTime
+                }}</span>
+              </div>
+              <div
+                class="mt-1 whitespace-pre-wrap break-words text-sm font-light text-gray-11 prose  prose-sm  max-w-none prose-p:my-0"
+                [innerHTML]="parentComment.content"
+              ></div>
             </div>
-            <div
-              class="mt-1 whitespace-pre-wrap break-words text-sm font-light text-gray-11 prose  prose-sm  max-w-none prose-p:my-0"
-              [innerHTML]="parentComment.content"
-            ></div>
           </div>
         </div>
-      </div>
       }
 
       <form class="border-b border-gray-6 p-4" (submit)="submitComment($event)">
@@ -133,7 +133,7 @@ type CommentPage = {
             [disabled]="submitting() || !newComment.trim()"
           >
             @if (submitting()) {
-            <ui-loading [inline]="true" size="sm" />
+              <ui-loading [inline]="true" size="sm" />
             }
             {{ isCommentMode() ? 'Responder' : 'Comentar' }}
           </button>
@@ -142,130 +142,136 @@ type CommentPage = {
 
       <div class="flex-1 overflow-y-auto discreet-scrollbar">
         @if (isCommentMode()) {
-        <!-- Comment mode: thread via CommentService -->
-        @if (commentThreadLoading()) {
-        <div class="flex justify-center py-10"><ui-loading /></div>
-        } @else if (commentThreadReplies().length > 0) {
-        <div class="flex flex-col divide-y divide-gray-6">
-          @for (reply of commentThreadReplies(); track reply.$id) {
-          <article class="p-4">
-            <ng-container
-              [ngTemplateOutlet]="commentBody"
-              [ngTemplateOutletContext]="{ $implicit: toEntryComment(reply) }"
-            />
-          </article>
-          }
-        </div>
-        } @else {
-        <p class="p-6 text-center text-sm text-gray-11">
-          Seja a primeira pessoa a responder.
-        </p>
-        } } @else {
-        <!-- Entry mode: comments via DashboardService -->
-        @if (roots().loading && roots().items.length === 0) {
-        <div class="flex justify-center py-10"><ui-loading /></div>
-        } @else {
-        <div class="flex flex-col divide-y divide-gray-6">
-          @for (comment of roots().items; track comment.$id) {
-          <article class="p-4">
-            <ng-container
-              [ngTemplateOutlet]="commentBody"
-              [ngTemplateOutletContext]="{ $implicit: comment }"
-            />
-
-            @if (comment.replyCount > 0) {
-            <button
-              type="button"
-              class="mt-3 text-sm text-blue-11 hover:underline"
-              (click)="loadReplies(comment.$id)"
-            >
-              @if (replyPage(comment.$id).loading) {
-              Carregando…
-              } @else if (replyPage(comment.$id).items.length === 0) {
-              Ver {{ comment.replyCount }} resposta(s)
-              } @else if (replyPage(comment.$id).hasMore) {
-              Carregar mais respostas
-              } @else {
-              Respostas
-              }
-            </button>
-            }
-
-            @if (replyPage(comment.$id).items.length > 0) {
-            <div
-              class="mt-4 flex flex-col gap-4 border-l border-gray-6 pl-4"
-            >
-              @for (
-                reply of replyPage(comment.$id).items;
-                track reply.$id
-              ) {
-              <article>
-                <ng-container
-                  [ngTemplateOutlet]="commentBody"
-                  [ngTemplateOutletContext]="{ $implicit: reply }"
-                />
-
-                @if (reply.replyCount > 0) {
-                <button
-                  type="button"
-                  class="mt-2 text-xs text-blue-11 hover:underline"
-                  (click)="loadReplies(reply.$id)"
-                >
-                  @if (replyPage(reply.$id).loading) {
-                  Carregando…
-                  } @else if (
-                    replyPage(reply.$id).items.length === 0
-                  ) {
-                  Ver {{ reply.replyCount }} resposta(s)
-                  } @else if (replyPage(reply.$id).hasMore) {
-                  Carregar mais
-                  } @else {
-                  Respostas
-                  }
-                </button>
-                }
-
-                @if (replyPage(reply.$id).items.length > 0) {
-                <div
-                  class="mt-3 flex flex-col gap-3 border-l border-gray-6 pl-4"
-                >
-                  @for (
-                    leaf of replyPage(reply.$id).items;
-                    track leaf.$id
-                  ) {
+          <!-- Comment mode: thread via CommentService -->
+          @if (commentThreadLoading()) {
+            <div class="flex justify-center py-10"><ui-loading /></div>
+          } @else if (commentThreadReplies().length > 0) {
+            <div class="flex flex-col divide-y divide-gray-6">
+              @for (reply of commentThreadReplies(); track reply.$id) {
+                <article class="p-4">
                   <ng-container
                     [ngTemplateOutlet]="commentBody"
-                    [ngTemplateOutletContext]="{ $implicit: leaf }"
+                    [ngTemplateOutletContext]="{
+                      $implicit: toEntryComment(reply),
+                    }"
                   />
-                  }
-                </div>
-                }
-              </article>
+                </article>
               }
             </div>
-            }
-          </article>
-          } @empty {
-          <p class="p-6 text-center text-sm text-gray-11">
-            Seja a primeira pessoa a comentar.
-          </p>
+          } @else {
+            <p class="p-6 text-center text-sm text-gray-11">
+              Seja a primeira pessoa a responder.
+            </p>
           }
-        </div>
+        } @else {
+          <!-- Entry mode: comments via DashboardService -->
+          @if (roots().loading && roots().items.length === 0) {
+            <div class="flex justify-center py-10"><ui-loading /></div>
+          } @else {
+            <div class="flex flex-col divide-y divide-gray-6">
+              @for (comment of roots().items; track comment.$id) {
+                <article class="p-4">
+                  <ng-container
+                    [ngTemplateOutlet]="commentBody"
+                    [ngTemplateOutletContext]="{ $implicit: comment }"
+                  />
 
-        @if (roots().hasMore) {
-        <div class="flex justify-center border-t border-gray-6 p-4">
-          <button
-            type="button"
-            class="ui-secondary-btn"
-            data-size="sm"
-            [disabled]="roots().loading"
-            (click)="loadRoots()"
-          >
-            Carregar mais
-          </button>
-        </div>
-        } }
-        <!-- /Entry mode -->
+                  @if (comment.replyCount > 0) {
+                    <button
+                      type="button"
+                      class="mt-3 text-sm text-blue-11 hover:underline"
+                      (click)="loadReplies(comment.$id)"
+                    >
+                      @if (replyPage(comment.$id).loading) {
+                        Carregando…
+                      } @else if (replyPage(comment.$id).items.length === 0) {
+                        Ver {{ comment.replyCount }} resposta(s)
+                      } @else if (replyPage(comment.$id).hasMore) {
+                        Carregar mais respostas
+                      } @else {
+                        Respostas
+                      }
+                    </button>
+                  }
+
+                  @if (replyPage(comment.$id).items.length > 0) {
+                    <div
+                      class="mt-4 flex flex-col gap-4 border-l border-gray-6 pl-4"
+                    >
+                      @for (
+                        reply of replyPage(comment.$id).items;
+                        track reply.$id
+                      ) {
+                        <article>
+                          <ng-container
+                            [ngTemplateOutlet]="commentBody"
+                            [ngTemplateOutletContext]="{ $implicit: reply }"
+                          />
+
+                          @if (reply.replyCount > 0) {
+                            <button
+                              type="button"
+                              class="mt-2 text-xs text-blue-11 hover:underline"
+                              (click)="loadReplies(reply.$id)"
+                            >
+                              @if (replyPage(reply.$id).loading) {
+                                Carregando…
+                              } @else if (
+                                replyPage(reply.$id).items.length === 0
+                              ) {
+                                Ver {{ reply.replyCount }} resposta(s)
+                              } @else if (replyPage(reply.$id).hasMore) {
+                                Carregar mais
+                              } @else {
+                                Respostas
+                              }
+                            </button>
+                          }
+
+                          @if (replyPage(reply.$id).items.length > 0) {
+                            <div
+                              class="mt-3 flex flex-col gap-3 border-l border-gray-6 pl-4"
+                            >
+                              @for (
+                                leaf of replyPage(reply.$id).items;
+                                track leaf.$id
+                              ) {
+                                <ng-container
+                                  [ngTemplateOutlet]="commentBody"
+                                  [ngTemplateOutletContext]="{
+                                    $implicit: leaf,
+                                  }"
+                                />
+                              }
+                            </div>
+                          }
+                        </article>
+                      }
+                    </div>
+                  }
+                </article>
+              } @empty {
+                <p class="p-6 text-center text-sm text-gray-11">
+                  Seja a primeira pessoa a comentar.
+                </p>
+              }
+            </div>
+
+            @if (roots().hasMore) {
+              <div class="flex justify-center border-t border-gray-6 p-4">
+                <button
+                  type="button"
+                  class="ui-secondary-btn"
+                  data-size="sm"
+                  [disabled]="roots().loading"
+                  (click)="loadRoots()"
+                >
+                  Carregar mais
+                </button>
+              </div>
+            }
+          }
+          <!-- /Entry mode -->
         }
       </div>
     </aside>
@@ -293,67 +299,70 @@ type CommentPage = {
           </p>
           <div class="mt-2 flex items-center gap-2">
             @if (!isCommentMode() && comment.depth < 2) {
-            <button
-              type="button"
-              class="ui-action-btn"
-              (click)="startReply(comment.$id)"
-            >
-              Responder
-            </button>
-            }
-            @if (canDelete(comment)) {
-            <button
-              type="button"
-              class="ui-action-btn text-danger"
-              data-size="icon"
-              aria-label="Excluir comentário"
-              [disabled]="deletingIds().has(comment.$id)"
-              (click)="deleteComment(comment)"
-            >
-              <i class="ph ph-trash"></i>
-            </button>
-            }
-          </div>
-          @if (replyingTo() === comment.$id) {
-          <form class="mt-3" (submit)="submitReply($event, comment)">
-            <textarea
-              name="reply-{{ comment.$id }}"
-              [(ngModel)]="replyContent"
-              maxlength="350"
-              class="min-h-16 w-full rounded-lg border border-gray-6 bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-focus-ring"
-              placeholder="Escreva uma resposta…"
-            ></textarea>
-            <div class="mt-2 flex justify-end gap-2">
               <button
                 type="button"
-                class="ui-ghost-btn"
-                data-size="sm"
-                (click)="cancelReply()"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                class="ui-primary-btn"
-                data-size="sm"
-                [disabled]="submitting() || !replyContent.trim()"
+                class="ui-action-btn"
+                (click)="startReply(comment.$id)"
               >
                 Responder
               </button>
-            </div>
-          </form>
+            }
+            @if (canDelete(comment)) {
+              <button
+                type="button"
+                class="ui-action-btn text-danger"
+                data-size="icon"
+                aria-label="Excluir comentário"
+                [disabled]="deletingIds().has(comment.$id)"
+                (click)="deleteComment(comment)"
+              >
+                <i class="ph ph-trash"></i>
+              </button>
+            }
+          </div>
+          @if (replyingTo() === comment.$id) {
+            <form class="mt-3" (submit)="submitReply($event, comment)">
+              <textarea
+                name="reply-{{ comment.$id }}"
+                [(ngModel)]="replyContent"
+                maxlength="350"
+                class="min-h-16 w-full rounded-lg border border-gray-6 bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-focus-ring"
+                placeholder="Escreva uma resposta…"
+              ></textarea>
+              <div class="mt-2 flex justify-end gap-2">
+                <button
+                  type="button"
+                  class="ui-ghost-btn"
+                  data-size="sm"
+                  (click)="cancelReply()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  class="ui-primary-btn"
+                  data-size="sm"
+                  [disabled]="submitting() || !replyContent.trim()"
+                >
+                  Responder
+                </button>
+              </div>
+            </form>
           }
         </div>
       </div>
     </ng-template>
   `,
 })
-export class EntryCommentsDrawer implements OnInit, OnDestroy {
+export class EntryCommentsDrawer implements OnInit, OnChanges, OnDestroy {
   private service = inject(DashboardService);
   private commentService = inject(CommentService);
   private authStore = inject(AuthStore);
   private notifications = inject(NotificationStore);
   private document = inject(DOCUMENT);
+  private pages = inject(EntryCommentsPagesStore);
+  private activeItemKey: string | null = null;
+  private requestGeneration = 0;
 
   item = input.required<DashboardFeedItem>();
   closed = output<void>();
@@ -362,13 +371,8 @@ export class EntryCommentsDrawer implements OnInit, OnDestroy {
   isCommentMode = computed(() => this.item().type === 'comment');
 
   // Entry mode state
-  roots = signal<CommentPage>({
-    items: [],
-    page: 0,
-    hasMore: false,
-    loading: false,
-  });
-  replies = signal<Record<string, CommentPage>>({});
+  roots = this.pages.roots;
+  replies = this.pages.replies;
   submitting = signal(false);
   deletingIds = signal<Set<string>>(new Set());
   replyingTo = signal<string | null>(null);
@@ -388,6 +392,29 @@ export class EntryCommentsDrawer implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.document.body.style.overflow = 'hidden';
+    this.syncItem();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['item'] && !changes['item'].firstChange) {
+      this.syncItem();
+    }
+  }
+
+  private syncItem() {
+    const item = this.item();
+    const key = `${item.type}:${item.$id}`;
+    if (this.activeItemKey === key) return;
+    this.activeItemKey = key;
+    this.requestGeneration += 1;
+    this.pages.reset(this.isCommentMode() ? null : item.$id);
+    this.submitting.set(false);
+    this.deletingIds.set(new Set());
+    this.replyingTo.set(null);
+    this.newComment = '';
+    this.replyContent = '';
+    this.commentThreadLoading.set(false);
+    this.commentThread.set(null);
     if (this.isCommentMode()) {
       void this.loadCommentThread();
     } else {
@@ -409,6 +436,7 @@ export class EntryCommentsDrawer implements OnInit, OnDestroy {
   // ------------------------------------------------------------------
   private async loadCommentThread() {
     const feedItem = this.item();
+    const requestGeneration = this.requestGeneration;
     const gameId = feedItem.gameId ?? feedItem.game?.$id;
     if (!gameId) return;
 
@@ -418,16 +446,20 @@ export class EntryCommentsDrawer implements OnInit, OnDestroy {
         gameId,
         feedItem.$id,
       );
-      this.commentThread.set(thread);
+      if (this.requestGeneration === requestGeneration)
+        this.commentThread.set(thread);
     } catch (error) {
-      this.showError(error);
+      if (this.requestGeneration === requestGeneration) this.showError(error);
     } finally {
-      this.commentThreadLoading.set(false);
+      if (this.requestGeneration === requestGeneration) {
+        this.commentThreadLoading.set(false);
+      }
     }
   }
 
   private async submitCommentReply(content: string) {
     const feedItem = this.item();
+    const requestGeneration = this.requestGeneration;
     const gameId = feedItem.gameId ?? feedItem.game?.$id;
     const profile = this.authStore.profile();
     if (!gameId || !profile) return;
@@ -444,6 +476,7 @@ export class EntryCommentsDrawer implements OnInit, OnDestroy {
         parentId,
         depth: (parent?.depth ?? 0) + 1,
       });
+      if (this.requestGeneration !== requestGeneration) return;
       // Add reply to thread
       const current = this.commentThread();
       if (current) {
@@ -464,9 +497,10 @@ export class EntryCommentsDrawer implements OnInit, OnDestroy {
       this.newComment = '';
       this.countChanged.emit(1);
     } catch (error) {
-      this.showError(error);
+      if (this.requestGeneration === requestGeneration) this.showError(error);
     } finally {
-      this.submitting.set(false);
+      if (this.requestGeneration === requestGeneration)
+        this.submitting.set(false);
     }
   }
 
@@ -505,63 +539,22 @@ export class EntryCommentsDrawer implements OnInit, OnDestroy {
   // Entry mode
   // ------------------------------------------------------------------
   async loadRoots() {
-    const current = this.roots();
-    if (current.loading || (current.page > 0 && !current.hasMore)) return;
-    this.roots.set({ ...current, loading: true });
-    try {
-      const page = current.page + 1;
-      const result = await this.service.getEntryComments(this.item().$id, page);
-      this.roots.set({
-        items: [...current.items, ...result.items],
-        page,
-        hasMore: result.hasMore,
-        loading: false,
-      });
-    } catch (error) {
-      this.roots.set({ ...current, loading: false });
-      this.showError(error);
-    }
+    await this.pages.loadRoots();
   }
 
   replyPage(parentId: string): CommentPage {
-    return (
-      this.replies()[parentId] ?? {
-        items: [],
-        page: 0,
-        hasMore: false,
-        loading: false,
-      }
-    );
+    return this.pages.replyPage(parentId);
   }
 
   async loadReplies(parentId: string) {
-    const current = this.replyPage(parentId);
-    if (current.loading || (current.page > 0 && !current.hasMore)) return;
-    this.setReplyPage(parentId, { ...current, loading: true });
-    try {
-      const page = current.page + 1;
-      const result = await this.service.getEntryComments(
-        this.item().$id,
-        page,
-        20,
-        parentId,
-      );
-      this.setReplyPage(parentId, {
-        items: [...current.items, ...result.items],
-        page,
-        hasMore: result.hasMore,
-        loading: false,
-      });
-    } catch (error) {
-      this.setReplyPage(parentId, { ...current, loading: false });
-      this.showError(error);
-    }
+    await this.pages.loadReplies(parentId);
   }
 
   async submitComment(event: Event) {
     event.preventDefault();
     const content = this.newComment.trim();
     if (!content || this.submitting()) return;
+    const requestGeneration = this.requestGeneration;
 
     if (this.isCommentMode()) {
       await this.submitCommentReply(content);
@@ -574,16 +567,15 @@ export class EntryCommentsDrawer implements OnInit, OnDestroy {
         this.item().$id,
         content,
       );
-      this.roots.update((state) => ({
-        ...state,
-        items: [comment, ...state.items],
-      }));
+      if (this.requestGeneration !== requestGeneration) return;
+      this.pages.prependRoot(comment);
       this.newComment = '';
       this.countChanged.emit(1);
     } catch (error) {
-      this.showError(error);
+      if (this.requestGeneration === requestGeneration) this.showError(error);
     } finally {
-      this.submitting.set(false);
+      if (this.requestGeneration === requestGeneration)
+        this.submitting.set(false);
     }
   }
 
@@ -601,6 +593,7 @@ export class EntryCommentsDrawer implements OnInit, OnDestroy {
     event.preventDefault();
     const content = this.replyContent.trim();
     if (!content || this.submitting()) return;
+    const requestGeneration = this.requestGeneration;
     this.submitting.set(true);
     try {
       const comment = await this.service.createEntryComment(
@@ -608,18 +601,15 @@ export class EntryCommentsDrawer implements OnInit, OnDestroy {
         content,
         parent.$id,
       );
-      const current = this.replyPage(parent.$id);
-      this.setReplyPage(parent.$id, {
-        ...current,
-        items: [comment, ...current.items],
-      });
-      this.incrementReplyCount(parent.$id, 1);
+      if (this.requestGeneration !== requestGeneration) return;
+      this.pages.prependReply(parent.$id, comment);
       this.cancelReply();
       this.countChanged.emit(1);
     } catch (error) {
-      this.showError(error);
+      if (this.requestGeneration === requestGeneration) this.showError(error);
     } finally {
-      this.submitting.set(false);
+      if (this.requestGeneration === requestGeneration)
+        this.submitting.set(false);
     }
   }
 
@@ -633,22 +623,27 @@ export class EntryCommentsDrawer implements OnInit, OnDestroy {
   async deleteComment(comment: EntryComment) {
     if (!this.canDelete(comment) || this.deletingIds().has(comment.$id)) return;
     if (!confirm('Deseja excluir este comentário e suas respostas?')) return;
+    const requestGeneration = this.requestGeneration;
+    const entryId = this.item().$id;
     this.deletingIds.update((ids) => new Set(ids).add(comment.$id));
     try {
       const result = await this.service.deleteEntryComment(
-        this.item().$id,
+        entryId,
         comment.$id,
       );
-      this.removeComment(comment);
+      if (this.requestGeneration !== requestGeneration) return;
+      this.pages.removeComment(comment);
       this.countChanged.emit(-result.deletedCount);
     } catch (error) {
-      this.showError(error);
+      if (this.requestGeneration === requestGeneration) this.showError(error);
     } finally {
-      this.deletingIds.update((ids) => {
-        const next = new Set(ids);
-        next.delete(comment.$id);
-        return next;
-      });
+      if (this.requestGeneration === requestGeneration) {
+        this.deletingIds.update((ids) => {
+          const next = new Set(ids);
+          next.delete(comment.$id);
+          return next;
+        });
+      }
     }
   }
 
@@ -660,49 +655,6 @@ export class EntryCommentsDrawer implements OnInit, OnDestroy {
       height: 64,
       background: '3e63dd',
     });
-  }
-
-  private removeComment(comment: EntryComment) {
-    if (!comment.parentId) {
-      this.roots.update((state) => ({
-        ...state,
-        items: state.items.filter((item) => item.$id !== comment.$id),
-      }));
-    } else {
-      const page = this.replyPage(comment.parentId);
-      this.setReplyPage(comment.parentId, {
-        ...page,
-        items: page.items.filter((item) => item.$id !== comment.$id),
-      });
-      this.incrementReplyCount(comment.parentId, -1);
-    }
-    this.replies.update((map) => {
-      const next = { ...map };
-      delete next[comment.$id];
-      return next;
-    });
-  }
-
-  private incrementReplyCount(commentId: string, delta: number) {
-    const update = (comment: EntryComment) =>
-      comment.$id === commentId
-        ? { ...comment, replyCount: Math.max(0, comment.replyCount + delta) }
-        : comment;
-    this.roots.update((state) => ({
-      ...state,
-      items: state.items.map(update),
-    }));
-    this.replies.update((map) => {
-      const next: Record<string, CommentPage> = {};
-      for (const [key, page] of Object.entries(map)) {
-        next[key] = { ...page, items: page.items.map(update) };
-      }
-      return next;
-    });
-  }
-
-  private setReplyPage(parentId: string, page: CommentPage) {
-    this.replies.update((map) => ({ ...map, [parentId]: page }));
   }
 
   private showError(error: unknown) {

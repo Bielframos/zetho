@@ -25,8 +25,14 @@ const browserConfig: ApplicationConfig = {
       enabled: environment.production,
       registrationStrategy: 'registerWhenStable:30000',
     }),
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideAnalytics(() => getAnalytics()),
+    ...(environment.firebase.apiKey &&
+    environment.firebase.projectId &&
+    environment.firebase.appId
+      ? [
+          provideFirebaseApp(() => initializeApp(environment.firebase)),
+          provideAnalytics(() => getAnalytics()),
+        ]
+      : []),
     provideAppInitializer(() => {
       const authStore = inject(AuthStore);
       // Deliberadamente não bloqueante: se o bootstrap esperasse a sessão, o

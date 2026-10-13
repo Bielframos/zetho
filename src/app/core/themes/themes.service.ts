@@ -40,9 +40,7 @@ export class ThemesService {
   }
 
   async listThemes() {
-    const themes = await this.request<ProfileTheme[]>('themes');
-    console.log(themes)
-    return themes;
+    return this.request<ProfileTheme[]>('themes');
   }
 
   async buyTheme(id: string) {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Query } from '../../shared/infra/appwrite/appwrite.client';
 import { GameRow, ZereiListItemRow, ZereiListRow } from '../../types';
-import { between } from '../../utils/lexorank';
+import { generateOrderKey } from '../../utils/lexorank';
 import { ListsRepository } from './lists.repository';
 
 const DEFAULT_LIST_LIMIT = 12;
@@ -98,7 +98,7 @@ export class ListService {
     /**
      * 1. Calcula nova posição (regra de domínio)
      */
-    const newOrderKey = between({ prev: list.lastOrderKey });
+    const newOrderKey = generateOrderKey({ prev: list.lastOrderKey });
 
     return this.repository.createItem({
       listId: list.$id,
@@ -127,7 +127,7 @@ export class ListService {
     let listId: string | undefined;
 
     for (const op of reorderOps) {
-      const newOrderKey = between({
+      const newOrderKey = generateOrderKey({
         prev: op.prevOrderKey,
         next: op.nextOrderKey,
       });

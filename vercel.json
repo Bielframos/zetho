@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm run build && rm -f dist/zerei/browser/index.csr.html",
+  "buildCommand": "ZETHO_REQUIRE_PUBLIC_CONFIG=1 pnpm run build && rm -f dist/zerei/browser/index.csr.html",
   "installCommand": "pnpm install --frozen-lockfile",
   "outputDirectory": "dist/zerei/browser",
   "framework": null,

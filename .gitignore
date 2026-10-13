@@ -11,6 +11,17 @@
 npm-debug.log
 yarn-error.log
 
+# Local environment and credentials
+.env*
+!.env.example
+src/environments/environment.generated.ts
+*.pem
+*.key
+*.p12
+*.pfx
+appwrite.local.json
+appwrite.config.local.json
+
 # IDEs and editors
 .idea/
 .project
