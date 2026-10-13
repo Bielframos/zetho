@@ -1,21 +1,8 @@
+import { publicEnvironment } from './environment.generated';
+
 export const environment = {
+  ...publicEnvironment,
   production: true,
-  appVersion: '1.34.7',
-  appUrl: 'https://www.zetho.app/',
-  features: {
-    raffles: false,
-  },
-  appwriteEndpoint: 'https://appwrite.adstrito.com/v1',
-  appwriteProject: '690a16460002c718253a',
-  themesBucketId: 'zetho-themes',
-  zethoApiEndpoint: 'https://api.zetho.app/',
-  firebase: {
-    apiKey: 'AIzaSyCzPo_B-Imte8ojtAsQAYg-oQ3FaFp34dg',
-    authDomain: 'zetho-7dc25.firebaseapp.com',
-    projectId: 'zetho-7dc25',
-    storageBucket: 'zetho-7dc25.firebasestorage.app',
-    messagingSenderId: '148247703080',
-    appId: '1:148247703080:web:57d9919ea83489c8ab0f1d',
-    measurementId: 'G-14MBQ4CZXB',
-  },
+  appVersion: '1.34.8',
+  features: { raffles: false },
 };

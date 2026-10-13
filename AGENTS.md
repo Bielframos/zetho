@@ -11,7 +11,7 @@ Fontes principais:
 
 ## Base Visual
 
-- O produto suporta claro, escuro e sistema. Consulte `docs/color-mode.md` e use tokens semanticos de `src/styles/color-tokens.css`; `gray-*`/`blue-*` sao aliases adaptaveis.
+- O produto suporta claro, escuro e sistema. Use tokens semanticos de `src/styles/color-tokens.css`; `gray-*`/`blue-*` sao aliases adaptaveis.
 - Use `text-gray-11` para texto secundario, descricoes, labels e metadados; use `text-gray-10` para informacao ainda mais discreta.
 - Use bordas como estrutura visual: `border-gray-4` no shell e separacoes externas; `border-gray-6` em secoes, modulos internos, listas e controles.
 - Azul e a cor de acao e enfase: `blue-9` para botoes/estado ativo, `blue-10` para hover de botao primario e `blue-11` para links, icones e destaques textuais.

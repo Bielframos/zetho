@@ -1,17 +1,21 @@
 {
   "name": "zetho",
-  "version": "1.34.7",
+  "version": "1.34.8",
   "packageManager": "pnpm@11.1.2",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.12.0"
   },
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "bump": "node scripts/bump-version.js"
+    "start": "pnpm configure && ng serve",
+    "build": "pnpm configure && ng build",
+    "watch": "pnpm configure && ng build --watch --configuration development",
+    "test": "pnpm configure && ng test",
+    "bump": "node scripts/bump-version.js",
+    "secrets:check": "bash scripts/check-secrets.sh",
+    "configure": "node scripts/configure-environment.js",
+    "test:ci": "pnpm configure && ng test --watch=false --browsers=ChromeHeadless",
+    "test:tooling": "node --test scripts/configure-environment.test.js"
   },
   "imports": {
     "#app.css": "./src/styles.css"
@@ -66,5 +70,14 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "prettier": "^3.7.3",
     "typescript": "~5.9.2"
-  }
+  },
+  "description": "Zetho: registre sua vida nos jogos e compartilhe com sua comunidade.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bielframos/zerei.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Bielframos/zerei/issues"
+  },
+  "license": "AGPL-3.0-only"
 }

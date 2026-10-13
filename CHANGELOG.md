@@ -4,6 +4,12 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+## [1.34.8] - 2026-10-13
+
+### Correções
+
+- Comentários adicionados ou removidos durante o carregamento permanecem atualizados ao navegar pelo Feed.
+
 ## [1.34.7] - 2026-10-13
 
 ### Melhorias

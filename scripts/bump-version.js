@@ -115,7 +115,7 @@ function validateUnreleasedChangelog() {
 
   if (!unreleased || !/^\s*[-*]\s+.+$/m.test(unreleased[1])) {
     throw new Error(
-      "Adicione ao menos uma mudança percebida pelo usuário em CHANGELOG.md antes de criar uma versão. Consulte docs/changelog.md.",
+      "Adicione ao menos uma mudança percebida pelo usuário em CHANGELOG.md antes de criar uma versão.",
     );
   }
 }
