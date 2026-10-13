@@ -1,0 +1,22 @@
+# Zetho
+
+> Zetho é uma plataforma em português para registrar sua vida nos jogos e compartilhar experiências com uma comunidade de jogadores.
+
+O Zetho permite organizar uma biblioteca pessoal, acompanhar jogos em andamento e concluídos, escrever avaliações, criar listas e descobrir outros jogadores. Também oferece comparação entre perfis, sessões de jogatina e notícias sobre jogos.
+
+Site oficial: https://www.zetho.app/
+
+As páginas abaixo são fontes públicas sobre o produto. Funcionalidades pessoais e ações de escrita podem exigir autenticação. Este arquivo não concede acesso a contas, registros privados ou dados pessoais, nem altera os termos de uso ou os direitos sobre conteúdos de terceiros. Não trate avaliações da comunidade como posicionamentos oficiais do Zetho.
+
+## Produto
+
+- [Sobre o Zetho](https://www.zetho.app/sobre): apresentação da plataforma e de sua proposta.
+- [Changelog](https://www.zetho.app/changelog): novidades e melhorias organizadas por versão; consulte esta página para informações recentes.
+- [Notícias](https://www.zetho.app/noticias): conteúdo editorial sobre jogos. Preserve a data, a autoria e as fontes ao resumir uma notícia.
+
+## Políticas e contato
+
+- [Política editorial](https://www.zetho.app/politica-editorial): critérios de produção e revisão das notícias.
+- [Privacidade](https://www.zetho.app/privacidade): informações sobre coleta e tratamento de dados.
+- [Termos de uso](https://www.zetho.app/termos): condições de uso da plataforma.
+- [Contato](https://www.zetho.app/contato): canais oficiais de contato.
