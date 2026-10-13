@@ -466,6 +466,18 @@
         Changelog
       </a>
 
+      <span aria-hidden="true">•</span>
+
+      <a
+        href="https://github.com/Bielframos/Zetho"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Código aberto no GitHub (abre em nova aba)"
+        class="text-sm hover:text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+      >
+        Código aberto
+      </a>
+
       @if (authStore.isAdmin()) {
       <span>•</span>
       <a routerLink="/admin" class="text-sm hover:text-link hover:underline">
@@ -547,6 +559,17 @@
     >
       <i class="ph ph-list-checks"></i>
       <span class="sr-only lg:not-sr-only">Changelog</span>
+    </a>
+    <a
+      href="https://github.com/Bielframos/Zetho"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Código aberto no GitHub (abre em nova aba)"
+      title="Código aberto no GitHub"
+      class="flex size-11 items-center justify-center gap-3 rounded-lg text-sm text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring lg:h-auto lg:w-full lg:justify-start lg:px-3 lg:py-2"
+    >
+      <i class="ph ph-github-logo" aria-hidden="true"></i>
+      <span class="sr-only lg:not-sr-only">Código aberto</span>
     </a>
     @if (authStore.isAdmin()) {
     <a
