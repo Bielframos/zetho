@@ -74,10 +74,10 @@
   "description": "Zetho: registre sua vida nos jogos e compartilhe com sua comunidade.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Bielframos/zerei.git"
+    "url": "git+https://github.com/Bielframos/Zetho.git"
   },
   "bugs": {
-    "url": "https://github.com/Bielframos/zerei/issues"
+    "url": "https://github.com/Bielframos/Zetho/issues"
   },
   "license": "AGPL-3.0-only"
 }

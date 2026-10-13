@@ -4,7 +4,7 @@ As correções são destinadas à versão mais recente da branch padrão. Versõ
 
 ## Relatar uma vulnerabilidade
 
-Use [Report a vulnerability](https://github.com/Bielframos/zerei/security/advisories/new) quando o relato privado estiver habilitado. Se não estiver disponível, procure os canais de contato do [mantenedor](https://github.com/Bielframos) para combinar uma comunicação privada. Não publique tokens, dados pessoais ou detalhes de exploração em issues abertas.
+Use [Report a vulnerability](https://github.com/Bielframos/Zetho/security/advisories/new) quando o relato privado estiver habilitado. Se não estiver disponível, procure os canais de contato do [mantenedor](https://github.com/Bielframos) para combinar uma comunicação privada. Não publique tokens, dados pessoais ou detalhes de exploração em issues abertas.
 
 Inclua o commit afetado, os passos mínimos de reprodução, o impacto e, se possível, uma correção. Use dados fictícios. Não há prazo de resposta ou programa de recompensa garantido.
 

@@ -4,15 +4,15 @@ Registre sua vida nos jogos e compartilhe com sua comunidade. O Zetho reúne bib
 
 *Zetho is a gaming journal and community app. Contributions in Portuguese and English are welcome.*
 
-Este repositório contém o frontend Angular com renderização no servidor. A [API NestJS](https://github.com/Bielframos/zetho-api) contém as regras de negócio e integrações. O nome histórico do repositório e do diretório de build é `zerei`.
+Este repositório contém o frontend Angular com renderização no servidor. A [API NestJS](https://github.com/Bielframos/zetho-api) contém as regras de negócio e integrações. O diretório de build mantém o nome histórico `zerei`.
 
 ## Desenvolvimento
 
 Requisitos: Node.js 22.12 ou superior (versão de referência em `.node-version`), pnpm 11.1.2, API do Zetho e um projeto Appwrite próprio. Para instalar pnpm: `npm install --global pnpm@11.1.2`.
 
 ```bash
-git clone https://github.com/Bielframos/zerei.git
-cd zerei
+git clone https://github.com/Bielframos/Zetho.git
+cd Zetho
 pnpm install --frozen-lockfile
 cp .env.example .env
 ```
