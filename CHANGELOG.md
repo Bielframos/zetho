@@ -6,6 +6,11 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [1.34.8] - 2026-10-13
 
+### Novidades
+
+- O Zetho agora é open-source! Você pode conhecer o código, sugerir melhorias e contribuir com o projeto no GitHub, sob a licença AGPL-3.0.
+- Acesse o repositório pelo link “Código aberto” no menu ou no rodapé.
+
 ### Correções
 
 - Comentários adicionados ou removidos durante o carregamento permanecem atualizados ao navegar pelo Feed.
