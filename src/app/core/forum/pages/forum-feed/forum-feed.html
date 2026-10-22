@@ -1,0 +1,468 @@
+<main class="mx-auto min-h-dvh w-full max-w-2xl">
+  <!-- Header padrão de página de segundo nível -->
+  <header class="border-b border-gray-6 px-4 py-4">
+    <div class="flex items-center justify-between gap-4">
+      <div class="flex min-w-0 flex-1 items-center gap-3">
+        <span
+          class="flex h-11 w-11 shrink-0 items-center justify-center border border-gray-6"
+          aria-hidden="true"
+        >
+          <i class="ph ph-chats-circle text-xl text-blue-11"></i>
+        </span>
+        <div class="min-w-0">
+          <h1 class="truncate text-2xl leading-tight text-gray-12">
+            @if (activeGame(); as game) {
+              Fórum · {{ game.name }}
+            } @else {
+              Fórum
+            }
+          </h1>
+          <p class="mt-0.5 text-sm text-gray-11">
+            Debata sobre seus jogos favoritos com a comunidade.
+          </p>
+        </div>
+      </div>
+
+      @if (authStore.isAuthenticated()) {
+        <button
+          type="button"
+          class="ui-primary-btn shrink-0"
+          (click)="toggleComposer()"
+          [attr.aria-expanded]="composerOpen()"
+        >
+          <i
+            class="ph"
+            [class.ph-plus]="!composerOpen()"
+            [class.ph-x]="composerOpen()"
+            aria-hidden="true"
+          ></i>
+          @if (composerOpen()) {
+            <span>Fechar</span>
+          } @else {
+            <span class="hidden sm:inline">Nova publicação</span>
+            <span class="sm:hidden">Publicar</span>
+          }
+        </button>
+      } @else {
+        <a routerLink="/entrar" class="ui-secondary-btn shrink-0">
+          <i class="ph ph-sign-in" aria-hidden="true"></i>
+          <span class="hidden sm:inline">Entrar para publicar</span>
+          <span class="sm:hidden">Entrar</span>
+        </a>
+      }
+    </div>
+  </header>
+
+  <!-- Formulário de nova publicação (Rich Text + jogo obrigatório) -->
+  @if (composerOpen() && authStore.isAuthenticated()) {
+    <section
+      class="border-b-8 border-gray-6 px-4 py-4"
+      aria-label="Criar nova publicação no Fórum"
+    >
+      <form class="flex flex-col gap-4" (submit)="submitPost($event)">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-medium text-gray-12">Nova publicação</h2>
+          <span class="text-xs text-gray-10">Jogo obrigatório</span>
+        </div>
+
+        <ui-combobox
+          label="Jogo relacionado"
+          placeholder="Busque pelo nome do jogo..."
+          emptyText="Nenhum jogo encontrado."
+          [required]="true"
+          [minQueryLength]="2"
+          [search]="searchGames"
+          [(selectedOptions)]="selectedPostGames"
+        />
+
+        <div>
+          <label
+            for="forum-post-title"
+            class="mb-1.5 block text-sm font-medium text-gray-12"
+          >
+            Título da discussão
+          </label>
+          <input
+            id="forum-post-title"
+            name="postTitle"
+            type="text"
+            maxlength="255"
+            required
+            placeholder="Ex: Qual a melhor build para o final de Elden Ring?"
+            [ngModel]="postTitle()"
+            (ngModelChange)="postTitle.set($event)"
+            class="w-full border border-gray-6 bg-transparent px-3 py-2 text-sm text-gray-12 outline-none placeholder:text-gray-10 focus:ring-2 focus:ring-focus-ring"
+          />
+          <div class="mt-1 flex justify-between text-xs text-gray-10">
+            <span>Mínimo de 3 caracteres</span>
+            <span>{{ postTitle().trim().length }}/255</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-gray-12">
+            Conteúdo
+          </label>
+          @if (isBrowser) {
+            <app-rich-text-editor
+              [content]="postContent()"
+              placeholder="Escreva sua publicação e compartilhe sua visão com a comunidade..."
+              (contentChange)="onEditorContentChange($event)"
+            ></app-rich-text-editor>
+          }
+          <div class="mt-1 flex justify-between text-xs text-gray-10">
+            <span>Formatação rich text habilitada</span>
+            <span
+              [class.text-danger]="postPlainTextLength() > 8000"
+              [class.text-success]="
+                postPlainTextLength() >= 3 && postPlainTextLength() <= 8000
+              "
+            >
+              {{ postPlainTextLength() }}/8000
+            </span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-1">
+          <button
+            type="button"
+            class="ui-ghost-btn"
+            (click)="closeComposer()"
+            [disabled]="submittingPost()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="ui-primary-btn"
+            [disabled]="!canSubmitPost()"
+          >
+            @if (submittingPost()) {
+              <ui-loading [inline]="true" size="sm"></ui-loading>
+            }
+            Publicar discussão
+          </button>
+        </div>
+      </form>
+    </section>
+  }
+
+  <!-- Filtro por jogo -->
+  <section class="border-b border-gray-6 px-4 py-3" aria-label="Filtro por jogo">
+    @if (activeGame(); as game) {
+      <div
+        class="flex items-center justify-between gap-3 border border-gray-6 bg-gray-2 px-3 py-2"
+      >
+        <div class="flex min-w-0 items-center gap-2.5">
+          @if (game.coverUrl) {
+            <img
+              [src]="game.coverUrl"
+              [alt]="'Capa de ' + game.name"
+              class="h-9 w-7 shrink-0 bg-gray-4 object-cover"
+            />
+          } @else {
+            <span
+              class="flex h-9 w-7 shrink-0 items-center justify-center border border-dashed border-gray-6 bg-gray-3"
+              aria-hidden="true"
+            >
+              <i class="ph ph-game-controller text-xs text-gray-9"></i>
+            </span>
+          }
+          <div class="min-w-0">
+            <span class="block text-[11px] text-gray-10">Filtrando por jogo</span>
+            @if (game.slug) {
+              <a
+                [routerLink]="['/jogo', game.slug]"
+                class="block truncate text-sm font-medium text-gray-12 hover:underline"
+              >
+                {{ game.name }}
+              </a>
+            } @else {
+              <span class="block truncate text-sm font-medium text-gray-12">
+                {{ game.name }}
+              </span>
+            }
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="ui-ghost-btn shrink-0"
+          data-size="sm"
+          (click)="clearGameFilter()"
+          aria-label="Limpar filtro de jogo"
+        >
+          <i class="ph ph-x" aria-hidden="true"></i>
+          Todos os jogos
+        </button>
+      </div>
+    } @else {
+      <ui-combobox
+        placeholder="Filtrar discussões por jogo..."
+        emptyText="Nenhum jogo encontrado."
+        [minQueryLength]="2"
+        [search]="searchGames"
+        [(selectedOptions)]="filterGameOptions"
+      />
+    }
+  </section>
+
+  <!-- Seletores de ordenação (mesmo padrão de tabs do Dashboard) -->
+  <nav
+    class="grid grid-cols-2 border-b border-gray-6"
+    role="tablist"
+    aria-label="Ordenar publicações"
+  >
+    <button
+      type="button"
+      role="tab"
+      class="cursor-pointer border-b-2 px-4 py-3 text-sm transition-colors"
+      [class.border-blue-9]="sort() === 'recent'"
+      [class.border-transparent]="sort() !== 'recent'"
+      [class.text-gray-12]="sort() === 'recent'"
+      [class.text-gray-11]="sort() !== 'recent'"
+      [attr.aria-selected]="sort() === 'recent'"
+      (click)="setSort('recent')"
+    >
+      Mais recentes
+    </button>
+    <button
+      type="button"
+      role="tab"
+      class="cursor-pointer border-b-2 px-4 py-3 text-sm transition-colors"
+      [class.border-blue-9]="sort() === 'top'"
+      [class.border-transparent]="sort() !== 'top'"
+      [class.text-gray-12]="sort() === 'top'"
+      [class.text-gray-11]="sort() !== 'top'"
+      [attr.aria-selected]="sort() === 'top'"
+      (click)="setSort('top')"
+    >
+      Mais votados
+    </button>
+  </nav>
+
+  <!-- Estados de carregamento / erro / vazio / listagem -->
+  @if (loading()) {
+    <div class="flex flex-col divide-y divide-gray-6" aria-live="polite">
+      @for (item of [1, 2, 3, 4]; track item) {
+        <article class="flex flex-col gap-3 p-4">
+          <div class="flex items-center gap-3">
+            <div class="h-8 w-8 overflow-hidden rounded-full">
+              <ui-skeleton [height]="32"></ui-skeleton>
+            </div>
+            <div class="flex flex-1 flex-col gap-2">
+              <ui-skeleton [height]="14" [width]="35"></ui-skeleton>
+              <ui-skeleton [height]="10" [width]="20"></ui-skeleton>
+            </div>
+          </div>
+          <ui-skeleton [height]="20" [width]="70"></ui-skeleton>
+          <ui-skeleton [height]="12"></ui-skeleton>
+          <ui-skeleton [height]="12" [width]="80"></ui-skeleton>
+        </article>
+      }
+    </div>
+  } @else if (error()) {
+    <section
+      class="m-4 border border-danger-line bg-danger-bg px-4 py-8 text-center"
+      role="alert"
+    >
+      <i class="ph ph-warning-circle text-2xl text-danger" aria-hidden="true"></i>
+      <p class="mt-2 text-gray-11">
+        Não foi possível carregar as discussões do Fórum.
+      </p>
+      <button type="button" class="ui-secondary-btn mt-4" (click)="retry()">
+        Tentar novamente
+      </button>
+    </section>
+  } @else if (posts().length === 0) {
+    <section class="px-4 py-12 text-center text-gray-11">
+      <i class="ph ph-chats-circle text-3xl text-gray-9" aria-hidden="true"></i>
+      <h2 class="mt-2 text-lg text-gray-12">Nenhuma discussão encontrada</h2>
+      <p class="mt-1 text-sm text-gray-11">
+        @if (activeGame(); as game) {
+          Ainda não há publicações sobre {{ game.name }}. Que tal puxar o primeiro
+          assunto?
+        } @else {
+          Seja a primeira pessoa a iniciar uma discussão na comunidade.
+        }
+      </p>
+      @if (authStore.isAuthenticated() && !composerOpen()) {
+        <button
+          type="button"
+          class="ui-primary-btn mt-4"
+          (click)="openComposer()"
+        >
+          <i class="ph ph-plus" aria-hidden="true"></i>
+          Criar publicação
+        </button>
+      }
+    </section>
+  } @else {
+    <section
+      class="flex flex-col divide-y-8 divide-gray-6"
+      aria-label="Publicações do Fórum"
+    >
+      @for (post of posts(); track post.$id) {
+        <article class="flex flex-col gap-3 p-4">
+          <header class="flex items-center gap-3">
+            @if (post.author?.avatarUrl) {
+              <img
+                [src]="post.author?.avatarUrl"
+                [alt]="'Avatar de ' + post.author?.gamertag"
+                class="h-8 w-8 shrink-0 rounded-full object-cover"
+              />
+            } @else {
+              <span
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-9 text-xs font-bold text-white"
+                aria-hidden="true"
+              >
+                {{ authorInitial(post) }}
+              </span>
+            }
+
+            <div class="flex min-w-0 flex-col">
+              @if (post.author?.gamertag) {
+                <a
+                  [routerLink]="['/player', post.author!.gamertag]"
+                  class="truncate text-sm font-medium text-gray-12 hover:underline"
+                >
+                  {{ post.author!.gamertag }}
+                </a>
+              } @else {
+                <span class="text-sm font-medium text-gray-12">Jogador</span>
+              }
+              <time
+                class="text-xs text-gray-10"
+                [attr.datetime]="post.$createdAt"
+              >
+                {{ post.$createdAt | relativeTime }}
+              </time>
+            </div>
+          </header>
+
+          <h2 class="text-lg font-medium leading-snug text-gray-12">
+            <a
+              [routerLink]="['/forum', post.slug]"
+              class="transition-colors hover:text-blue-11 hover:underline"
+            >
+              {{ post.title }}
+            </a>
+          </h2>
+
+          @if (post.content) {
+            <ui-feed-review-content
+              [reviewId]="post.$id"
+              [content]="post.content"
+            />
+          }
+
+          @if (post.game) {
+            <a
+              [routerLink]="['/jogo', post.game.slug]"
+              class="group flex items-center gap-3 border-t border-gray-6 pt-3"
+            >
+              @if (post.game.coverUrl) {
+                <img
+                  [src]="post.game.coverUrl"
+                  [alt]="'Capa de ' + post.game.name"
+                  class="h-16 w-11 shrink-0 bg-gray-4 object-cover"
+                />
+              } @else {
+                <span
+                  class="flex h-16 w-11 shrink-0 items-center justify-center border border-dashed border-gray-6 bg-gray-2"
+                  aria-hidden="true"
+                >
+                  <i class="ph ph-game-controller text-gray-9"></i>
+                </span>
+              }
+              <span class="min-w-0">
+                <span class="block text-xs text-gray-10">Discussão sobre</span>
+                <span
+                  class="block truncate text-sm font-medium text-gray-12 group-hover:underline"
+                >
+                  {{ post.game.name }}
+                </span>
+              </span>
+            </a>
+          }
+
+          <footer
+            class="flex items-center justify-between border-t border-gray-6 pt-3 text-sm text-gray-11"
+          >
+            <div class="flex items-center gap-0.5">
+              <button
+                type="button"
+                class="ui-ghost-btn"
+                data-size="icon"
+                (click)="votePost(post, 'up')"
+                [disabled]="votingPostIds().has(post.$id)"
+                aria-label="Votar positivamente"
+              >
+                <i
+                  class="ph ph-arrow-up"
+                  [class.text-link]="post.viewerVote === 'up'"
+                ></i>
+              </button>
+              <span class="min-w-6 text-center font-medium tabular-nums text-gray-12">
+                {{ post.voteCount || 0 }}
+              </span>
+              <button
+                type="button"
+                class="ui-ghost-btn"
+                data-size="icon"
+                (click)="votePost(post, 'down')"
+                [disabled]="votingPostIds().has(post.$id)"
+                aria-label="Votar negativamente"
+              >
+                <i
+                  class="ph ph-arrow-down"
+                  [class.text-danger]="post.viewerVote === 'down'"
+                ></i>
+              </button>
+            </div>
+
+            <a
+              [routerLink]="['/forum', post.slug]"
+              class="ui-ghost-btn gap-1.5 px-2.5 text-xs text-gray-11 hover:text-gray-12"
+            >
+              <i class="ph ph-chat-circle text-base" aria-hidden="true"></i>
+              <span class="tabular-nums">
+                @if (post.replyCount > 0) {
+                  {{ post.replyCount }}
+                  {{ post.replyCount === 1 ? 'resposta' : 'respostas' }}
+                } @else {
+                  Responder
+                }
+              </span>
+            </a>
+          </footer>
+        </article>
+      }
+    </section>
+
+    <div
+      uiInfiniteScroll
+      rootMargin="600px"
+      [disabled]="loadingMore() || loadMoreError() || !hasMore()"
+      (scrolled)="loadMore()"
+      class="flex min-h-16 items-center justify-center px-4"
+      aria-live="polite"
+    >
+      @if (loadingMore()) {
+        <ui-loading
+          [inline]="true"
+          size="sm"
+          fallback="Carregando mais discussões"
+        ></ui-loading>
+      } @else if (loadMoreError()) {
+        <button
+          type="button"
+          class="ui-secondary-btn my-4"
+          (click)="retryLoadMore()"
+        >
+          Tentar carregar mais
+        </button>
+      }
+    </div>
+  }
+</main>

@@ -15,6 +15,7 @@ import { ZCOINS_ROUTES } from './core/zCoins/zcoins.routes';
 import { RANKING_ROUTES } from './core/ranking/ranking.routes';
 import { GAMEPLAY_SESSIONS_ROUTES } from './core/gameplay-sessions/gameplay-sessions.routes';
 import { NEWS_ROUTES } from './core/news/news.routes';
+import { FORUM_ROUTES } from './core/forum/forum.routes';
 import { environment } from '../environments/environment';
 import { userGuardWithSsr } from './core/auth/auth.guards';
 
@@ -43,6 +44,7 @@ export const routes: Routes = [
   },
   ...GAME_ROUTES,
   ...NEWS_ROUTES,
+  ...FORUM_ROUTES,
   {
     path: 'reviews',
     loadComponent: () =>

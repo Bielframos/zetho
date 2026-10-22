@@ -8,14 +8,13 @@ import {
   viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { AuthStore } from '../../../auth/auth.store';
 import { SeoService } from '../../../system/seo/seo.service';
 import { GameController } from '../../game.controller';
 import { UiGameActions } from './modules/game-actions';
 import { UiGameHeader } from './modules/game-header';
-import { UiGameLobby } from './modules/game-lobby';
 import { UiGameMedias } from './modules/game-medias';
 import { UiGameSimilar } from './modules/game-similar';
 import { UiGameStats } from './modules/game-stats';
@@ -33,7 +32,6 @@ import { RatingsService } from '../../../ratings/ratings.service';
 
 type GameTab =
   | 'briefing'
-  | 'lobby'
   | 'stats'
   | 'playthrough'
   | 'reviews'
@@ -51,7 +49,6 @@ type GameTab =
     UiGameBriefing,
     UiGameStats,
     UiMyPlaythrough,
-    UiGameLobby,
     UiGameActions,
     UiGameMedias,
     UiGameSimilar,
@@ -71,6 +68,7 @@ export class GamePage {
    * --------------------------------------------------------- */
   private seo = inject(SeoService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router, { optional: true });
   private ratingsService = inject(RatingsService);
   controller = inject(GameController);
   authStore = inject(AuthStore);
@@ -80,7 +78,6 @@ export class GamePage {
   myRating = signal<number | null>(null);
 
   shareModal = viewChild<UiShareModal>('shareModal');
-  gameLobby = viewChild(UiGameLobby);
 
   shareData = computed<ShareCardData | null>(() => {
     const game = this.controller.game();
@@ -109,7 +106,6 @@ export class GamePage {
   tabs = computed<UiTab[]>(() => {
     const list: UiTab[] = [
       { id: 'briefing', label: 'Briefing' },
-      { id: 'lobby', label: 'Lobby' },
       { id: 'stats', label: 'Estatísticas' },
       { id: 'playthrough', label: 'Meu registro' },
       {
@@ -187,23 +183,13 @@ export class GamePage {
 
     effect(() => {
       const commentId = this.commentId();
-      const lobby = this.gameLobby();
-      if (!commentId) {
-        untracked(() => lobby?.clearCommentFocus());
-        return;
-      }
-
-      this.openTab('lobby');
-
-      const slug = this.slug();
-      const game = this.controller.game();
-      if (!slug || game?.slug !== slug || !lobby) {
-        untracked(() => lobby?.clearCommentFocus());
-        return;
-      }
+      if (!commentId) return;
 
       untracked(() => {
-        void lobby.focusComment(commentId);
+        void this.router?.navigate(['/forum', commentId], {
+          queryParams: { commentId },
+          replaceUrl: true,
+        });
       });
     });
 

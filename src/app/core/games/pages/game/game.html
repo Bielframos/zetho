@@ -121,11 +121,6 @@
         [class.hidden]="activeTab() !== 'briefing'"
         [gameId]="controller.game()!.$id"
       ></ui-game-briefing>
-      } @if (visitedTabs().has('lobby')) {
-      <ui-game-lobby
-        class="block animate-fade-in-slide"
-        [class.hidden]="activeTab() !== 'lobby'"
-      ></ui-game-lobby>
       } @if (visitedTabs().has('stats')) {
       <ui-game-stats
         class="block animate-fade-in-slide"

@@ -4,6 +4,13 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+## [1.35.0] - 2026-10-22
+
+### Novidades
+
+- Novo Fórum da comunidade em `/forum`: crie publicações associadas a qualquer jogo com editor rich text, participe de debates em threads com até 3 níveis de resposta, filtre discussões por jogo e compartilhe páginas individuais de cada tópico.
+- A aba Lobby na página dos jogos deu lugar ao novo Fórum dedicado, com atalho direto na página de cada jogo para ver e criar discussões sobre ele.
+
 ## [1.34.8] - 2026-10-13
 
 ### Novidades

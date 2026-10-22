@@ -206,10 +206,10 @@ import { NotificationStore } from './notification.store';
                       (click)="onViewGameComment(notif)"
                       class="ui-ghost-btn"
                       data-size="sm"
-                      aria-label="Ver comentário no jogo"
+                      aria-label="Ver discussão no Fórum"
                     >
                       <i class="ph ph-arrow-right"></i>
-                      Ver comentário
+                      Ver discussão
                     </button>
                   }
                 </div>

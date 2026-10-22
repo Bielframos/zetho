@@ -4,6 +4,8 @@ import { UserProfileRow } from '../../types';
 type Comment = {
   gameId: string;
   userProfile: UserProfileRow;
+  title?: string | null;
+  slug?: string | null;
   content: string;
   parentId?: string;
   votes?: {
@@ -15,6 +17,7 @@ type Comment = {
   voteCount?: number;
   replyCount?: number;
   depth?: number;
+  viewerVote?: 'up' | 'down' | null;
 };
 
 type CommentRow = StoredRow<Comment>;

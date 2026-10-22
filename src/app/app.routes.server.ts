@@ -80,6 +80,16 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server,
     headers: EDGE_CACHE_10_MIN,
   },
+  {
+    path: 'forum',
+    renderMode: RenderMode.Server,
+    headers: EDGE_CACHE_5_MIN,
+  },
+  {
+    path: 'forum/:slug',
+    renderMode: RenderMode.Server,
+    headers: EDGE_CACHE_5_MIN,
+  },
   { path: 'reviews', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   { path: 'listas', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   {
