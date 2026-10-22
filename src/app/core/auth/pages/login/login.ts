@@ -10,7 +10,7 @@ import { AuthStore } from '../../auth.store';
   imports: [UiInput, FormsModule, RouterLink, UiLoading],
   templateUrl: './login.html',
   host: {
-    class: 'flex min-h-full w-full',
+    class: 'flex w-full flex-1',
   },
 })
 export class LoginPage {
@@ -23,8 +23,10 @@ export class LoginPage {
   result = signal<{ error?: boolean; message?: string }>({});
 
   async login(form: NgForm) {
+    if (this.isLoading()) return;
+    this.result.set({});
     if (form.invalid) {
-      alert('Preencha todos os campos');
+      form.control.markAllAsTouched();
       return;
     }
 

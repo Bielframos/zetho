@@ -46,6 +46,9 @@ export class UiInput implements ControlValueAccessor {
   @Input() name = '';
   @Input() id = '';
   @Input() placeholder = '';
+  @Input() autocomplete = '';
+  @Input() describedBy: string | null = null;
+  @Input({ transform: booleanAttribute }) invalid = false;
   @Input({ transform: booleanAttribute }) required = false;
   @Input({ transform: booleanAttribute }) disabled = false;
   @Input() icon = '';

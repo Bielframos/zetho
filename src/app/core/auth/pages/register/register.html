@@ -1,228 +1,223 @@
-<main
-  class="relative isolate min-h-full w-full overflow-hidden bg-gray-1 px-5 py-6 text-gray-12 md:px-10 md:py-24"
->
-  <div
-    class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[560px] bg-[radial-gradient(circle_at_20%_0%,rgba(62,99,221,0.34),transparent_34%),radial-gradient(circle_at_78%_10%,rgba(247,209,84,0.15),transparent_28%)]"
-    aria-hidden="true"
-  ></div>
-
-  <div
-    class="mx-auto grid min-h-full w-full max-w-6xl items-end gap-6 lg:gap-10 lg:grid-cols-[0.88fr_1.12fr]"
+<main class="flex w-full flex-1 items-center px-5 py-10 sm:px-8 sm:py-14">
+  <section
+    class="mx-auto w-full max-w-[420px]"
+    aria-labelledby="register-title"
   >
-    <section class="max-w-xl">
-      <a routerLink="/landing" class="inline-flex">
-        <span class="font-display text-[48px] leading-none">zetho</span>
-      </a>
-
-      <h1 class="mt-5 text-4xl leading-tight md:text-5xl">
-        Crie uma casa para tudo que você joga.
+    <header class="mb-8">
+      <h1 id="register-title" class="text-2xl tracking-tight">
+        Criar sua conta
       </h1>
-
-      <p class="mt-5 text-base font-light leading-7 text-gray-11">
-        Registre jogos zerados, organize seu backlog, publique reviews e monte
-        listas que mostram seu gosto de verdade.
+      <p class="mt-2 text-sm leading-6 text-gray-11">
+        Um lugar para sua história com os jogos.
       </p>
+    </header>
 
-      <div class="mt-8 hidden gap-3 lg:grid">
-        <div class="flex gap-3 border-y border-gray-6 py-4">
-          <span
-            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-3 text-blue-11"
-          >
-            <i class="ph-fill ph-user-circle"></i>
-          </span>
-          <div>
-            <h2 class="text-base">Perfil compartilhável</h2>
-            <p class="mt-1 text-sm text-gray-11">
-              Mostre biblioteca, listas e reviews em uma página com sua cara.
-            </p>
-          </div>
-        </div>
-        <div class="flex gap-3 border-b border-gray-6 pb-4">
-          <span
-            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-3 text-warning"
-          >
-            <i class="ph-fill ph-coins"></i>
-          </span>
-          <div>
-            <h2 class="text-base">Z-Coins e rankings</h2>
-            <p class="mt-1 text-sm text-gray-11">
-              Ganhe moedas por atividade e acompanhe sua evolução semanal.
-            </p>
-          </div>
-        </div>
-        <div class="flex gap-3 border-b border-gray-6 pb-4">
-          <span
-            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-3 text-success"
-          >
-            <i class="ph-fill ph-users-three"></i>
-          </span>
-          <div>
-            <h2 class="text-base">Comunidade por gosto</h2>
-            <p class="mt-1 text-sm text-gray-11">
-              Descubra perfis, jogos e listas a partir do que você realmente
-              joga.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section
-      class="bg-transparent p-0 md:border md:border-gray-6 md:bg-gray-2/80 md:p-8 md:backdrop-blur"
-    >
-      <header class="mb-8">
-        <p class="text-sm uppercase tracking-wide text-blue-11">Cadastro</p>
-        <h2 class="mt-2 text-3xl">Monte seu perfil</h2>
-        <p class="mt-2 text-sm text-gray-11">
-          Já tem conta?
-          <a
-            routerLink="/entrar"
-            class="text-blue-11 transition-colors hover:text-link hover:underline"
-            >Entre para continuar</a
-          >.
+    @if (inviter(); as person) {
+    <div class="mb-6 flex items-center gap-3 border-y border-gray-6 py-4">
+      <img
+        [src]="inviterAvatar(person)"
+        alt=""
+        class="h-10 w-10 rounded-full object-cover"
+      />
+      <div class="min-w-0">
+        <p class="break-words text-sm">
+          <strong>{{ person.gamertag }}</strong> convidou você
         </p>
-      </header>
+        <p class="mt-1 text-xs leading-5 text-gray-11">
+          Ao criar a conta, vocês já se conectam.
+        </p>
+      </div>
+    </div>
+    }
 
-      @if (inviter(); as person) {
-      <div
-        class="mb-4 flex items-center gap-3 border border-gray-6 bg-gray-2/60 p-4"
-      >
-        <img
-          [src]="inviterAvatar(person)"
-          alt="Avatar"
-          class="h-12 w-12 rounded-full border border-gray-6 object-cover"
+    <form
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      class="flex flex-col gap-5"
+      [attr.aria-busy]="isSubmitting()"
+      novalidate
+    >
+      <div>
+        <ui-input
+          label="Nome"
+          type="text"
+          name="name"
+          placeholder="Seu nome completo"
+          autocomplete="name"
+          formControlName="name"
+          variant="secondary"
+          required
+          [invalid]="form.controls.name.invalid && form.controls.name.touched"
+          [describedBy]="form.controls.name.invalid && form.controls.name.touched ? 'register-name-error' : null"
         />
-        <div>
-          <p class="text-gray-12">
-            <strong>{{ person.gamertag }}</strong> convidou você
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+        <p id="register-name-error" class="mt-2 px-4 text-xs text-danger">
+          Informe seu nome completo.
+        </p>
+        }
+      </div>
+
+      <div>
+        <ui-input
+          label="Gamertag"
+          type="text"
+          placeholder="Seu nome nos jogos"
+          name="gamertag"
+          autocomplete="username"
+          formControlName="gamertag"
+          variant="secondary"
+          required
+          [invalid]="gamertag.invalid && gamertag.touched"
+          describedBy="register-gamertag-help"
+        />
+        <div
+          id="register-gamertag-help"
+          class="mt-2 px-4 text-xs leading-5"
+          aria-live="polite"
+        >
+          @if (gamertag.pending) {
+          <p class="flex items-center gap-2 text-gray-11">
+            <ui-loading [inline]="true" size="sm" /> Verificando
+            disponibilidade…
           </p>
-          <p class="text-sm text-gray-11">
-            {{ person.totalsCompleted }} jogos zerados — monte sua estante também
-            e vocês já se conectam.
+          } @else if (gamertag.touched && gamertag.errors?.['gamertagTaken']) {
+          <p class="text-danger">Essa gamertag já está em uso. Tente outra.</p>
+          } @else if (gamertag.touched &&
+          gamertag.errors?.['gamertagCheckFailed']) {
+          <p class="text-danger">
+            Não foi possível verificar a gamertag. Edite o campo e tente
+            novamente.
           </p>
+          } @else if (gamertag.invalid && gamertag.touched) {
+          <p class="text-danger">
+            Use pelo menos 3 caracteres: letras, números ou _.
+          </p>
+          } @else if (gamertag.valid && gamertag.dirty) {
+          <p class="text-success">Gamertag disponível.</p>
+          } @else {
+          <p class="text-gray-11">
+            Como você aparece no Zetho. Use letras, números ou _.
+          </p>
+          }
         </div>
       </div>
-      }
 
-      <form [formGroup]="form" (ngSubmit)="submit()" class="grid gap-4">
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div>
-            <ui-input
-              label="Nome"
-              type="text"
-              name="name"
-              placeholder="Gabriel França"
-              icon="identification-card"
-              formControlName="name"
-              variant="secondary"
-              required
-            />
-            @if (form.controls.name.errors?.['invalidName']) {
-            <small class="mt-1 block px-4 text-danger"
-              >Informe seu nome completo.</small
-            >
-            }
-          </div>
-
-          <div class="relative">
-            <ui-input
-              label="Gamertag"
-              type="text"
-              placeholder="Bielframos"
-              name="gamertag"
-              icon="game-controller"
-              formControlName="gamertag"
-              variant="secondary"
-              required
-            />
-
-            <div class="absolute right-3 bottom-2">
-              @if(gamertag.pending) {
-              <ui-loading [inline]="true" size="sm"></ui-loading>
-              } @else if(gamertag.errors?.['gamertagTaken'] && gamertag.dirty) {
-              <i class="ph ph-x-circle text-md text-danger"></i>
-              } @else if(gamertag.valid && gamertag.dirty) {
-              <i class="ph ph-check-circle text-md text-success"></i>
-              }
-            </div>
-
-            @if (form.controls.gamertag.errors?.['invalidGamertagFormat']) {
-            <small class="mt-1 block px-4 text-danger">
-              Use apenas letras, números e _.
-            </small>
-            }
-          </div>
-        </div>
-
+      <div>
         <ui-input
           label="E-mail"
           type="email"
-          placeholder="voce@email.com"
+          placeholder="voce@exemplo.com"
           name="email"
-          icon="envelope"
+          autocomplete="email"
           formControlName="email"
           variant="secondary"
           required
+          [invalid]="form.controls.email.invalid && form.controls.email.touched"
+          [describedBy]="form.controls.email.invalid && form.controls.email.touched ? 'register-email-error' : null"
         />
+        @if (form.controls.email.invalid && form.controls.email.touched) {
+        <p id="register-email-error" class="mt-2 px-4 text-xs text-danger">
+          Informe um e-mail válido.
+        </p>
+        }
+      </div>
 
-        <div class="grid gap-4 sm:grid-cols-2">
+      <div>
+        <ui-input
+          label="Senha"
+          type="password"
+          placeholder="Crie uma senha"
+          name="password"
+          autocomplete="new-password"
+          formControlName="password"
+          variant="secondary"
+          required
+          [invalid]="form.controls.password.invalid && form.controls.password.touched"
+          describedBy="register-password-help"
+        />
+        <p
+          id="register-password-help"
+          class="mt-2 px-4 text-xs"
+          [class]="form.controls.password.invalid && form.controls.password.touched ? 'text-danger' : 'text-gray-11'"
+        >
+          Use pelo menos 8 caracteres.
+        </p>
+      </div>
+
+      <div>
+        <ui-input
+          label="Confirmar senha"
+          type="password"
+          placeholder="Repita sua senha"
+          name="confirmPassword"
+          autocomplete="new-password"
+          formControlName="confirmPassword"
+          variant="secondary"
+          required
+          [invalid]="form.controls.confirmPassword.touched && (form.controls.confirmPassword.invalid || form.hasError('passwordsMismatch'))"
+          [describedBy]="form.controls.confirmPassword.touched && (form.controls.confirmPassword.invalid || form.hasError('passwordsMismatch')) ? 'register-confirm-error' : null"
+        />
+        @if (form.controls.confirmPassword.touched &&
+        (form.controls.confirmPassword.invalid ||
+        form.hasError('passwordsMismatch'))) {
+        <p id="register-confirm-error" class="mt-2 px-4 text-xs text-danger">
+          {{ form.controls.confirmPassword.hasError('required') ? 'Confirme sua
+          senha.' : 'As senhas precisam ser iguais.' }}
+        </p>
+        }
+      </div>
+
+      <details
+        #inviteDetails
+        class="border-y border-gray-4 py-1"
+        [open]="inviteExpanded()"
+        (toggle)="inviteExpanded.set(inviteDetails.open)"
+      >
+        <summary
+          class="cursor-pointer rounded-lg py-3 text-sm text-gray-11 hover:text-gray-12 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+        >
+          Tenho um código de convite
+        </summary>
+        <div class="pb-3 pt-1">
           <ui-input
-            label="Senha"
-            type="password"
-            placeholder="No mínimo 8 caracteres"
-            name="password"
-            icon="lock"
-            formControlName="password"
+            label="Código de convite (opcional)"
+            type="text"
+            placeholder="Seu código"
+            name="inviteCode"
+            formControlName="inviteCode"
             variant="secondary"
-            required
-          />
-          <ui-input
-            label="Confirme a senha"
-            type="password"
-            placeholder="Repita sua senha"
-            name="confirmPassword"
-            icon="lock-key"
-            variant="secondary"
-            formControlName="confirmPassword"
-            required
           />
         </div>
+      </details>
 
-        @if (form.errors?.['passwordsMismatch']) {
-        <small class="-mt-2 block px-4 text-danger">
-          As senhas precisam ser iguais.
-        </small>
-        }
+      @if (form.errors?.['submitFailed']) {
+      <p
+        role="alert"
+        class="rounded-lg border border-danger-line bg-danger-bg p-3 text-sm text-danger"
+      >
+        Não foi possível criar sua conta agora. Verifique os dados e tente
+        novamente.
+      </p>
+      }
+      <button
+        type="submit"
+        class="ui-primary-btn min-h-11 w-full rounded-lg"
+        [disabled]="isSubmitting() || form.pending"
+      >
+        @if (isSubmitting()) { <ui-loading [inline]="true" size="sm" /> } {{
+        isSubmitting() ? 'Criando conta…' : 'Criar conta' }}
+      </button>
+    </form>
 
-        <ui-input
-          label="Código de convite"
-          type="text"
-          placeholder="Opcional"
-          name="inviteCode"
-          icon="ticket"
-          formControlName="inviteCode"
-          variant="secondary"
-        />
-
-        @if (form.errors?.['submitFailed']) {
-        <small
-          class="rounded-lg border border-danger-line bg-danger-bg p-3 text-danger"
-        >
-          Não foi possível criar sua conta agora. Verifique os dados e tente
-          novamente.
-        </small>
-        }
-
-        <button
-          type="submit"
-          class="mt-2 inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-blue-9 px-5 text-base font-medium text-white transition-colors hover:bg-blue-10 focus:outline-none focus:ring-2 focus:ring-focus-ring disabled:pointer-events-none disabled:bg-gray-5 disabled:text-gray-10"
-          [disabled]="form.invalid || isSubmitting()"
-        >
-          @if (isSubmitting()) {
-          <ui-loading [inline]="true" size="sm"></ui-loading>
-          } Criar perfil no Zetho
-        </button>
-      </form>
-    </section>
-  </div>
+    <p
+      class="mt-6 border-t border-gray-4 pt-4 text-center text-sm text-gray-11"
+    >
+      Já tem conta?
+      <a
+        routerLink="/entrar"
+        class="inline-flex min-h-11 items-center rounded-lg text-blue-11 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+        >Entrar</a
+      >
+    </p>
+  </section>
 </main>

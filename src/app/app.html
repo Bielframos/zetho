@@ -1,5 +1,9 @@
 @if (isSplashRoute()) {
 <router-outlet />
+} @else if (isPublicEntryRoute()) {
+<app-public-entry-layout [showLogin]="isLandingRoute()">
+  <router-outlet />
+</app-public-entry-layout>
 } @else if (isOnboardingRoute()) {
 <div class="min-h-dvh bg-gray-1 text-gray-12"><router-outlet /></div>
 } @else if (usesAppShell()) {
