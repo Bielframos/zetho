@@ -15,16 +15,25 @@ export const AUTH_ROUTES: Routes = [
     title: 'Zetho | Minha conta',
   },
   {
-    path: 'registrar',
-    component: RegisterPage,
-    canMatch: [guestGuard],
-    title: 'Zetho | Registro',
-  },
-  {
-    path: 'entrar',
-    component: LoginPage,
-    canMatch: [guestGuard],
-    title: 'Zetho | Login',
+    path: '',
+    loadComponent: () =>
+      import('./components/auth-game-space/auth-game-space').then(
+        (m) => m.AuthGameSpace,
+      ),
+    children: [
+      {
+        path: 'registrar',
+        component: RegisterPage,
+        canMatch: [guestGuard],
+        title: 'Zetho | Registro',
+      },
+      {
+        path: 'entrar',
+        component: LoginPage,
+        canMatch: [guestGuard],
+        title: 'Zetho | Login',
+      },
+    ],
   },
   {
     path: 'recuperar-senha',

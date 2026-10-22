@@ -1,0 +1,264 @@
+:host {
+  position: relative;
+  --parallax-x: 0px;
+  --parallax-y: 0px;
+}
+.space {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: calc(100svh - 182px);
+  padding: 76px 20px;
+  overflow: clip;
+}
+ui-shader-background.shader {
+  mask-image: none;
+  opacity: var(--recommendation-opacity);
+}
+.panel {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 480px;
+  padding: 32px;
+  border: 1px solid var(--gray-6);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--gray-1) 96%, transparent);
+  box-shadow: 0 20px 70px rgb(0 0 0 / 0.12);
+  animation: arrive 0.7s both;
+}
+.motion {
+  position: absolute;
+  right: 24px;
+  top: 12px;
+  z-index: 20;
+}
+.game-universe {
+  display: contents;
+}
+.field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform: translate3d(var(--parallax-x), var(--parallax-y), 0);
+  transition: transform 0.8s;
+}
+.orbit {
+  position: absolute;
+  width: var(--width);
+  pointer-events: auto;
+  animation: drift var(--duration, 12s) ease-in-out infinite alternate;
+  animation-delay: var(--delay, 0s);
+  z-index: 1;
+}
+.orbit[data-slot="0"] {
+  left: max(24px, calc(50% - 570px));
+  top: 10%;
+  --width: 132px;
+  --rotation: -12deg;
+  --duration: 13s;
+}
+.orbit[data-slot="1"] {
+  left: calc(50% - 365px);
+  top: 39%;
+  --width: 108px;
+  --rotation: 9deg;
+  --duration: 10s;
+  --delay: -4s;
+}
+.orbit[data-slot="2"] {
+  left: max(32px, calc(50% - 535px));
+  top: 68%;
+  --width: 120px;
+  --rotation: -7deg;
+  --duration: 14s;
+  --delay: -7s;
+}
+.orbit[data-slot="3"] {
+  right: max(24px, calc(50% - 560px));
+  top: 14%;
+  --width: 126px;
+  --rotation: 12deg;
+  --duration: 11s;
+  --delay: -3s;
+}
+.orbit[data-slot="4"] {
+  right: calc(50% - 365px);
+  top: 44%;
+  --width: 108px;
+  --rotation: -10deg;
+  --duration: 14s;
+  --delay: -6s;
+}
+.orbit[data-slot="5"] {
+  right: max(32px, calc(50% - 540px));
+  top: 73%;
+  --width: 118px;
+  --rotation: 8deg;
+  --duration: 12s;
+  --delay: -9s;
+}
+.cover {
+  display: block;
+  position: relative;
+  width: 100%;
+  padding: 0;
+  cursor: pointer;
+  border: 0;
+  border-radius: 6px;
+  box-shadow: 0 16px 32px rgb(0 0 0 / 0.25);
+  transform: perspective(600px) rotate(var(--rotation)) rotateY(-8deg);
+  transition:
+    transform 0.35s,
+    opacity 0.35s;
+  opacity: 0.85;
+}
+.cover ui-game-card {
+  display: block;
+  overflow: hidden;
+  border-radius: 5px;
+}
+.cover:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 5px;
+}
+.orbit[data-active="true"] {
+  z-index: 30;
+  animation-play-state: paused;
+}
+.orbit[data-active="true"] .cover {
+  transform: perspective(600px) rotate(0) rotateY(0) scale(1.06);
+  opacity: 1;
+}
+.details {
+  position: absolute;
+  top: calc(100% + 18px);
+  right: 0;
+  width: 232px;
+  padding: 16px;
+  border: 1px solid var(--gray-6);
+  border-radius: 10px;
+  background: var(--gray-2);
+  color: var(--gray-12);
+  box-shadow: 0 12px 40px rgb(0 0 0 / 0.25);
+  animation: arrive 0.18s both;
+}
+.orbit[data-slot="0"] .details,
+.orbit[data-slot="4"] .details {
+  left: 0;
+  right: auto;
+}
+.orbit[data-slot="2"] .details,
+.orbit[data-slot="5"] .details {
+  top: auto;
+  bottom: calc(100% + 18px);
+}
+.orbit[data-slot="2"] .details {
+  left: 0;
+  right: auto;
+}
+.note {
+  position: relative;
+  z-index: 2;
+  margin-top: 28px;
+  text-align: center;
+}
+.space[data-paused="true"] .orbit {
+  animation-play-state: paused;
+}
+.space[data-paused="true"] .field {
+  transform: none;
+}
+.space:has(.panel:focus-within) .cover {
+  opacity: 0.55;
+}
+@keyframes drift {
+  from {
+    translate: 0 -9px;
+  }
+  to {
+    translate: 7px 12px;
+  }
+}
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 1023px) {
+  .space {
+    justify-content: flex-start;
+    padding: 64px 20px 32px;
+  }
+  .panel {
+    padding: 28px;
+  }
+  .game-universe {
+    position: relative;
+    z-index: 20;
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    margin-top: 32px;
+  }
+  .field {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    transform: none;
+  }
+  .orbit:nth-child(n) {
+    position: static;
+    width: auto;
+    animation: none;
+  }
+  .orbit:nth-child(n + 4) {
+    display: none;
+  }
+  .cover {
+    max-width: 100px;
+    margin: auto;
+    transform: rotate(calc(var(--rotation) * 0.4));
+  }
+  .orbit[data-slot] .details {
+    position: fixed;
+    inset: auto 16px 16px;
+    width: auto;
+    max-width: 400px;
+    margin: auto;
+    z-index: 40;
+  }
+}
+@media (max-width: 420px) {
+  .panel {
+    padding: 24px 20px;
+  }
+  .motion {
+    right: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .motion {
+    display: none;
+  }
+  .panel,
+  .orbit,
+  .details {
+    animation: none;
+  }
+  .field,
+  .cover {
+    transition: none;
+    transform: none;
+  }
+}

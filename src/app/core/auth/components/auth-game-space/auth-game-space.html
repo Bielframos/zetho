@@ -1,0 +1,150 @@
+<div
+  class="space"
+  [attr.data-paused]="paused() || formFocused()"
+  (keydown.escape)="dismiss()"
+>
+  @defer (on idle) {
+  <ui-shader-background class="shader" [paused]="paused() || formFocused()" />
+  }
+
+  <button
+    type="button"
+    class="motion ui-ghost-btn min-h-11 rounded-lg text-xs"
+    [attr.aria-label]="paused() ? 'Retomar movimento' : 'Pausar movimento'"
+    [attr.aria-pressed]="paused()"
+    (click)="paused.set(!paused())"
+  >
+    <i [class]="paused() ? 'ph ph-play' : 'ph ph-pause'" aria-hidden="true"></i>
+    <span>{{ paused() ? 'Retomar movimento' : 'Pausar movimento' }}</span>
+  </button>
+
+  <div
+    #panel
+    class="panel"
+    (focusin)="formFocused.set(true)"
+    (focusout)="panelBlur($event, panel)"
+  >
+    <router-outlet />
+  </div>
+
+  @if (games().length) {
+  <section class="game-universe" aria-label="Jogos em destaque na comunidade">
+    <p class="mb-3 block text-xs text-gray-11 lg:hidden">Na comunidade</p>
+    <ul class="field">
+      @for (item of games(); track item.game.$id; let index = $index) {
+      <li
+        #orbit
+        class="orbit"
+        [attr.data-slot]="index"
+        [attr.data-active]="active() === item.game.$id"
+        (pointerenter)="$event.pointerType !== 'touch' && activate(item.game.$id)"
+        (pointerleave)="leave(item.game.$id, orbit)"
+        (focusin)="onFocus(item.game.$id)"
+        (focusout)="blur(item.game.$id, orbit, $event)"
+      >
+        <button
+          type="button"
+          class="cover"
+          [attr.data-game-button]="item.game.$id"
+          [attr.aria-label]="'Ver estatísticas de ' + item.game.name"
+          [attr.aria-expanded]="active() === item.game.$id"
+          [attr.aria-controls]="'space-game-' + index"
+          (click)="activate(item.game.$id)"
+        >
+          <ui-game-card
+            [game]="item.game"
+            [readonlyMode]="true"
+            [showEntryStatus]="false"
+          />
+        </button>
+
+        @if (active() === item.game.$id) {
+        <section
+          class="details"
+          [id]="'space-game-' + index"
+          [attr.aria-label]="'Estatísticas de ' + item.game.name"
+        >
+          <header class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <h2 class="text-sm font-medium leading-5">
+                {{ item.game.name }}
+              </h2>
+              @if (item.game.releaseYear) {
+              <p class="mt-1 text-xs text-gray-11">
+                {{ item.game.releaseYear }}
+              </p>
+              }
+            </div>
+            <button
+              type="button"
+              class="ui-ghost-btn shrink-0 rounded-lg"
+              data-size="icon"
+              aria-label="Fechar estatísticas"
+              (click)="$event.stopPropagation(); dismiss()"
+            >
+              <i class="ph ph-x" aria-hidden="true"></i>
+            </button>
+          </header>
+          <p class="my-3 flex items-center gap-1.5 text-xs text-gray-11">
+            @if (item.game.ratingCount > 0 && item.game.ratingAvg != null) {
+            <i class="ph-fill ph-star text-warning" aria-hidden="true"></i>
+            <span class="text-gray-12"
+              >{{ item.game.ratingAvg | number:'1.1-1' }} / 5</span
+            >
+            <span
+              >· {{ item.game.ratingCount | number }} {{ item.game.ratingCount
+              === 1 ? 'avaliação' : 'avaliações' }}</span
+            >
+            } @else { Ainda sem avaliações }
+          </p>
+          <dl
+            class="grid grid-cols-3 gap-2 border-y border-gray-6 py-3 text-center"
+          >
+            <div>
+              <dt class="text-[10px] text-gray-11">Jogando</dt>
+              <dd class="mt-1 text-sm tabular-nums">
+                {{ item.playing === null ? '—' : (item.playing | number) }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-[10px] text-gray-11">Zeraram</dt>
+              <dd class="mt-1 text-sm tabular-nums">
+                {{ item.completed === null ? '—' : (item.completed | number) }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-[10px] text-gray-11">Desejos</dt>
+              <dd class="mt-1 text-sm tabular-nums">
+                {{ item.wishlist === null ? '—' : (item.wishlist | number) }}
+              </dd>
+            </div>
+          </dl>
+          <a
+            [routerLink]="['/jogo', item.game.slug]"
+            class="mt-2 inline-flex min-h-11 items-center gap-2 rounded-lg text-xs text-blue-11 hover:underline focus-visible:outline-2 focus-visible:outline-focus-ring"
+            >Conhecer o jogo
+            <i class="ph ph-arrow-up-right" aria-hidden="true"></i
+          ></a>
+        </section>
+        }
+      </li>
+      }
+    </ul>
+  </section>
+  }
+
+  <div class="note text-xs text-gray-10" aria-live="polite">
+    @if (failed()) {
+    <span>Não foi possível carregar os jogos.</span>
+    <button
+      type="button"
+      class="ui-ghost-btn min-h-11 rounded-lg text-xs"
+      (click)="loadGames()"
+    >
+      Tentar novamente
+    </button>
+    } @else if (games().length) {
+    <span>Há sempre uma nova história para jogar.</span>
+    }
+  </div>
+</div>
