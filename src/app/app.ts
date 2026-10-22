@@ -1,3 +1,4 @@
+import { PublicEntryLayout } from './shared/app/public-entry-layout';
 import { ColorModeStore } from './core/system/color-mode/color-mode.store';
 import { FollowControl } from './shared/ui/follow-control';
 import { ProfileThemeContrast } from './shared/ui/profile-theme-contrast';
@@ -43,6 +44,7 @@ import { InAppNotificationStore } from './core/system/notifications/in-app-notif
 @Component({
   selector: 'app-root',
   imports: [FollowControl,ProfileThemeContrast,
+    PublicEntryLayout,
     ColorModeSelector,
     UiSheet,
     AppSearchInput,
@@ -224,6 +226,10 @@ export class App {
 
   usesPublicAppShell() {
     return !this.authStore.isAuthenticated() && !this.isAppShellExcludedRoute();
+  }
+
+  isPublicEntryRoute() {
+    return ['/landing', '/entrar', '/registrar'].includes(this.currentPath());
   }
 
   isLandingRoute() {

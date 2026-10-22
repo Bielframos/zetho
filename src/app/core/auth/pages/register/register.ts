@@ -31,7 +31,7 @@ import {
   imports: [UiInput, ReactiveFormsModule, RouterLink, UiLoading],
   templateUrl: './register.html',
   host: {
-    class: 'flex min-h-full w-full',
+    class: 'flex w-full flex-1',
   },
 })
 export class RegisterPage {
@@ -41,11 +41,13 @@ export class RegisterPage {
   private profileService = inject(UserProfileService);
 
   isSubmitting = signal(false);
+  inviteExpanded = signal(false);
   inviter = signal<InviterPreview | null>(null);
 
   constructor() {
     const code = this.route.snapshot.queryParamMap.get('invite');
     if (code) {
+      this.inviteExpanded.set(true);
       this.form.controls.inviteCode.setValue(code);
       void this.loadInviter(code);
     }
@@ -80,7 +82,6 @@ export class RegisterPage {
     const pass = group.get('password')?.value;
     const confirm = group.get('confirmPassword')?.value;
     if (pass && confirm && pass !== confirm) {
-      group.get('confirmPassword')?.setErrors({ passwordsMismatch: true });
       return { passwordsMismatch: true };
     }
     return null;
@@ -121,6 +122,7 @@ export class RegisterPage {
   );
 
   async submit() {
+    if (this.isSubmitting() || this.form.pending) return;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;

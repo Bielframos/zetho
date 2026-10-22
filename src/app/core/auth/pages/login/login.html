@@ -1,134 +1,93 @@
-<main
-  class="relative isolate min-h-full w-full overflow-hidden bg-gray-1 px-5 py-6 text-gray-12 md:px-10 md:py-24"
->
-  <div
-    class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] bg-[radial-gradient(circle_at_18%_0%,rgba(62,99,221,0.34),transparent_34%),radial-gradient(circle_at_82%_12%,rgba(247,209,84,0.14),transparent_28%)]"
-    aria-hidden="true"
-  ></div>
-
-  <div
-    class="mx-auto grid min-h-full w-full max-w-6xl items-end gap-6 lg:gap-10 lg:grid-cols-[0.88fr_1.12fr]"
-  >
-    <section class="max-w-xl">
-      <a routerLink="/landing" class="inline-flex">
-        <span class="font-display text-[48px] leading-none">zetho</span>
-      </a>
-
-      <h1 class="mt-5 text-4xl leading-tight md:text-5xl">
-        Entre e continue de onde sua coleção parou.
-      </h1>
-
-      <p class="mt-5 text-base font-light leading-7 text-gray-11">
-        Atualize seus status, escreva reviews, revise seu backlog e descubra o
-        que a comunidade está jogando agora.
+<main class="flex w-full flex-1 items-center px-5 py-12 sm:px-8 sm:py-16">
+  <section class="mx-auto w-full max-w-[400px]" aria-labelledby="login-title">
+    <header class="mb-8">
+      <h1 id="login-title" class="text-2xl tracking-tight">Entrar no Zetho</h1>
+      <p class="mt-2 text-sm leading-6 text-gray-11">
+        Sua próxima aventura começa por aqui.
       </p>
+    </header>
 
-      <div class="mt-8 hidden gap-3 lg:grid">
-        <div class="flex gap-3 border-y border-gray-6 py-4">
-          <span
-            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-3 text-blue-11"
-          >
-            <i class="ph-fill ph-books"></i>
-          </span>
-          <div>
-            <h2 class="text-base">Coleção sempre à mão</h2>
-            <p class="mt-1 text-sm text-gray-11">
-              Biblioteca, wishlist e jogos em andamento no mesmo lugar.
-            </p>
-          </div>
-        </div>
-        <div class="flex gap-3 border-b border-gray-6 pb-4">
-          <span
-            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-3 text-warning"
-          >
-            <i class="ph-fill ph-star"></i>
-          </span>
-          <div>
-            <h2 class="text-base">Reviews conectadas</h2>
-            <p class="mt-1 text-sm text-gray-11">
-              Notas e textos ficam ligados ao seu perfil público.
-            </p>
-          </div>
-        </div>
-        <div class="flex gap-3 border-b border-gray-6 pb-4">
-          <span
-            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-3 text-success"
-          >
-            <i class="ph-fill ph-ranking"></i>
-          </span>
-          <div>
-            <h2 class="text-base">Evolução visível</h2>
-            <p class="mt-1 text-sm text-gray-11">
-              Z-Coins, rankings e histórico para acompanhar sua jornada.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section
-      class="bg-transparent p-0 md:border md:border-gray-6 md:bg-gray-2/80 md:p-8 md:backdrop-blur"
+    <form
+      #form="ngForm"
+      (ngSubmit)="login(form)"
+      class="flex flex-col gap-5"
+      novalidate
+      [attr.aria-busy]="isLoading()"
     >
-      <header class="mb-8">
-        <p class="text-sm uppercase tracking-wide text-blue-11">Login</p>
-        <h2 class="mt-2 text-3xl">Acesse sua conta</h2>
-        <p class="mt-2 text-sm text-gray-11">
-          Novo por aqui?
-          <a
-            routerLink="/registrar"
-            class="text-blue-11 transition-colors hover:text-link hover:underline"
-            >Crie seu perfil gamer</a
-          >.
-        </p>
-      </header>
-
-      <form #form="ngForm" (ngSubmit)="login(form)" class="flex flex-col gap-4">
+      <div>
         <ui-input
           type="email"
           label="E-mail"
-          placeholder="voce@email.com"
+          placeholder="voce@exemplo.com"
           name="email"
-          icon="envelope"
+          autocomplete="username"
           [(ngModel)]="email"
+          #emailField="ngModel"
           variant="secondary"
           required
+          email
+          [invalid]="emailField.invalid && (emailField.touched || form.submitted)"
+          [describedBy]="emailField.invalid && (emailField.touched || form.submitted) ? 'login-email-error' : null"
         />
+        @if (emailField.invalid && (emailField.touched || form.submitted)) {
+        <p id="login-email-error" class="mt-2 px-4 text-xs text-danger">
+          Informe um e-mail válido.
+        </p>
+        }
+      </div>
+      <div>
         <ui-input
           type="password"
           label="Senha"
           placeholder="Sua senha"
           name="password"
-          icon="lock"
+          autocomplete="current-password"
           [(ngModel)]="password"
+          #passwordField="ngModel"
           variant="secondary"
           required
+          [invalid]="passwordField.invalid && (passwordField.touched || form.submitted)"
+          [describedBy]="passwordField.invalid && (passwordField.touched || form.submitted) ? 'login-password-error' : null"
         />
-
+        @if (passwordField.invalid && (passwordField.touched || form.submitted))
+        {
+        <p id="login-password-error" class="mt-2 px-4 text-xs text-danger">
+          Informe sua senha.
+        </p>
+        }
         <a
           routerLink="/recuperar-senha"
-          class="-mt-1 self-end text-sm text-blue-11 transition-colors hover:text-link hover:underline"
+          class="mt-2 inline-flex min-h-11 items-center rounded-lg text-sm text-blue-11 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+          >Esqueceu sua senha?</a
         >
-          Esqueceu sua senha?
-        </a>
+      </div>
+      @if (result().message) {
+      <p
+        role="alert"
+        class="rounded-lg border border-danger-line bg-danger-bg p-3 text-sm text-danger"
+      >
+        {{ result().message }}
+      </p>
+      }
+      <button
+        type="submit"
+        class="ui-primary-btn min-h-11 w-full rounded-lg"
+        [disabled]="isLoading()"
+      >
+        @if (isLoading()) { <ui-loading [inline]="true" size="sm" /> } {{
+        isLoading() ? 'Entrando…' : 'Entrar' }}
+      </button>
+    </form>
 
-        @if (result().message) {
-        <small
-          class="rounded-lg border border-danger-line bg-danger-bg p-3 text-danger"
-        >
-          {{ result().message }}
-        </small>
-        }
-
-        <button
-          type="submit"
-          class="mt-2 inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-blue-9 px-5 text-base font-medium text-white transition-colors hover:bg-blue-10 focus:outline-none focus:ring-2 focus:ring-focus-ring disabled:pointer-events-none disabled:bg-gray-5 disabled:text-gray-10"
-          [disabled]="isLoading()"
-        >
-          @if (isLoading()) {
-          <ui-loading [inline]="true" size="sm"></ui-loading>
-          } Entrar na minha conta
-        </button>
-      </form>
-    </section>
-  </div>
+    <p
+      class="mt-8 border-t border-gray-4 pt-6 text-center text-sm text-gray-11"
+    >
+      Ainda não tem conta?
+      <a
+        routerLink="/registrar"
+        class="inline-flex min-h-11 items-center rounded-lg text-blue-11 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+        >Criar conta</a
+      >
+    </p>
+  </section>
 </main>

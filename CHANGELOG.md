@@ -4,6 +4,13 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+## [1.35.1] - 2026-10-22
+
+### Melhorias
+
+- Landing, login e cadastro com visual alinhado ao app: superfícies neutras, navegação mais simples, prévia de estante e formulários com orientações junto aos campos.
+- Código de convite opcional recolhido no cadastro e preenchimento automático nos campos de acesso.
+
 ## [1.35.0] - 2026-10-22
 
 ### Novidades
