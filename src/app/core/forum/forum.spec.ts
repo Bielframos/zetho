@@ -242,7 +242,8 @@ describe('ForumFeedPage', () => {
     fixture.detectChanges();
     component.setSort('recent');
     fixture.detectChanges();
-    await fixture.whenStable();
+    await Promise.resolve();
+    await Promise.resolve();
 
     // Now resolve the stale 'top' call and verify it does NOT overwrite the 'recent' state
     resolveFirstCall({
