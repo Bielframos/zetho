@@ -6,9 +6,10 @@ import {
   ElementRef,
   inject,
   NgZone,
+  input,
   viewChild,
 } from '@angular/core';
-import { ColorModeStore } from '../system/color-mode/color-mode.store';
+import { ColorModeStore } from '../../core/system/color-mode/color-mode.store';
 
 const VERTEX = `attribute vec2 a_position;
 void main() { gl_Position = vec4(a_position, 0.0, 1.0); }`;
@@ -39,7 +40,7 @@ void main() {
 }`;
 
 @Component({
-  selector: 'app-recommendation-background',
+  selector: 'ui-shader-background',
   template: '<canvas #canvas aria-hidden="true"></canvas>',
   styles: `
     :host {
@@ -63,7 +64,8 @@ void main() {
     }
   `,
 })
-export class RecommendationBackground {
+export class ShaderBackground {
+  readonly paused = input(false);
   private readonly canvas =
     viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
   private readonly destroy = inject(DestroyRef);
@@ -71,11 +73,16 @@ export class RecommendationBackground {
 
   private readonly mode = inject(ColorModeStore);
   private updatePalette?: () => void;
+  private updateMotion?: () => void;
 
   constructor() {
     afterRenderEffect(() => {
       this.mode.effective();
       this.zone.runOutsideAngular(() => this.updatePalette?.());
+    });
+    afterRenderEffect(() => {
+      this.paused();
+      this.zone.runOutsideAngular(() => this.updateMotion?.());
     });
     afterNextRender(() => this.zone.runOutsideAngular(() => this.initialize()));
   }
@@ -142,10 +149,15 @@ export class RecommendationBackground {
     let frame = 0;
     let lastDraw = 0;
     let lost = false;
-    const start = performance.now();
+    let previousTime = performance.now();
+    let elapsed = 0;
     const draw = (now: number) => {
       if (lost || document.hidden) return;
-      gl.uniform1f(time, reducedMotion.matches ? 0 : (now - start) / 2000);
+      if (!this.paused() && !reducedMotion.matches) {
+        elapsed += Math.max(0, now - previousTime) / 2000;
+      }
+      previousTime = now;
+      gl.uniform1f(time, reducedMotion.matches ? 0 : elapsed);
       gl.uniform2f(resolution, canvas.width, canvas.height);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     };
@@ -153,8 +165,14 @@ export class RecommendationBackground {
       if (lost) return;
       // Read the already applied pre-paint/runtime palette, never the store's SSR default.
       const styles = getComputedStyle(canvas);
-      gl.uniform3fv(base, shaderColor(styles.getPropertyValue('--recommendation-base')));
-      gl.uniform3fv(accent, shaderColor(styles.getPropertyValue('--recommendation-accent')));
+      gl.uniform3fv(
+        base,
+        shaderColor(styles.getPropertyValue('--recommendation-base')),
+      );
+      gl.uniform3fv(
+        accent,
+        shaderColor(styles.getPropertyValue('--recommendation-accent')),
+      );
       if (!document.hidden) draw(performance.now());
     };
     this.updatePalette();
@@ -169,9 +187,12 @@ export class RecommendationBackground {
     const resume = () => {
       cancelAnimationFrame(frame);
       if (lost || document.hidden) return;
-      draw(performance.now());
-      if (!reducedMotion.matches) frame = requestAnimationFrame(tick);
+      previousTime = performance.now();
+      draw(previousTime);
+      if (!reducedMotion.matches && !this.paused())
+        frame = requestAnimationFrame(tick);
     };
+    this.updateMotion = resume;
     const resize = new ResizeObserver(() => {
       // One physical pixel per CSS pixel caps GPU work, even on high-DPI phones.
       canvas.width = Math.max(1, Math.round(canvas.clientWidth));
@@ -192,6 +213,7 @@ export class RecommendationBackground {
     this.destroy.onDestroy(() => {
       cancelAnimationFrame(frame);
       this.updatePalette = undefined;
+      this.updateMotion = undefined;
       resize.disconnect();
       reducedMotion.removeEventListener('change', resume);
       document.removeEventListener('visibilitychange', resume);
@@ -206,6 +228,13 @@ export class RecommendationBackground {
 /** Palette tokens are hexadecimal sRGB values; WebGL expects normalized channels. */
 export function shaderColor(color: string): Float32Array {
   const value = color.trim().replace('#', '');
-  const hex = value.length === 3 ? [...value].map((channel) => channel + channel).join('') : value;
-  return new Float32Array([0, 2, 4].map((offset) => parseInt(hex.slice(offset, offset + 2), 16) / 255));
+  const hex =
+    value.length === 3
+      ? [...value].map((channel) => channel + channel).join('')
+      : value;
+  return new Float32Array(
+    [0, 2, 4].map(
+      (offset) => parseInt(hex.slice(offset, offset + 2), 16) / 255,
+    ),
+  );
 }

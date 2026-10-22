@@ -4,6 +4,13 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+## [1.35.2] - 2026-10-22
+
+### Melhorias
+
+- Login e cadastro com o shader das recomendações, capas flutuantes e estatísticas da comunidade acessíveis por mouse, teclado e toque.
+- Controle para pausar o movimento, respeito à preferência de movimento reduzido e formulários protegidos da animação.
+
 ## [1.35.1] - 2026-10-22
 
 ### Melhorias
