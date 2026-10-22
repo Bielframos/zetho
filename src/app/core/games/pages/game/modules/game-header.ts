@@ -71,19 +71,32 @@ import { GameStore } from '../../../game.store';
             </p>
           </div>
 
-          <button
-            type="button"
-            (click)="toggleGameInfo()"
-            class="ui-action-btn"
-            [attr.aria-expanded]="showGameInfo()"
-          >
-            <i
-              class="ph"
-              [class.ph-caret-down]="!showGameInfo()"
-              [class.ph-caret-up]="showGameInfo()"
-            ></i>
-            {{ showGameInfo() ? 'Ocultar detalhes' : 'Ver detalhes do jogo' }}
-          </button>
+          <div class="flex flex-wrap items-center justify-center gap-2">
+            <button
+              type="button"
+              (click)="toggleGameInfo()"
+              class="ui-action-btn"
+              [attr.aria-expanded]="showGameInfo()"
+            >
+              <i
+                class="ph"
+                [class.ph-caret-down]="!showGameInfo()"
+                [class.ph-caret-up]="showGameInfo()"
+              ></i>
+              {{ showGameInfo() ? 'Ocultar detalhes' : 'Ver detalhes do jogo' }}
+            </button>
+
+            @if (game()?.slug) {
+              <a
+                [routerLink]="['/forum']"
+                [queryParams]="{ jogo: game()!.slug }"
+                class="ui-action-btn"
+              >
+                <i class="ph ph-chats-circle text-blue-11" aria-hidden="true"></i>
+                Discussões no Fórum
+              </a>
+            }
+          </div>
 
           <!-- Descrição expandida (disclosure) -->
           <div

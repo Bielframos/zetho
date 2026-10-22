@@ -1,0 +1,624 @@
+<main class="mx-auto min-h-dvh w-full max-w-3xl">
+  @if (loading()) {
+    <div class="border-y border-gray-6">
+      <ui-loading fallback="Carregando discussão..." variant="subtle" />
+    </div>
+  } @else if (error()) {
+    <section
+      class="m-4 border border-danger-line bg-danger-bg px-4 py-8 text-center"
+      role="alert"
+    >
+      <i class="ph ph-warning-circle text-2xl text-danger" aria-hidden="true"></i>
+      <p class="mt-2 text-gray-11">
+        Não foi possível carregar esta discussão do Fórum.
+      </p>
+      <a routerLink="/forum" class="ui-secondary-btn mt-4 inline-flex">
+        Voltar ao Fórum
+      </a>
+    </section>
+  } @else if (post(); as rootPost) {
+    <article>
+      <!-- Navegação contextual + Jogo associado -->
+      <header class="border-b border-gray-6 px-4 py-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 text-sm">
+          <div class="flex flex-wrap items-center gap-2">
+            <a
+              routerLink="/forum"
+              class="inline-flex items-center gap-1 text-blue-11 hover:underline"
+            >
+              <i class="ph ph-arrow-left" aria-hidden="true"></i>
+              <span>Fórum</span>
+            </a>
+
+            @if (rootPost.game) {
+              <span class="text-gray-10" aria-hidden="true">/</span>
+              <a
+                [routerLink]="['/forum']"
+                [queryParams]="{ jogo: rootPost.game.slug }"
+                class="truncate font-medium text-gray-11 hover:text-gray-12 hover:underline"
+              >
+                {{ rootPost.game.name }}
+              </a>
+            }
+          </div>
+        </div>
+
+        <!-- Autor e data -->
+        <div class="mt-4 flex items-center gap-3">
+          @if (rootPost.author?.avatarUrl) {
+            <img
+              [src]="rootPost.author?.avatarUrl"
+              [alt]="'Avatar de ' + rootPost.author?.gamertag"
+              class="h-10 w-10 shrink-0 rounded-full object-cover"
+            />
+          } @else {
+            <span
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-9 text-sm font-bold text-white"
+              aria-hidden="true"
+            >
+              {{ authorInitial(rootPost) }}
+            </span>
+          }
+
+          <div class="min-w-0 flex-1">
+            @if (rootPost.author?.gamertag) {
+              <a
+                [routerLink]="['/player', rootPost.author!.gamertag]"
+                class="truncate text-sm font-medium text-gray-12 hover:underline"
+              >
+                {{ rootPost.author!.gamertag }}
+              </a>
+            } @else {
+              <span class="text-sm font-medium text-gray-12">Jogador</span>
+            }
+            <div class="flex flex-wrap items-center gap-1.5 text-xs text-gray-10">
+              <time [attr.datetime]="rootPost.$createdAt">
+                {{ formatDate(rootPost.$createdAt) }}
+              </time>
+              <span aria-hidden="true">·</span>
+              <span>{{ rootPost.$createdAt | relativeTime }}</span>
+            </div>
+          </div>
+
+          @if (canManage(rootPost)) {
+            <div class="flex items-center gap-1">
+              <button
+                type="button"
+                class="ui-ghost-btn"
+                data-size="icon"
+                aria-label="Editar publicação"
+                title="Editar publicação"
+                (click)="startEdit(rootPost)"
+              >
+                <i class="ph ph-pencil-simple"></i>
+              </button>
+              <button
+                type="button"
+                class="ui-ghost-btn text-danger"
+                data-size="icon"
+                aria-label="Excluir publicação"
+                title="Excluir publicação"
+                [disabled]="deletingIds().has(rootPost.$id)"
+                (click)="deleteItem(rootPost)"
+              >
+                <i class="ph ph-trash"></i>
+              </button>
+            </div>
+          }
+        </div>
+
+        @if (editingId() === rootPost.$id) {
+          <!-- Edição inline da publicação raiz -->
+          <form
+            class="mt-4 flex flex-col gap-3"
+            (submit)="saveEdit($event, rootPost)"
+          >
+            <div>
+              <label
+                for="edit-post-title"
+                class="mb-1 block text-xs font-medium text-gray-11"
+              >
+                Título da publicação
+              </label>
+              <input
+                id="edit-post-title"
+                name="editTitle"
+                type="text"
+                maxlength="255"
+                required
+                [ngModel]="editTitle()"
+                (ngModelChange)="editTitle.set($event)"
+                class="w-full border border-gray-6 bg-transparent px-3 py-2 text-sm text-gray-12 outline-none focus:ring-2 focus:ring-focus-ring"
+              />
+            </div>
+
+            @if (isBrowser) {
+              <app-rich-text-editor
+                [content]="editContent()"
+                placeholder="Atualize o conteúdo da publicação..."
+                (contentChange)="editContent.set($event)"
+              ></app-rich-text-editor>
+            }
+
+            <div class="flex items-center justify-between text-xs text-gray-10">
+              <span>{{ editTextLength() }}/8000</span>
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  class="ui-ghost-btn"
+                  data-size="sm"
+                  (click)="cancelEdit()"
+                  [disabled]="savingEdit()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  class="ui-primary-btn"
+                  data-size="sm"
+                  [disabled]="!canSaveEdit(true)"
+                >
+                  Salvar alterações
+                </button>
+              </div>
+            </div>
+          </form>
+        } @else {
+          <h1 class="mt-4 text-2xl leading-tight text-gray-12 md:text-3xl">
+            {{ rootPost.title }}
+          </h1>
+
+          <div
+            class="prose prose-sm mt-4 max-w-none text-gray-11 prose-headings:text-gray-12 prose-a:text-blue-11 prose-a:no-underline hover:prose-a:underline"
+            [innerHTML]="safeHtml(rootPost.content)"
+          ></div>
+        }
+
+        @if (rootPost.game) {
+          <a
+            [routerLink]="['/jogo', rootPost.game.slug]"
+            class="group mt-5 flex items-center gap-3 border-t border-gray-6 pt-4"
+          >
+            @if (rootPost.game.coverUrl) {
+              <img
+                [src]="rootPost.game.coverUrl"
+                [alt]="'Capa de ' + rootPost.game.name"
+                class="h-16 w-11 shrink-0 bg-gray-4 object-cover"
+              />
+            } @else {
+              <span
+                class="flex h-16 w-11 shrink-0 items-center justify-center border border-dashed border-gray-6 bg-gray-2"
+                aria-hidden="true"
+              >
+                <i class="ph ph-game-controller text-gray-9"></i>
+              </span>
+            }
+            <span class="min-w-0">
+              <span class="block text-xs text-gray-10">Discussão sobre</span>
+              <span
+                class="block truncate text-sm font-medium text-gray-12 group-hover:underline"
+              >
+                {{ rootPost.game.name }}
+              </span>
+            </span>
+          </a>
+        }
+
+        <!-- Barra de interações da publicação -->
+        <footer
+          class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-gray-6 pt-3 text-sm text-gray-11"
+        >
+          <div class="flex items-center gap-1">
+            <button
+              type="button"
+              class="ui-ghost-btn"
+              data-size="icon"
+              (click)="voteItem(rootPost, 'up')"
+              [disabled]="votingIds().has(rootPost.$id)"
+              aria-label="Votar positivamente"
+            >
+              <i
+                class="ph ph-arrow-up"
+                [class.text-link]="rootPost.viewerVote === 'up'"
+              ></i>
+            </button>
+            <span class="min-w-6 text-center font-medium tabular-nums text-gray-12">
+              {{ rootPost.voteCount || 0 }}
+            </span>
+            <button
+              type="button"
+              class="ui-ghost-btn"
+              data-size="icon"
+              (click)="voteItem(rootPost, 'down')"
+              [disabled]="votingIds().has(rootPost.$id)"
+              aria-label="Votar negativamente"
+            >
+              <i
+                class="ph ph-arrow-down"
+                [class.text-danger]="rootPost.viewerVote === 'down'"
+              ></i>
+            </button>
+
+            <span class="ml-3 inline-flex items-center gap-1.5 text-xs text-gray-11">
+              <i class="ph ph-chat-circle text-base" aria-hidden="true"></i>
+              <span class="tabular-nums">
+                {{ rootPost.replyCount || 0 }}
+                {{ (rootPost.replyCount || 0) === 1 ? 'resposta' : 'respostas' }}
+              </span>
+            </span>
+          </div>
+
+          <button
+            type="button"
+            class="ui-ghost-btn gap-1.5 px-2.5 text-xs"
+            (click)="sharePost()"
+          >
+            <i class="ph ph-share-network" aria-hidden="true"></i>
+            Compartilhar
+          </button>
+        </footer>
+      </header>
+
+      <!-- Compositor de resposta principal -->
+      <section
+        class="border-b-8 border-gray-6 px-4 py-4"
+        aria-label="Responder à discussão"
+      >
+        @if (authStore.isAuthenticated()) {
+          <form class="flex flex-col gap-3" (submit)="submitRootReply($event)">
+            <label class="text-sm font-medium text-gray-12">
+              Participar da discussão
+            </label>
+            @if (isBrowser) {
+              <app-rich-text-editor
+                [content]="rootReplyContent()"
+                placeholder="Escreva sua resposta..."
+                (contentChange)="rootReplyContent.set($event)"
+              ></app-rich-text-editor>
+            }
+            <div class="flex items-center justify-between text-xs text-gray-10">
+              <span
+                [class.text-danger]="rootReplyTextLength() > 4000"
+                [class.text-success]="
+                  rootReplyTextLength() >= 3 && rootReplyTextLength() <= 4000
+                "
+              >
+                {{ rootReplyTextLength() }}/4000
+              </span>
+              <button
+                type="submit"
+                class="ui-primary-btn"
+                data-size="sm"
+                [disabled]="!canSubmitRootReply()"
+              >
+                @if (submittingRootReply()) {
+                  <ui-loading [inline]="true" size="sm"></ui-loading>
+                }
+                Responder
+              </button>
+            </div>
+          </form>
+        } @else {
+          <div class="flex flex-wrap items-center justify-between gap-3 py-1">
+            <div>
+              <h2 class="text-sm font-medium text-gray-12">
+                Quer participar do debate?
+              </h2>
+              <p class="text-xs text-gray-11">
+                Entre na sua conta para responder e votar nos comentários da
+                comunidade.
+              </p>
+            </div>
+            <a routerLink="/entrar" class="ui-primary-btn" data-size="sm">
+              Entrar ou criar conta
+            </a>
+          </div>
+        }
+      </section>
+
+      <!-- Lista de respostas em threads (até 3 níveis) -->
+      <section aria-label="Respostas da comunidade">
+        <div
+          class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-6 px-4"
+        >
+          <h2 class="py-3 text-lg font-medium text-gray-12">
+            Discussão ({{ repliesTotal() }})
+          </h2>
+
+          <div
+            class="flex items-center"
+            role="tablist"
+            aria-label="Ordenar respostas"
+          >
+            <button
+              type="button"
+              role="tab"
+              class="-mb-px cursor-pointer border-b-2 px-4 py-3.5 text-sm transition-colors"
+              [class.border-blue-9]="replySort() === 'recent'"
+              [class.border-transparent]="replySort() !== 'recent'"
+              [class.text-gray-12]="replySort() === 'recent'"
+              [class.text-gray-11]="replySort() !== 'recent'"
+              [attr.aria-selected]="replySort() === 'recent'"
+              (click)="setReplySort('recent')"
+            >
+              Mais recentes
+            </button>
+            <button
+              type="button"
+              role="tab"
+              class="-mb-px cursor-pointer border-b-2 px-4 py-3.5 text-sm transition-colors"
+              [class.border-blue-9]="replySort() === 'top'"
+              [class.border-transparent]="replySort() !== 'top'"
+              [class.text-gray-12]="replySort() === 'top'"
+              [class.text-gray-11]="replySort() !== 'top'"
+              [attr.aria-selected]="replySort() === 'top'"
+              (click)="setReplySort('top')"
+            >
+              Mais votados
+            </button>
+          </div>
+        </div>
+
+        <div class="px-4 py-4">
+          @if (replies().length === 0) {
+            <div class="py-10 text-center text-sm text-gray-11">
+              Seja a primeira pessoa a responder nesta discussão.
+            </div>
+          } @else {
+            <div class="flex flex-col divide-y divide-gray-6">
+              @for (reply of replies(); track reply.$id) {
+                <div class="py-4 first:pt-0">
+                  <ng-container
+                    [ngTemplateOutlet]="replyThreadNode"
+                    [ngTemplateOutletContext]="{ $implicit: reply }"
+                  ></ng-container>
+                </div>
+              }
+            </div>
+
+            @if (repliesHasMore()) {
+              <div class="mt-4 flex justify-center border-t border-gray-6 pt-4">
+                <button
+                  type="button"
+                  class="ui-secondary-btn"
+                  [disabled]="loadingMoreReplies()"
+                  (click)="loadMoreRootReplies()"
+                >
+                  @if (loadingMoreReplies()) {
+                    <ui-loading [inline]="true" size="sm"></ui-loading>
+                  }
+                  Carregar mais respostas
+                </button>
+              </div>
+            }
+          }
+        </div>
+      </section>
+    </article>
+  }
+</main>
+
+<!-- Template recursivo para até 3 níveis de profundidade -->
+<ng-template #replyThreadNode let-comment>
+  <article
+    [id]="'comment-' + comment.$id"
+    class="transition-colors duration-300"
+    [class.border]="highlightedCommentId() === comment.$id"
+    [class.border-blue-9]="highlightedCommentId() === comment.$id"
+    [class.bg-blue-3/10]="highlightedCommentId() === comment.$id"
+    [class.p-3]="highlightedCommentId() === comment.$id"
+  >
+    <div class="flex items-start gap-3">
+      @if (comment.author?.avatarUrl) {
+        <img
+          [src]="comment.author.avatarUrl"
+          [alt]="'Avatar de ' + comment.author.gamertag"
+          class="h-8 w-8 shrink-0 rounded-full object-cover"
+        />
+      } @else {
+        <span
+          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-9 text-xs font-bold text-white"
+          aria-hidden="true"
+        >
+          {{ authorInitial(comment) }}
+        </span>
+      }
+
+      <div class="min-w-0 flex-1">
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          @if (comment.author?.gamertag) {
+            <a
+              [routerLink]="['/player', comment.author.gamertag]"
+              class="font-medium text-gray-12 hover:underline"
+            >
+              {{ comment.author.gamertag }}
+            </a>
+          } @else {
+            <span class="font-medium text-gray-12">Jogador</span>
+          }
+          <time class="text-gray-10" [attr.datetime]="comment.$createdAt">
+            {{ comment.$createdAt | relativeTime }}
+          </time>
+        </div>
+
+        @if (editingId() === comment.$id) {
+          <form
+            class="mt-2 flex flex-col gap-2"
+            (submit)="saveEdit($event, comment)"
+          >
+            @if (isBrowser) {
+              <app-rich-text-editor
+                [content]="editContent()"
+                placeholder="Edite sua resposta..."
+                (contentChange)="editContent.set($event)"
+              ></app-rich-text-editor>
+            }
+            <div class="flex items-center justify-between text-xs text-gray-10">
+              <span>{{ editTextLength() }}/4000</span>
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  class="ui-ghost-btn"
+                  data-size="sm"
+                  (click)="cancelEdit()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  class="ui-primary-btn"
+                  data-size="sm"
+                  [disabled]="!canSaveEdit(false)"
+                >
+                  Salvar
+                </button>
+              </div>
+            </div>
+          </form>
+        } @else {
+          <div
+            class="prose prose-sm mt-1.5 max-w-none text-gray-11 prose-p:my-1 prose-headings:text-gray-12 prose-a:text-blue-11"
+            [innerHTML]="safeHtml(comment.content)"
+          ></div>
+        }
+
+        <div class="mt-2 flex flex-wrap items-center gap-1 text-xs text-gray-11">
+          <button
+            type="button"
+            class="ui-ghost-btn"
+            data-size="icon"
+            (click)="voteItem(comment, 'up')"
+            [disabled]="votingIds().has(comment.$id)"
+            aria-label="Upvote"
+          >
+            <i
+              class="ph ph-arrow-up"
+              [class.text-link]="comment.viewerVote === 'up'"
+            ></i>
+          </button>
+          <span class="min-w-5 text-center font-medium tabular-nums text-gray-12">
+            {{ comment.voteCount || 0 }}
+          </span>
+          <button
+            type="button"
+            class="ui-ghost-btn"
+            data-size="icon"
+            (click)="voteItem(comment, 'down')"
+            [disabled]="votingIds().has(comment.$id)"
+            aria-label="Downvote"
+          >
+            <i
+              class="ph ph-arrow-down"
+              [class.text-danger]="comment.viewerVote === 'down'"
+            ></i>
+          </button>
+
+          @if (authStore.isAuthenticated() && (comment.depth || 1) < 3) {
+            <button
+              type="button"
+              class="ui-action-btn ml-1"
+              (click)="startReplyTo(comment)"
+            >
+              <i class="ph ph-arrow-bend-up-left" aria-hidden="true"></i>
+              Responder
+            </button>
+          }
+
+          @if (canManage(comment)) {
+            <button
+              type="button"
+              class="ui-action-btn"
+              (click)="startEdit(comment)"
+            >
+              Editar
+            </button>
+            <button
+              type="button"
+              class="ui-action-btn text-danger"
+              [disabled]="deletingIds().has(comment.$id)"
+              (click)="deleteItem(comment)"
+            >
+              Excluir
+            </button>
+          }
+        </div>
+
+        @if (replyingToId() === comment.$id) {
+          <form
+            class="mt-3 flex flex-col gap-2"
+            (submit)="submitInlineReply($event, comment)"
+          >
+            @if (isBrowser) {
+              <app-rich-text-editor
+                [content]="inlineReplyContent()"
+                placeholder="Escreva sua resposta..."
+                (contentChange)="inlineReplyContent.set($event)"
+              ></app-rich-text-editor>
+            }
+            <div class="flex items-center justify-between text-xs text-gray-10">
+              <span>{{ inlineReplyTextLength() }}/4000</span>
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  class="ui-ghost-btn"
+                  data-size="sm"
+                  (click)="cancelInlineReply()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  class="ui-primary-btn"
+                  data-size="sm"
+                  [disabled]="!canSubmitInlineReply()"
+                >
+                  Responder
+                </button>
+              </div>
+            </div>
+          </form>
+        }
+
+        <!-- Controles e árvore de respostas filhas -->
+        @if ((comment.replyCount || 0) > 0 || nestedBucket(comment.$id)?.items?.length) {
+          <div class="mt-2">
+            <button
+              type="button"
+              class="text-xs font-medium text-blue-11 hover:underline"
+              (click)="toggleOrLoadNestedReplies(comment)"
+            >
+              @if (nestedBucket(comment.$id)?.loading) {
+                Carregando respostas...
+              } @else if (!nestedBucket(comment.$id)?.items?.length) {
+                Ver {{ comment.replyCount }}
+                {{ comment.replyCount === 1 ? 'resposta' : 'respostas' }}
+              } @else if (nestedBucket(comment.$id)?.hidden) {
+                Mostrar respostas ({{ comment.replyCount }})
+              } @else if (nestedBucket(comment.$id)?.hasMore) {
+                Carregar mais respostas
+              } @else {
+                Ocultar respostas
+              }
+            </button>
+
+            @if (
+              nestedBucket(comment.$id);
+              as bucket
+            ) {
+              @if (!bucket.hidden && bucket.items.length > 0) {
+                <div class="mt-3 flex flex-col gap-4 border-l border-gray-6 pl-4">
+                  @for (child of bucket.items; track child.$id) {
+                    <ng-container
+                      [ngTemplateOutlet]="replyThreadNode"
+                      [ngTemplateOutletContext]="{ $implicit: child }"
+                    ></ng-container>
+                  }
+                </div>
+              }
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </article>
+</ng-template>

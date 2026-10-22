@@ -111,7 +111,11 @@
               >
             </div>
             } @else if (item.type === 'comment') {
-            <span class="text-xs text-gray-11">Comentário</span>
+            <a
+              [routerLink]="['/forum', item.slug || item.$id]"
+              class="text-xs text-blue-11 hover:underline"
+              >Fórum</a
+            >
             } @else if (item.type === 'list') {
             <span class="text-xs text-gray-11">Lista</span>
             } @else if (item.type === 'status') {
@@ -184,6 +188,14 @@
         </div>
         } @if (item.type === 'rating' && item.title) {
         <h3 class="text-lg font-medium text-gray-12">{{ item.title }}</h3>
+        } @else if (item.type === 'comment' && item.title) {
+        <h3 class="text-lg font-medium text-gray-12">
+          <a
+            [routerLink]="['/forum', item.slug || item.$id]"
+            class="hover:text-blue-11 hover:underline"
+            >{{ item.title }}</a
+          >
+        </h3>
         } @if (item.content) { @if (item.type === 'rating') {
         <ui-feed-review-content [reviewId]="item.$id" [content]="item.content" />
         } @else if (item.type === 'comment') {

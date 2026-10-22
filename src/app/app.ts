@@ -142,6 +142,7 @@ export class App {
           : []),
       ],
       [
+        { label: 'Fórum', icon: 'ph-chats-circle', route: ['/forum'] },
         { label: 'Reviews', icon: 'ph-star', route: ['/reviews'] },
         { label: 'Notícias', icon: 'ph-newspaper', route: ['/noticias'] },
         { label: 'Listas', icon: 'ph-list-dashes', route: ['/listas'] },
