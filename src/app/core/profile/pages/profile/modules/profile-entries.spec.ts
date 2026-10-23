@@ -60,20 +60,18 @@ describe('Profile entry groups', () => {
       .toEqual([true, false]);
   });
 
-  it('updates group in the URL while preserving the status filter', async () => {
+  it('renders the subtle grouping toolbar without the floating button and updates URL while preserving status', async () => {
     const { fixture } = setup();
     const router = TestBed.inject(Router);
     await router.navigateByUrl('/?t=completed');
     fixture.detectChanges();
-    const panel: HTMLElement = fixture.nativeElement.querySelector('#profile-entry-grouping');
-    const trigger: HTMLButtonElement = fixture.nativeElement.querySelector('[aria-controls="profile-entry-grouping"]');
-    expect(panel.hidden).toBeTrue();
-    expect(trigger.getAttribute('aria-expanded')).toBe('false');
-    expect(fixture.nativeElement.querySelector('select')).toBeNull();
-    trigger.click();
-    fixture.detectChanges();
-    expect(panel.hidden).toBeFalse();
-    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+
+    expect(fixture.nativeElement.querySelector('[aria-controls="profile-entry-grouping"]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('#profile-entry-grouping')).toBeNull();
+
+    const label: HTMLElement = fixture.nativeElement.querySelector('label');
+    expect(label.textContent).toContain('Agrupar por');
+
     fixture.nativeElement.querySelector('ui-select button').click();
     fixture.detectChanges();
     const options = fixture.nativeElement.querySelectorAll('ui-select [role="option"]');
@@ -81,9 +79,27 @@ describe('Profile entry groups', () => {
     options[2].click();
     await fixture.whenStable();
     expect(router.parseUrl(router.url).queryParams).toEqual({ t: 'completed', group: 'alphabetical' });
-    trigger.click();
+  });
+
+  it('displays the entry count in the toolbar when entries exist', () => {
+    const { controller, fixture } = setup();
+    const a = { $id: 'a', game: { name: 'First' } };
+    controller.entries.set([a]);
     fixture.detectChanges();
-    expect(panel.hidden).toBeTrue();
+    expect(fixture.nativeElement.textContent).toContain('1 jogo');
+
+    const b = { $id: 'b', game: { name: 'Second' } };
+    controller.entries.set([a, b]);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('2 jogos');
+  });
+
+  it('maintains toggleGrouping compatibility', () => {
+    const { fixture } = setup();
+    const component = fixture.componentInstance;
+    expect(component.groupingExpanded()).toBeFalse();
+    component.toggleGrouping();
+    expect(component.groupingExpanded()).toBeTrue();
   });
 
   it('loads the own-profile suggestion after a successful empty page with zero offset', async () => {

@@ -1,33 +1,24 @@
-<div class="relative">
-    <button
-      type="button"
-      class="ui-ghost-btn absolute top-0 left-1/2 -translate-x-1/2 z-20 min-h-11 min-w-11 cursor-pointer bg-canvas text-content shadow-sm"
-      data-size="icon"
-      [attr.aria-expanded]="groupingExpanded()"
-      aria-controls="profile-entry-grouping"
-      [attr.aria-label]="groupingExpanded() ? 'Recolher agrupamento' : 'Expandir agrupamento'"
-      (click)="toggleGrouping()"
-    >
-      <i class="ph ph-caret-down transition-transform" [class.rotate-180]="groupingExpanded()" aria-hidden="true"></i>
-    </button>
-  <div
-    id="profile-entry-grouping"
-    [hidden]="!groupingExpanded()"
-    class="border-b border-gray-6 bg-canvas px-4 py-3"
-  >
-    <div class="flex items-center justify-between gap-4">
-      <label [for]="groupSelect.id" class="shrink-0 text-sm text-gray-11">Agrupar por</label>
-      <ui-select
-        #groupSelect
-        class="w-64 max-w-[calc(50%-2rem)]"
-        label="Agrupar por"
-        [hideLabel]="true"
-        [options]="groupingOptions"
-        [value]="controller.grouping()"
-        (valueChange)="changeGrouping($event)"
-      ></ui-select>
-    </div>
+<div class="flex items-center justify-between gap-4 border-b border-gray-6 px-4 py-2 bg-canvas text-sm">
+  @if (controller.entries().length > 0) {
+  <span class="text-xs text-gray-11">{{ controller.entries().length }} {{ controller.entries().length === 1 ? 'jogo' : 'jogos' }}</span>
+  } @else {
+  <span></span>
+  }
+  <div class="flex items-center gap-2">
+    <label [for]="groupSelect.id" class="text-xs text-gray-11 flex items-center gap-1.5 shrink-0">
+      <i class="ph ph-rows" aria-hidden="true"></i> Agrupar por
+    </label>
+    <ui-select
+      #groupSelect
+      class="w-48 text-xs"
+      label="Agrupar por"
+      [hideLabel]="true"
+      [options]="groupingOptions"
+      [value]="controller.grouping()"
+      (valueChange)="changeGrouping($event)"
+    ></ui-select>
   </div>
+</div>
 @if (controller.initialLoading()) {
 <div aria-busy="true" aria-label="Carregando jogos">
   @if (controller.grouping() !== 'none') {
@@ -154,5 +145,3 @@ controller.groups(); track group.key; let firstGroup = $first) {
   </p>
 </div>
 }
-
-</div>
