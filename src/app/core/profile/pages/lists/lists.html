@@ -34,6 +34,7 @@
     <app-user-lists
       [lists]="controller.lists()"
       [disableGrid]="true"
+      [fromMe]="itsMe"
     ></app-user-lists>
   } @else {
     @if (loadingSaved()) {
