@@ -38,9 +38,17 @@
     ></app-user-lists>
   } @else {
     @if (loadingSaved()) {
-      <div class="flex justify-center py-8">
-        <i class="ph ph-spinner animate-spin text-3xl text-link"></i>
-      </div>
+      <ul class="flex flex-col w-full divide-y divide-gray-6 animate-pulse" aria-hidden="true">
+        @for (item of [1, 2, 3]; track $index) {
+          <li class="flex flex-row items-end gap-6 px-4 py-3">
+            <div class="aspect-[3/4] w-24 rounded-lg bg-gray-3 shrink-0"></div>
+            <div class="flex flex-1 flex-col justify-center gap-2 py-4">
+              <div class="h-4 w-48 max-w-[70%] bg-gray-3 rounded"></div>
+              <div class="h-3 w-24 bg-gray-3 rounded"></div>
+            </div>
+          </li>
+        }
+      </ul>
     } @else {
       <ul class="flex flex-col w-full divide-y divide-gray-6">
         @for (list of savedLists(); track list.$id) {
@@ -49,10 +57,12 @@
             [ownerGamertag]="list.author?.gamertag || list.ownerFingerprint"
           ></ui-list-card>
         } @empty {
-          <div class="p-8 text-center text-gray-11">
-            <i class="ph ph-bookmark-simple text-4xl mb-4 block"></i>
-            <p>Você ainda não salvou nenhuma lista.</p>
-          </div>
+          <ui-empty-state
+            icon="ph ph-bookmark-simple"
+            title="Nenhuma lista salva"
+            description="Você ainda não salvou nenhuma lista pública."
+            headingLevel="h2"
+          />
         }
       </ul>
     }

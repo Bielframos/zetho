@@ -36,4 +36,30 @@ describe('SessionsListPage deep links', () => {
     );
     expect(page.isDetailModalOpen()).toBeTrue();
   });
+
+  it('opens the create session modal when openCreateModal is invoked', () => {
+    const params = new BehaviorSubject(convertToParamMap({}));
+    const sessionsService = {
+      sessions: signal([]),
+      selectedSession: signal(null),
+      loadSessions: jasmine.createSpy('loadSessions').and.resolveTo(),
+      loadSessionDetail: jasmine
+        .createSpy('loadSessionDetail')
+        .and.resolveTo(null),
+    };
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: GameplaySessionsService, useValue: sessionsService },
+        {
+          provide: ActivatedRoute,
+          useValue: { queryParamMap: params.asObservable() },
+        },
+      ],
+    });
+
+    const page = TestBed.runInInjectionContext(() => new SessionsListPage());
+    expect(page.isCreateModalOpen()).toBeFalse();
+    page.openCreateModal();
+    expect(page.isCreateModalOpen()).toBeTrue();
+  });
 });
