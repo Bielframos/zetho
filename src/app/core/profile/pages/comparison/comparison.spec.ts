@@ -142,4 +142,14 @@ describe('Comparison page', () => {
     await fixture.whenStable();
     expect(fixture.componentInstance.result()).toBeNull();
   });
+  it('renders close button linking back to player profile', async () => {
+    const fixture = TestBed.createComponent(ProfileComparisonPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const closeBtn = fixture.nativeElement.querySelector('a[data-size="icon"]');
+    expect(closeBtn).toBeTruthy();
+    expect(closeBtn.getAttribute('aria-label')).toBe('Fechar comparação e voltar ao perfil de Peer');
+    expect(closeBtn.querySelector('i.ph-x')).toBeTruthy();
+  });
 });

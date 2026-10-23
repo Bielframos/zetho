@@ -1,13 +1,17 @@
 <section class="w-full text-gray-12">
-  <header class="border-b border-gray-6 p-4">
+  <header class="flex items-start justify-between gap-4 border-b border-gray-6 p-4">
+    <div>
+      <h1 class="text-2xl font-medium">Comparar gostos</h1>
+      <p class="mt-1 text-sm text-gray-11">Você e {{ gamertag() }}</p>
+    </div>
     <a
       [routerLink]="['/player', gamertag()]"
-      class="ui-ghost-btn min-h-11 min-w-11 cursor-pointer"
+      class="ui-ghost-btn min-h-11 min-w-11 cursor-pointer shrink-0"
       data-size="icon"
-      [attr.aria-label]="'Voltar ao perfil de ' + gamertag()"
-    ><i class="ph ph-arrow-left" aria-hidden="true"></i></a>
-    <h1 class="mt-3 text-2xl">Comparar gostos</h1>
-    <p class="mt-2 text-sm text-gray-11">Você e {{ gamertag() }}</p>
+      [attr.aria-label]="'Fechar comparação e voltar ao perfil de ' + gamertag()"
+    >
+      <i class="ph ph-x text-lg" aria-hidden="true"></i>
+    </a>
   </header>
   <nav
     aria-label="Visões da comparação"
