@@ -1,20 +1,21 @@
 <section>
   <header class="w-full flex justify-between gap-4 border-b border-gray-6 p-4">
     <div>
-      <h3 class="text-2xl max-w-xl">{{controller.list()?.title}}</h3>
+      <h1 class="text-2xl font-medium max-w-xl">{{controller.list()?.title}}</h1>
       <p class="text-gray-11">{{controller.list()?.description}}</p>
-      @if (socialState()) {
       <div class="mt-2 flex items-center gap-4 text-sm text-gray-11">
-        <span>{{ controller.list()?.itemCount || 0 }} jogos</span>
+        <span>{{ controller.list()?.itemCount || 0 }} {{ (controller.list()?.itemCount === 1) ? 'jogo' : 'jogos' }}</span>
+        @if (socialState()) {
         <span>{{ socialState()?.likeCount || 0 }} curtidas</span>
         <span>{{ socialState()?.saveCount || 0 }} salvos</span>
+        }
       </div>
-      }
     </div>
     <div class="flex items-start gap-2">
       <button
         type="button"
-        class="flex h-9 w-9 cursor-pointer items-center justify-center border border-gray-6 hover:bg-gray-3"
+        class="ui-ghost-btn min-h-11 min-w-11 cursor-pointer"
+        data-size="icon"
         (click)="openShare()"
         aria-label="Compartilhar lista"
       >
@@ -23,9 +24,11 @@
       @if (!itsMe()) {
       <button
         type="button"
-        class="flex h-9 w-9 cursor-pointer items-center justify-center border border-gray-6 hover:bg-gray-3"
+        class="ui-ghost-btn min-h-11 min-w-11 cursor-pointer"
+        data-size="icon"
+        [attr.aria-pressed]="socialState()?.likedByMe"
+        [attr.aria-label]="socialState()?.likedByMe ? 'Remover curtida da lista' : 'Curtir lista'"
         (click)="toggleLike()"
-        aria-label="Curtir lista"
       >
         <i
           [class]="socialState()?.likedByMe ? 'ph-fill ph-heart text-danger' : 'ph ph-heart'"
@@ -33,10 +36,12 @@
       </button>
       <button
         type="button"
-        class="flex h-9 w-9 cursor-pointer items-center justify-center border border-gray-6 hover:bg-gray-3"
-        [class.text-link]="socialState()?.savedByMe"
+        class="ui-ghost-btn min-h-11 min-w-11 cursor-pointer"
+        data-size="icon"
+        [attr.aria-pressed]="socialState()?.savedByMe"
+        [attr.aria-label]="socialState()?.savedByMe ? 'Remover lista dos salvos' : 'Salvar lista'"
+        [class.text-blue-11]="socialState()?.savedByMe"
         (click)="toggleSave()"
-        aria-label="Salvar lista"
       >
         <i
           [class]="socialState()?.savedByMe ? 'ph-fill ph-bookmark-simple' : 'ph ph-bookmark-simple'"
