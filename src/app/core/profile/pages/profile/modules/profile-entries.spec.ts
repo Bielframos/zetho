@@ -18,19 +18,22 @@ class GameCardStub {
 }
 
 describe('Profile entry groups', () => {
-  function setup(own = false) {
+  function setup(
+    own = false,
+    suggestions: any[] = [{ $id: 'suggestion', name: 'Example', slug: 'example' }],
+  ) {
     const controller = {
       grouping: signal('none'),
       initialLoading: signal(false),
       loaded: signal(true),
       loadingMore: signal(false),
-      entries: signal<any[]>([]),
+      entries: signal<any[] | null>([]),
       groups: signal<any[]>([]),
       errors: signal<Record<string, unknown>>({}),
       hasMore: signal(false),
       offset: signal(0),
     };
-    const findBySlugs = jasmine.createSpy().and.resolveTo([{ $id: 'suggestion', name: 'Example', slug: 'example' }]);
+    const findBySlugs = jasmine.createSpy().and.resolveTo(suggestions);
     TestBed.configureTestingModule({
       imports: [UiUserLibGrid],
       providers: [
@@ -114,6 +117,10 @@ describe('Profile entry groups', () => {
     expect(controller.offset()).toBe(0);
     expect(findBySlugs).toHaveBeenCalledTimes(1);
     expect(fixture.nativeElement.textContent).toContain('Você tem muita cara de quem joga Example');
+    const h2 = fixture.nativeElement.querySelector('h2');
+    expect(h2).not.toBeNull();
+    expect(h2.textContent).toContain('Você tem muita cara de quem joga Example');
+    expect(fixture.nativeElement.querySelectorAll('h1').length).toBe(0);
   });
 
   it('does not suggest a game when the entries request failed', () => {
@@ -130,5 +137,46 @@ describe('Profile entry groups', () => {
     fixture.detectChanges();
     const skeletonSlots = fixture.nativeElement.querySelectorAll('.aspect-3\\/4');
     expect(skeletonSlots.length).toBe(12);
+  });
+
+  it('renders UiEmptyState for another user profile when library is empty without h1 tags', () => {
+    const { fixture } = setup(false);
+    fixture.detectChanges();
+    const h2 = fixture.nativeElement.querySelector('h2');
+    expect(h2).not.toBeNull();
+    expect(h2.textContent).toContain('Nenhum jogo registrado');
+    expect(fixture.nativeElement.textContent).toContain('Este jogador ainda não registrou nenhum jogo.');
+    expect(fixture.nativeElement.querySelectorAll('h1').length).toBe(0);
+  });
+
+  it('renders UiEmptyState with action button when own library is empty and has no suggestion', async () => {
+    const { controller, fixture } = setup(true, []);
+    controller.loaded.set(true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const h2 = fixture.nativeElement.querySelector('h2');
+    expect(h2).not.toBeNull();
+    expect(h2.textContent).toContain('Seu perfil está quieto demais.');
+    expect(fixture.nativeElement.textContent).toContain('Registre um jogo antes que a gente tire conclusões precipitadas.');
+    const action = fixture.nativeElement.querySelector('a[href="/buscar"]');
+    expect(action).not.toBeNull();
+    expect(action.textContent).toContain('Buscar um jogo');
+    expect(fixture.nativeElement.querySelectorAll('h1').length).toBe(0);
+  });
+
+  it('renders call-to-action with h2 and link to /buscar when entries is null', () => {
+    const { controller, fixture } = setup(false);
+    controller.entries.set(null);
+    fixture.detectChanges();
+
+    const h2 = fixture.nativeElement.querySelector('h2');
+    expect(h2).not.toBeNull();
+    expect(h2.textContent).toContain('Cada jogo tem uma história, comece a sua.');
+    const link = fixture.nativeElement.querySelector('a[href="/buscar"]');
+    expect(link).not.toBeNull();
+    expect(link.textContent).toContain('Buscar um jogo');
+    expect(fixture.nativeElement.querySelectorAll('h1').length).toBe(0);
   });
 });

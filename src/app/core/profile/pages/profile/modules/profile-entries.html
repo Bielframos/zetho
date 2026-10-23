@@ -1,6 +1,6 @@
 <div class="flex items-center justify-between gap-4 border-b border-gray-6 px-4 py-2 bg-canvas text-sm">
-  @if (controller.entries().length > 0) {
-  <span class="text-xs text-gray-11">{{ controller.entries().length }} {{ controller.entries().length === 1 ? 'jogo' : 'jogos' }}</span>
+  @if ((controller.entries()?.length ?? 0) > 0) {
+  <span class="text-xs text-gray-11">{{ controller.entries()?.length }} {{ controller.entries()?.length === 1 ? 'jogo' : 'jogos' }}</span>
   } @else {
   <span></span>
   }
@@ -74,9 +74,9 @@ controller.groups(); track group.key; let firstGroup = $first) {
 
       <div class="flex flex-col items-center sm:items-start">
         <span class="mb-2 text-xs text-gray-10">Nosso palpite duvidoso</span>
-        <h1 class="text-2xl">
+        <h2 class="text-2xl font-medium text-gray-12">
           Você tem muita cara de quem joga {{ game.name }}.
-        </h1>
+        </h2>
         <p class="mt-2 max-w-md text-gray-11">
           Acertamos ou passamos vergonha? Registre o jogo — ou algum que você
           realmente joga — para limpar este palpite do seu perfil.
@@ -87,26 +87,24 @@ controller.groups(); track group.key; let firstGroup = $first) {
       </div>
     </div>
     } @else {
-    <div class="flex flex-col items-center text-center">
-      <i class="ph ph-game-controller mb-2 text-[32px]"></i>
-      <h1 class="text-2xl">Seu perfil está quieto demais.</h1>
-      <p class="mt-2 max-w-md text-gray-11">
-        Registre um jogo antes que a gente tire conclusões precipitadas.
-      </p>
-      <a class="ui-primary-btn mt-6" routerLink="/buscar"> Buscar um jogo </a>
-    </div>
+    <ui-empty-state
+      icon="ph ph-game-controller"
+      title="Seu perfil está quieto demais."
+      description="Registre um jogo antes que a gente tire conclusões precipitadas."
+      actionLabel="Buscar um jogo"
+      actionLink="/buscar"
+      headingLevel="h2"
+    />
     }
   </li>
   } @else {
-  <li class="col-span-4 px-4 py-10 text-center">
-    <i
-      class="ph ph-game-controller mb-2 text-[32px] text-gray-10"
-      aria-hidden="true"
-    ></i>
-    <h1 class="text-2xl">Nenhum jogo registrado</h1>
-    <p class="mt-2 text-gray-11">
-      Este jogador ainda não registrou nenhum jogo.
-    </p>
+  <li class="col-span-4">
+    <ui-empty-state
+      icon="ph ph-game-controller"
+      title="Nenhum jogo registrado"
+      description="Este jogador ainda não registrou nenhum jogo."
+      headingLevel="h2"
+    />
   </li>
   }
 </ul>
@@ -129,19 +127,16 @@ controller.groups(); track group.key; let firstGroup = $first) {
   }
 </div>
 } } @else {
-<div
-  class="flex h-full flex-col items-center justify-center p-10 text-center max-md:p-10"
->
-  <i class="ph-fill ph-game-controller text-[56px] text-blue-11 mb-4"></i>
-  <h1 class="text-center text-2xl max-w-xl pb-4">
+<div class="flex h-full flex-col items-center justify-center p-10 text-center">
+  <i class="ph-fill ph-game-controller text-[48px] text-blue-11 mb-3" aria-hidden="true"></i>
+  <h2 class="text-center text-2xl font-medium max-w-xl text-gray-12">
     Cada jogo tem uma história, comece a sua.
-  </h1>
+  </h2>
   <p class="text-gray-11 text-center max-w-md mt-2">
-    Busque por um jogo
-    <span class="underline underline-offset-4 decoration-blue-9"
-      >e crie um registro</span
-    >
-    para acompanhar sua jornada.
+    Busque por um jogo e crie um registro para acompanhar sua jornada.
   </p>
+  <a class="ui-primary-btn mt-6" routerLink="/buscar">
+    Buscar um jogo
+  </a>
 </div>
 }
