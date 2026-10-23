@@ -107,4 +107,12 @@ describe('Profile entry groups', () => {
     expect(findBySlugs).not.toHaveBeenCalled();
     expect(fixture.nativeElement.querySelector('[role=alert]')).not.toBeNull();
   });
+
+  it('renders skeleton cards while initialLoading is true', () => {
+    const { controller, fixture } = setup();
+    controller.initialLoading.set(true);
+    fixture.detectChanges();
+    const skeletonSlots = fixture.nativeElement.querySelectorAll('.aspect-3\\/4');
+    expect(skeletonSlots.length).toBe(12);
+  });
 });
