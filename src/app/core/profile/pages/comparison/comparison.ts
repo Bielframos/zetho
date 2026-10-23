@@ -1,6 +1,7 @@
 import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { UiEmptyState } from '../../../../shared/ui/empty-state';
 import { UiSegmentedControl, UiSegmentOption } from '../../../../shared/ui/segmented-control';
 import { UiZethoIcon } from '../../../../shared/ui/zetho-icon';
 import { UiLoading } from '../../../../shared/ui/loading';
@@ -17,7 +18,7 @@ import {
 
 @Component({
   selector: 'app-profile-comparison',
-  imports: [RouterLink, UiLoading, UiSegmentedControl, UiZethoIcon],
+  imports: [RouterLink, UiEmptyState, UiLoading, UiSegmentedControl, UiZethoIcon],
   templateUrl: './comparison.html',
 })
 export class ProfileComparisonPage {
