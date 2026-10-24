@@ -4,6 +4,21 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+## [1.35.3] - 2026-10-24
+
+### Novidades
+
+- Novo componente reutilizável `ui-empty-state` para padronização visual e semântica de estados vazios no aplicativo.
+
+### Melhorias
+
+- **Comparação de gostos**: novo botão de fechar ("X") fixado no canto superior direito do header, alinhamento consistente das linhas de jogos à esquerda, correção na pluralização de jogos e novos estados vazios e de erro visuais.
+- **Biblioteca do usuário**: barra de ferramentas sutil e integrada para agrupamento de jogos e contagem, skeleton em grade simulando capas de jogos durante o carregamento inicial, e estados vazios limpos e contextuais.
+- **Carregamento (Loading)**: centralização vertical e altura mínima no componente de loading padrão, eliminando logos colados ao topo da tela.
+- **Página de Conexões**: novo estado vazio padronizado para seguidores e seguindo, e semântica correta de títulos.
+- **Página de Listas**: botões de ação (compartilhar, curtir e salvar) padronizados com área de toque mínima de 44px, acessibilidade completa (`aria-pressed`, labels dinâmicos), exibição permanente da contagem de jogos e correção da hierarquia de títulos.
+- **Listas públicas e Jogatinas**: adição de divisor vertical central na grade de duas colunas, skeletons estruturados para jogatinas e listas salvas, e modernização dos estados vazios.
+
 ## [1.35.2] - 2026-10-22
 
 ### Melhorias
