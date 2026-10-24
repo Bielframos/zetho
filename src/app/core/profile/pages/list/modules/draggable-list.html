@@ -35,7 +35,23 @@
     }
   </div>
   } @empty {
-  <div class="p-6 text-center text-gray-11">Essa lista está vazia.</div>
+      @if (itsMe()) {
+    <ui-empty-state
+      icon="ph ph-list-plus"
+      title="Essa lista está vazia"
+      description="Busque jogos para adicionar e começar a organizar esta lista."
+      actionLabel="Buscar jogos"
+      actionLink="/buscar"
+      headingLevel="h2"
+    />
+    } @else {
+    <ui-empty-state
+      icon="ph ph-list-dashes"
+      title="Essa lista está vazia"
+      description="Nenhum jogo foi adicionado a esta lista ainda."
+      headingLevel="h2"
+    />
+    }
   }
 </div>
 

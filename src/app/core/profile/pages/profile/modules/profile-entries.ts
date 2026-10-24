@@ -1,6 +1,7 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { UiSelect, UiSelectOption } from '../../../../../shared/ui/select';
 import { UiLoading } from '../../../../../shared/ui/loading';
+import { UiEmptyState } from '../../../../../shared/ui/empty-state';
 import { UiGameCard } from '../../../../../shared/ui/game-card/game-card';
 import { InfiniteScrollDirective } from '../../../../../shared/ui/infinite-scroll';
 import { ZEntriesController } from '../../../../zEntries/zEntries.controller';
@@ -20,7 +21,7 @@ const SUGGESTED_GAME_SLUGS = [
 @Component({
   selector: 'ui-proflie-entries',
   standalone: true,
-  imports: [UiLoading, UiGameCard, RouterLink, InfiniteScrollDirective, UiSelect],
+  imports: [UiLoading, UiEmptyState, UiGameCard, RouterLink, InfiniteScrollDirective, UiSelect],
   templateUrl: './profile-entries.html',
   host: { class: 'block' },
 })
@@ -54,6 +55,7 @@ export class UiUserLibGrid {
   readonly profileStore = inject(ProfileStore);
   readonly suggestedGame = signal<GameRow | null>(null);
   readonly loadingSuggestion = signal(false);
+  readonly skeletonSlots = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   constructor() {
     effect(() => {

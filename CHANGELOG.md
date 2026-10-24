@@ -4,33 +4,35 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+## [1.35.3] - 2026-10-24
+
+### Melhorias
+
+- Melhorias visuais e na experiência de uso da biblioteca, listas, conexões, jogatinas e comparação de perfis.
+
 ## [1.35.2] - 2026-10-22
 
 ### Melhorias
 
-- Login e cadastro com o shader das recomendações, capas flutuantes e estatísticas da comunidade acessíveis por mouse, teclado e toque.
-- Controle para pausar o movimento, respeito à preferência de movimento reduzido e formulários protegidos da animação.
+- Melhorias visuais e de interatividade nas telas de entrada e cadastro.
 
 ## [1.35.1] - 2026-10-22
 
 ### Melhorias
 
-- Landing, login e cadastro com visual alinhado ao app: superfícies neutras, navegação mais simples, prévia de estante e formulários com orientações junto aos campos.
-- Código de convite opcional recolhido no cadastro e preenchimento automático nos campos de acesso.
+- Visual renovado na página inicial, no login e no cadastro.
 
 ## [1.35.0] - 2026-10-22
 
 ### Novidades
 
-- Novo Fórum da comunidade em `/forum`: crie publicações associadas a qualquer jogo com editor rich text, participe de debates em threads com até 3 níveis de resposta, filtre discussões por jogo e compartilhe páginas individuais de cada tópico.
-- A aba Lobby na página dos jogos deu lugar ao novo Fórum dedicado, com atalho direto na página de cada jogo para ver e criar discussões sobre ele.
+- Novo Fórum da comunidade para criar publicações, responder a tópicos e conversar sobre seus jogos favoritos.
 
 ## [1.34.8] - 2026-10-13
 
 ### Novidades
 
-- O Zetho agora é open-source! Você pode conhecer o código, sugerir melhorias e contribuir com o projeto no GitHub, sob a licença AGPL-3.0.
-- Acesse o repositório pelo link “Código aberto” no menu ou no rodapé.
+- O Zetho agora é open-source! Acesse o link “Código aberto” no menu ou no rodapé para conhecer e contribuir com o projeto no GitHub.
 
 ### Correções
 
@@ -40,8 +42,7 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- Melhorias na interface e na experiência de uso do seletor de aparência no celular e no computador.
-- O histórico de versões ficou mais simples e fácil de consultar.
+- Melhorias no seletor de aparência e na página de histórico de versões.
 
 ## [1.34.6] - 2026-10-11
 

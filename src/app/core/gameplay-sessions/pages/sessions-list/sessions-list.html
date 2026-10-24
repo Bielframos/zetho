@@ -63,8 +63,30 @@
   </label>
 
   @if (sessionsService.loading()) {
-  <section class="border-b border-gray-6 px-4 py-10">
-    <ui-loading fallback="Carregando Jogatinas..."></ui-loading>
+  <section class="border-b border-gray-6 divide-y divide-gray-6" aria-hidden="true">
+    @for (item of [1, 2, 3]; track $index) {
+    <div class="animate-pulse bg-gray-2 p-4">
+      <div class="flex gap-4">
+        <div class="h-24 w-[4.5rem] shrink-0 rounded bg-gray-4"></div>
+        <div class="min-w-0 flex-1 space-y-2 py-1">
+          <div class="h-3 w-32 rounded bg-gray-4"></div>
+          <div class="h-5 w-3/4 rounded bg-gray-4"></div>
+          <div class="flex items-center gap-2 pt-1">
+            <div class="h-6 w-6 rounded-full bg-gray-4"></div>
+            <div class="h-3 w-24 rounded bg-gray-4"></div>
+          </div>
+          <div class="flex gap-4 pt-2">
+            <div class="h-3 w-16 rounded bg-gray-4"></div>
+            <div class="h-3 w-16 rounded bg-gray-4"></div>
+            <div class="h-3 w-12 rounded bg-gray-4"></div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4 flex justify-end gap-2 border-t border-gray-6 pt-3">
+        <div class="h-8 w-24 rounded bg-gray-4"></div>
+      </div>
+    </div>
+    }
   </section>
   } @else if (sessionsService.filteredSessions().length > 0) {
   <section class="animate-fade-in-slide">
@@ -82,21 +104,13 @@
     </div>
   </section>
   } @else {
-  <section class="border-b border-dashed border-gray-6 px-4 py-12 text-center">
-    <i class="ph ph-game-controller text-[40px] text-gray-10"></i>
-    <h2 class="mt-3 text-lg text-gray-12">Nenhuma Jogatina encontrada</h2>
-    <p class="mx-auto mt-2 max-w-md text-sm text-gray-11">
-      Ajuste os filtros ou crie uma Jogatina para reunir outros jogadores.
-    </p>
-    <button
-      type="button"
-      (click)="openCreateModal()"
-      class="ui-primary-btn mt-4"
-    >
-      <i class="ph ph-plus"></i>
-      Criar Jogatina
-    </button>
-  </section>
+  <ui-empty-state
+    icon="ph ph-users-three"
+    title="Nenhuma jogatina por aqui"
+    description="Crie uma sessão de gameplay e jogue com outros jogadores."
+    actionLabel="Criar Jogatina"
+    (action)="openCreateModal()"
+  />
   }
 
   <app-create-session-modal [(isOpen)]="isCreateModalOpen" />

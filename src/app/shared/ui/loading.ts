@@ -9,6 +9,8 @@ import { Component, input } from '@angular/core';
       [class.w-full]="!inline()"
       [class.flex-col]="!inline() && variant() === 'default'"
       [class.justify-center]="!inline()"
+      [class.min-h-48]="!inline() && variant() === 'default'"
+      [class.md:min-h-[35vh]]="!inline() && variant() === 'default'"
       [class.py-6]="!inline() && variant() === 'default'"
       [class.py-3]="!inline() && variant() === 'subtle'"
       [class.py-0]="inline()"

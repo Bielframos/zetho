@@ -18,19 +18,22 @@ class GameCardStub {
 }
 
 describe('Profile entry groups', () => {
-  function setup(own = false) {
+  function setup(
+    own = false,
+    suggestions: any[] = [{ $id: 'suggestion', name: 'Example', slug: 'example' }],
+  ) {
     const controller = {
       grouping: signal('none'),
       initialLoading: signal(false),
       loaded: signal(true),
       loadingMore: signal(false),
-      entries: signal<any[]>([]),
+      entries: signal<any[] | null>([]),
       groups: signal<any[]>([]),
       errors: signal<Record<string, unknown>>({}),
       hasMore: signal(false),
       offset: signal(0),
     };
-    const findBySlugs = jasmine.createSpy().and.resolveTo([{ $id: 'suggestion', name: 'Example', slug: 'example' }]);
+    const findBySlugs = jasmine.createSpy().and.resolveTo(suggestions);
     TestBed.configureTestingModule({
       imports: [UiUserLibGrid],
       providers: [
@@ -60,20 +63,18 @@ describe('Profile entry groups', () => {
       .toEqual([true, false]);
   });
 
-  it('updates group in the URL while preserving the status filter', async () => {
+  it('renders the subtle grouping toolbar without the floating button and updates URL while preserving status', async () => {
     const { fixture } = setup();
     const router = TestBed.inject(Router);
     await router.navigateByUrl('/?t=completed');
     fixture.detectChanges();
-    const panel: HTMLElement = fixture.nativeElement.querySelector('#profile-entry-grouping');
-    const trigger: HTMLButtonElement = fixture.nativeElement.querySelector('[aria-controls="profile-entry-grouping"]');
-    expect(panel.hidden).toBeTrue();
-    expect(trigger.getAttribute('aria-expanded')).toBe('false');
-    expect(fixture.nativeElement.querySelector('select')).toBeNull();
-    trigger.click();
-    fixture.detectChanges();
-    expect(panel.hidden).toBeFalse();
-    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+
+    expect(fixture.nativeElement.querySelector('[aria-controls="profile-entry-grouping"]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('#profile-entry-grouping')).toBeNull();
+
+    const label: HTMLElement = fixture.nativeElement.querySelector('label');
+    expect(label.textContent).toContain('Agrupar por');
+
     fixture.nativeElement.querySelector('ui-select button').click();
     fixture.detectChanges();
     const options = fixture.nativeElement.querySelectorAll('ui-select [role="option"]');
@@ -81,9 +82,27 @@ describe('Profile entry groups', () => {
     options[2].click();
     await fixture.whenStable();
     expect(router.parseUrl(router.url).queryParams).toEqual({ t: 'completed', group: 'alphabetical' });
-    trigger.click();
+  });
+
+  it('displays the entry count in the toolbar when entries exist', () => {
+    const { controller, fixture } = setup();
+    const a = { $id: 'a', game: { name: 'First' } };
+    controller.entries.set([a]);
     fixture.detectChanges();
-    expect(panel.hidden).toBeTrue();
+    expect(fixture.nativeElement.textContent).toContain('1 jogo');
+
+    const b = { $id: 'b', game: { name: 'Second' } };
+    controller.entries.set([a, b]);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('2 jogos');
+  });
+
+  it('maintains toggleGrouping compatibility', () => {
+    const { fixture } = setup();
+    const component = fixture.componentInstance;
+    expect(component.groupingExpanded()).toBeFalse();
+    component.toggleGrouping();
+    expect(component.groupingExpanded()).toBeTrue();
   });
 
   it('loads the own-profile suggestion after a successful empty page with zero offset', async () => {
@@ -98,6 +117,10 @@ describe('Profile entry groups', () => {
     expect(controller.offset()).toBe(0);
     expect(findBySlugs).toHaveBeenCalledTimes(1);
     expect(fixture.nativeElement.textContent).toContain('Você tem muita cara de quem joga Example');
+    const h2 = fixture.nativeElement.querySelector('h2');
+    expect(h2).not.toBeNull();
+    expect(h2.textContent).toContain('Você tem muita cara de quem joga Example');
+    expect(fixture.nativeElement.querySelectorAll('h1').length).toBe(0);
   });
 
   it('does not suggest a game when the entries request failed', () => {
@@ -106,5 +129,54 @@ describe('Profile entry groups', () => {
     fixture.detectChanges();
     expect(findBySlugs).not.toHaveBeenCalled();
     expect(fixture.nativeElement.querySelector('[role=alert]')).not.toBeNull();
+  });
+
+  it('renders skeleton cards while initialLoading is true', () => {
+    const { controller, fixture } = setup();
+    controller.initialLoading.set(true);
+    fixture.detectChanges();
+    const skeletonSlots = fixture.nativeElement.querySelectorAll('.aspect-3\\/4');
+    expect(skeletonSlots.length).toBe(12);
+  });
+
+  it('renders UiEmptyState for another user profile when library is empty without h1 tags', () => {
+    const { fixture } = setup(false);
+    fixture.detectChanges();
+    const h2 = fixture.nativeElement.querySelector('h2');
+    expect(h2).not.toBeNull();
+    expect(h2.textContent).toContain('Nenhum jogo registrado');
+    expect(fixture.nativeElement.textContent).toContain('Este jogador ainda não registrou nenhum jogo.');
+    expect(fixture.nativeElement.querySelectorAll('h1').length).toBe(0);
+  });
+
+  it('renders UiEmptyState with action button when own library is empty and has no suggestion', async () => {
+    const { controller, fixture } = setup(true, []);
+    controller.loaded.set(true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const h2 = fixture.nativeElement.querySelector('h2');
+    expect(h2).not.toBeNull();
+    expect(h2.textContent).toContain('Seu perfil está quieto demais.');
+    expect(fixture.nativeElement.textContent).toContain('Registre um jogo antes que a gente tire conclusões precipitadas.');
+    const action = fixture.nativeElement.querySelector('a[href="/buscar"]');
+    expect(action).not.toBeNull();
+    expect(action.textContent).toContain('Buscar um jogo');
+    expect(fixture.nativeElement.querySelectorAll('h1').length).toBe(0);
+  });
+
+  it('renders call-to-action with h2 and link to /buscar when entries is null', () => {
+    const { controller, fixture } = setup(false);
+    controller.entries.set(null);
+    fixture.detectChanges();
+
+    const h2 = fixture.nativeElement.querySelector('h2');
+    expect(h2).not.toBeNull();
+    expect(h2.textContent).toContain('Cada jogo tem uma história, comece a sua.');
+    const link = fixture.nativeElement.querySelector('a[href="/buscar"]');
+    expect(link).not.toBeNull();
+    expect(link.textContent).toContain('Buscar um jogo');
+    expect(fixture.nativeElement.querySelectorAll('h1').length).toBe(0);
   });
 });

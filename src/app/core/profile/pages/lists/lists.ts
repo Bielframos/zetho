@@ -8,11 +8,12 @@ import { AuthStore } from '../../../auth/auth.store';
 import { ListsController } from '../../../lists/lists.controller';
 import { DashboardService, TrendingListItem } from '../../../dashboard/dashboard.service';
 import { UiListCard } from '../../../../shared/ui/list-card';
+import { UiEmptyState } from '../../../../shared/ui/empty-state';
 
 @Component({
   selector: 'app-lists',
   standalone: true,
-  imports: [UiSegmentedControl, AppUserLists, AppNewListDialog, UiListCard],
+  imports: [UiSegmentedControl, AppUserLists, AppNewListDialog, UiListCard, UiEmptyState],
   templateUrl: './lists.html',
 })
 export class ListsPage {

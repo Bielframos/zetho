@@ -1,13 +1,17 @@
 <section class="w-full text-gray-12">
-  <header class="border-b border-gray-6 p-4">
+  <header class="flex items-start justify-between gap-4 border-b border-gray-6 p-4">
+    <div>
+      <h1 class="text-2xl font-medium">Comparar gostos</h1>
+      <p class="mt-1 text-sm text-gray-11">Você e {{ gamertag() }}</p>
+    </div>
     <a
       [routerLink]="['/player', gamertag()]"
-      class="ui-ghost-btn min-h-11 min-w-11 cursor-pointer"
+      class="ui-ghost-btn min-h-11 min-w-11 cursor-pointer shrink-0"
       data-size="icon"
-      [attr.aria-label]="'Voltar ao perfil de ' + gamertag()"
-    ><i class="ph ph-arrow-left" aria-hidden="true"></i></a>
-    <h1 class="mt-3 text-2xl">Comparar gostos</h1>
-    <p class="mt-2 text-sm text-gray-11">Você e {{ gamertag() }}</p>
+      [attr.aria-label]="'Fechar comparação e voltar ao perfil de ' + gamertag()"
+    >
+      <i class="ph ph-x text-lg" aria-hidden="true"></i>
+    </a>
   </header>
   <nav
     aria-label="Visões da comparação"
@@ -40,41 +44,67 @@
     <ui-loading />
   </div>
   } @else if (error()) {
-  <div class="p-6 text-sm text-gray-11" role="alert">
-    <p>{{ error() }}</p>
+  <div
+    class="flex flex-col items-center justify-center text-center p-8 border-b border-gray-6"
+    role="alert"
+  >
+    <i class="ph ph-warning-circle text-3xl text-danger mb-2" aria-hidden="true"></i>
+    <p class="max-w-md text-sm text-gray-11">{{ error() }}</p>
     @if (auth.isAuthenticated()) {
     <button type="button" class="ui-secondary-btn mt-4" (click)="load()">
       Tentar novamente
     </button>
-    } @else { <a routerLink="/entrar" class="ui-primary-btn mt-4">Entrar</a> }
+    } @else {
+    <a routerLink="/entrar" class="ui-secondary-btn mt-4">Entrar</a>
+    }
   </div>
   } @else if (result(); as data) { @if (!data.rows.length) {
-  <p class="p-6 text-sm text-gray-11">
-    @switch (view()) { @case ('opinions') { Vocês ainda não têm avaliações em
-    comum. Explore os jogos em comum ou as descobertas. } @case ('discoveries')
-    { Nenhuma descoberta disponível por enquanto. } @default { Nenhum jogo em
-    comum por enquanto. Experimente as outras visões. } }
-  </p>
+  @switch (view()) {
+    @case ('opinions') {
+    <ui-empty-state
+      icon="ph ph-scales"
+      title="Nenhuma avaliação em comum"
+      description="Vocês ainda não têm avaliações em comum. Explore os jogos em comum ou as descobertas."
+      headingLevel="h2"
+    />
+    }
+    @case ('discoveries') {
+    <ui-empty-state
+      icon="ph ph-scales"
+      title="Nenhuma descoberta disponível"
+      description="Nenhuma descoberta disponível por enquanto."
+      headingLevel="h2"
+    />
+    }
+    @default {
+    <ui-empty-state
+      icon="ph ph-scales"
+      title="Nenhum jogo em comum"
+      description="Nenhum jogo em comum por enquanto. Experimente as outras visões."
+      headingLevel="h2"
+    />
+    }
+  }
   } @else {
   <p class="border-b border-gray-6 px-4 py-3 text-sm text-gray-11">
-    {{ data.total }} jogos · {{ data.me.gamertag }} e {{ data.other.gamertag }}
+    {{ data.total }} {{ data.total === 1 ? 'jogo' : 'jogos' }} · {{ data.me.gamertag }} e {{ data.other.gamertag }}
   </p>
   <div class="divide-y divide-gray-6">
     @for (row of data.rows; track row.game.id) {
     <article>
       <a
         [routerLink]="['/jogo', row.game.slug]"
-        class="flex min-w-0 items-center justify-center gap-3 border-b border-gray-6 p-4 hover:text-link focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring"
+        class="flex min-w-0 items-center justify-start gap-3.5 border-b border-gray-6 p-4 hover:bg-gray-3/50 transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring"
       >
         @if (row.game.coverUrl) {
         <img
           [src]="row.game.coverUrl"
           alt=""
-          class="h-16 w-12 shrink-0 rounded object-cover"
+          class="h-16 w-12 shrink-0 rounded object-cover shadow-xs"
           loading="lazy"
         />
         }
-        <h2 class="min-w-0 wrap-anywhere text-center font-medium">{{ row.game.name }}</h2>
+        <h2 class="min-w-0 wrap-anywhere text-left font-medium text-gray-12">{{ row.game.name }}</h2>
       </a>
       <dl class="grid grid-cols-2 divide-x divide-gray-6 text-center text-sm">
         @for (player of [{ identity: data.me, entry: row.me, mine: true }, { identity: data.other, entry: row.other, mine: false }]; track player.identity.id) {

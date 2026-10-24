@@ -22,7 +22,7 @@
     aria-label="Carregando listas públicas"
   >
     @for (item of [1, 2, 3, 4, 5, 6]; track item) {
-    <div class="flex flex-col gap-4 border-gray-6 p-4 sm:border-b">
+    <div class="flex flex-col gap-4 border-gray-6 p-4 sm:border-b sm:odd:border-r">
       <ui-skeleton [height]="180"></ui-skeleton>
       <ui-skeleton [height]="20" [width]="70"></ui-skeleton>
       <ui-skeleton [height]="16" [width]="45"></ui-skeleton>
@@ -51,7 +51,7 @@
     aria-label="Listas públicas"
   >
     @for (list of lists(); track list.$id) {
-    <li class="border-gray-6 sm:border-b">
+    <li class="border-gray-6 sm:border-b sm:odd:border-r">
       <a
         [routerLink]="
               list.author
