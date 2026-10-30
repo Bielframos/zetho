@@ -29,26 +29,10 @@ Firebase permanece opcional e ausente no SSR. A coleta automática já configura
 
 ## Listas editoriais
 
-O agente envia apenas rascunhos privados pela ferramenta MCP `submit_editorial_list_draft`. `/admin/listas-editoriais` permite revisar texto, fontes e período, salvar uma versão, aprovar/publicar a lista e gerar um rascunho de post. Publicar o post exige outra ação após sua prévia. Campos desconhecidos e instruções de publicação no payload são rejeitados. Texto é tratado como dado; fontes não são executadas nem buscadas pelo servidor.
+As listas oficiais ampliam `lists`/`list_items`, com `ownerType=user|system` e `status=draft|published|archived`, independentemente de `isPublic`. O MCP `submit_editorial_list_draft` cria diretamente uma lista do sistema em rascunho. Não há nova geração autônoma nem publicação automática.
 
-Listas publicadas reutilizam `lists`/`list_items`, ordem, jogos e ações sociais, com identidade reservada `system:zetho`. A vitrine pública encaminha essa identidade à página editorial. `/listas-editoriais/:slug` entrega conteúdo público, critérios subjetivos, fontes e CTAs no SSR. Posts desse autor usam `Article`, sem representar a curadoria como `NewsArticle`.
+Administradores criam listas oficiais no diálogo existente em `/listas`. A página comum `/listas/:slug` reúne título, descrição, ordenação e jogos, com controles de critérios, fontes, período e publicação. Publicar exige salvar e conferir a revisão atual; voltar para rascunho ou arquivar retira a exposição pública, preservando IDs e vínculos. A conversão em post oferece prévia e ação própria de publicação. Respostas antigas são descartadas ao mudar de lista ou revisão, inclusive A → B → A.
 
-A API precisa provisionar a nova tabela privada antes do uso editorial. Não há chamadas pagas de IA, cron de geração, nem publicação de dados reais. Detalhes, API e política de correções: `docs/editorial-lists.md` no backend.
+A apresentação pública mostra “Por Zetho”, fontes e CTAs no SSR. Os antigos caminhos `/listas-editoriais` redirecionam para `/listas`. Posts de curadoria usam `Article`.
 
-## Auditoria do fórum
-
-Já existiam SSR para feed/tópico, sanitização, canonical, `DiscussionForumPosting` e sitemap via API. Foram preservados. Lacunas corrigidas:
-
-- Feed paginado com links HTML `?page=n`, leitura SSR da página e canonical correspondente.
-- Rota `/forum/:slug/respostas/:parentId?page=n` com leitura pública paginada e links para descendentes. Confere a raiz da discussão antes de mostrar respostas. `noindex,follow`, canonical do tópico, sem duplicar a discussão principal.
-- Tópico ausente responde 404; falha transitória responde 503/noindex. Limpeza de conteúdo e JSON-LD durante mudança de rota impede dados antigos em uma falha.
-- HTML do fórum e respostas da API não usam cache compartilhado. Isso evita conservar texto excluído por 24h via stale-while-revalidate. Sitemap tem expiração máxima de cinco minutos; pode conservar uma URL removida nesse intervalo, mas a URL responde 404. Notícias conservam sua infraestrutura.
-- `articleBody` passa a refletir o texto público completo visível, não apenas o excerpt.
-
-`game_comments` é um domínio público, sem campo de tópico privado neste schema. Exclusão de comentários é física e em cascata, protegida pelo serviço social. Não foi criada nova permissão nem interpretação de privacidade. Qualquer futura modalidade privada precisa compartilhar uma política de elegibilidade entre leitura e sitemap antes de ser exposta.
-
-## Validação e limites
-
-Testes unitários usam mocks e não comprovam transações/índices em Appwrite real. A verificação SSR local usa catálogo, notícias, discussões e listas fictícias, sem autenticação ou produção. Verifica HTML inicial, sanitização, links, status 404/503 e cache. Não comprova indexação pelo Google.
-
-Antes de liberar: testar transações concorrentes em Appwrite de homologação, provisionar a tabela privada, verificar review/withdrawal com uma sessão admin de teste, e validar eventos no DebugView com uma propriedade de teste. Conferir o `measurementId` configurado para distinguir App e Gazetho, sem imprimir credenciais. Diferenciar: nenhum evento emitido; requisição bloqueada; destino incorreto; recebido no DebugView; e atraso de relatório. Ausência em relatório não comprova conversão zero. Nenhuma configuração de GA/GSC foi modificada.
+A API deve receber a migração de colunas e permissões antes desta versão do frontend. Os itens públicos agora são lidos pela API após verificar a lista; o cliente antigo não é compatível com a retirada da leitura global do Appwrite. A implantação exige manutenção coordenada. Consulte `docs/editorial-lists.md` no backend para ordem, backup e retomada da migração. Não houve gravação real em produção.

@@ -85,10 +85,18 @@ describe('ListPage', () => {
     dashboardServiceSpy = {
       toggleListLike: jasmine
         .createSpy('toggleListLike')
-        .and.resolveTo({ ...initialSocialState, likedByMe: true, likeCount: 5 }),
+        .and.resolveTo({
+          ...initialSocialState,
+          likedByMe: true,
+          likeCount: 5,
+        }),
       toggleListSave: jasmine
         .createSpy('toggleListSave')
-        .and.resolveTo({ ...initialSocialState, savedByMe: true, saveCount: 3 }),
+        .and.resolveTo({
+          ...initialSocialState,
+          savedByMe: true,
+          saveCount: 3,
+        }),
       getListSocialState: jasmine
         .createSpy('getListSocialState')
         .and.resolveTo(initialSocialState),
@@ -142,6 +150,8 @@ describe('ListPage', () => {
 
     fixture = TestBed.createComponent(ListPage);
     component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it('renders list title with a semantic h1 element and correct classes', () => {
@@ -253,11 +263,15 @@ describe('ListPage', () => {
       likeBtn.click();
       fixture.detectChanges();
 
-      expect(dashboardServiceSpy.toggleListLike).toHaveBeenCalledWith('list-123');
+      expect(dashboardServiceSpy.toggleListLike).toHaveBeenCalledWith(
+        'list-123',
+      );
       await fixture.whenStable();
       fixture.detectChanges();
 
-      expect(likeBtn.getAttribute('aria-label')).toBe('Remover curtida da lista');
+      expect(likeBtn.getAttribute('aria-label')).toBe(
+        'Remover curtida da lista',
+      );
       expect(likeBtn.getAttribute('aria-pressed')).toBe('true');
       expect(icon?.classList.contains('ph-fill')).toBeTrue();
       expect(icon?.classList.contains('text-danger')).toBeTrue();
@@ -291,11 +305,15 @@ describe('ListPage', () => {
       saveBtn.click();
       fixture.detectChanges();
 
-      expect(dashboardServiceSpy.toggleListSave).toHaveBeenCalledWith('list-123');
+      expect(dashboardServiceSpy.toggleListSave).toHaveBeenCalledWith(
+        'list-123',
+      );
       await fixture.whenStable();
       fixture.detectChanges();
 
-      expect(saveBtn.getAttribute('aria-label')).toBe('Remover lista dos salvos');
+      expect(saveBtn.getAttribute('aria-label')).toBe(
+        'Remover lista dos salvos',
+      );
       expect(saveBtn.getAttribute('aria-pressed')).toBe('true');
       expect(saveBtn.classList.contains('text-blue-11')).toBeTrue();
       expect(icon?.classList.contains('ph-fill')).toBeTrue();
@@ -307,7 +325,9 @@ describe('ListPage', () => {
 
       expect(component.itsMe()).toBeTrue();
       expect(
-        fixture.nativeElement.querySelector('button[aria-label="Curtir lista"]'),
+        fixture.nativeElement.querySelector(
+          'button[aria-label="Curtir lista"]',
+        ),
       ).toBeNull();
       expect(
         fixture.nativeElement.querySelector(
@@ -315,7 +335,9 @@ describe('ListPage', () => {
         ),
       ).toBeNull();
       expect(
-        fixture.nativeElement.querySelector('button[aria-label="Salvar lista"]'),
+        fixture.nativeElement.querySelector(
+          'button[aria-label="Salvar lista"]',
+        ),
       ).toBeNull();
       expect(
         fixture.nativeElement.querySelector(

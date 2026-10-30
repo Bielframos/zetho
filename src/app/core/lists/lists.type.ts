@@ -1,6 +1,16 @@
-import { StoredList, StoredRow } from '../../shared/infra/appwrite/appwrite.types';
+import {
+  StoredList,
+  StoredRow,
+} from '../../shared/infra/appwrite/appwrite.types';
 
 type ZereiList = {
+  ownerType?: 'user' | 'system';
+  status?: 'draft' | 'published' | 'archived';
+  revision?: string;
+  criteria?: string;
+  kind?: 'thematic' | 'monthly';
+  month?: string;
+
   ownerFingerprint: string;
   title: string;
   slug: string;
@@ -17,6 +27,10 @@ type ZereiListRow = StoredRow<ZereiList>;
 type ZereiLists = StoredList<ZereiListRow>;
 
 type ZereiListItem = {
+  reason?: string;
+  sources?: string[];
+  releaseDate?: string;
+
   list: string;
   game: string;
   orderKey: string;

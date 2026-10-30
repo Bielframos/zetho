@@ -4,6 +4,11 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+### Changed
+
+- Listas oficiais são criadas e revisadas na interface de listas existente, com estados de rascunho, publicada e arquivada, autoria Zetho e links preservados.
+
+
 ### Correções
 
 - Trocar de lista durante a revisão editorial descarta prévias antigas e impede publicar um post diferente do revisado.

@@ -85,7 +85,7 @@ export class ContentIntentService {
   returnPath(owner?: string): string | null {
     const value = this.read();
     if (!value || (value.owner && value.owner !== owner)) return null;
-    return `${value.source === 'news' ? '/noticias' : '/listas-editoriais'}/${value.slug}`;
+    return `${value.source === 'news' ? '/noticias' : '/listas'}/${value.slug}`;
   }
 
   clear(requestId?: string) {

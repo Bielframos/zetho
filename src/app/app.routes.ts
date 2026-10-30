@@ -44,19 +44,17 @@ export const routes: Routes = [
   },
   ...GAME_ROUTES,
   ...NEWS_ROUTES,
-  {
-    path: 'listas-editoriais',
-    loadComponent: () =>
-      import('./core/editorial-lists/editorial-list-page').then(
-        (m) => m.EditorialListPage,
-      ),
-  },
+  { path: 'listas-editoriais', redirectTo: 'listas', pathMatch: 'full' },
   {
     path: 'listas-editoriais/:slug',
+    redirectTo: 'listas/:slug',
+    pathMatch: 'full',
+  },
+  {
+    path: 'listas/:slug',
+    data: { systemList: true },
     loadComponent: () =>
-      import('./core/editorial-lists/editorial-list-page').then(
-        (m) => m.EditorialListPage,
-      ),
+      import('./core/profile/pages/list/list').then((m) => m.ListPage),
   },
   ...FORUM_ROUTES,
   {

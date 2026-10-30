@@ -66,6 +66,12 @@ export const serverRoutes: ServerRoute[] = [
   {
     path: 'listas-editoriais/:slug',
     renderMode: RenderMode.Server,
+    status: 301,
+    headers: { 'Cache-Control': 'no-store' },
+  },
+  {
+    path: 'listas/:slug',
+    renderMode: RenderMode.Server,
     headers: { 'Cache-Control': 'no-store' },
   },
   // Estáticas puras — sem chamada de API.
@@ -106,7 +112,11 @@ export const serverRoutes: ServerRoute[] = [
     headers: { 'Cache-Control': 'no-store' },
   },
   { path: 'reviews', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
-  { path: 'listas', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
+  {
+    path: 'listas',
+    renderMode: RenderMode.Server,
+    headers: { 'Cache-Control': 'no-store' },
+  },
   {
     path: 'recomendacoes',
     renderMode: RenderMode.Server,
