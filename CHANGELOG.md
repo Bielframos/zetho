@@ -4,6 +4,23 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+### Changed
+
+- Listas oficiais são criadas e revisadas na interface de listas existente, com estados de rascunho, publicada e arquivada, autoria Zetho e links preservados.
+
+
+### Correções
+
+- Trocar de lista durante a revisão editorial descarta prévias antigas e impede publicar um post diferente do revisado.
+- Salvamentos simultâneos em “Quero jogar” mantêm a atribuição de cada jogo e preservam as outras ações pendentes.
+
+### Melhorias
+
+- Ações “Quero jogar” em notícias e listas editoriais, com retorno ao conteúdo após login/cadastro e confirmação de salvamento.
+- Eventos de conclusão de cadastro, convite aceito e primeiro jogo persistido, com atribuição de conteúdo sem dados pessoais.
+- Listas oficiais do Zetho com revisão administrativa, fontes e conversão em rascunhos de posts.
+- Navegação pública paginada do fórum e suas respostas, com tratamento SSR de páginas ausentes e falhas temporárias.
+
 ## [1.35.3] - 2026-10-24
 
 ### Melhorias

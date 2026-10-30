@@ -1,3 +1,4 @@
+import { SystemLists } from '../../system-lists';
 import {
   afterNextRender,
   Component,
@@ -25,7 +26,7 @@ const PAGE_SIZE = 12;
 @Component({
   selector: 'app-public-lists',
   standalone: true,
-  imports: [RouterLink, UiLoading, UiSkeleton],
+  imports: [RouterLink, UiLoading, UiSkeleton, SystemLists],
   templateUrl: './public-lists.html',
 })
 export class PublicListsPage implements OnDestroy {

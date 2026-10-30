@@ -16,6 +16,7 @@ export type GetListsInput = {
 };
 
 export type CreateListInput = {
+  ownerType?: 'user' | 'system';
   ownerFingerprint: string;
   title: string;
   description?: string;
@@ -35,6 +36,10 @@ export class ListService {
   /* =======================
      Lists
      ======================= */
+
+  getSystemList(slug: string) {
+    return this.repository.systemList(slug);
+  }
 
   async getLists({
     userFingerprint,
@@ -57,6 +62,7 @@ export class ListService {
 
   async createList(input: CreateListInput) {
     return this.repository.createList({
+      ownerType: input.ownerType,
       title: input.title,
       description: input.description,
       isPublic: input.isPublic,
@@ -133,15 +139,16 @@ export class ListService {
       });
       listId = op.item.list;
       reorderedRows.push(
-        await this.repository.updateItemOrder(op.item.list, op.item.$id, newOrderKey),
+        await this.repository.updateItemOrder(
+          op.item.list,
+          op.item.$id,
+          newOrderKey,
+        ),
       );
     }
 
-    const updatedList = listId
-      ? (await this.repository.listLists([Query.equal('$id', listId), Query.limit(1)])).rows[0]
-      : undefined;
+    const updatedList = listId ? await this.repository.byId(listId) : undefined;
 
     return { reorderedRows, updatedList };
   }
-
 }

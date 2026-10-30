@@ -21,6 +21,56 @@ const PAGE_SIZE = 50;
 
 @Injectable({ providedIn: 'root' })
 export class ListController {
+  private systemSlug: string | null = null;
+  private generation = 0;
+  usePersonal() {
+    this.systemSlug = null;
+    this.cancelLoad();
+    this.reset();
+    this.list.set(null);
+    this.loading.set(false);
+  }
+  cancelLoad() {
+    this.generation++;
+    this.reorderOps.set([]);
+  }
+  async loadSystem(slug: string, loadMore = false) {
+    this.systemSlug = slug;
+    const generation = ++this.generation;
+    this.loading.set(true);
+    if (!loadMore) {
+      this.reset();
+      this.list.set(null);
+      this.currentPage.set(1);
+    }
+    try {
+      const list = await this.listService.getSystemList(slug);
+      if (generation !== this.generation) return;
+      const offset = loadMore ? this.items().length : 0;
+      const items = await this.listService.getItems({
+        listId: list.$id,
+        offset,
+        limit: 50,
+      });
+      if (generation !== this.generation) return;
+      this.list.set(list);
+      const rows = items.rows as unknown as ZereiListItemRowExpanded[];
+      this.items.set(loadMore ? [...this.items(), ...rows] : rows);
+      this.totalItems.set(items.total);
+      this.hasMore.set(this.items().length < items.total);
+    } catch (error) {
+      if (generation !== this.generation) return;
+      this.list.set(null);
+      this.error.set({
+        message: 'Não foi possível carregar a lista.',
+        code: String(error).includes('404') ? 404 : 503,
+        type: 'list_unavailable',
+      });
+    } finally {
+      if (generation === this.generation) this.loading.set(false);
+    }
+  }
+
   // O valor do slug é fornecido pelo componente pai (ListPage)
   slug$ = new Subject<string>();
 
@@ -64,6 +114,8 @@ export class ListController {
     slug?: string;
     loadMore?: boolean;
   }) {
+    if (this.systemSlug) return this.loadSystem(this.systemSlug, loadMore);
+    const generation = this.generation;
     try {
       if (this.loading()) return;
       this.loading.set(true);
@@ -98,6 +150,7 @@ export class ListController {
             ).rows[0]
           : this.list();
 
+      if (generation !== this.generation) return;
       if (!list) {
         this.error.set({
           message: 'Lista não encontrada.',
@@ -114,6 +167,7 @@ export class ListController {
         offset: this.offset(),
       });
 
+      if (generation !== this.generation) return;
       const rows = items.rows as unknown as ZereiListItemRowExpanded[];
 
       if (loadMore) {
@@ -126,6 +180,7 @@ export class ListController {
       this.totalItems.set(items.total);
       this.hasMore.set(loaded < items.total);
     } catch (e) {
+      if (generation !== this.generation) return;
       const error = e as AppwriteException;
       console.error(e);
 
@@ -135,7 +190,7 @@ export class ListController {
         type: error.type,
       });
     } finally {
-      this.loading.set(false);
+      if (generation === this.generation) this.loading.set(false);
     }
   }
 
@@ -149,12 +204,14 @@ export class ListController {
   }
 
   private async persistOrder() {
+    const generation = this.generation;
     try {
       if (this.reorderOps().length === 0) return;
 
       const { reorderedRows, updatedList } =
         await this.listService.reorderItems(this.reorderOps());
 
+      if (generation !== this.generation) return;
       const orderMap = new Map(
         reorderedRows
           .filter((row) => row.$tableId === 'list_items')
@@ -170,6 +227,7 @@ export class ListController {
       );
 
       if (updatedList) {
+        if (generation !== this.generation) return;
         this.list.set(updatedList);
       }
 
@@ -184,6 +242,7 @@ export class ListController {
      ======================= */
 
   async removeItem(item: ZereiListItemRowExpanded) {
+    const generation = this.generation;
     try {
       const list = this.list();
       if (!list) return;
@@ -195,10 +254,13 @@ export class ListController {
         list.latestAdditions,
       );
 
+      if (generation !== this.generation) return;
       this.items.update((state) => state.filter((i) => i.$id !== item.$id));
 
+      if (generation !== this.generation) return;
       this.list.set(updatedList);
     } catch (e) {
+      if (generation !== this.generation) return;
       const error = e as AppwriteException;
       console.error(e);
 
@@ -219,6 +281,7 @@ export class ListController {
     description?: string;
     isPublic?: boolean;
   }) {
+    const generation = this.generation;
     try {
       const list = this.list();
       if (!list) return;
@@ -228,8 +291,10 @@ export class ListController {
         ...params,
       });
 
+      if (generation !== this.generation) return;
       this.list.set(updatedList);
     } catch (e) {
+      if (generation !== this.generation) return;
       const error = e as AppwriteException;
       console.error(e);
 
@@ -242,6 +307,7 @@ export class ListController {
   }
 
   async setCoverImage(gameCoverUrl?: string) {
+    const generation = this.generation;
     try {
       const list = this.list();
       if (!list || !gameCoverUrl) return;
@@ -255,8 +321,10 @@ export class ListController {
         coverImageUrls: coverImageUrls.slice(-3),
       });
 
+      if (generation !== this.generation) return;
       this.list.set(updatedList);
     } catch (e) {
+      if (generation !== this.generation) return;
       const error = e as AppwriteException;
       console.error(e);
 
@@ -269,15 +337,17 @@ export class ListController {
   }
 
   async deleteList() {
+    const generation = this.generation;
     try {
       const list = this.list();
       if (!list) return;
 
       await this.listService.deleteList(list.$id);
-
+      if (generation !== this.generation) return;
       this.list.set(null);
       this.reset();
     } catch (e) {
+      if (generation !== this.generation) return;
       const error = e as AppwriteException;
       console.error(e);
 

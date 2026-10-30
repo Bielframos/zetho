@@ -1,3 +1,4 @@
+import { ContentGameCta } from '../../acquisition/content-game-cta';
 import {
   Component,
   computed,
@@ -21,7 +22,7 @@ import { createSsrTaskRunner } from '../../../utils/ssr-task';
 @Component({
   selector: 'app-news-detail',
   standalone: true,
-  imports: [RouterLink, UiLoading],
+  imports: [RouterLink, UiLoading, ContentGameCta],
   template: `
     <main class="mx-auto min-h-dvh w-full max-w-3xl">
       @if (loading()) {
@@ -102,13 +103,15 @@ import { createSsrTaskRunner } from '../../../utils/ssr-task';
               @if (item.relatedGames.length) {
                 <div class="mb-5">
                   <h2 class="text-sm text-gray-10">Jogos relacionados</h2>
-                  <div class="mt-2 flex flex-wrap gap-x-4 gap-y-2">
+                  <div class="mt-2 divide-y divide-gray-6">
                     @for (game of item.relatedGames; track game.id) {
-                      <a
-                        [routerLink]="['/jogo', game.slug]"
-                        class="text-blue-11 hover:underline"
-                        >{{ game.name }}</a
-                      >
+                      @if (game.id && game.slug) {
+                        <app-content-game-cta
+                          [game]="game"
+                          [contentId]="item.$id"
+                          [slug]="item.slug"
+                        />
+                      }
                     }
                   </div>
                 </div>
@@ -245,7 +248,8 @@ export class NewsDetailPage implements OnDestroy {
 
       this.seo.setJsonLd('news-page', {
         '@context': 'https://schema.org',
-        '@type': 'NewsArticle',
+        '@type':
+          news.contentType === 'editorial_list' ? 'Article' : 'NewsArticle',
         headline: news.title,
         description: news.subtitle ?? news.title,
         datePublished: news.$createdAt,

@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, inject } from '@angular/core';
 import {
   FormControl,
@@ -18,7 +19,8 @@ import { UiCheckbox } from '../../ui/checkbox';
   imports: [UiModal, UiInput, UiCheckbox, ReactiveFormsModule],
 })
 export class AppNewListDialog {
-  private authStore = inject(AuthStore);
+  authStore = inject(AuthStore);
+  private router = inject(Router);
   controller = inject(ListsController);
 
   form = new FormGroup({
@@ -28,16 +30,21 @@ export class AppNewListDialog {
     }),
     listDescription: new FormControl('', { nonNullable: true }),
     isPublic: new FormControl(false),
+    system: new FormControl(false),
   });
 
   async handleSubmit({ close }: { close: () => void }) {
-    await this.controller.createList({
+    const created = await this.controller.createList({
+      ownerType: this.form.controls.system.value ? 'system' : 'user',
       ownerFingerprint: this.authStore.profile()?.fingerprint!,
       title: this.form.controls.listName.value,
       description: this.form.controls.listDescription.value,
       isPublic: this.form.controls.isPublic.value || undefined,
     });
 
+    if (!created) return;
     close();
+    if (created.ownerType === 'system')
+      await this.router.navigate(['/listas', created.slug]);
   }
 }
