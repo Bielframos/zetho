@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
-import { ContentIntentService } from './content-intent.service';
+import { ContentIntent, ContentIntentService } from './content-intent.service';
 
 @Injectable({ providedIn: 'root' })
 export class AcquisitionAnalytics {
@@ -18,8 +18,8 @@ export class AcquisitionAnalytics {
       invite_status?: 'accepted' | 'none' | 'unknown';
       game_id?: string;
     } = {},
+    context: ContentIntent | null = this.intent.read(),
   ) {
-    const context = this.intent.read();
     try {
       if (!this.analytics) return;
       const params = {

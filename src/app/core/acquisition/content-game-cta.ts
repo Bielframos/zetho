@@ -147,9 +147,10 @@ export class ContentGameCta implements OnDestroy {
       this.saved.set(true);
       this.confirm.set(false);
       this.message.set('Jogo salvo na sua biblioteca.');
-      this.analytics.emit('content_action_complete');
-      if (result.firstGameSaved) this.analytics.emit('first_game_saved');
-      this.intent.clear();
+      this.analytics.emit('content_action_complete', {}, intent);
+      if (result.firstGameSaved)
+        this.analytics.emit('first_game_saved', {}, intent);
+      this.intent.clear(intent.requestId);
     } catch {
       if (generation === this.generation)
         this.message.set(

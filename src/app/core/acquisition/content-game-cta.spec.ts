@@ -70,7 +70,11 @@ describe('Content game CTA', () => {
     finish({ saved: true, firstGameSaved: true });
     await pending;
     expect(cta.saved()).toBeTrue();
-    expect(events).toHaveBeenCalledWith('first_game_saved');
+    expect(events).toHaveBeenCalledWith(
+      'first_game_saved',
+      {},
+      jasmine.objectContaining({ gameId: 'g1', contentId: 'post1' }),
+    );
     expect(TestBed.inject(ContentIntentService).read()).toBeNull();
   });
   it('preserves the idempotency key after errors, and permits cancellation', async () => {

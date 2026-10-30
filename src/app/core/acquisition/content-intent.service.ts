@@ -88,7 +88,8 @@ export class ContentIntentService {
     return `${value.source === 'news' ? '/noticias' : '/listas-editoriais'}/${value.slug}`;
   }
 
-  clear() {
+  clear(requestId?: string) {
+    if (requestId !== undefined && this.read()?.requestId !== requestId) return;
     this.memory = null;
     safeSessionStorage.removeItem(KEY);
   }

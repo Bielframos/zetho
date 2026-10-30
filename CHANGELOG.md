@@ -4,6 +4,11 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+### Correções
+
+- Trocar de lista durante a revisão editorial descarta prévias antigas e impede publicar um post diferente do revisado.
+- Salvamentos simultâneos em “Quero jogar” mantêm a atribuição de cada jogo e preservam as outras ações pendentes.
+
 ### Melhorias
 
 - Ações “Quero jogar” em notícias e listas editoriais, com retorno ao conteúdo após login/cadastro e confirmação de salvamento.

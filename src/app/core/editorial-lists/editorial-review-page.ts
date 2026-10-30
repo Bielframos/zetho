@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { SocialApi } from '../../shared/infra/social-api';
@@ -176,8 +176,10 @@ interface Selection {
     }
   </section>`,
 })
-export class EditorialReviewPage {
+export class EditorialReviewPage implements OnDestroy {
   private api = inject(SocialApi);
+  private selectionGeneration = 0;
+  private postPreview: { id: string; revision: string } | null = null;
   queue = signal<Draft[]>([]);
   selected = signal<Draft | null>(null);
   selection = signal<Selection | null>(null);
@@ -189,6 +191,9 @@ export class EditorialReviewPage {
   constructor() {
     void this.load();
   }
+  ngOnDestroy() {
+    this.selectionGeneration++;
+  }
   title(row: Draft) {
     try {
       return JSON.parse(row.payload).title;
@@ -197,6 +202,9 @@ export class EditorialReviewPage {
     }
   }
   select(row: Draft) {
+    this.selectionGeneration++;
+    this.postPreview = null;
+    this.message.set('');
     this.selected.set({ ...row, games: row.games ?? this.selected()?.games });
     this.selection.set(JSON.parse(row.payload));
     this.published.set(row.status === 'published');
@@ -213,13 +221,16 @@ export class EditorialReviewPage {
     });
   }
   async save() {
+    const generation = this.selectionGeneration;
     await this.run(async () => {
       const row = await this.api.request<Draft>(
         `editorial-lists/review/${this.selected()!.$id}`,
         'PATCH',
         this.selection(),
       );
+      if (generation !== this.selectionGeneration) return;
       this.select(row);
+      this.message.set('Operação concluída.');
     });
   }
   async approve() {
@@ -232,32 +243,56 @@ export class EditorialReviewPage {
     await this.action('approve');
   }
   async action(name: 'approve' | 'post' | 'publish-post' | 'withdraw') {
+    const generation = this.selectionGeneration;
+    const row = this.selected();
+    if (!row) return;
+    if (
+      name === 'publish-post' &&
+      (!this.postBody() ||
+        this.postPreview?.id !== row.$id ||
+        this.postPreview?.revision !== row.revision)
+    ) {
+      this.message.set(
+        'Gere e confira a prévia desta versão antes de publicar.',
+      );
+      return;
+    }
     await this.run(async () => {
-      const row = this.selected()!;
       const result = await this.api.request<{ body?: string }>(
         `editorial-lists/review/${row.$id}/${name}`,
         'POST',
         { revision: row.revision, sourcesVerified: this.verified },
       );
+      if (generation !== this.selectionGeneration) return;
       if (name === 'approve') this.published.set(true);
-      if (name === 'post') this.postBody.set(result.body ?? '');
+      if (name === 'post') {
+        this.postPreview = { id: row.$id, revision: row.revision };
+        this.postBody.set(result.body ?? '');
+      }
       if (name === 'withdraw') {
+        this.selectionGeneration++;
+        this.postPreview = null;
+        this.postBody.set('');
         this.selected.set(null);
         this.selection.set(null);
+        this.message.set('Operação concluída.');
       }
     });
   }
   private async run(work: () => Promise<void>) {
     if (this.busy()) return;
+    const generation = this.selectionGeneration;
     this.busy.set(true);
     this.message.set('');
     try {
       await work();
-      this.message.set('Operação concluída.');
+      if (generation === this.selectionGeneration)
+        this.message.set('Operação concluída.');
     } catch {
-      this.message.set(
-        'Não foi possível concluir. Confira a revisão e as fontes antes de tentar novamente.',
-      );
+      if (generation === this.selectionGeneration)
+        this.message.set(
+          'Não foi possível concluir. Confira a revisão e as fontes antes de tentar novamente.',
+        );
     } finally {
       this.busy.set(false);
     }
