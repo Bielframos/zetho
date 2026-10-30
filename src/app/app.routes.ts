@@ -44,6 +44,20 @@ export const routes: Routes = [
   },
   ...GAME_ROUTES,
   ...NEWS_ROUTES,
+  {
+    path: 'listas-editoriais',
+    loadComponent: () =>
+      import('./core/editorial-lists/editorial-list-page').then(
+        (m) => m.EditorialListPage,
+      ),
+  },
+  {
+    path: 'listas-editoriais/:slug',
+    loadComponent: () =>
+      import('./core/editorial-lists/editorial-list-page').then(
+        (m) => m.EditorialListPage,
+      ),
+  },
   ...FORUM_ROUTES,
   {
     path: 'reviews',

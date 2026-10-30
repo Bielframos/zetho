@@ -1,3 +1,4 @@
+import { AcquisitionAnalytics } from '../acquisition/acquisition-analytics.service';
 import { Injectable, inject } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
 import { ZEntryRow } from '../../types';
@@ -7,6 +8,7 @@ import { ZEntriesRepository } from './zEntries.repository';
 @Injectable({ providedIn: 'root' })
 export class ZEntryService {
   private repository = inject(ZEntriesRepository);
+  private acquisition = inject(AcquisitionAnalytics);
 
   /**
    * Opcional de propósito: o Firebase só é provido no bootstrap do browser
@@ -47,6 +49,9 @@ export class ZEntryService {
       current,
       opts,
     );
+
+    if ((ZEntryLog as ZEntryRow & { firstGameSaved?: boolean }).firstGameSaved)
+      this.acquisition.emit('first_game_saved', { game_id: gameId });
 
     try {
       if (this.analytics) {

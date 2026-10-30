@@ -22,7 +22,9 @@
     aria-label="Carregando listas públicas"
   >
     @for (item of [1, 2, 3, 4, 5, 6]; track item) {
-    <div class="flex flex-col gap-4 border-gray-6 p-4 sm:border-b sm:odd:border-r">
+    <div
+      class="flex flex-col gap-4 border-gray-6 p-4 sm:border-b sm:odd:border-r"
+    >
       <ui-skeleton [height]="180"></ui-skeleton>
       <ui-skeleton [height]="20" [width]="70"></ui-skeleton>
       <ui-skeleton [height]="16" [width]="45"></ui-skeleton>
@@ -54,12 +56,12 @@
     <li class="border-gray-6 sm:border-b sm:odd:border-r">
       <a
         [routerLink]="
-              list.author
+              list.ownerFingerprint === 'system:zetho' ? ['/listas-editoriais', list.slug] : list.author
                 ? ['/player', list.author.gamertag, 'listas', list.slug]
                 : null
             "
         class="group flex h-full flex-col gap-4 p-4 transition-colors hover:bg-gray-3"
-        [attr.aria-disabled]="list.author ? null : true"
+        [attr.aria-disabled]="list.author || list.ownerFingerprint === 'system:zetho' ? null : true"
       >
         @if (coversFor(list); as covers) { @if (covers.length > 0) {
         <div class="flex h-44 items-end overflow-hidden bg-gray-2">
@@ -90,7 +92,8 @@
             {{ list.title }}
           </h2>
           <p class="truncate text-sm text-gray-11">
-            por {{ list.author?.gamertag ?? list.ownerFingerprint }}
+            por {{ list.ownerFingerprint === 'system:zetho' ? 'Zetho ·
+            Editorial' : list.author?.gamertag ?? list.ownerFingerprint }}
           </p>
         </div>
 

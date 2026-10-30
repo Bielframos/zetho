@@ -1,3 +1,4 @@
+import { ContentIntentService } from '../../../acquisition/content-intent.service';
 import { FollowControl } from '../../../../shared/ui/follow-control';
 import {
   Component,
@@ -29,12 +30,13 @@ import { appwrite } from '../../../../shared/infra/appwrite/appwrite.client';
 @Component({
   selector: 'app-onboarding',
   standalone: true,
-  imports: [FollowControl,AppStartingRating, UiLoading],
+  imports: [FollowControl, AppStartingRating, UiLoading],
   templateUrl: './onboarding.html',
   host: { class: 'block' },
 })
 export class OnboardingPage implements OnInit, OnDestroy {
   private router = inject(Router);
+  private intent = inject(ContentIntentService);
   private authStore = inject(AuthStore);
   private gameService = inject(GameService);
   private zEntryService = inject(ZEntryService);
@@ -353,8 +355,10 @@ export class OnboardingPage implements OnInit, OnDestroy {
     if (!complete && !this.restoreError()) this.persist();
     const profile = this.authStore.profile();
     const first = this.markedList()[0];
-    const navigated =
-      first && profile?.gamertag
+    const returnPath = this.intent.returnPath(profile?.fingerprint);
+    const navigated = returnPath
+      ? await this.router.navigateByUrl(returnPath)
+      : first && profile?.gamertag
         ? await this.router.navigate(['/player', profile.gamertag], {
             queryParams: { t: first.zEntry?.status },
           })

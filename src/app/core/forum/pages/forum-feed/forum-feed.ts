@@ -5,6 +5,7 @@ import {
   inject,
   OnDestroy,
   PLATFORM_ID,
+  RESPONSE_INIT,
   signal,
   untracked,
 } from '@angular/core';
@@ -31,11 +32,7 @@ import { UiSkeleton } from '../../../../shared/ui/skeleton';
 import { RelativeTimePipe } from '../../../../utils/pipes';
 import { createSsrTaskRunner } from '../../../../utils/ssr-task';
 import { ForumService } from '../../forum.service';
-import {
-  ForumGameSummary,
-  ForumPostItem,
-  ForumSort,
-} from '../../forum.types';
+import { ForumGameSummary, ForumPostItem, ForumSort } from '../../forum.types';
 
 const PAGE_SIZE = 12;
 
@@ -64,6 +61,18 @@ export class ForumFeedPage implements OnDestroy {
   private readonly seo = inject(SeoService);
   private readonly zCoinsService = inject(ZCoinsService);
   private readonly route = inject(ActivatedRoute);
+  private readonly response = inject(RESPONSE_INIT, { optional: true });
+  readonly pageParam = toSignal(
+    this.route.queryParamMap.pipe(
+      map((params) => {
+        const value = Number(params.get('page') ?? 1);
+        return Number.isSafeInteger(value) && value > 0 && value <= 10000
+          ? value
+          : 1;
+      }),
+    ),
+    { initialValue: 1 },
+  );
   private readonly router = inject(Router);
   private readonly runAsSsrTask = createSsrTaskRunner();
   readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
@@ -179,6 +188,7 @@ export class ForumFeedPage implements OnDestroy {
 
     effect(() => {
       const gameSlug = this.gameSlugParam();
+      this.pageParam();
       const sort = this.sort();
       this.viewerKey();
 
@@ -199,6 +209,7 @@ export class ForumFeedPage implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.requestGeneration++;
     this.seo.clearJsonLd('forum-feed');
   }
 
@@ -269,9 +280,10 @@ export class ForumFeedPage implements OnDestroy {
       void this.zCoinsService.applyInput('engaged').catch(() => undefined);
 
       const profile = this.authStore.profile();
-      const gameSummary =
-        this.searchedGamesById.get(selectedGame.id) ??
-        (this.activeGame()?.$id === selectedGame.id ? this.activeGame() : null) ?? {
+      const gameSummary = this.searchedGamesById.get(selectedGame.id) ??
+        (this.activeGame()?.$id === selectedGame.id
+          ? this.activeGame()
+          : null) ?? {
           $id: selectedGame.id,
           name: selectedGame.label,
           slug: '',
@@ -287,7 +299,10 @@ export class ForumFeedPage implements OnDestroy {
         title: created.title ?? title,
         slug: created.slug ?? created.$id,
         content: created.content ?? content,
-        excerpt: this.extractPlainText(created.content ?? content).slice(0, 240),
+        excerpt: this.extractPlainText(created.content ?? content).slice(
+          0,
+          240,
+        ),
         parentId: null,
         depth: 0,
         voteCount: created.voteCount ?? 0,
@@ -484,7 +499,7 @@ export class ForumFeedPage implements OnDestroy {
 
       try {
         const response = await this.forumService.getPosts({
-          page: 1,
+          page: this.pageParam(),
           pageSize: PAGE_SIZE,
           gameSlug: gameSlug ?? undefined,
           gameId: activeGameId,
@@ -518,10 +533,24 @@ export class ForumFeedPage implements OnDestroy {
         }
 
         this.applyFeedSeo(resolvedGame);
+        if (!response.items.length && this.pageParam() > 1) {
+          this.seo.apply({ robots: 'noindex,follow' });
+          if (this.response) this.response.status = 404;
+        }
       } catch {
         if (generation !== this.requestGeneration) return;
         this.posts.set([]);
         this.error.set(true);
+        this.seo.apply({
+          title: 'Fórum indisponível — Zetho',
+          description: 'Tente novamente mais tarde.',
+          robots: 'noindex,follow',
+        });
+        this.seo.clearJsonLd('forum-feed');
+        if (this.response) {
+          this.response.status = 503;
+          this.response.headers = { 'Cache-Control': 'no-store' };
+        }
       } finally {
         if (generation === this.requestGeneration) {
           this.loading.set(false);
@@ -537,12 +566,15 @@ export class ForumFeedPage implements OnDestroy {
     const description = game
       ? `Participe das discussões, teorias e dicas da comunidade sobre ${game.name} no Fórum do Zetho.`
       : 'Debata teorias, dicas, análises e experiências sobre seus jogos favoritos no Fórum da comunidade Zetho.';
-    const canonical = game?.slug ? `/forum?jogo=${encodeURIComponent(game.slug)}` : '/forum';
+    const canonical = game?.slug
+      ? `/forum?jogo=${encodeURIComponent(game.slug)}`
+      : '/forum';
 
     this.seo.apply({
       title,
       description,
-      canonical: '/forum',
+      canonical:
+        this.pageParam() > 1 ? `/forum?page=${this.pageParam()}` : '/forum',
       robots: game ? 'noindex,follow' : 'index,follow',
       ogType: 'website',
       ogImage: game?.coverUrl ?? undefined,

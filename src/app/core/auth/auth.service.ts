@@ -12,7 +12,10 @@ import { safeLocalStorage } from '../../utils/platform-storage';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  constructor(private userProfService: UserProfileService, private socialApi: SocialApi) {}
+  constructor(
+    private userProfService: UserProfileService,
+    private socialApi: SocialApi,
+  ) {}
 
   /**
    * Método de registro para novos usuários
@@ -29,46 +32,58 @@ export class AuthService {
     inviteCode?: string,
   ) {
     try {
-      await appwrite.account.create({
-        userId: 'unique()',
-        name,
-        email,
-        password,
-      });
-
-      await this.login(email, password);
-      const user = await this.getLoggedInUser();
-
-      if (!user)
-        throw { message: 'Ocorreu um erro ao fazer o registro.', code: 500 };
-
-      const res = await fetch(
-        new URL('profile', environment.zethoApiEndpoint),
-        {
-          headers: {
-            Authorization: `Bearer ${await this.createJWT()}`,
-            'x-appwrite-session': safeLocalStorage.getItem('cookieFallback') ?? '',
-            'Content-Type': 'application/json',
-          },
-          method: 'POST',
-          body: JSON.stringify({
-            gamertag,
-            ...(inviteCode ? { inviteCode } : {}),
-          }),
-        },
-      );
-
-      if (!res.ok)
-        throw { message: 'Ocorreu um erro ao fazer o registro.', code: 500 };
-
+      try {
+        await appwrite.account.create({
+          userId: 'unique()',
+          name,
+          email,
+          password,
+        });
+      } catch (error) {
+        if ((error as { code?: number }).code !== 409) throw error;
+        // A failed profile step may leave an account behind. Authenticate it
+        // before resuming; never infer identity from the duplicate email alone.
+      }
+      let user = await this.getLoggedInUser();
+      if (!user) {
+        await this.login(email, password);
+        user = await this.getLoggedInUser();
+      }
+      if (!user || user.email.toLowerCase() !== email.trim().toLowerCase())
+        throw {
+          message: 'Entre na conta correspondente para concluir o registro.',
+          code: 401,
+        };
       return {
         user,
-        profile: (await res.json()) as UserProfileRow,
+        profile: await this.completeRegistration(gamertag, inviteCode),
       };
     } catch (error) {
-      console.error('Error registering user:', error);
       throw error;
     }
+  }
+
+  async completeRegistration(
+    gamertag: string,
+    inviteCode?: string,
+  ): Promise<UserProfileRow> {
+    const res = await fetch(new URL('profile', environment.zethoApiEndpoint), {
+      headers: {
+        Authorization: `Bearer ${await this.createJWT()}`,
+        'x-appwrite-session': safeLocalStorage.getItem('cookieFallback') ?? '',
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        gamertag,
+        ...(inviteCode ? { inviteCode } : {}),
+      }),
+    });
+
+    if (!res.ok)
+      throw { message: 'Ocorreu um erro ao fazer o registro.', code: 500 };
+
+    return (await res.json()) as UserProfileRow;
   }
 
   async deleteAccount(profileId: string) {
@@ -82,10 +97,22 @@ export class AuthService {
    * @param password
    */
   async login(email: string, password: string) {
-    return await appwrite.account.createEmailPasswordSession({
-      email,
-      password,
-    });
+    try {
+      return await appwrite.account.createEmailPasswordSession({
+        email,
+        password,
+      });
+    } catch (error) {
+      if ((error as { type?: string }).type !== 'user_session_already_exists')
+        throw error;
+      const current = await this.getLoggedInUser();
+      if (
+        !current ||
+        current.email.toLowerCase() !== email.trim().toLowerCase()
+      )
+        throw error;
+      return current;
+    }
   }
 
   /**
@@ -130,7 +157,8 @@ export class AuthService {
       {
         headers: {
           Authorization: `Bearer ${await this.createJWT()}`,
-          'x-appwrite-session': safeLocalStorage.getItem('cookieFallback') ?? '',
+          'x-appwrite-session':
+            safeLocalStorage.getItem('cookieFallback') ?? '',
         },
       },
     );
@@ -145,7 +173,8 @@ export class AuthService {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${await this.createJWT()}`,
-          'x-appwrite-session': safeLocalStorage.getItem('cookieFallback') ?? '',
+          'x-appwrite-session':
+            safeLocalStorage.getItem('cookieFallback') ?? '',
         },
       },
     );

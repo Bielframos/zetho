@@ -53,6 +53,21 @@ const EDGE_CACHE_10_MIN = {
 };
 
 export const serverRoutes: ServerRoute[] = [
+  {
+    path: 'forum/:slug/respostas/:parentId',
+    renderMode: RenderMode.Server,
+    headers: { 'Cache-Control': 'no-store' },
+  },
+  {
+    path: 'listas-editoriais',
+    renderMode: RenderMode.Server,
+    headers: { 'Cache-Control': 'no-store' },
+  },
+  {
+    path: 'listas-editoriais/:slug',
+    renderMode: RenderMode.Server,
+    headers: { 'Cache-Control': 'no-store' },
+  },
   // Estáticas puras — sem chamada de API.
   { path: 'institucional', renderMode: RenderMode.Prerender },
   { path: 'privacidade', renderMode: RenderMode.Prerender },
@@ -83,12 +98,12 @@ export const serverRoutes: ServerRoute[] = [
   {
     path: 'forum',
     renderMode: RenderMode.Server,
-    headers: EDGE_CACHE_5_MIN,
+    headers: { 'Cache-Control': 'no-store' },
   },
   {
     path: 'forum/:slug',
     renderMode: RenderMode.Server,
-    headers: EDGE_CACHE_5_MIN,
+    headers: { 'Cache-Control': 'no-store' },
   },
   { path: 'reviews', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   { path: 'listas', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },

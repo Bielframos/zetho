@@ -9,6 +9,7 @@ export interface NewsAuthor {
 }
 
 export interface NewsSummary {
+  contentType?: 'news' | 'editorial_list';
   $id: string;
   $createdAt: string;
   $updatedAt: string;
