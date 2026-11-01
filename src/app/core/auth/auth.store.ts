@@ -142,6 +142,7 @@ export class AuthStore {
     name: string,
     gamertag: string,
     inviteCode?: string,
+    profileSharingAllowed = false,
   ) {
     const { user, profile } = await this.authService.register(
       email,
@@ -149,6 +150,7 @@ export class AuthStore {
       name,
       gamertag,
       inviteCode,
+      profileSharingAllowed,
     );
 
     this.userSignal.set(user);

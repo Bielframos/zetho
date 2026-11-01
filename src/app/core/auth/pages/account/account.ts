@@ -1,3 +1,5 @@
+import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
+import { ProfileSharing } from './profile-sharing';
 import { CommonModule } from '@angular/common';
 import { OnInit } from '@angular/core';
 import {
@@ -39,6 +41,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
   standalone: true,
   imports: [
     CommonModule,
+    UiFounderBadge,
+    ProfileSharing,
     UiInput,
     ReactiveFormsModule,
     UiModal,

@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
 import { ContentIntentService } from '../../../acquisition/content-intent.service';
 import { FollowControl } from '../../../../shared/ui/follow-control';
 import {
@@ -30,7 +31,7 @@ import { appwrite } from '../../../../shared/infra/appwrite/appwrite.client';
 @Component({
   selector: 'app-onboarding',
   standalone: true,
-  imports: [FollowControl, AppStartingRating, UiLoading],
+  imports: [UiFounderBadge, FollowControl, AppStartingRating, UiLoading],
   templateUrl: './onboarding.html',
   host: { class: 'block' },
 })

@@ -1,7 +1,7 @@
 import { ContentIntentService } from '../../../acquisition/content-intent.service';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { AuthStore } from '../../auth.store';
@@ -17,6 +17,7 @@ import { AuthStore } from '../../auth.store';
 export class LoginPage {
   authStore = inject(AuthStore);
   router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   intent = inject(ContentIntentService);
 
   email = '';
@@ -36,11 +37,15 @@ export class LoginPage {
 
     try {
       await this.authStore.login(this.email, this.password);
-      const owner = this.authStore.profile?.()?.fingerprint;
-      if (owner) this.intent.bind(owner);
-      const target = this.intent.returnPath(owner);
-      if (target) await this.router.navigateByUrl(target);
-      else await this.router.navigate(['/feed']);
+      if (this.route.snapshot.queryParamMap.get('founder') === '1') {
+        await this.router.navigate(['/fundador']);
+      } else {
+        const owner = this.authStore.profile?.()?.fingerprint;
+        if (owner) this.intent.bind(owner);
+        const target = this.intent.returnPath(owner);
+        if (target) await this.router.navigateByUrl(target);
+        else await this.router.navigate(['/feed']);
+      }
     } catch (e: any) {
       if (e.code === 401)
         this.result.set({

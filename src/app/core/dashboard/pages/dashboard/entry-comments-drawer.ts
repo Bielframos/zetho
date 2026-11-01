@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { A11yModule } from '@angular/cdk/a11y';
 import {
@@ -39,7 +40,7 @@ import {
   selector: 'ui-entry-comments-drawer',
   standalone: true,
   providers: [EntryCommentsPagesStore],
-  imports: [
+  imports: [UiFounderBadge,
     A11yModule,
     CommonModule,
     FormsModule,
@@ -68,8 +69,8 @@ import {
           <h2 id="entry-comments-title" class="text-xl">
             {{ isCommentMode() ? 'Respostas' : 'Comentários' }}
           </h2>
-          <p class="truncate text-xs text-gray-10">
-            {{ item().userProfile?.gamertag || 'Jogador' }} ·
+          <p class="wrap-anywhere text-xs text-gray-10">
+            {{ item().userProfile?.gamertag || 'Jogador' }} <ui-founder-badge [gamertag]="item().userProfile?.gamertag" /> ·
             {{ item().game?.name }}
           </p>
         </div>
@@ -97,7 +98,7 @@ import {
                 <a
                   [routerLink]="['/player', parentComment.userProfile.gamertag]"
                   class="font-medium text-gray-12 hover:underline"
-                  >{{ parentComment.userProfile.gamertag || 'Jogador' }}</a
+                  >{{ parentComment.userProfile.gamertag || 'Jogador' }} <ui-founder-badge [gamertag]="parentComment.userProfile.gamertag" /></a
                 >
                 <span class="text-gray-10">{{
                   parentComment.$createdAt | relativeTime
@@ -288,7 +289,7 @@ import {
             <a
               [routerLink]="['/player', comment.userProfile?.gamertag]"
               class="font-medium text-gray-12 hover:underline"
-              >{{ comment.userProfile?.gamertag || 'Jogador' }}</a
+              >{{ comment.userProfile?.gamertag || 'Jogador' }} <ui-founder-badge [gamertag]="comment.userProfile?.gamertag" /></a
             >
             <span class="text-gray-10">{{
               comment.$createdAt | relativeTime

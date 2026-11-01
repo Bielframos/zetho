@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
 import {
   Component,
   computed,
@@ -39,7 +40,7 @@ const PAGE_SIZE = 12;
 @Component({
   selector: 'app-forum-feed',
   standalone: true,
-  imports: [
+  imports: [UiFounderBadge,
     CommonModule,
     FormsModule,
     RouterLink,

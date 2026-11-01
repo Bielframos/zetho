@@ -64,9 +64,9 @@
             @if (rootPost.author?.gamertag) {
               <a
                 [routerLink]="['/player', rootPost.author!.gamertag]"
-                class="truncate text-sm font-medium text-gray-12 hover:underline"
+                class="wrap-anywhere text-sm font-medium text-gray-12 hover:underline"
               >
-                {{ rootPost.author!.gamertag }}
+                {{ rootPost.author!.gamertag }} <ui-founder-badge [gamertag]="rootPost.author!.gamertag" />
               </a>
             } @else {
               <span class="text-sm font-medium text-gray-12">Jogador</span>
@@ -432,7 +432,7 @@
               [routerLink]="['/player', comment.author.gamertag]"
               class="font-medium text-gray-12 hover:underline"
             >
-              {{ comment.author.gamertag }}
+              {{ comment.author.gamertag }} <ui-founder-badge [gamertag]="comment.author.gamertag" />
             </a>
           } @else {
             <span class="font-medium text-gray-12">Jogador</span>

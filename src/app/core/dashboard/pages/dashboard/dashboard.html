@@ -76,7 +76,7 @@
               <a
                 [routerLink]="['/player', item.userProfile?.gamertag]"
                 class="font-medium text-gray-12 hover:underline"
-                >{{ item.userProfile?.gamertag || 'Jogador' }}</a
+                >{{ item.userProfile?.gamertag || 'Jogador' }} <ui-founder-badge [gamertag]="item.userProfile?.gamertag" /></a
               >
               @if (item.type === 'status') {
               <span class="text-gray-11"
@@ -175,7 +175,7 @@
             <a
               [routerLink]="['/player', item.parentComment.userProfile?.gamertag]"
               class="font-medium text-gray-11 hover:text-gray-12 hover:underline"
-              >{{ item.parentComment.userProfile?.gamertag }}</a
+              >{{ item.parentComment.userProfile?.gamertag }} <ui-founder-badge [gamertag]="item.parentComment.userProfile?.gamertag" /></a
             >
             } @else {
             <span class="font-medium text-gray-11">Jogador</span>
@@ -360,8 +360,8 @@
             class="h-10 w-10 rounded-full border border-gray-6 object-cover"
           />
           <a [routerLink]="['/player', person.gamertag]" class="min-w-0 flex-1">
-            <p class="truncate font-medium text-gray-12">
-              {{ person.gamertag }}
+            <p class="wrap-anywhere font-medium text-gray-12">
+              {{ person.gamertag }} <ui-founder-badge [gamertag]="person.gamertag" />
             </p>
             <p class="text-xs text-gray-11">
               {{ person.sharedCount }} jogo(s) em comum

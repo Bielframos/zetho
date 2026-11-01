@@ -1,3 +1,4 @@
+import { UiFounderBadge } from './shared/ui/founder-badge';
 import { PublicEntryLayout } from './shared/app/public-entry-layout';
 import { ColorModeStore } from './core/system/color-mode/color-mode.store';
 import { FollowControl } from './shared/ui/follow-control';
@@ -43,7 +44,7 @@ import { InAppNotificationStore } from './core/system/notifications/in-app-notif
 
 @Component({
   selector: 'app-root',
-  imports: [FollowControl,ProfileThemeContrast,
+  imports: [UiFounderBadge, FollowControl,ProfileThemeContrast,
     PublicEntryLayout,
     ColorModeSelector,
     UiSheet,

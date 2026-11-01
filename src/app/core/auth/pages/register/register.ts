@@ -1,3 +1,5 @@
+import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
+import { UiCheckbox } from '../../../../shared/ui/checkbox';
 import { Component, inject, signal } from '@angular/core';
 import {
   FormControl,
@@ -28,7 +30,7 @@ import {
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [UiInput, ReactiveFormsModule, RouterLink, UiLoading],
+  imports: [UiFounderBadge, UiCheckbox, UiInput, ReactiveFormsModule, RouterLink, UiLoading],
   templateUrl: './register.html',
   host: {
     class: 'flex w-full flex-1',
@@ -114,6 +116,7 @@ export class RegisterPage {
       confirmPassword: new FormControl('', {
         validators: [Validators.required],
       }),
+      profileSharingAllowed: new FormControl(false, { nonNullable: true }),
       inviteCode: new FormControl('', {
         nonNullable: true,
       }),
@@ -131,7 +134,7 @@ export class RegisterPage {
     this.isSubmitting.set(true);
 
     try {
-      const { email, password, name, gamertag, inviteCode } =
+      const { email, password, name, gamertag, inviteCode, profileSharingAllowed } =
         this.form.getRawValue();
       await this.authStore.register(
         email,
@@ -139,6 +142,7 @@ export class RegisterPage {
         name,
         gamertag,
         inviteCode || undefined,
+        profileSharingAllowed,
       );
       await this.router.navigate(['/comecar']);
     } catch (e) {

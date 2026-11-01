@@ -34,7 +34,7 @@ describe('Registration retry authentication', () => {
       'invite',
     );
     expect(login).toHaveBeenCalledWith('test@example.com', 'password123');
-    expect(complete).toHaveBeenCalledWith('player', 'invite');
+    expect(complete).toHaveBeenCalledWith('player', 'invite', false);
   });
   it('never completes a profile for a different active account', async () => {
     const service = TestBed.inject(AuthService);

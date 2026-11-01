@@ -5,7 +5,7 @@ import { FollowStore } from '../../core/connections/follow.store';
 
 @Component({
   selector: 'ui-follow-control',
-  host: { '[style.width]': "variant() === 'icon' ? '44px' : compact() ? '132px' : '156px'" },
+  host: { '[style.width]': "variant() === 'icon' ? '32px' : compact() ? '132px' : '156px'" },
   styles: `
     :host { display: block; position: relative; max-width: 100%; min-width: 0; }
     .follow-button { display: flex; align-items: center; justify-content: center; gap: .5rem; width: 100%; min-height: 44px; padding: .5rem; border: 1px solid currentColor; border-radius: .5rem; font-size: .875rem; cursor: pointer; }
@@ -17,7 +17,7 @@ import { FollowStore } from '../../core/connections/follow.store';
     .follow-primary:hover:not(:disabled) { background: var(--blue-10); border-color: var(--blue-10); }
     .follow-secondary { background: var(--gray-2); color: inherit; }
     .follow-secondary:hover:not(:disabled) { text-decoration: underline; background: var(--gray-3); }
-    .follow-icon { width: 44px; height: 44px; border-color: transparent; background: var(--follow-icon-background, var(--gray-2)); color: inherit; }
+    .follow-icon { width: 32px; height: 32px; min-height: 32px; padding: 0; border-color: transparent; background: var(--follow-icon-background, var(--gray-2)); color: inherit; }
     .follow-icon:hover:not(:disabled) { background: var(--follow-icon-hover, var(--gray-3)); }
     .follow-icon.following { background: var(--follow-icon-active, var(--gray-3)); }
     .follow-icon:disabled { opacity: .65; }

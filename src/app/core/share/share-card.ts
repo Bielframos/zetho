@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../../shared/ui/founder-badge';
 import { Component, computed, inject, input } from '@angular/core';
 import { ShareService } from './share.service';
 import {
@@ -22,6 +23,7 @@ type StarKind = 'full' | 'half' | 'empty';
  */
 @Component({
   selector: 'ui-share-card',
+  imports: [UiFounderBadge],
   standalone: true,
   host: { class: 'block color-mode-fixed-dark' },
   template: `
@@ -203,7 +205,7 @@ type StarKind = 'full' | 'half' | 'empty';
         <div class="flex flex-col leading-tight">
           <span class="text-sm text-gray-12">{{
             '@' + data().author.gamertag
-          }}</span>
+          }} <ui-founder-badge [gamertag]="data().author.gamertag" /></span>
           <span class="text-xs text-gray-11">zetho.app</span>
         </div>
       </div>

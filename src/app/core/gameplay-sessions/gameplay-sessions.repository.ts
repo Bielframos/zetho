@@ -26,7 +26,7 @@ export interface GameplayNotificationDto {
   participantId?: string;
   actionStatus?: string;
   targetUrl?: string;
-  senderProfile?: { avatarUrl?: string } | null;
+  senderProfile?: { avatarUrl?: string; gamertag?: string } | null;
 }
 
 @Injectable({ providedIn: 'root' })

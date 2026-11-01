@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
 import {
   Component,
   computed,
@@ -50,7 +51,7 @@ export interface NestedReplyBucket {
 @Component({
   selector: 'app-forum-post',
   standalone: true,
-  imports: [
+  imports: [UiFounderBadge,
     CommonModule,
     FormsModule,
     NgTemplateOutlet,

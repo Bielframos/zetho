@@ -18,6 +18,7 @@ export interface InAppNotification {
   read: boolean;
   createdAt: string;
   avatarUrl?: string;
+  senderGamertag?: string;
   entityId?: string;
   sessionId?: string;
   participantId?: string;
@@ -59,6 +60,7 @@ export class InAppNotificationStore {
           actionStatus: n.actionStatus,
           targetUrl: n.targetUrl,
           avatarUrl: n.senderProfile?.avatarUrl,
+          senderGamertag: n.senderProfile?.gamertag,
           status:
             n.type !== 'session_invite'
               ? undefined

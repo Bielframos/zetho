@@ -28,7 +28,7 @@
     }
 
     <div class="min-w-0 flex-1">
-      <p class="truncate text-sm text-gray-12">{{ selected.label }}</p>
+      <p class="wrap-anywhere text-sm text-gray-12">{{ selected.label }} <ui-founder-badge [gamertag]="selected.founderGamertag" /></p>
       @if (selected.description) {
       <p class="truncate text-xs text-gray-10">{{ selected.description }}</p>
       }
@@ -48,7 +48,7 @@
     <span
       class="inline-flex max-w-full items-center gap-1 rounded-full bg-blue-3 py-0.5 pl-2 pr-1 text-xs text-blue-11"
     >
-      <span class="truncate">{{ selected.label }}</span>
+      <span class="wrap-anywhere">{{ selected.label }} <ui-founder-badge [gamertag]="selected.founderGamertag" /></span>
       <button
         type="button"
         class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full hover:bg-blue-4 focus:outline-none focus:ring-2 focus:ring-focus-ring"
@@ -137,8 +137,8 @@
       }
 
       <span class="min-w-0 flex-1">
-        <span class="block truncate text-sm text-gray-12">
-          {{ option.label }}
+        <span class="block wrap-anywhere text-sm text-gray-12">
+          {{ option.label }} <ui-founder-badge [gamertag]="option.founderGamertag" />
         </span>
         @if (option.description) {
         <span class="block truncate text-xs text-gray-10">

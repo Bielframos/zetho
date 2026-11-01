@@ -30,6 +30,7 @@ export class AuthService {
     name: string,
     gamertag: string,
     inviteCode?: string,
+    profileSharingAllowed = false,
   ) {
     try {
       try {
@@ -56,7 +57,11 @@ export class AuthService {
         };
       return {
         user,
-        profile: await this.completeRegistration(gamertag, inviteCode),
+        profile: await this.completeRegistration(
+          gamertag,
+          inviteCode,
+          profileSharingAllowed,
+        ),
       };
     } catch (error) {
       throw error;
@@ -66,6 +71,7 @@ export class AuthService {
   async completeRegistration(
     gamertag: string,
     inviteCode?: string,
+    profileSharingAllowed?: boolean,
   ): Promise<UserProfileRow> {
     const res = await fetch(new URL('profile', environment.zethoApiEndpoint), {
       headers: {
@@ -76,6 +82,9 @@ export class AuthService {
       method: 'POST',
       body: JSON.stringify({
         gamertag,
+        ...(profileSharingAllowed === undefined
+          ? {}
+          : { profileSharingAllowed }),
         ...(inviteCode ? { inviteCode } : {}),
       }),
     });

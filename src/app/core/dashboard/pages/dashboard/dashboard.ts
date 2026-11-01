@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
 import { FollowControl } from '../../../../shared/ui/follow-control';
 import { SeoService } from '../../../system/seo/seo.service';
 import { FeedReviewContent } from '../../../ratings/components/feed-review-content';
@@ -49,7 +50,7 @@ const STATUS_ICONS: Record<FeedGameStatus, string> = {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [FollowControl,
+  imports: [UiFounderBadge, FollowControl,
     OnboardingResume,
     FeedReviewContent,
     FeedReviewVotes,

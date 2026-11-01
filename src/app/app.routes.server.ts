@@ -173,6 +173,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'recuperar-senha', renderMode: RenderMode.Client },
   { path: 'redefinir-senha', renderMode: RenderMode.Client },
   { path: 'verificacao', renderMode: RenderMode.Client },
+  { path: 'fundador', renderMode: RenderMode.Client },
   { path: 'comecar', renderMode: RenderMode.Client },
   { path: 'dashboard', renderMode: RenderMode.Client },
   { path: 'feed', renderMode: RenderMode.Client },
