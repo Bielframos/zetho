@@ -4,6 +4,10 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+### Correções
+
+- Campos de formulário voltam a exibir valores recebidos após o carregamento, incluindo zero, e o campo de senha em Minha conta passa a ter borda visível.
+
 ### Melhorias
 
 - Confirmação de e-mail enviada automaticamente no cadastro, com aviso no onboarding, feed e Minha conta, reenvio com intervalo e atualização ao retornar ao app.
