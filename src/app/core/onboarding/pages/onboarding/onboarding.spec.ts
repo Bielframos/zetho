@@ -1,7 +1,6 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
-import { of } from 'rxjs';
+import { Router } from '@angular/router';
 import { OnboardingPage } from './onboarding';
 import { AuthStore } from '../../../auth/auth.store';
 import { GameService } from '../../../games/games.service';
@@ -50,7 +49,6 @@ describe('OnboardingPage', () => {
     navigate = jasmine.createSpy().and.resolveTo(true);
     TestBed.configureTestingModule({
       providers: [
-        { provide: ActivatedRoute, useValue: { queryParamMap: of(convertToParamMap({})) } },
         { provide: Router, useValue: { navigate } },
         {
           provide: AuthStore,

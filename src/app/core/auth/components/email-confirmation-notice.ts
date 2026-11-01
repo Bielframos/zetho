@@ -3,11 +3,9 @@ import {
   afterNextRender,
   computed,
   inject,
-  isDevMode,
   signal,
 } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { AuthStore } from '../auth.store';
 import { EmailConfirmation } from '../email-confirmation';
 import { environment } from '../../../../environments/environment';
@@ -17,34 +15,22 @@ import { environment } from '../../../../environments/environment';
   standalone: true,
   imports: [RouterLink],
   host: {
+    '[style.display]': "visible() ? 'block' : 'none'",
     '(window:focus)': 'check()',
     '(document:visibilitychange)': 'onVisibilityChange()',
   },
   template: `
     @if (auth.user(); as user) {
-      @if (!user.emailVerification || preview()) {
+      @if (!user.emailVerification) {
         <section
           class="border-b border-gray-6 bg-blue-2 px-4 py-4"
           aria-label="Confirmação do e-mail"
         >
           <header class="flex items-start justify-between gap-3">
             <h2 class="min-w-0 text-sm font-medium">Confirmação do e-mail</h2>
-            @if (user.emailVerification) {
-              <span
-                class="inline-flex shrink-0 items-center gap-1 rounded-full border border-success-line bg-success-bg px-2 py-0.5 text-xs text-success"
-                role="status"
-              >
-                <i class="ph ph-check-circle" aria-hidden="true"></i> Confirmado
-              </span>
-            }
           </header>
-          @if (preview()) {
-            <p class="mt-1 text-xs text-gray-11">Prévia local do aviso</p>
-          }
           <p class="mt-2 break-words text-sm leading-6 text-gray-11">
-            @if (user.emailVerification) {
-              Seu e-mail <strong>{{ user.email }}</strong> já está confirmado.
-            } @else if (delivery()?.status === 'sent') {
+            @if (delivery()?.status === 'sent') {
               Enviamos um link para <strong>{{ user.email }}</strong
               >. Confira também a caixa de spam.
             } @else {
@@ -128,10 +114,6 @@ import { environment } from '../../../../environments/environment';
   `,
 })
 export class EmailConfirmationNotice {
-  private readonly query = toSignal(inject(ActivatedRoute).queryParamMap);
-  readonly preview = computed(
-    () => isDevMode() && this.query()?.get('previewEmailConfirmation') === '1',
-  );
   readonly founderImageUrl = new URL(
     'achievements/founder-badge/image',
     environment.zethoApiEndpoint,
@@ -143,6 +125,12 @@ export class EmailConfirmationNotice {
     this.confirmation.forAccount(this.auth.user()),
   );
   readonly confirmedUser = signal<string | null>(null);
+  readonly visible = computed(() => {
+    const user = this.auth.user();
+    return (
+      !!user && (!user.emailVerification || this.confirmedUser() === user.$id)
+    );
+  });
   private checking = false;
 
   constructor() {

@@ -14,7 +14,7 @@
       </button>
     </header>
 
-    <div class="mt-6"><app-email-confirmation-notice /></div>
+    <app-email-confirmation-notice class="mt-6" />
 
   </section>
 
@@ -54,10 +54,8 @@
   </section>
 
   <section class="border-b border-gray-6 p-4">
-    <a routerLink="/fundador" class="ui-secondary-btn">Minha insígnia de fundador <i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>
+    <a routerLink="/fundador" class="ui-secondary-btn w-full justify-center">Minha insígnia de fundador <i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>
   </section>
-
-  <app-profile-sharing />
 
   <app-profile-invite-card></app-profile-invite-card>
 
@@ -363,6 +361,8 @@
       } }
     </div>
   </section>
+
+  <app-profile-sharing />
 
   <header class="p-4 border-t-8 border-b border-gray-6">
     <h2 class="text-2xl">Zona de risco</h2>
