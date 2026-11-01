@@ -4,6 +4,11 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+### Melhorias
+
+- Confirmação de e-mail enviada automaticamente no cadastro, com aviso no onboarding, feed e Minha conta, reenvio com intervalo e atualização ao retornar ao app.
+- Compartilhamento da insígnia e do número de Fundador em imagem para Story ou publicação quadrada.
+
 ## [1.36.1] - 2026-11-01
 
 ### Correções

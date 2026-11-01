@@ -1,3 +1,4 @@
+import { EmailConfirmation } from './email-confirmation';
 import { AcquisitionAnalytics } from '../acquisition/acquisition-analytics.service';
 import { ContentIntentService } from '../acquisition/content-intent.service';
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
@@ -18,6 +19,7 @@ const JWT_TTL_MS = 15 * 60 * 1000;
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore {
+  private readonly confirmation = inject(EmailConfirmation);
   private acquisition = inject(AcquisitionAnalytics);
   private contentIntent = inject(ContentIntentService);
   private userProfileService = inject(UserProfileService);
@@ -155,6 +157,8 @@ export class AuthStore {
 
     this.userSignal.set(user);
     this.profileSignal.set(profile);
+    // Email delivery must never turn a successful registration into an error.
+    void this.confirmation.send(user);
     this.contentIntent.bind(profile.fingerprint);
     if (profile.registration?.created === true) {
       this.acquisition.emit('sign_up', {
@@ -233,6 +237,22 @@ export class AuthStore {
     } finally {
       this.loadingSignal.set(false);
     }
+  }
+
+  /** Refresh only verification, preserving the session when the network is unavailable. */
+  async refreshEmailVerification(): Promise<boolean> {
+    const snapshot = this.userSignal();
+    if (!snapshot || snapshot.emailVerification) return false;
+    const user = await this.authService.getLoggedInUser();
+    if (
+      this.userSignal() !== snapshot ||
+      user?.$id !== snapshot.$id ||
+      user.email !== snapshot.email
+    ) return false;
+    if (!user.emailVerification) return false;
+    this.userSignal.set(user);
+    safeSessionStorage.setItem('user', JSON.stringify(user));
+    return true;
   }
 
   /**
@@ -416,12 +436,12 @@ export class AuthStore {
    * @param password
    */
   async updateEmail(newEmail: string, password: string) {
-    try {
-      await this.authService.updateEmail(newEmail, password);
-      this.refresh();
-    } catch (e) {
-      throw e;
-    }
+    const snapshot = this.userSignal();
+    const user = await this.authService.updateEmail(newEmail, password);
+    if (this.userSignal() !== snapshot) return;
+    this.userSignal.set(user);
+    safeSessionStorage.setItem('user', JSON.stringify(user));
+    void this.confirmation.send(user);
   }
 
   /**

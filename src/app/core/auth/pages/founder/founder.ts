@@ -1,6 +1,10 @@
+import { UiShareModal } from '../../../share/share-modal';
+import { ShareFounderData } from '../../../share/share.types';
+import { EmailConfirmationNotice } from '../../components/email-confirmation-notice';
 import { isPlatformBrowser } from '@angular/common';
 import {
   Component,
+  computed,
   DestroyRef,
   effect,
   inject,
@@ -9,7 +13,6 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '../../auth.store';
-import { AuthService } from '../../auth.service';
 import { SocialApi } from '../../../../shared/infra/social-api';
 import { FounderDirectory } from '../../../../shared/ui/founder-badge';
 import { UiLoading } from '../../../../shared/ui/loading';
@@ -22,42 +25,46 @@ export type FounderReceipt =
 @Component({
   selector: 'app-founder-page',
   standalone: true,
-  imports: [RouterLink, UiLoading],
+  imports: [RouterLink, UiLoading, UiShareModal, EmailConfirmationNotice],
   templateUrl: './founder.html',
   host: { class: 'flex w-full flex-1' },
 })
 export class FounderPage {
   readonly auth = inject(AuthStore);
   private readonly api = inject(SocialApi);
-  private readonly authService = inject(AuthService);
   private readonly directory = inject(FounderDirectory);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   readonly receipt = signal<FounderReceipt | null>(null);
   readonly loading = signal(true);
   readonly error = signal('');
-  readonly sending = signal(false);
-  readonly sent = signal(false);
   readonly imageFailed = signal(false);
   readonly imageUrl = new URL(
     'achievements/founder-badge/image',
     environment.zethoApiEndpoint,
   ).toString();
+  readonly shareData = computed<ShareFounderData | null>(() => {
+    const receipt = this.receipt();
+    const profile = this.auth.profile();
+    if (!this.auth.user() || receipt?.status !== 'awarded' || !profile?.gamertag)
+      return null;
+    return {
+      kind: 'founder',
+      author: { gamertag: profile.gamertag, avatarUrl: profile.avatarUrl },
+      code: receipt.code,
+      badgeUrl: this.imageUrl,
+    };
+  });
   private generation = 0;
-  private resendGeneration = 0;
 
   constructor() {
     inject(DestroyRef).onDestroy(() => {
       this.generation++;
-      this.resendGeneration++;
     });
     effect(() => {
       const userId = this.auth.user()?.$id;
       this.generation++;
-      this.resendGeneration++;
       this.receipt.set(null);
       this.error.set('');
-      this.sent.set(false);
-      this.sending.set(false);
       this.loading.set(true);
       if (!this.browser) return;
       if (userId) void this.load();
@@ -98,24 +105,6 @@ export class FounderPage {
         );
     } finally {
       if (current()) this.loading.set(false);
-    }
-  }
-
-  async resend() {
-    if (this.sending()) return;
-    const generation = ++this.resendGeneration;
-    this.sending.set(true);
-    this.error.set('');
-    try {
-      await this.authService.createEmailVerification();
-      if (generation === this.resendGeneration) this.sent.set(true);
-    } catch {
-      if (generation === this.resendGeneration)
-        this.error.set(
-          'Não foi possível enviar o e-mail. Aguarde um pouco e tente novamente.',
-        );
-    } finally {
-      if (generation === this.resendGeneration) this.sending.set(false);
     }
   }
 }

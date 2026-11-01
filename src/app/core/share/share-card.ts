@@ -7,6 +7,7 @@ import {
   ShareBackground,
   ShareCardData,
   ShareFormat,
+  ShareFounderData,
   ShareLibraryData,
   ShareListData,
   ShareReviewData,
@@ -49,6 +50,19 @@ type StarKind = 'full' | 'half' | 'empty';
           >{{ eyebrow() }}</span
         >
       </div>
+
+      @if (data().kind === 'founder') {
+        <div class="flex min-h-0 flex-1 flex-col items-center justify-center px-10 text-center">
+          <p class="text-2xl font-medium leading-tight">Eu faço parte do começo.</p>
+          <img [src]="founder().badgeUrl" alt="Insígnia Fundador do Zetho"
+            class="my-5 object-contain" [style.width.px]="format() === 'story' ? 240 : 144"
+            [style.height.px]="format() === 'story' ? 240 : 144" />
+          <p class="text-xs uppercase tracking-[0.22em]">Meu número de fundador</p>
+          <p class="mt-2 font-mono font-semibold tabular-nums leading-none tracking-tight"
+            [style.fontSize.px]="format() === 'story' ? 88 : 64">{{ founder().code }}</p>
+          <p class="mt-4 text-sm">Minha história com os jogos também está aqui.</p>
+        </div>
+      }
 
       <!-- ========================= ZEREI ========================= -->
       @if (data().kind === 'zerei') {
@@ -205,7 +219,7 @@ type StarKind = 'full' | 'half' | 'empty';
         <div class="flex flex-col leading-tight">
           <span class="text-sm text-gray-12">{{
             '@' + data().author.gamertag
-          }} <ui-founder-badge [gamertag]="data().author.gamertag" /></span>
+          }} @if (data().kind !== 'founder') { <ui-founder-badge [gamertag]="data().author.gamertag" /> }</span>
           <span class="text-xs text-gray-11">zetho.app</span>
         </div>
       </div>
@@ -224,6 +238,8 @@ export class UiShareCard {
   dims = computed(() => SHARE_DIMENSIONS[this.format()]);
   bg = computed(() => this.background() ?? SHARE_BACKGROUNDS[0]);
 
+  founder = computed(() => this.data() as ShareFounderData);
+
   zerei = computed(() => this.data() as ShareZereiData);
   review = computed(() => this.data() as ShareReviewData);
   library = computed(() => this.data() as ShareLibraryData);
@@ -231,6 +247,8 @@ export class UiShareCard {
 
   eyebrow = computed(() => {
     switch (this.data().kind) {
+      case 'founder':
+        return 'Edição Fundador';
       case 'zerei':
         return 'Zerei';
       case 'review':

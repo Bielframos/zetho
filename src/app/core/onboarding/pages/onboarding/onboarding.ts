@@ -1,3 +1,4 @@
+import { EmailConfirmationNotice } from '../../../auth/components/email-confirmation-notice';
 import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
 import { ContentIntentService } from '../../../acquisition/content-intent.service';
 import { FollowControl } from '../../../../shared/ui/follow-control';
@@ -31,7 +32,7 @@ import { appwrite } from '../../../../shared/infra/appwrite/appwrite.client';
 @Component({
   selector: 'app-onboarding',
   standalone: true,
-  imports: [UiFounderBadge, FollowControl, AppStartingRating, UiLoading],
+  imports: [EmailConfirmationNotice, UiFounderBadge, FollowControl, AppStartingRating, UiLoading],
   templateUrl: './onboarding.html',
   host: { class: 'block' },
 })

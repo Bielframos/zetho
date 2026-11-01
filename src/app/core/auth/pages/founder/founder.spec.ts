@@ -1,7 +1,11 @@
 import { signal } from '@angular/core';
+import { By } from '@angular/platform-browser';
+import { UiShareModal } from '../../../share/share-modal';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AuthStore } from '../../auth.store';
+import { ShareService } from '../../../share/share.service';
+import { EmailConfirmation } from '../../email-confirmation';
 import { AuthService } from '../../auth.service';
 import { SocialApi } from '../../../../shared/infra/social-api';
 import { FounderDirectory } from '../../../../shared/ui/founder-badge';
@@ -13,7 +17,7 @@ describe('Founder recognition page', () => {
   let resend: jasmine.Spy;
   let directory: { invalidate: jasmine.Spy; load: jasmine.Spy };
   beforeEach(() => {
-    user = signal<any>({ $id: 'zero' });
+    user = signal<any>({ $id: 'zero', email: 'zero@example.com', emailVerification: true });
     request = jasmine
       .createSpy('request')
       .and.resolveTo({ status: 'awarded', number: 0, code: '#0000' });
@@ -29,6 +33,8 @@ describe('Founder recognition page', () => {
           provide: AuthStore,
           useValue: {
             user,
+            activeTheme: signal(null),
+            refreshEmailVerification: jasmine.createSpy().and.resolveTo(false),
             ready: Promise.resolve(),
             profile: signal({ gamertag: 'Zero' }),
           },
@@ -54,7 +60,35 @@ describe('Founder recognition page', () => {
     expect(directory.invalidate).toHaveBeenCalledTimes(1);
     expect(resend).not.toHaveBeenCalled();
   });
+  it('previews the awarded code and exports it through the existing share flow', async () => {
+    const blob = new Blob(['png'], { type: 'image/png' });
+    const exportNode = jasmine.createSpy().and.resolveTo(blob);
+    const deliver = jasmine.createSpy().and.resolveTo('shared');
+    TestBed.overrideProvider(ShareService, { useValue: {
+      exportNode, deliver, initialsAvatar: () => '', proxyImage: (url: string) => url,
+    } });
+    const fixture = TestBed.createComponent(FounderPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const button = Array.from(fixture.nativeElement.querySelectorAll('button') as NodeListOf<HTMLButtonElement>)
+      .find(button => button.textContent?.includes('Compartilhar minha insígnia'))!;
+    button.click();
+    const modal = fixture.debugElement.query(By.directive(UiShareModal)).componentInstance as UiShareModal;
+    expect(fixture.nativeElement.querySelector('dialog').open).toBeTrue();
+    expect(fixture.nativeElement.querySelector('ui-share-card').textContent).toContain('#0000');
+    expect(fixture.nativeElement.querySelector('ui-share-card').textContent).toContain('@Zero');
+    modal.format.set('square');
+    fixture.detectChanges();
+    await modal.generate();
+    expect(exportNode.calls.mostRecent().args[1]).toBe(540);
+    expect(exportNode.calls.mostRecent().args[2]).toBe(540);
+    expect(exportNode.calls.mostRecent().args[0].textContent).toContain('#0000');
+    expect(deliver).toHaveBeenCalledOnceWith(blob, 'zetho-founder-square.png');
+  });
+
   it('shows verification instructions without revealing a reserved code', async () => {
+    user.set({ $id: 'zero', email: 'zero@example.com', emailVerification: false });
     request.and.resolveTo({ status: 'verification_required' });
     const fixture = TestBed.createComponent(FounderPage);
     fixture.detectChanges();
@@ -65,7 +99,8 @@ describe('Founder recognition page', () => {
     );
     expect(fixture.nativeElement.textContent).not.toContain('#0000');
     expect(directory.invalidate).not.toHaveBeenCalled();
-    await fixture.componentInstance.resend();
+    expect(fixture.nativeElement.querySelector('ui-share-modal')).toBeNull();
+    await TestBed.inject(EmailConfirmation).send(user());
     expect(resend).toHaveBeenCalledTimes(1);
   });
   it('does not display another session receipt after the user changes', async () => {
