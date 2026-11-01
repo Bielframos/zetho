@@ -9,7 +9,6 @@ import { AuthStore } from '../../auth.store';
   standalone: true,
   imports: [UiCheckbox, FormsModule],
   template: `<section class="border-b border-gray-6 p-4">
-    <h2 class="mb-4 text-lg">Divulgação do perfil</h2>
     @if (loaded()) {
       <ui-checkbox
         name="profile-sharing"
