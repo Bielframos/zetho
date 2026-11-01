@@ -57,7 +57,11 @@ export class AuthService {
         };
       return {
         user,
-        profile: await this.completeRegistration(gamertag, inviteCode, profileSharingAllowed),
+        profile: await this.completeRegistration(
+          gamertag,
+          inviteCode,
+          profileSharingAllowed,
+        ),
       };
     } catch (error) {
       throw error;
@@ -78,7 +82,9 @@ export class AuthService {
       method: 'POST',
       body: JSON.stringify({
         gamertag,
-        ...(profileSharingAllowed === undefined ? {} : { profileSharingAllowed }),
+        ...(profileSharingAllowed === undefined
+          ? {}
+          : { profileSharingAllowed }),
         ...(inviteCode ? { inviteCode } : {}),
       }),
     });

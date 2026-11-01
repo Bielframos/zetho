@@ -4,35 +4,30 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+## [1.36.0] - 2026-11-01
+
 ### Novidades
 
 - Insígnia de Fundador com número exclusivo de #0000 a #1000, reservada pela ordem de criação da conta e liberada após a confirmação do e-mail.
 - Tela de reconhecimento com a insígnia oficial e o código de fundador, acessível após confirmar o e-mail e em Minha conta.
 - Autorização opcional para divulgar o perfil nas redes do Zetho, com opção de alterar a escolha em Minha conta.
+- Listas oficiais do Zetho com criação e revisão na interface de listas, fontes, estados de rascunho, publicada e arquivada, além de conversão em posts.
 
-### Aparência e experiência
+### Melhorias
 
-- Identificação de Fundador sem fundo, apenas com a imagem e o número; nos blocos de perfil, aparece ao lado da gamertag, na segunda linha abaixo do nome.
-- Insígnia integrada a perfis, feed, comentários, avaliações, conexões, rankings, Jogatinas, notificações e cartões de compartilhamento.
-- Botão de seguir em formato de ícone com área de 32 × 32 px nos cabeçalhos de perfil.
-- Links de confirmação de e-mail funcionam também sem sessão aberta e permitem entrar para descobrir a insígnia.
-
-### Changed
-
-- Listas oficiais são criadas e revisadas na interface de listas existente, com estados de rascunho, publicada e arquivada, autoria Zetho e links preservados.
-
+- Badge de Fundador sem fundo, apenas com a imagem e o número; nos blocos de perfil, aparece ao lado de @nickname, na segunda linha abaixo do nome.
+- Identificação de Fundador em perfis, feed, comentários, avaliações, conexões, rankings, Jogatinas, notificações e cartões de compartilhamento.
+- Botão de seguir em formato de ícone reduzido para 32 × 32 px nos cabeçalhos de perfil.
+- Confirmação de e-mail funciona também sem sessão aberta e permite entrar para descobrir a insígnia.
+- Ações “Quero jogar” em notícias e listas editoriais, com retorno ao conteúdo após login/cadastro e confirmação de salvamento.
+- Navegação pública paginada do fórum e suas respostas, com tratamento de páginas ausentes e falhas temporárias.
+- Acompanhamento de conclusão de cadastro, convite aceito e primeiro jogo salvo, sem dados pessoais nas métricas.
 
 ### Correções
 
 - Trocar de lista durante a revisão editorial descarta prévias antigas e impede publicar um post diferente do revisado.
 - Salvamentos simultâneos em “Quero jogar” mantêm a atribuição de cada jogo e preservam as outras ações pendentes.
-
-### Melhorias
-
-- Ações “Quero jogar” em notícias e listas editoriais, com retorno ao conteúdo após login/cadastro e confirmação de salvamento.
-- Eventos de conclusão de cadastro, convite aceito e primeiro jogo persistido, com atribuição de conteúdo sem dados pessoais.
-- Listas oficiais do Zetho com revisão administrativa, fontes e conversão em rascunhos de posts.
-- Navegação pública paginada do fórum e suas respostas, com tratamento SSR de páginas ausentes e falhas temporárias.
+- Listas oficiais preservam seus links e vínculos sociais durante a publicação e revisão.
 
 ## [1.35.3] - 2026-10-24
 
