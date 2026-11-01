@@ -1,15 +1,4 @@
-<div class="flex items-center justify-between gap-4 border-b border-gray-6 px-4 py-2 bg-canvas text-sm">
-  @if (controller.initialLoading()) {
-  <span class="inline-block h-3.5 w-16 rounded-xs bg-gray-3 motion-safe:animate-pulse" aria-hidden="true"></span>
-  } @else if (controller.entries(); as entries) {
-  @if (entries.length > 0) {
-  <span class="text-xs text-gray-11">{{ entries.length }} {{ entries.length === 1 ? 'jogo' : 'jogos' }}</span>
-  } @else {
-  <span></span>
-  }
-  } @else {
-  <span></span>
-  }
+<div class="flex items-center justify-end gap-4 border-b border-gray-6 px-4 py-2 bg-canvas text-sm">
   <div class="flex items-center gap-2">
     <label [for]="groupSelect.id" class="text-xs text-gray-11 flex items-center gap-1.5 shrink-0">
       <i class="ph ph-rows" aria-hidden="true"></i> Agrupar por
