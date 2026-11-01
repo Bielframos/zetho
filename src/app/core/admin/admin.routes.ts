@@ -18,6 +18,7 @@ export const ADMIN_ROUTES_CHILDREN: Routes = [
     title: 'Zetho | Painel Admin',
     children: [
       { path: '', redirectTo: 'games', pathMatch: 'full' },
+      { path: 'listas-editoriais', redirectTo: '/listas', pathMatch: 'full' },
       { path: 'games', component: AdminGamesPage, title: 'Admin | Games' },
       { path: 'perfis', component: AdminProfilesPage, title: 'Admin | Perfis' },
       {

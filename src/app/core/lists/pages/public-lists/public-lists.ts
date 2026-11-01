@@ -1,4 +1,5 @@
 import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
+import { SystemLists } from '../../system-lists';
 import {
   afterNextRender,
   Component,
@@ -26,7 +27,7 @@ const PAGE_SIZE = 12;
 @Component({
   selector: 'app-public-lists',
   standalone: true,
-  imports: [UiFounderBadge, RouterLink, UiLoading, UiSkeleton],
+  imports: [UiFounderBadge, RouterLink, UiLoading, UiSkeleton, SystemLists],
   templateUrl: './public-lists.html',
 })
 export class PublicListsPage implements OnDestroy {

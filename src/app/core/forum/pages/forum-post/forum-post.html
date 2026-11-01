@@ -318,6 +318,7 @@
 
       <!-- Lista de respostas em threads (até 3 níveis) -->
       <section aria-label="Respostas da comunidade">
+        <a [routerLink]="['/forum', rootPost.slug, 'respostas', rootPost.$id]" class="block px-4 py-3 text-sm text-blue-11 hover:underline">Ver respostas por página</a>
         <div
           class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-6 px-4"
         >

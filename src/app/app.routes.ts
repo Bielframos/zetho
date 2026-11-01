@@ -44,6 +44,18 @@ export const routes: Routes = [
   },
   ...GAME_ROUTES,
   ...NEWS_ROUTES,
+  { path: 'listas-editoriais', redirectTo: 'listas', pathMatch: 'full' },
+  {
+    path: 'listas-editoriais/:slug',
+    redirectTo: 'listas/:slug',
+    pathMatch: 'full',
+  },
+  {
+    path: 'listas/:slug',
+    data: { systemList: true },
+    loadComponent: () =>
+      import('./core/profile/pages/list/list').then((m) => m.ListPage),
+  },
   ...FORUM_ROUTES,
   {
     path: 'reviews',

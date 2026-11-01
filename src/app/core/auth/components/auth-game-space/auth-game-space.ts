@@ -1,3 +1,4 @@
+import { ContentIntentNotice } from '../../../acquisition/content-intent-notice';
 import { DecimalPipe, DOCUMENT } from '@angular/common';
 import {
   afterNextRender,
@@ -25,6 +26,7 @@ export interface CommunityGame {
 @Component({
   selector: 'app-auth-game-space',
   imports: [
+    ContentIntentNotice,
     ShaderBackground,
     UiGameCard,
     DecimalPipe,

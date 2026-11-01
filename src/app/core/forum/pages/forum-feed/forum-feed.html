@@ -440,6 +440,14 @@
       }
     </section>
 
+    <nav aria-label="Páginas de discussões" class="flex justify-between p-4">
+      @if (pageParam() > 1) {
+        <a routerLink="/forum" [queryParams]="{ page: pageParam() - 1, jogo: gameSlugParam() }" class="text-blue-11 hover:underline">Página anterior</a>
+      }
+      @if (hasMore()) {
+        <a routerLink="/forum" [queryParams]="{ page: page() + 1, jogo: gameSlugParam() }" class="text-blue-11 hover:underline">Próxima página</a>
+      }
+    </nav>
     <div
       uiInfiniteScroll
       rootMargin="600px"

@@ -1,3 +1,4 @@
+import { ContentGameCta } from '../../../../acquisition/content-game-cta';
 import {
   CdkDrag,
   type CdkDragDrop,
@@ -18,6 +19,7 @@ import { RouterLink } from '@angular/router';
   templateUrl: './draggable-list.html',
   styleUrl: './draggable-list.css',
   imports: [
+    ContentGameCta,
     CdkDropList,
     CdkDrag,
     UiGameCard,

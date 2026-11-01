@@ -7,6 +7,7 @@ import {
   inject,
   OnDestroy,
   PLATFORM_ID,
+  RESPONSE_INIT,
   SecurityContext,
   signal,
   untracked,
@@ -69,6 +70,7 @@ export class ForumPostPage implements OnDestroy {
   private readonly zCoinsService = inject(ZCoinsService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly route = inject(ActivatedRoute);
+  private readonly response = inject(RESPONSE_INIT, { optional: true });
   private readonly router = inject(Router);
   private readonly document = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
@@ -126,8 +128,8 @@ export class ForumPostPage implements OnDestroy {
     ]),
   );
 
-  readonly rootReplyTextLength = computed(() =>
-    this.extractPlainText(this.rootReplyContent()).length,
+  readonly rootReplyTextLength = computed(
+    () => this.extractPlainText(this.rootReplyContent()).length,
   );
 
   readonly canSubmitRootReply = computed(() => {
@@ -135,8 +137,8 @@ export class ForumPostPage implements OnDestroy {
     return !this.submittingRootReply() && len >= 3 && len <= 4000;
   });
 
-  readonly inlineReplyTextLength = computed(() =>
-    this.extractPlainText(this.inlineReplyContent()).length,
+  readonly inlineReplyTextLength = computed(
+    () => this.extractPlainText(this.inlineReplyContent()).length,
   );
 
   readonly canSubmitInlineReply = computed(() => {
@@ -144,8 +146,8 @@ export class ForumPostPage implements OnDestroy {
     return !this.submittingInlineReply() && len >= 3 && len <= 4000;
   });
 
-  readonly editTextLength = computed(() =>
-    this.extractPlainText(this.editContent()).length,
+  readonly editTextLength = computed(
+    () => this.extractPlainText(this.editContent()).length,
   );
 
   constructor() {
@@ -164,7 +166,8 @@ export class ForumPostPage implements OnDestroy {
       if (
         currentPost &&
         slug === currentPost.slug &&
-        this.loadedPostKey === `${currentPost.$id}:${sort}:${viewer}:${commentId ?? ''}`
+        this.loadedPostKey ===
+          `${currentPost.$id}:${sort}:${viewer}:${commentId ?? ''}`
       ) {
         return;
       }
@@ -176,6 +179,7 @@ export class ForumPostPage implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.requestGeneration++;
     this.seo.clearJsonLd('forum-post');
   }
 
@@ -355,7 +359,9 @@ export class ForumPostPage implements OnDestroy {
       ]);
       this.repliesTotal.update((total) => total + 1);
       this.post.update((current) =>
-        current ? { ...current, replyCount: (current.replyCount ?? 0) + 1 } : null,
+        current
+          ? { ...current, replyCount: (current.replyCount ?? 0) + 1 }
+          : null,
       );
       this.rootReplyContent.set('');
       this.notification.show({
@@ -386,10 +392,7 @@ export class ForumPostPage implements OnDestroy {
     this.inlineReplyContent.set('');
   }
 
-  async submitInlineReply(
-    event: Event,
-    parent: ForumReplyItem,
-  ): Promise<void> {
+  async submitInlineReply(event: Event, parent: ForumReplyItem): Promise<void> {
     event.preventDefault();
     const post = this.post();
     const content = this.inlineReplyContent().trim();
@@ -576,9 +579,7 @@ export class ForumPostPage implements OnDestroy {
     } catch (error) {
       this.notification.show({
         message:
-          error instanceof Error
-            ? error.message
-            : 'Não foi possível excluir.',
+          error instanceof Error ? error.message : 'Não foi possível excluir.',
         type: 'error',
       });
     } finally {
@@ -667,6 +668,9 @@ export class ForumPostPage implements OnDestroy {
       const generation = ++this.requestGeneration;
       this.loading.set(true);
       this.error.set(false);
+      this.post.set(null);
+      this.replies.set([]);
+      this.seo.clearJsonLd('forum-post');
 
       try {
         const detail = await this.forumService.getPostBySlugOrId(slugOrId, {
@@ -677,7 +681,15 @@ export class ForumPostPage implements OnDestroy {
         if (generation !== this.requestGeneration) return;
 
         if (!detail) {
-          void this.router.navigate(['/404'], { replaceUrl: true });
+          this.seo.apply({
+            title: 'Discussão não encontrada — Zetho',
+            description: 'Esta discussão não está disponível.',
+            robots: 'noindex,follow',
+          });
+          if (this.response) {
+            this.response.status = 404;
+            this.response.headers = { 'Cache-Control': 'no-store' };
+          } else void this.router.navigate(['/404'], { replaceUrl: true });
           return;
         }
 
@@ -758,6 +770,15 @@ export class ForumPostPage implements OnDestroy {
       } catch {
         if (generation === this.requestGeneration) {
           this.error.set(true);
+          this.seo.apply({
+            title: 'Discussão indisponível — Zetho',
+            description: 'Tente novamente mais tarde.',
+            robots: 'noindex,follow',
+          });
+          if (this.response) {
+            this.response.status = 503;
+            this.response.headers = { 'Cache-Control': 'no-store' };
+          }
         }
       } finally {
         if (generation === this.requestGeneration) {
@@ -840,10 +861,10 @@ export class ForumPostPage implements OnDestroy {
     const jsonLd: Record<string, unknown> = {
       '@context': 'https://schema.org',
       '@type': 'DiscussionForumPosting',
-       '@id': canonicalUrl,
+      '@id': canonicalUrl,
       headline: post.title,
       text: post.excerpt || seo.description,
-      articleBody: post.excerpt || seo.description,
+      articleBody: this.extractPlainText(post.content),
       url: canonicalUrl,
       mainEntityOfPage: canonicalUrl,
       datePublished: post.$createdAt,

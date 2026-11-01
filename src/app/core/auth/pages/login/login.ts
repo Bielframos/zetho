@@ -1,3 +1,4 @@
+import { ContentIntentService } from '../../../acquisition/content-intent.service';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -17,6 +18,7 @@ export class LoginPage {
   authStore = inject(AuthStore);
   router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  intent = inject(ContentIntentService);
 
   email = '';
   password = '';
@@ -35,7 +37,15 @@ export class LoginPage {
 
     try {
       await this.authStore.login(this.email, this.password);
-      this.router.navigate([this.route.snapshot.queryParamMap.get('founder') === '1' ? '/fundador' : '/feed']);
+      if (this.route.snapshot.queryParamMap.get('founder') === '1') {
+        await this.router.navigate(['/fundador']);
+      } else {
+      const owner = this.authStore.profile?.()?.fingerprint;
+      if (owner) this.intent.bind(owner);
+      const target = this.intent.returnPath(owner);
+      if (target) await this.router.navigateByUrl(target);
+      else await this.router.navigate(['/feed']);
+      }
     } catch (e: any) {
       if (e.code === 401)
         this.result.set({

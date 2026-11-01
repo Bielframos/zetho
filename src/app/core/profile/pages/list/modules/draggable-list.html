@@ -19,7 +19,13 @@
       [routerLink]="['/jogo', item.game.slug]"
       class="flex gap-4 items-center flex-1"
     >
-      <ui-game-card [width]="64" [game]="item.game" transitionScope="list" [transitionItemId]="item.$id" readonlyMode></ui-game-card>
+      <ui-game-card
+        [width]="64"
+        [game]="item.game"
+        transitionScope="list"
+        [transitionItemId]="item.$id"
+        readonlyMode
+      ></ui-game-card>
 
       <span
         class="font-normal font-mono text-gray-11 px-3 rounded-full bg-gray-3 w-fit"
@@ -34,25 +40,45 @@
     <app-list-card-menu [item]="item"></app-list-card-menu>
     }
   </div>
-  } @empty {
-      @if (itsMe()) {
-    <ui-empty-state
-      icon="ph ph-list-plus"
-      title="Essa lista está vazia"
-      description="Busque jogos para adicionar e começar a organizar esta lista."
-      actionLabel="Buscar jogos"
-      actionLink="/buscar"
-      headingLevel="h2"
-    />
-    } @else {
-    <ui-empty-state
-      icon="ph ph-list-dashes"
-      title="Essa lista está vazia"
-      description="Nenhum jogo foi adicionado a esta lista ainda."
-      headingLevel="h2"
-    />
+  @if (controller.list()?.ownerType === 'system') {
+  <div class="px-4 pb-4 text-gray-11">
+    <p>{{item.reason}}</p>
+    @if(item.releaseDate) {
+    <p class="text-sm">Lançamento: {{item.releaseDate}}</p>
     }
-  }
+    <div class="my-2 flex flex-wrap gap-3">
+      @for(source of item.sources ?? []; track source){<a
+        [href]="source"
+        target="_blank"
+        rel="nofollow noopener noreferrer"
+        class="text-sm text-blue-11 hover:underline"
+        >Fonte</a
+      >}
+    </div>
+    @if(controller.list()?.status === 'published') {<app-content-game-cta
+      [game]="{id:item.game.$id,name:item.game.name,slug:item.game.slug}"
+      [contentId]="controller.list()!.$id"
+      [slug]="controller.list()!.slug"
+      source="editorial_list"
+    />}
+  </div>
+  } } @empty { @if (itsMe()) {
+  <ui-empty-state
+    icon="ph ph-list-plus"
+    title="Essa lista está vazia"
+    description="Busque jogos para adicionar e começar a organizar esta lista."
+    actionLabel="Buscar jogos"
+    actionLink="/buscar"
+    headingLevel="h2"
+  />
+  } @else {
+  <ui-empty-state
+    icon="ph ph-list-dashes"
+    title="Essa lista está vazia"
+    description="Nenhum jogo foi adicionado a esta lista ainda."
+    headingLevel="h2"
+  />
+  } }
 </div>
 
 @if (controller.hasMore()) {

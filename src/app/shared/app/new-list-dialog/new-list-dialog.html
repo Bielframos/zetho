@@ -10,6 +10,13 @@
     method="dialog"
     class="flex flex-col gap-4 mt-4 mb-6"
   >
+    @if (authStore.isAdmin()) {
+    <ui-checkbox
+      name="system"
+      label="Lista oficial do Zetho (rascunho)"
+      formControlName="system"
+    />
+    }
     <ui-input
       label="Nome da lista"
       name="listName"

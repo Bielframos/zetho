@@ -23,6 +23,7 @@ class ListCardMenuStub {
 describe('UiDraggableList', () => {
   let fixture: ComponentFixture<UiDraggableList>;
   let mockController: {
+    list: ReturnType<typeof signal<any>>;
     items: ReturnType<typeof signal<any[]>>;
     hasMore: ReturnType<typeof signal<boolean>>;
     load: jasmine.Spy;
@@ -31,6 +32,7 @@ describe('UiDraggableList', () => {
 
   beforeEach(async () => {
     mockController = {
+      list: signal(null),
       items: signal<any[]>([]),
       hasMore: signal(false),
       load: jasmine.createSpy('load'),

@@ -1,3 +1,9 @@
+import { ListPublicationControls } from '../../../lists/list-publication-controls';
+import { createSsrTaskRunner } from '../../../../utils/ssr-task';
+import { SeoService } from '../../../system/seo/seo.service';
+import { RESPONSE_INIT, OnDestroy } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DestroyRef } from '@angular/core';
 import {
   Component,
   computed,
@@ -5,6 +11,7 @@ import {
   inject,
   signal,
   viewChild,
+  untracked,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UiLoading } from '../../../../shared/ui/loading';
@@ -27,6 +34,7 @@ import { ShareCardData } from '../../../share/share.types';
   standalone: true,
   templateUrl: './list.html',
   imports: [
+    ListPublicationControls,
     UiDraggableList,
     UiLoading,
     ReactiveFormsModule,
@@ -34,7 +42,36 @@ import { ShareCardData } from '../../../share/share.types';
     UiShareModal,
   ],
 })
-export class ListPage {
+export class ListPage implements OnDestroy {
+  private destroyRef = inject(DestroyRef);
+  private seo = inject(SeoService);
+  private response = inject(RESPONSE_INIT, { optional: true });
+  private run = createSsrTaskRunner();
+  readonly systemRoute =
+    !!inject(ActivatedRoute).snapshot?.data?.['systemList'];
+  readonly isSystem = computed(
+    () => this.controller.list()?.ownerType === 'system',
+  );
+  readonly canReview = computed(
+    () => this.isSystem() && this.authStore.isAdmin(),
+  );
+  readonly visible = computed(
+    () =>
+      !this.isSystem() ||
+      (this.controller.list()?.status === 'published' &&
+        this.controller.list()?.isPublic === true),
+  );
+  private socialGeneration = 0;
+  async reloadSystem() {
+    const slug = this.route.snapshot.paramMap.get('slug');
+    if (slug) await this.run(() => this.controller.loadSystem(slug));
+  }
+  ngOnDestroy() {
+    this.socialGeneration++;
+    this.controller.cancelLoad?.();
+    this.seo.clearJsonLd('list-page');
+  }
+
   private route = inject(ActivatedRoute);
   private authStore = inject(AuthStore);
   private profileStore = inject(ProfileStore);
@@ -44,13 +81,17 @@ export class ListPage {
 
   shareModal = viewChild<UiShareModal>('shareModal');
 
-  itsMe = computed(
-    () => this.authStore.profile()?.$id === this.profileStore.current()?.$id,
+  itsMe = computed(() =>
+    this.isSystem()
+      ? this.canReview() && this.controller.list()?.status === 'draft'
+      : this.authStore.profile()?.$id === this.profileStore.current()?.$id,
   );
 
   shareData = computed<ShareCardData | null>(() => {
     const list = this.controller.list();
-    const owner = this.profileStore.current();
+    const owner = this.isSystem()
+      ? { gamertag: 'Zetho', avatarUrl: null }
+      : this.profileStore.current();
     if (!list || !owner) return null;
 
     const covers = this.controller
@@ -76,18 +117,67 @@ export class ListPage {
 
   constructor() {
     effect(() => {
-      const listId = this.controller.list()?.$id;
-      if (listId) {
-        void this.loadSocialState(listId);
+      this.authStore.user();
+      if (this.systemRoute) untracked(() => void this.reloadSystem());
+    });
+    effect(() => {
+      if (!this.systemRoute) return;
+      const list = this.controller.list();
+      const error = this.controller.error();
+      this.seo.clearJsonLd('list-page');
+      if (error) {
+        this.seo.apply({
+          title: 'Lista indisponível — Zetho',
+          description: 'Esta lista não está disponível.',
+          robots: 'noindex,follow',
+        });
+        if (this.response)
+          this.response.status = error.code === 404 ? 404 : 503;
+      } else if (list) {
+        this.seo.apply({
+          title: `${list.title} — Zetho`,
+          description: list.description ?? list.title,
+          canonical: `/listas/${list.slug}`,
+          robots:
+            list.status === 'published' ? 'index,follow' : 'noindex,follow',
+        });
+        if (list.status === 'published')
+          this.seo.setJsonLd('list-page', {
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            name: list.title,
+            itemListElement: this.controller
+              .items()
+              .map((item, index) => ({
+                '@type': 'ListItem',
+                position: index + 1,
+                name: item.game.name,
+                url: this.seo.toAbsoluteUrl(`/jogo/${item.game.slug}`),
+              })),
+          });
       }
+    });
+    effect(() => {
+      const listId = this.controller.list()?.$id;
+      this.socialGeneration++;
+      this.socialState.set(null);
+      if (listId && this.visible()) void this.loadSocialState(listId);
     });
   }
 
   ngOnInit() {
+    if (this.systemRoute) {
+      this.route.paramMap
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => void this.reloadSystem());
+      return;
+    }
+    this.controller.usePersonal?.();
     this.route.paramMap
       .pipe(
         map((params) => params.get('slug')),
         distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((slug) => {
         if (slug) {
@@ -103,14 +193,14 @@ export class ListPage {
 
     const previous = this.socialState();
     this.applyOptimisticSocialState('like');
+    const generation = this.socialGeneration;
 
     try {
-      this.socialState.set(
-        await this.dashboardService.toggleListLike(list.$id),
-      );
+      const state = await this.dashboardService.toggleListLike(list.$id);
+      if (generation === this.socialGeneration) this.socialState.set(state);
     } catch (e) {
       console.error(e);
-      this.socialState.set(previous);
+      if (generation === this.socialGeneration) this.socialState.set(previous);
     }
   }
 
@@ -120,22 +210,22 @@ export class ListPage {
 
     const previous = this.socialState();
     this.applyOptimisticSocialState('save');
+    const generation = this.socialGeneration;
 
     try {
-      this.socialState.set(
-        await this.dashboardService.toggleListSave(list.$id),
-      );
+      const state = await this.dashboardService.toggleListSave(list.$id);
+      if (generation === this.socialGeneration) this.socialState.set(state);
     } catch (e) {
       console.error(e);
-      this.socialState.set(previous);
+      if (generation === this.socialGeneration) this.socialState.set(previous);
     }
   }
 
   private async loadSocialState(listId: string) {
+    const generation = this.socialGeneration;
     try {
-      this.socialState.set(
-        await this.dashboardService.getListSocialState(listId),
-      );
+      const state = await this.dashboardService.getListSocialState(listId);
+      if (generation === this.socialGeneration) this.socialState.set(state);
     } catch (e) {
       console.error(e);
     }
