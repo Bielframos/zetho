@@ -4,6 +4,12 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+## [1.36.2] - 2026-11-01
+
+### Correções
+
+- Label e seletor de agrupamento distribuídos nas extremidades da barra no perfil mobile.
+
 ## [1.36.1] - 2026-11-01
 
 ### Correções
