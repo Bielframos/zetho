@@ -80,6 +80,14 @@
       histórias que você construir por aqui.
     </p>
   </section>
+  @if (shareData(); as data) {
+  <div class="mt-7 flex justify-center">
+    <button type="button" class="ui-primary-btn min-h-11" (click)="share.open()">
+      <i class="ph ph-share-network" aria-hidden="true"></i> Compartilhar minha insígnia
+    </button>
+  </div>
+  <ui-share-modal #share [data]="data" />
+  }
   <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
     <a
       [routerLink]="auth.profile()?.gamertag ? ['/player', auth.profile()!.gamertag] : ['/comecar']"
@@ -103,22 +111,11 @@
     parte da edição Fundador. Seu lugar na sequência segue a data de criação da
     conta.
   </p>
-  <button
-    type="button"
-    class="ui-primary-btn mt-7 self-start"
-    [disabled]="sending()"
-    (click)="resend()"
-  >
-    {{ sending() ? 'Enviando…' : 'Enviar e-mail de confirmação' }}
-  </button>
+  <div class="mt-6"><app-email-confirmation-notice /></div>
   <button type="button" class="ui-ghost-btn mt-3 self-start" (click)="load()">
     Já confirmei meu e-mail
   </button>
-  @if (sent()) {
-  <p class="mt-3 text-sm text-success" role="status">
-    E-mail enviado. Confira também a caixa de spam.
-  </p>
-  } } @else if (receipt.status === 'pending') {
+  } @else if (receipt.status === 'pending') {
   <h1 id="founder-title" class="text-3xl font-semibold tracking-tight">
     Seu reconhecimento está a caminho.
   </h1>
