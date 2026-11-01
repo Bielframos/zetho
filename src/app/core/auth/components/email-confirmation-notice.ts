@@ -3,9 +3,11 @@ import {
   afterNextRender,
   computed,
   inject,
+  isDevMode,
   signal,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { AuthStore } from '../auth.store';
 import { EmailConfirmation } from '../email-confirmation';
 
@@ -19,12 +21,15 @@ import { EmailConfirmation } from '../email-confirmation';
   },
   template: `
     @if (auth.user(); as user) {
-      @if (!user.emailVerification) {
+      @if (!user.emailVerification || preview()) {
         <section
           class="border-b border-gray-6 bg-blue-2 px-4 py-4"
           aria-label="Confirmação do e-mail"
         >
           <h2 class="text-sm font-medium">Confirme seu e-mail</h2>
+          @if (preview()) {
+            <p class="mt-1 text-xs text-gray-11">Prévia local do aviso</p>
+          }
           <p class="mt-2 break-words text-sm leading-6 text-gray-11">
             @if (delivery()?.status === 'sent') {
               Enviamos um link para <strong>{{ user.email }}</strong
@@ -40,15 +45,17 @@ import { EmailConfirmation } from '../email-confirmation';
             <button
               type="button"
               class="ui-secondary-btn"
-              [disabled]="delivery()?.coolingDown"
+              [disabled]="user.emailVerification || delivery()?.coolingDown"
               (click)="confirmation.send(user)"
             >
               {{
-                delivery()?.status === 'sending'
-                  ? 'Enviando…'
-                  : delivery()?.coolingDown
-                    ? 'Aguarde 1 minuto para reenviar'
-                    : 'Reenviar e-mail'
+                user.emailVerification
+                  ? 'E-mail já confirmado'
+                  : delivery()?.status === 'sending'
+                    ? 'Enviando…'
+                    : delivery()?.coolingDown
+                      ? 'Aguarde 1 minuto para reenviar'
+                      : 'Reenviar e-mail'
               }}
             </button>
             <a
@@ -84,6 +91,10 @@ import { EmailConfirmation } from '../email-confirmation';
   `,
 })
 export class EmailConfirmationNotice {
+  private readonly query = toSignal(inject(ActivatedRoute).queryParamMap);
+  readonly preview = computed(
+    () => isDevMode() && this.query()?.get('previewEmailConfirmation') === '1',
+  );
   readonly auth = inject(AuthStore);
   readonly confirmation = inject(EmailConfirmation);
   readonly delivery = computed(() =>
