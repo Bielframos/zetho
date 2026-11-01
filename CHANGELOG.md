@@ -14,6 +14,12 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 - Compartilhamento da insígnia e do número de Fundador em imagens para stories e publicações.
 - Melhorias na organização e na navegação de Minha conta.
 
+## [1.36.2] - 2026-11-01
+
+### Correções
+
+- Corrigido o alinhamento dos controles de agrupamento no perfil em celulares.
+
 ## [1.36.1] - 2026-11-01
 
 ### Correções
