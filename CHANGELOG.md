@@ -10,6 +10,8 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
+- Removido o título redundante da seção de autorização de divulgação do perfil em Minha conta.
+
 - Confirmação de e-mail enviada automaticamente no cadastro, com aviso no onboarding, feed e Minha conta, reenvio com intervalo e atualização ao retornar ao app.
 - Aviso de confirmação com a insígnia junto a Fundador e badge de e-mail confirmado, sem botão de reenvio para contas verificadas.
 - Compartilhamento da insígnia e do número de Fundador em Story ou publicação quadrada, com avatar e gamertag centralizados e a insígnia na base do avatar.
