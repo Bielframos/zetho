@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -11,7 +12,7 @@ import { GameplaySessionsService } from '../../gameplay-sessions.service';
 @Component({
   selector: 'app-session-detail-page',
   standalone: true,
-  imports: [CommonModule, RouterLink, UiLoading],
+  imports: [UiFounderBadge, CommonModule, RouterLink, UiLoading],
   templateUrl: './session-detail.html',
 })
 export class SessionDetailPage {

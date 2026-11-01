@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
 import { CommonModule } from '@angular/common';
 import {
   Component,
@@ -26,7 +27,7 @@ import {
 @Component({
   selector: 'app-session-detail-modal',
   standalone: true,
-  imports: [CommonModule, UiModal, UiCombobox],
+  imports: [UiFounderBadge, CommonModule, UiModal, UiCombobox],
   template: `
     <ui-modal
       [(isOpen)]="isOpen"
@@ -80,7 +81,7 @@ import {
                   }
                   <span class="text-xs text-gray-11">
                     Organizada por
-                    <strong class="text-gray-12">@{{ host.gamertag }}</strong>
+                    <strong class="text-gray-12">@{{ host.gamertag }} <ui-founder-badge [gamertag]="host.gamertag" /></strong>
                   </span>
                 </div>
               }
@@ -416,8 +417,8 @@ import {
                 }}
               </span>
             }
-            <span class="truncate text-sm text-gray-12">
-              @{{ participant.profile?.gamertag || 'Perfil indisponível' }}
+            <span class="wrap-anywhere text-sm text-gray-12">
+              @{{ participant.profile?.gamertag || 'Perfil indisponível' }} <ui-founder-badge [gamertag]="participant.profile?.gamertag" />
             </span>
           </div>
         </ng-template>
@@ -477,6 +478,7 @@ export class SessionDetailModalComponent {
       .map((profile) => ({
         id: profile.$id,
         label: `@${profile.gamertag}`,
+        founderGamertag: profile.gamertag,
         description: 'Conexão',
         imageUrl: profile.avatarUrl,
         imageShape: 'avatar' as const,

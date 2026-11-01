@@ -27,6 +27,7 @@ export class AuthService {
     name: string,
     gamertag: string,
     inviteCode?: string,
+    profileSharingAllowed = false,
   ) {
     try {
       await appwrite.account.create({
@@ -53,6 +54,7 @@ export class AuthService {
           method: 'POST',
           body: JSON.stringify({
             gamertag,
+            profileSharingAllowed,
             ...(inviteCode ? { inviteCode } : {}),
           }),
         },

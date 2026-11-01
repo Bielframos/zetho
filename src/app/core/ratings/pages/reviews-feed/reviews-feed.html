@@ -78,9 +78,9 @@
               @if (review.author) {
                 <a
                   [routerLink]="['/player', review.author.gamertag]"
-                  class="truncate text-sm font-medium text-gray-12 hover:underline"
+                  class="wrap-anywhere text-sm font-medium text-gray-12 hover:underline"
                 >
-                  {{ review.author.gamertag }}
+                  {{ review.author.gamertag }} <ui-founder-badge [gamertag]="review.author.gamertag" />
                 </a>
               } @else {
                 <span class="text-sm font-medium text-gray-12">Jogador</span>

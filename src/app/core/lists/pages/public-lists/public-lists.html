@@ -89,8 +89,8 @@
           <h2 class="truncate text-lg text-gray-12 group-hover:underline">
             {{ list.title }}
           </h2>
-          <p class="truncate text-sm text-gray-11">
-            por {{ list.author?.gamertag ?? list.ownerFingerprint }}
+          <p class="wrap-anywhere text-sm text-gray-11">
+            por {{ list.author?.gamertag ?? list.ownerFingerprint }} <ui-founder-badge [gamertag]="list.author?.gamertag" />
           </p>
         </div>
 

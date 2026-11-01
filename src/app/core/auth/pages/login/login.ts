@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { AuthStore } from '../../auth.store';
@@ -16,6 +16,7 @@ import { AuthStore } from '../../auth.store';
 export class LoginPage {
   authStore = inject(AuthStore);
   router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   email = '';
   password = '';
@@ -34,7 +35,7 @@ export class LoginPage {
 
     try {
       await this.authStore.login(this.email, this.password);
-      this.router.navigate(['/feed']);
+      this.router.navigate([this.route.snapshot.queryParamMap.get('founder') === '1' ? '/fundador' : '/feed']);
     } catch (e: any) {
       if (e.code === 401)
         this.result.set({

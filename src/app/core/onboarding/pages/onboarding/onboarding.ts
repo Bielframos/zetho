@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
 import { FollowControl } from '../../../../shared/ui/follow-control';
 import {
   Component,
@@ -29,7 +30,7 @@ import { appwrite } from '../../../../shared/infra/appwrite/appwrite.client';
 @Component({
   selector: 'app-onboarding',
   standalone: true,
-  imports: [FollowControl,AppStartingRating, UiLoading],
+  imports: [UiFounderBadge, FollowControl,AppStartingRating, UiLoading],
   templateUrl: './onboarding.html',
   host: { class: 'block' },
 })

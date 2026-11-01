@@ -24,7 +24,11 @@
         <img [src]="profileStore.avatarUrl()" alt="{{`Avatar do ${profile?.gamertag}`}}"
           class="profile-theme-avatar rounded-full w-12 h-12 shrink-0 object-cover border border-gray-6" />
         <div class="min-w-0">
-          <h3 class="truncate font-semibold">{{profile?.gamertag}}</h3>
+          <h3 class="wrap-anywhere font-semibold">{{ profileStore.itsMe() ? authStore.user()?.name : profile?.gamertag }}</h3>
+          <div class="flex min-w-0 items-center gap-2 text-sm text-gray-11">
+            <span class="min-w-0 truncate">@{{ profile?.gamertag }}</span>
+            <ui-founder-badge class="shrink-0" [gamertag]="profile?.gamertag" />
+          </div>
         </div>
       </div>
       @if (profileStore.itsMe()) {

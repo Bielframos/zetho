@@ -63,6 +63,7 @@ describe('Entry forms', () => {
       password: 'password123',
       confirmPassword: 'password123',
       inviteCode: 'my-invite',
+      profileSharingAllowed: false,
     });
     expect(page.form.pending).toBeTrue();
     await page.submit();
@@ -78,7 +79,11 @@ describe('Entry forms', () => {
       'Ana Silva',
       'ana',
       'my-invite',
+      false,
     );
+    page.form.controls.profileSharingAllowed.setValue(true);
+    await page.submit();
+    expect(auth.register.calls.mostRecent().args[5]).toBeTrue();
     expect(TestBed.inject(Router).navigate).toHaveBeenCalledWith(['/comecar']);
   });
 

@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthStore } from '../../../auth/auth.store';
@@ -9,7 +10,7 @@ import { ZCoinsService } from '../../../zCoins/zcoins.service';
 @Component({
   selector: 'app-weekly-zcoin-leaderboard',
   standalone: true,
-  imports: [UiLoading],
+  imports: [UiFounderBadge, UiLoading],
   templateUrl: './weekly-leaderboard.html',
 })
 export class WeeklyLeaderboardPage {

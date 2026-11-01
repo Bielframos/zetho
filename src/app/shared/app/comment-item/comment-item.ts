@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../../ui/founder-badge';
 import { NgClass } from '@angular/common';
 import { Component, computed, inject, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -10,7 +11,7 @@ import { UiLoading } from '../../ui/loading';
 @Component({
   selector: 'app-comment-item',
   templateUrl: './comment-item.html',
-  imports: [FormsModule, NgClass, RouterLink, UiLoading],
+  imports: [UiFounderBadge, FormsModule, NgClass, RouterLink, UiLoading],
 })
 export class AppCommentItem {
   controller = inject(CommentsController);

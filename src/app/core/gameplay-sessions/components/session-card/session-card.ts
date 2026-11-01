@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, input, output } from '@angular/core';
 import { GameplaySessionsService } from '../../gameplay-sessions.service';
@@ -6,7 +7,7 @@ import { GameplaySession } from '../../gameplay-sessions.types';
 @Component({
   selector: 'app-session-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [UiFounderBadge, CommonModule],
   template: `
     <article class="group p-4 transition-colors hover:bg-gray-2/60">
       <div class="flex gap-4">
@@ -81,7 +82,7 @@ import { GameplaySession } from '../../gameplay-sessions.types';
               }
               <span class="text-xs text-gray-11"
                 >por
-                <strong class="text-gray-12">@{{ host.gamertag }}</strong></span
+                <strong class="text-gray-12">@{{ host.gamertag }} <ui-founder-badge [gamertag]="host.gamertag" /></strong></span
               >
             </div>
           }

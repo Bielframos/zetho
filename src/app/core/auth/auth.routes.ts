@@ -48,9 +48,13 @@ export const AUTH_ROUTES: Routes = [
     title: 'Zetho | Recuperar senha',
   },
   {
+    path: 'fundador',
+    loadComponent: () => import('./pages/founder/founder').then(m => m.FounderPage),
+    title: 'Zetho | Sua insígnia de fundador',
+  },
+  {
     path: 'verificacao',
     component: VerificationPage,
-    canMatch: [userGuard],
     title: 'Zetho | Verificação de e-mail',
   },
 ];

@@ -4,6 +4,21 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+### Melhorias
+
+- Botão de seguir em formato de ícone reduzido para 32 × 32 px nos cabeçalhos de perfil.
+
+- Identificação de Fundador sem fundo, exibindo apenas a imagem e o número. Nos blocos de perfil, aparece ao lado da gamertag, na segunda linha abaixo do nome.
+
+### Adicionado
+
+- Tela de reconhecimento de Fundador após confirmar o e-mail, com a insígnia oficial e número exclusivo.
+- Liberação da insígnia somente para contas ativas com e-mail confirmado; links de confirmação também funcionam sem sessão aberta.
+
+- Identificação especial de Fundador, com insígnia e número único de #0000 a #1000 junto aos nomes nos perfis, feed, comentários, avaliações, rankings, conexões e Jogatinas.
+- Autorização opcional para divulgar o perfil nas redes do Zetho, com opção para alterar a escolha em Minha conta.
+
+
 ## [1.35.3] - 2026-10-24
 
 ### Melhorias

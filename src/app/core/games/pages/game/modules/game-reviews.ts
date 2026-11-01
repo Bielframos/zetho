@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../../../../../shared/ui/founder-badge';
 import {
   Component,
   computed,
@@ -25,7 +26,7 @@ import { ShareCardData } from '../../../../share/share.types';
 @Component({
   selector: 'ui-game-reviews',
   standalone: true,
-  imports: [
+  imports: [UiFounderBadge,
     CommonModule,
     FormsModule,
     RouterLink,
@@ -172,7 +173,7 @@ import { ShareCardData } from '../../../../share/share.types';
                     <div class="flex gap-2 items-center">
                       <span class="text-gray-12 font-medium text-base">{{
                         mine.profile?.gamertag || 'Você'
-                      }}</span>
+                      }} <ui-founder-badge [gamertag]="mine.profile?.gamertag" /></span>
                       <span
                         class="text-[10px] bg-blue-9 text-white px-1.5 py-0.5 rounded-full font-medium"
                         >Sua Crítica</span
@@ -266,7 +267,7 @@ import { ShareCardData } from '../../../../share/share.types';
                     <div class="flex flex-col">
                       <span
                         class="text-gray-12 font-medium text-base hover:underline"
-                        >{{ review.profile?.gamertag || 'Jogador Zetho' }}</span
+                        >{{ review.profile?.gamertag || 'Jogador Zetho' }} <ui-founder-badge [gamertag]="review.profile?.gamertag" /></span
                       >
                       <span class="text-xs text-gray-10">{{
                         review.$createdAt | date: 'dd/MM/yyyy'

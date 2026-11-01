@@ -21,7 +21,7 @@
       />
       <div class="min-w-0">
         <p class="break-words text-sm">
-          <strong>{{ person.gamertag }}</strong> convidou você
+          <strong>{{ person.gamertag }} <ui-founder-badge [gamertag]="person.gamertag" /></strong> convidou você
         </p>
         <p class="mt-1 text-xs leading-5 text-gray-11">
           Ao criar a conta, vocês já se conectam.
@@ -189,6 +189,13 @@
           />
         </div>
       </details>
+
+      <ui-checkbox
+        name="profileSharingAllowed"
+        formControlName="profileSharingAllowed"
+        label="Autorizo a divulgação do meu perfil nas redes do Zetho (opcional)"
+        description="O Zetho poderá compartilhar minha gamertag, foto e link do perfil para valorizar minha participação na comunidade. Posso retirar a autorização em Minha conta. Minha insígnia não depende desta escolha."
+      />
 
       @if (form.errors?.['submitFailed']) {
       <p

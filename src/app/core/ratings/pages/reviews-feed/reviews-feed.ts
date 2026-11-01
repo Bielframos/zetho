@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
 import { FeedReviewContent } from '../../components/feed-review-content';
 import { FeedReviewVotes } from '../../components/feed-review-votes';
 import { Component, computed, inject, signal } from '@angular/core';
@@ -17,7 +18,7 @@ const PAGE_SIZE = 12;
 @Component({
   selector: 'app-reviews-feed',
   standalone: true,
-  imports: [
+  imports: [UiFounderBadge,
     FeedReviewContent,
     FeedReviewVotes,
     InfiniteScrollDirective,
