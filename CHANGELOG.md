@@ -4,11 +4,22 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+### Correções
+
+- Campos de formulário voltam a exibir valores recebidos após o carregamento, incluindo zero, e o campo de senha em Minha conta passa a ter borda visível.
+
+### Melhorias
+
+- Confirmação de e-mail enviada automaticamente no cadastro, com aviso no onboarding, feed e Minha conta, reenvio com intervalo e atualização ao retornar ao app.
+- Aviso de confirmação com a insígnia junto a Fundador e badge de e-mail confirmado, sem botão de reenvio para contas verificadas.
+- Compartilhamento da insígnia e do número de Fundador em Story ou publicação quadrada, com avatar e gamertag centralizados e a insígnia na base do avatar.
+- Minha conta sem espaço vazio no cabeçalho, com acesso à insígnia em largura total e autorização de divulgação acima da zona de risco, separada de Aparência pelo divisor de borda grossa.
+
 ## [1.36.2] - 2026-11-01
 
 ### Correções
 
-- Label e seletor de agrupamento distribuídos nas extremidades da barra no perfil mobile.
+- Corrigido o alinhamento dos controles de agrupamento no perfil em celulares.
 
 ## [1.36.1] - 2026-11-01
 

@@ -7,6 +7,7 @@ import {
   ShareBackground,
   ShareCardData,
   ShareFormat,
+  ShareFounderData,
   ShareLibraryData,
   ShareListData,
   ShareReviewData,
@@ -49,6 +50,33 @@ type StarKind = 'full' | 'half' | 'empty';
           >{{ eyebrow() }}</span
         >
       </div>
+
+      @if (data().kind === 'founder') {
+        <div class="flex min-h-0 flex-1 flex-col items-center justify-center px-10 text-center">
+          <p class="text-2xl font-medium leading-tight">Eu faço parte do começo.</p>
+          <div role="group" aria-label="Perfil do fundador" class="flex w-full flex-col items-center">
+            <div class="relative shrink-0" [style.marginTop.px]="format() === 'story' ? 32 : 16"
+              [style.width.px]="format() === 'story' ? 184 : 120"
+              [style.height.px]="format() === 'story' ? 184 : 120">
+              <img [src]="avatarUrl()" [alt]="'Avatar de @' + data().author.gamertag"
+                class="h-full w-full rounded-full object-cover ring-1 ring-gray-6" />
+              <img [src]="founder().badgeUrl" alt="Insígnia Fundador do Zetho"
+                class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/4 object-contain"
+                [style.width.px]="format() === 'story' ? 80 : 56"
+                [style.height.px]="format() === 'story' ? 80 : 56" />
+            </div>
+            <p class="w-full break-words text-2xl leading-tight"
+              [style.marginTop.px]="format() === 'story' ? 40 : 32">{{ '@' + data().author.gamertag }}</p>
+          </div>
+          <p class="text-xs uppercase tracking-[0.22em]"
+            [style.marginTop.px]="format() === 'story' ? 24 : 12">Meu número de fundador</p>
+          <p class="mt-2 font-mono font-semibold tabular-nums leading-none tracking-tight"
+            [style.fontSize.px]="format() === 'story' ? 88 : 56">{{ founder().code }}</p>
+          @if (format() === 'story') {
+            <p class="mt-4 text-sm">Minha história com os jogos também está aqui.</p>
+          }
+        </div>
+      }
 
       <!-- ========================= ZEREI ========================= -->
       @if (data().kind === 'zerei') {
@@ -196,6 +224,9 @@ type StarKind = 'full' | 'half' | 'empty';
       }
 
       <!-- ========================= WATERMARK ========================= -->
+      @if (data().kind === 'founder') {
+        <p class="px-10 pb-8 pt-4 text-center text-xs text-gray-11">zetho.app</p>
+      } @else {
       <div class="flex items-center gap-3 px-10 pb-10 pt-6">
         <img
           [src]="avatarUrl()"
@@ -209,6 +240,7 @@ type StarKind = 'full' | 'half' | 'empty';
           <span class="text-xs text-gray-11">zetho.app</span>
         </div>
       </div>
+      }
     </div>
   `,
 })
@@ -224,6 +256,8 @@ export class UiShareCard {
   dims = computed(() => SHARE_DIMENSIONS[this.format()]);
   bg = computed(() => this.background() ?? SHARE_BACKGROUNDS[0]);
 
+  founder = computed(() => this.data() as ShareFounderData);
+
   zerei = computed(() => this.data() as ShareZereiData);
   review = computed(() => this.data() as ShareReviewData);
   library = computed(() => this.data() as ShareLibraryData);
@@ -231,6 +265,8 @@ export class UiShareCard {
 
   eyebrow = computed(() => {
     switch (this.data().kind) {
+      case 'founder':
+        return 'Edição Fundador';
       case 'zerei':
         return 'Zerei';
       case 'review':
@@ -250,8 +286,9 @@ export class UiShareCard {
 
   avatarUrl = computed(() => {
     const author = this.data().author;
-    if (author.avatarUrl) return this.share.proxyImage(author.avatarUrl, 96, 96);
-    return this.share.initialsAvatar(author.gamertag, 96);
+    const size = this.data().kind === 'founder' ? 400 : 96;
+    if (author.avatarUrl) return this.share.proxyImage(author.avatarUrl, size, size);
+    return this.share.initialsAvatar(author.gamertag, size);
   });
 
   libraryCovers = computed(() => {

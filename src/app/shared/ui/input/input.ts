@@ -2,6 +2,8 @@ import { NgClass } from '@angular/common';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  inject,
   Component,
   forwardRef,
   Input,
@@ -17,6 +19,7 @@ import {
   standalone: true,
   imports: [FormsModule, NgClass],
   templateUrl: './input.html',
+  host: { class: 'block min-w-0' },
   styles: [
     `
       input.hide-number-controls {
@@ -40,6 +43,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiInput implements ControlValueAccessor {
+  private readonly changeDetector = inject(ChangeDetectorRef);
   // Input
   @Input() label = '';
   @Input() type: 'text' | 'email' | 'password' | 'number' = 'text';
@@ -67,7 +71,8 @@ export class UiInput implements ControlValueAccessor {
 
   // Método chamado pelo Angular para atualizar o valor no template
   writeValue(value: any): void {
-    this.value = value || '';
+    this.value = value == null ? '' : String(value);
+    this.changeDetector.markForCheck();
   }
 
   // Registra o callback de mudança
