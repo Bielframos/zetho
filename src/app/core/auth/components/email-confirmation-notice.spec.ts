@@ -36,6 +36,12 @@ describe('Email confirmation notice', () => {
     fixture.detectChanges();
     await fixture.whenStable();
     expect(fixture.nativeElement.textContent).toContain('player@example.com');
+    expect(fixture.nativeElement.querySelector('img').src).toContain(
+      '/achievements/founder-badge/image',
+    );
+    expect(
+      fixture.nativeElement.querySelector('header [role="status"]'),
+    ).toBeNull();
     expect(fixture.nativeElement.textContent).toContain(
       'Se sua conta fizer parte',
     );
@@ -87,9 +93,10 @@ describe('Email confirmation notice', () => {
     expect(fixture.nativeElement.textContent).toContain(
       'Prévia local do aviso',
     );
-    const button = fixture.nativeElement.querySelector('button');
-    expect(button.disabled).toBeTrue();
-    button.click();
+    expect(fixture.nativeElement.querySelector('button')).toBeNull();
+    const badge = fixture.nativeElement.querySelector('header [role="status"]');
+    expect(badge.textContent).toContain('Confirmado');
+    expect(fixture.nativeElement.textContent).toContain('já está confirmado.');
     expect(send).not.toHaveBeenCalled();
     expect(user().emailVerification).toBeTrue();
   });
