@@ -84,19 +84,6 @@ describe('Profile entry groups', () => {
     expect(router.parseUrl(router.url).queryParams).toEqual({ t: 'completed', group: 'alphabetical' });
   });
 
-  it('displays the entry count in the toolbar when entries exist', () => {
-    const { controller, fixture } = setup();
-    const a = { $id: 'a', game: { name: 'First' } };
-    controller.entries.set([a]);
-    fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).toContain('1 jogo');
-
-    const b = { $id: 'b', game: { name: 'Second' } };
-    controller.entries.set([a, b]);
-    fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).toContain('2 jogos');
-  });
-
   it('maintains toggleGrouping compatibility', () => {
     const { fixture } = setup();
     const component = fixture.componentInstance;

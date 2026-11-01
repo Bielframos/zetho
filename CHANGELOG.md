@@ -4,6 +4,12 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+## [1.36.1] - 2026-11-01
+
+### Correções
+
+- Removida a contagem de jogos da barra de agrupamento no perfil.
+
 ## [1.36.0] - 2026-11-01
 
 ### Novidades
