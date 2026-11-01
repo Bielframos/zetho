@@ -15,6 +15,12 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 - Compartilhamento da insígnia e do número de Fundador em Story ou publicação quadrada, com avatar e gamertag centralizados e a insígnia na base do avatar.
 - Minha conta sem espaço vazio no cabeçalho, com acesso à insígnia em largura total e autorização de divulgação acima da zona de risco, separada de Aparência pelo divisor de borda grossa.
 
+## [1.36.2] - 2026-11-01
+
+### Correções
+
+- Corrigido o alinhamento dos controles de agrupamento no perfil em celulares.
+
 ## [1.36.1] - 2026-11-01
 
 ### Correções
