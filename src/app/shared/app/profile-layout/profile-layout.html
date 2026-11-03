@@ -1,5 +1,5 @@
 <aside
-  class="profile-theme-card h-fit flex-1 border-y border-gray-6 lg:hidden relative overflow-hidden"
+  class="profile-theme-card h-fit flex-1 border-b sm:border-t border-gray-6 lg:hidden relative overflow-hidden"
   [class.has-theme]="!!profileStore.activeTheme()"
   [style.--theme-bg]="profileStore.activeTheme()?.backgroundColor"
   [style.--theme-c1]="profileStore.activeTheme()?.primaryColor"
@@ -18,25 +18,25 @@
   </div>
   }
 
-  <header class="profile-theme-divider flex flex-col w-full gap-3 px-4 py-4 border-b border-gray-6 relative z-20">
-    <div class="flex items-center justify-between gap-3">
-      <div class="flex min-w-0 items-center gap-3">
+  <header class="profile-theme-divider flex flex-col w-full gap-3 px-4 py-4 border-b border-gray-6 relative z-20 text-center sm:text-left">
+    <div class="flex items-center justify-center sm:justify-between gap-3">
+      <div class="flex min-w-0 flex-col sm:flex-row items-center gap-3">
         <img [src]="profileStore.avatarUrl()" alt="{{`Avatar do ${profile?.gamertag}`}}"
-          class="profile-theme-avatar rounded-full w-12 h-12 shrink-0 object-cover border border-gray-6" />
+          class="profile-theme-avatar rounded-full w-20 h-20 sm:w-12 sm:h-12 shrink-0 object-cover border border-gray-6" />
         <div class="min-w-0">
           <h3 class="wrap-anywhere font-semibold">{{ profileStore.itsMe() ? authStore.user()?.name : profile?.gamertag }}</h3>
-          <div class="flex min-w-0 items-center gap-2 text-sm text-gray-11">
+          <div class="flex min-w-0 items-center justify-center sm:justify-start gap-2 text-sm text-gray-11">
             <span class="min-w-0 truncate">@{{ profile?.gamertag }}</span>
             <ui-founder-badge class="shrink-0" [gamertag]="profile?.gamertag" />
           </div>
         </div>
       </div>
       @if (profileStore.itsMe()) {
-        <a routerLink="/minha-conta" class="profile-theme-action ui-action-btn border-none! shrink-0"
+        <a routerLink="/minha-conta" class="profile-theme-action ui-action-btn border-none! shrink-0 absolute right-4 top-4 sm:static"
           aria-label="Minha conta" data-size="icon"><i class="ph ph-gear text-[16px]"></i></a>
       } @else if (authStore.isAuthenticated()) {
         @if (profile; as person) {
-          <ui-follow-control class="shrink-0" variant="icon" [profileId]="person.$id" [gamertag]="person.gamertag" />
+          <ui-follow-control class="shrink-0 absolute right-4 top-4 sm:static" variant="icon" [profileId]="person.$id" [gamertag]="person.gamertag" />
         }
       }
     </div>
@@ -117,7 +117,7 @@
     }
   </header>
 
-  <ul class="profile-theme-divider relative z-10 flex md:flex-col px-2 overflow-x-auto border-b border-gray-6">
+  <ul class="profile-theme-divider relative z-10 flex md:flex-col p-2 md:py-0 overflow-x-auto border-b border-gray-6">
     @for (tab of tabs(); track tab.key) {
     <li
       class="group flex-1"
@@ -125,7 +125,7 @@
     >
       <a
         [routerLink]="tab.key === 'games' ? ['/player', profile?.gamertag] : ['/player', profile?.gamertag, tab.key]"
-        class="profile-theme-tab flex gap-2 w-full whitespace-nowrap max-md:justify-center px-3 py-3 border-b-2 border-transparent transition-colors"
+        class="profile-theme-tab flex gap-2 w-full whitespace-nowrap max-md:justify-center px-3 py-2 rounded-lg md:rounded-none md:py-3 md:border-b-2 border-transparent transition-colors"
       >
         <i class="ph {{ tab.icon }}"></i>
         {{ tab.label }}

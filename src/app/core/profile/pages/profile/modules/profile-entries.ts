@@ -30,16 +30,11 @@ export class UiUserLibGrid {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  readonly groupingExpanded = signal(false);
   readonly groupingOptions: UiSelectOption[] = [
     { value: 'none', label: 'Recentes · sem agrupamento' },
     { value: 'release-year', label: 'Ano de lançamento' },
     { value: 'alphabetical', label: 'Nome (A–Z)' },
   ];
-
-  toggleGrouping() {
-    this.groupingExpanded.update((expanded) => !expanded);
-  }
 
   changeGrouping(group: string) {
     void this.router.navigate([], {

@@ -72,8 +72,9 @@ describe('Profile entry groups', () => {
     expect(fixture.nativeElement.querySelector('[aria-controls="profile-entry-grouping"]')).toBeNull();
     expect(fixture.nativeElement.querySelector('#profile-entry-grouping')).toBeNull();
 
-    const label: HTMLElement = fixture.nativeElement.querySelector('label');
-    expect(label.textContent).toContain('Agrupar por');
+    const button: HTMLElement = fixture.nativeElement.querySelector('ui-select button');
+    expect(button.textContent).toContain('Recentes · sem agrupamento');
+    expect(fixture.nativeElement.querySelector('label').classList).toContain('sr-only');
 
     fixture.nativeElement.querySelector('ui-select button').click();
     fixture.detectChanges();
@@ -82,14 +83,6 @@ describe('Profile entry groups', () => {
     options[2].click();
     await fixture.whenStable();
     expect(router.parseUrl(router.url).queryParams).toEqual({ t: 'completed', group: 'alphabetical' });
-  });
-
-  it('maintains toggleGrouping compatibility', () => {
-    const { fixture } = setup();
-    const component = fixture.componentInstance;
-    expect(component.groupingExpanded()).toBeFalse();
-    component.toggleGrouping();
-    expect(component.groupingExpanded()).toBeTrue();
   });
 
   it('loads the own-profile suggestion after a successful empty page with zero offset', async () => {
