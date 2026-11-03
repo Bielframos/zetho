@@ -43,6 +43,11 @@ export const routes: Routes = [
       ),
   },
   ...GAME_ROUTES,
+  {
+    path: 'fundadores',
+    title: 'Fundadores | Zetho',
+    loadComponent: () => import('./core/founders/founders').then((m) => m.FoundersPage),
+  },
   ...NEWS_ROUTES,
   { path: 'listas-editoriais', redirectTo: 'listas', pathMatch: 'full' },
   {

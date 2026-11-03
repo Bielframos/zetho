@@ -140,6 +140,7 @@ export class App {
             ]
           : []),
         { label: 'Rankings', icon: 'ph-ranking', route: ['/ranking'] },
+        { label: 'Fundadores', icon: 'ph-seal-check', route: ['/fundadores'] },
         ...(this.featureRaffles
           ? [{ label: 'Sorteios', icon: 'ph-gift', route: ['/sorteios'] }]
           : []),
