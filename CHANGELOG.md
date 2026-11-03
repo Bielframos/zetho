@@ -10,6 +10,8 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
+- Reconhecimento de Fundador esclarece que o número é atribuído após confirmar o e-mail, conforme a disponibilidade, sem reserva no cadastro.
+
 - Nova página Fundadores, com cabeçalho centralizado, total de fundadores e grid de quatro colunas com avatares, nicknames, números de fundador e acesso aos perfis.
 - Confirmação de e-mail enviada automaticamente após o cadastro, com opções para reenviar o link e corrigir o endereço.
 - Compartilhamento da insígnia e do número de Fundador em imagens para stories e publicações.
