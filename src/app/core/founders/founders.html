@@ -1,0 +1,47 @@
+<section class="mx-auto w-full max-w-5xl" aria-labelledby="founders-title">
+  <header class="flex flex-col items-center px-4 py-10 text-center">
+    @if (!badgeImageFailed()) {
+      <img [src]="badgeImageUrl" alt="" width="80" height="80" class="mb-4 h-20 w-20 object-contain" (error)="badgeImageFailed.set(true)" />
+    } @else {
+      <i class="ph-fill ph-seal-check mb-4 text-6xl text-blue-11" aria-hidden="true"></i>
+    }
+    <h1 id="founders-title" class="text-4xl font-semibold tracking-tight text-gray-12 sm:text-5xl">Fundadores</h1>
+    <p class="mt-3 text-sm text-gray-11">Quem faz parte do início do Zetho</p>
+    @if (!loading() && !error()) {
+      <p class="mt-2 text-xs tabular-nums text-gray-11" role="status">
+        {{ founders().length }} {{ founders().length === 1 ? 'fundador' : 'fundadores' }}
+      </p>
+    }
+  </header>
+
+  <div [attr.aria-busy]="loading()">
+    @if (loading()) {
+      <div class="flex justify-center px-4 py-12" role="status">
+        <ui-loading fallback="Carregando fundadores..." />
+      </div>
+    } @else if (error()) {
+      <div class="space-y-4 px-4 py-10 text-center" role="alert">
+        <p class="text-gray-11">Não foi possível carregar os fundadores agora.</p>
+        <button type="button" class="ui-secondary-btn focus-visible:ring-2 focus-visible:ring-focus-ring" (click)="load()">Tentar novamente</button>
+      </div>
+    } @else if (founders().length === 0) {
+      <p class="px-4 py-10 text-center text-gray-11">Nenhum fundador disponível para exibir no momento.</p>
+    } @else {
+      <ul class="grid grid-cols-2 gap-x-2 gap-y-4 p-4 sm:grid-cols-4" aria-label="Fundadores do Zetho">
+        @for (founder of founders(); track founder.gamertag) {
+          <li class="min-w-0">
+            <a [routerLink]="['/player', founder.gamertag]" class="group flex h-full min-w-0 flex-col items-center gap-2 rounded-lg px-2 py-3 text-center transition-colors hover:bg-gray-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring" [title]="founder.gamertag">
+              @if (founder.avatarUrl && !failedAvatars().has(founder.gamertag)) {
+                <img [src]="founder.avatarUrl" alt="" width="64" height="64" loading="lazy" decoding="async" class="h-16 w-16 rounded-full border border-gray-6 object-cover" (error)="avatarFailed(founder.gamertag)" />
+              } @else {
+                <span class="flex h-16 w-16 items-center justify-center rounded-full bg-blue-9 text-xl text-white" aria-hidden="true">{{ founder.gamertag.charAt(0).toUpperCase() }}</span>
+              }
+              <span class="w-full wrap-anywhere text-sm font-medium text-gray-12 group-hover:text-blue-11">{{ founder.gamertag }}</span>
+              <span class="text-xs tabular-nums text-gray-11">Fundador #{{ founder.number.toString().padStart(4, '0') }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</section>
