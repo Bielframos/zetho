@@ -45,7 +45,7 @@ export interface UiSelectOption {
         [disabled]="disabled()"
         (click)="toggle()"
         (keydown)="onKeydown($event)"
-        class="flex min-h-12 w-full items-center gap-3 rounded-lg border border-line-strong bg-gray-2 px-3 py-2 text-left text-sm text-gray-12 transition-colors hover:border-gray-8 focus:outline-none focus:ring-2 focus:ring-focus-ring disabled:cursor-not-allowed disabled:opacity-50"
+        [class]="bar() ? 'flex min-h-10 w-full cursor-pointer items-center gap-3 bg-canvas px-4 py-2 text-left text-sm text-gray-11 transition-colors hover:bg-gray-2 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-focus-ring disabled:cursor-not-allowed disabled:opacity-50' : 'flex min-h-12 w-full items-center gap-3 rounded-lg border border-line-strong bg-gray-2 px-3 py-2 text-left text-sm text-gray-12 transition-colors hover:border-gray-8 focus:outline-none focus:ring-2 focus:ring-focus-ring disabled:cursor-not-allowed disabled:opacity-50'"
       >
         @if (selected()?.logo; as logo) {
           <span
@@ -57,7 +57,7 @@ export interface UiSelectOption {
         } @else if (selected()?.icon; as icon) {
           <i class="ph {{ icon }} text-blue-11" aria-hidden="true"></i>
         }
-        <span class="min-w-0 flex-1 truncate">{{
+        <span [class]="bar() ? 'min-w-0 flex-1' : 'min-w-0 flex-1 truncate'">{{
           selected()?.label ?? placeholder()
         }}</span>
         <i
@@ -145,6 +145,7 @@ export class UiSelect {
   private readonly element = inject<ElementRef<HTMLElement>>(ElementRef);
   readonly label = input.required<string>();
   readonly hideLabel = input(false);
+  readonly bar = input(false);
   readonly options = input.required<readonly UiSelectOption[]>();
   readonly placeholder = input('Selecione');
   readonly searchable = input(false);
