@@ -1,4 +1,5 @@
 <div class="w-full max-w-2xl mx-auto">
+  <app-email-confirmation-notice />
   <app-onboarding-resume />
   <section>
     <nav
@@ -76,7 +77,7 @@
               <a
                 [routerLink]="['/player', item.userProfile?.gamertag]"
                 class="font-medium text-gray-12 hover:underline"
-                >{{ item.userProfile?.gamertag || 'Jogador' }}</a
+                >{{ item.userProfile?.gamertag || 'Jogador' }} <ui-founder-badge [gamertag]="item.userProfile?.gamertag" /></a
               >
               @if (item.type === 'status') {
               <span class="text-gray-11"
@@ -111,7 +112,11 @@
               >
             </div>
             } @else if (item.type === 'comment') {
-            <span class="text-xs text-gray-11">Comentário</span>
+            <a
+              [routerLink]="['/forum', item.slug || item.$id]"
+              class="text-xs text-blue-11 hover:underline"
+              >Fórum</a
+            >
             } @else if (item.type === 'list') {
             <span class="text-xs text-gray-11">Lista</span>
             } @else if (item.type === 'status') {
@@ -171,7 +176,7 @@
             <a
               [routerLink]="['/player', item.parentComment.userProfile?.gamertag]"
               class="font-medium text-gray-11 hover:text-gray-12 hover:underline"
-              >{{ item.parentComment.userProfile?.gamertag }}</a
+              >{{ item.parentComment.userProfile?.gamertag }} <ui-founder-badge [gamertag]="item.parentComment.userProfile?.gamertag" /></a
             >
             } @else {
             <span class="font-medium text-gray-11">Jogador</span>
@@ -184,6 +189,14 @@
         </div>
         } @if (item.type === 'rating' && item.title) {
         <h3 class="text-lg font-medium text-gray-12">{{ item.title }}</h3>
+        } @else if (item.type === 'comment' && item.title) {
+        <h3 class="text-lg font-medium text-gray-12">
+          <a
+            [routerLink]="['/forum', item.slug || item.$id]"
+            class="hover:text-blue-11 hover:underline"
+            >{{ item.title }}</a
+          >
+        </h3>
         } @if (item.content) { @if (item.type === 'rating') {
         <ui-feed-review-content [reviewId]="item.$id" [content]="item.content" />
         } @else if (item.type === 'comment') {
@@ -348,8 +361,8 @@
             class="h-10 w-10 rounded-full border border-gray-6 object-cover"
           />
           <a [routerLink]="['/player', person.gamertag]" class="min-w-0 flex-1">
-            <p class="truncate font-medium text-gray-12">
-              {{ person.gamertag }}
+            <p class="wrap-anywhere font-medium text-gray-12">
+              {{ person.gamertag }} <ui-founder-badge [gamertag]="person.gamertag" />
             </p>
             <p class="text-xs text-gray-11">
               {{ person.sharedCount }} jogo(s) em comum

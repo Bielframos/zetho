@@ -1,15 +1,17 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
   Output,
+  PLATFORM_ID,
   SimpleChanges,
   ViewEncapsulation,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
@@ -140,13 +142,17 @@ import { TiptapEditorDirective } from 'ngx-tiptap';
   `,
 })
 export class RichTextEditorComponent implements OnInit, OnChanges, OnDestroy {
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+
   @Input() content: string = '';
   @Input() placeholder: string = 'Escreva sua crítica aqui...';
   @Output() contentChange = new EventEmitter<string>();
 
-  editor!: Editor;
+  editor?: Editor;
 
   ngOnInit(): void {
+    if (!this.isBrowser) return;
+
     this.editor = new Editor({
       extensions: [StarterKit],
       content: this.content,
@@ -166,39 +172,39 @@ export class RichTextEditorComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   toggleBold() {
-    this.editor.chain().focus().toggleBold().run();
+    this.editor?.chain().focus().toggleBold().run();
   }
 
   toggleItalic() {
-    this.editor.chain().focus().toggleItalic().run();
+    this.editor?.chain().focus().toggleItalic().run();
   }
 
   toggleStrike() {
-    this.editor.chain().focus().toggleStrike().run();
+    this.editor?.chain().focus().toggleStrike().run();
   }
 
   toggleBulletList() {
-    this.editor.chain().focus().toggleBulletList().run();
+    this.editor?.chain().focus().toggleBulletList().run();
   }
 
   toggleOrderedList() {
-    this.editor.chain().focus().toggleOrderedList().run();
+    this.editor?.chain().focus().toggleOrderedList().run();
   }
 
   toggleBlockquote() {
-    this.editor.chain().focus().toggleBlockquote().run();
+    this.editor?.chain().focus().toggleBlockquote().run();
   }
 
   toggleHeading(level: 1 | 2 | 3) {
-    this.editor.chain().focus().toggleHeading({ level }).run();
+    this.editor?.chain().focus().toggleHeading({ level }).run();
   }
 
   undo() {
-    this.editor.chain().focus().undo().run();
+    this.editor?.chain().focus().undo().run();
   }
 
   redo() {
-    this.editor.chain().focus().redo().run();
+    this.editor?.chain().focus().redo().run();
   }
 
   ngOnDestroy(): void {

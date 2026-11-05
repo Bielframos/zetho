@@ -1,41 +1,21 @@
 <main class="mx-auto">
   <section class="border-b border-gray-6 p-4">
     <header class="flex gap-4 justify-between items-center">
-      <h1 class="text-2xl">{{authStore.user()?.name}}</h1>
+      <div class="min-w-0">
+        <h1 class="wrap-anywhere text-2xl">{{ authStore.user()?.name }}</h1>
+        <div class="flex min-w-0 items-center gap-2 text-sm text-gray-11">
+          <span class="min-w-0 truncate">@{{ authStore.profile()?.gamertag }}</span>
+          <ui-founder-badge class="shrink-0" [gamertag]="authStore.profile()?.gamertag" />
+        </div>
+      </div>
 
       <button (click)="authStore.logout()" class="ui-secondary-btn">
         <i class="ph ph-sign-out"></i> Sair
       </button>
     </header>
 
-    @if (!authStore.user()?.emailVerification) {
-    <div
-      class="mt-6 p-4 flex flex-col border border-warning-line bg-warning-bg"
-    >
-      <h4 class="font-medium text-lg mb-2 w-full">E-mail não verificado</h4>
-      <span class="text-gray-11"
-        >Para manter sua conta ativa, verifique seu e-mail.</span
-      >
-      <div class="flex items-end justify-between gap-4">
-        @if (mailVerification().sended) {
-        <small class="text-red text-success"
-          >Confira sua caixa de e-mail.</small
-        >
-        } @else if (mailVerification().error) {
-        <small class="text-red text-danger"
-          >Erro ao enviar e-mail de verificação.</small
-        >
-        }
+    <app-email-confirmation-notice class="mt-6" />
 
-        <button
-          class="ui-primary-btn whitespace-nowrap max-md:w-full mt-4 ml-auto"
-          (click)="requestMailVerification()"
-        >
-          Verificar e-mail
-        </button>
-      </div>
-    </div>
-    }
   </section>
 
   <section class="flex items-center flex-col p-6 border-b border-gray-6">
@@ -71,6 +51,10 @@
       (change)="onSelectProfilePic($event)"
       accept="image/*"
     />
+  </section>
+
+  <section class="border-b border-gray-6 p-4">
+    <a routerLink="/fundador" class="ui-secondary-btn w-full justify-center">Minha insígnia de fundador <i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>
   </section>
 
   <app-profile-invite-card></app-profile-invite-card>
@@ -270,7 +254,7 @@
       </button>
     </form>
 
-    <div class="flex flex-col gap-2.5 w-full pt-8">
+    <div #emailSection id="account-email" class="flex flex-col gap-2.5 w-full pt-8 scroll-mt-20">
       <div>
         <ui-input
           type="email"
@@ -278,15 +262,10 @@
           placeholder="bielframos@zetho.com"
           name="email"
           [formControl]="email"
-          [disabled]="!authStore.user()?.emailVerification"
           variant="secondary"
           required
         />
-        @if (!authStore.user()?.emailVerification) {
-        <small class="text-red px-4 text-gray-11">
-          Para trocar o seu e-mail, é necessário verificá-lo antes.
-        </small>
-        }
+
       </div>
 
       <button
@@ -383,6 +362,8 @@
     </div>
   </section>
 
+  <app-profile-sharing class="block border-t-8 border-gray-6" />
+
   <header class="p-4 border-t-8 border-b border-gray-6">
     <h2 class="text-2xl">Zona de risco</h2>
   </header>
@@ -417,7 +398,8 @@
     <ui-input
       type="password"
       label="Senha"
-      name="'password"
+      variant="secondary"
+      name="password"
       [formControl]="password"
       placeholder="Informe sua senha"
       required

@@ -3,6 +3,6 @@ import { publicEnvironment } from './environment.generated';
 export const environment = {
   ...publicEnvironment,
   production: true,
-  appVersion: '1.34.8',
+  appVersion: '1.36.3',
   features: { raffles: false },
 };

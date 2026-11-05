@@ -72,9 +72,9 @@
             >
             <a
               [href]="profileUrl(leader.gamertag)"
-              class="text-lg font-medium truncate hover:text-link"
+              class="text-lg font-medium wrap-anywhere hover:text-link"
             >
-              {{ leader.gamertag ?? 'Jogador anônimo' }}
+              {{ leader.gamertag ?? 'Jogador anônimo' }} <ui-founder-badge [gamertag]="leader.gamertag" />
             </a>
             @if (isCurrentUser(leader.userId)) {
             <span

@@ -100,9 +100,9 @@
 
                   <a
                     [href]="profileUrl(leader.gamertag)"
-                    class="text-base md:text-lg font-medium truncate hover:text-link transition-colors"
+                    class="text-base md:text-lg font-medium wrap-anywhere hover:text-link transition-colors"
                   >
-                    {{ leader.gamertag ?? 'Jogador anônimo' }}
+                    {{ leader.gamertag ?? 'Jogador anônimo' }} <ui-founder-badge [gamertag]="leader.gamertag" />
                   </a>
 
                   @if (isCurrentUser(leader.userId)) {
@@ -242,9 +242,9 @@
 
                     <a
                       [href]="profileUrl(leader.gamertag)"
-                      class="text-base md:text-lg font-medium truncate hover:text-link transition-colors"
+                      class="text-base md:text-lg font-medium wrap-anywhere hover:text-link transition-colors"
                     >
-                      {{ leader.gamertag }}
+                      {{ leader.gamertag }} <ui-founder-badge [gamertag]="leader.gamertag" />
                     </a>
 
                     @if (leader.isCurrentUser) {

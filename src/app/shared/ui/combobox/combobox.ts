@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../founder-badge';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -13,6 +14,7 @@ export interface UiComboboxOption {
   label: string;
   description?: string;
   imageUrl?: string;
+  founderGamertag?: string;
   imageShape?: 'avatar' | 'cover';
   icon?: string;
   disabled?: boolean;
@@ -25,7 +27,7 @@ export type UiComboboxSearch = (
 @Component({
   selector: 'ui-combobox',
   standalone: true,
-  imports: [],
+  imports: [UiFounderBadge],
   templateUrl: './combobox.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {

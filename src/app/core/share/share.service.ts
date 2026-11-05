@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { FounderDirectory } from '../../shared/ui/founder-badge';
+import { inject, Injectable } from '@angular/core';
 import { toBlob } from 'html-to-image';
 import { appwrite } from '../../shared/infra/appwrite/appwrite.client';
 
@@ -10,6 +11,7 @@ import { appwrite } from '../../shared/infra/appwrite/appwrite.client';
  */
 @Injectable({ providedIn: 'root' })
 export class ShareService {
+  private readonly founders = inject(FounderDirectory);
   /** Proxia uma imagem externa pelo endpoint do Appwrite (CORS-limpo). */
   proxyImage(url: string | null | undefined, width = 600, height = 800) {
     if (!url) return null;
@@ -34,6 +36,8 @@ export class ShareService {
 
   /** Renderiza o nó em um PNG de alta resolução (pixelRatio 2). */
   async exportNode(node: HTMLElement, width: number, height: number) {
+    await this.founders.load();
+    await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
     const fonts = (
       document as unknown as { fonts?: { ready?: Promise<unknown> } }
     ).fonts;

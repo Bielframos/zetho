@@ -1,3 +1,6 @@
+import { EmailConfirmation } from './email-confirmation';
+import { AcquisitionAnalytics } from '../acquisition/acquisition-analytics.service';
+import { ContentIntentService } from '../acquisition/content-intent.service';
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { AppwriteException, Models } from 'appwrite';
 import { AuthService } from './auth.service';
@@ -16,6 +19,9 @@ const JWT_TTL_MS = 15 * 60 * 1000;
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore {
+  private readonly confirmation = inject(EmailConfirmation);
+  private acquisition = inject(AcquisitionAnalytics);
+  private contentIntent = inject(ContentIntentService);
   private userProfileService = inject(UserProfileService);
 
   private userSignal = signal<Models.User<Models.Preferences> | null>(null);
@@ -138,6 +144,7 @@ export class AuthStore {
     name: string,
     gamertag: string,
     inviteCode?: string,
+    profileSharingAllowed = false,
   ) {
     const { user, profile } = await this.authService.register(
       email,
@@ -145,10 +152,25 @@ export class AuthStore {
       name,
       gamertag,
       inviteCode,
+      profileSharingAllowed,
     );
 
     this.userSignal.set(user);
     this.profileSignal.set(profile);
+    // Email delivery must never turn a successful registration into an error.
+    void this.confirmation.send(user);
+    this.contentIntent.bind(profile.fingerprint);
+    if (profile.registration?.created === true) {
+      this.acquisition.emit('sign_up', {
+        method: 'password',
+        invite_status:
+          profile.registration?.inviteAccepted === true
+            ? 'accepted'
+            : profile.registration
+              ? 'none'
+              : 'unknown',
+      });
+    }
   }
 
   /**
@@ -187,9 +209,23 @@ export class AuthStore {
 
     try {
       const user = await this.authService.getLoggedInUser();
-      const profile = await this.userProfileService.getProfileByUserId(
-        user!.$id,
+      if (!user) throw new Error('Sessão não encontrada');
+      const existingProfile = await this.userProfileService.getProfileByUserId(
+        user.$id,
       );
+      if (!existingProfile) throw new Error('Conclua o cadastro');
+      const profile = await this.authService.completeRegistration(
+        existingProfile.gamertag,
+      );
+      if (profile.registration?.created === true) {
+        this.contentIntent.bind(profile.fingerprint);
+        this.acquisition.emit('sign_up', {
+          method: 'password',
+          invite_status: profile.registration.inviteAccepted
+            ? 'accepted'
+            : 'none',
+        });
+      }
 
       this.userSignal.set(user);
       this.profileSignal.set(profile);
@@ -203,15 +239,45 @@ export class AuthStore {
     }
   }
 
+  /** Refresh only verification, preserving the session when the network is unavailable. */
+  async refreshEmailVerification(): Promise<boolean> {
+    const snapshot = this.userSignal();
+    if (!snapshot || snapshot.emailVerification) return false;
+    const user = await this.authService.getLoggedInUser();
+    if (
+      this.userSignal() !== snapshot ||
+      user?.$id !== snapshot.$id ||
+      user.email !== snapshot.email
+    ) return false;
+    if (!user.emailVerification) return false;
+    this.userSignal.set(user);
+    safeSessionStorage.setItem('user', JSON.stringify(user));
+    return true;
+  }
+
   /**
    * Método para atualizar o estado de autenticação
    */
   async refresh() {
     try {
       const user = await this.authService.getLoggedInUser();
-      const profile = await this.userProfileService.getProfileByUserId(
-        user!.$id,
+      if (!user) throw new Error('Sessão não encontrada');
+      const existingProfile = await this.userProfileService.getProfileByUserId(
+        user.$id,
       );
+      if (!existingProfile) throw new Error('Conclua o cadastro');
+      const profile = await this.authService.completeRegistration(
+        existingProfile.gamertag,
+      );
+      if (profile.registration?.created === true) {
+        this.contentIntent.bind(profile.fingerprint);
+        this.acquisition.emit('sign_up', {
+          method: 'password',
+          invite_status: profile.registration.inviteAccepted
+            ? 'accepted'
+            : 'none',
+        });
+      }
 
       this.userSignal.set(user);
       this.profileSignal.set(profile);
@@ -232,6 +298,8 @@ export class AuthStore {
       const session = await this.authService.login(email, password);
       if (session) {
         await this.refresh();
+        if (!this.profile() || !this.user())
+          throw new Error('Conclua o cadastro para continuar.');
       }
     } catch (e) {
       this.clear();
@@ -243,6 +311,7 @@ export class AuthStore {
    * Método de logout para encerrar a sessão do usuário
    */
   async logout() {
+    this.contentIntent.clear();
     try {
       await this.authService.logout();
     } catch {}
@@ -367,12 +436,12 @@ export class AuthStore {
    * @param password
    */
   async updateEmail(newEmail: string, password: string) {
-    try {
-      await this.authService.updateEmail(newEmail, password);
-      this.refresh();
-    } catch (e) {
-      throw e;
-    }
+    const snapshot = this.userSignal();
+    const user = await this.authService.updateEmail(newEmail, password);
+    if (this.userSignal() !== snapshot) return;
+    this.userSignal.set(user);
+    safeSessionStorage.setItem('user', JSON.stringify(user));
+    void this.confirmation.send(user);
   }
 
   /**
@@ -450,6 +519,7 @@ export class AuthStore {
    * Método para limpar o estado de autenticação
    */
   clear() {
+    if (this.contentIntent.read()?.owner) this.contentIntent.clear();
     this.userSignal.set(null);
     this.profileSignal.set(null);
     this.cachedJwt.set(null);

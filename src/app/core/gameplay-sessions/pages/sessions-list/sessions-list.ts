@@ -7,7 +7,7 @@ import { SessionCardComponent } from '../../components/session-card/session-card
 import { CreateSessionModalComponent } from '../../components/create-session-modal/create-session-modal';
 import { SessionDetailModalComponent } from '../../components/session-detail-modal/session-detail-modal';
 import { GameplaySession, SessionFilter } from '../../gameplay-sessions.types';
-import { UiLoading } from '../../../../shared/ui/loading';
+import { UiEmptyState } from '../../../../shared/ui/empty-state';
 
 @Component({
   selector: 'app-sessions-list-page',
@@ -18,7 +18,7 @@ import { UiLoading } from '../../../../shared/ui/loading';
     SessionCardComponent,
     CreateSessionModalComponent,
     SessionDetailModalComponent,
-    UiLoading,
+    UiEmptyState,
   ],
   templateUrl: './sessions-list.html',
 })

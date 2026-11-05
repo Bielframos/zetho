@@ -145,7 +145,10 @@ export class AppListMenu {
 
   async handleDeleteList() {
     try {
+      const system = this.controller.list()?.ownerType === 'system';
       await this.controller.deleteList();
+      if (this.controller.error()) return;
+      if (system) { await this.router.navigate(['/listas']); return; }
       this.router.navigate([
         'player',
         this.profileStore.current()?.gamertag,

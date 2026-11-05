@@ -12,7 +12,7 @@
       alt="{{`Avatar do ${comment().userProfile.gamertag}`}}"
       class="h-8 w-8 rounded-full object-cover"
     />
-    <span class="text-lg">{{ comment().userProfile.gamertag }}</span>
+    <span class="text-lg">{{ comment().userProfile.gamertag }} <ui-founder-badge [gamertag]="comment().userProfile.gamertag" /></span>
   </a>
 
   <!-- Conteúdo -->

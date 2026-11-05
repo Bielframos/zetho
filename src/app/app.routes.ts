@@ -15,6 +15,7 @@ import { ZCOINS_ROUTES } from './core/zCoins/zcoins.routes';
 import { RANKING_ROUTES } from './core/ranking/ranking.routes';
 import { GAMEPLAY_SESSIONS_ROUTES } from './core/gameplay-sessions/gameplay-sessions.routes';
 import { NEWS_ROUTES } from './core/news/news.routes';
+import { FORUM_ROUTES } from './core/forum/forum.routes';
 import { environment } from '../environments/environment';
 import { userGuardWithSsr } from './core/auth/auth.guards';
 
@@ -42,7 +43,25 @@ export const routes: Routes = [
       ),
   },
   ...GAME_ROUTES,
+  {
+    path: 'fundadores',
+    title: 'Fundadores | Zetho',
+    loadComponent: () => import('./core/founders/founders').then((m) => m.FoundersPage),
+  },
   ...NEWS_ROUTES,
+  { path: 'listas-editoriais', redirectTo: 'listas', pathMatch: 'full' },
+  {
+    path: 'listas-editoriais/:slug',
+    redirectTo: 'listas/:slug',
+    pathMatch: 'full',
+  },
+  {
+    path: 'listas/:slug',
+    data: { systemList: true },
+    loadComponent: () =>
+      import('./core/profile/pages/list/list').then((m) => m.ListPage),
+  },
+  ...FORUM_ROUTES,
   {
     path: 'reviews',
     loadComponent: () =>

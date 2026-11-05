@@ -123,8 +123,10 @@ export class ListsController {
     try {
       this.awaitingCreation.set(true);
       const newList = await this.listService.createList(input);
+      if (newList.ownerType === 'system') return newList;
       this.lists.update((state) => [this.parseList(newList), ...state]);
       void this.zCoinsService.applyInput('create_list').catch(() => undefined);
+      return newList;
     } catch (e) {
       const error = e as AppwriteException;
       console.error(e);
@@ -134,6 +136,7 @@ export class ListsController {
         code: error.code,
         type: error.type,
       });
+      return undefined;
     } finally {
       this.awaitingCreation.set(false);
     }

@@ -5,6 +5,10 @@ import { ZStatsRepository } from './zStats.repository';
 export class ZStatsService {
   private readonly zStatsRepository = inject(ZStatsRepository);
 
+  getCommunityGames() {
+    return this.zStatsRepository.listCommunityGames(6);
+  }
+
   getTrendingGames(params: { total: number } = { total: 6 }) {
     return this.zStatsRepository.listTrendingGames(params);
   }

@@ -1,3 +1,4 @@
+import { UiFounderBadge } from './founder-badge';
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProfileWithConnection, UserProfileRow } from '../../types';
@@ -5,7 +6,7 @@ import { appwrite } from '../infra/appwrite/appwrite.client';
 
 @Component({
   selector: 'ui-profile-card',
-  imports: [RouterLink],
+  imports: [UiFounderBadge, RouterLink],
   template: `
     <a
       [routerLink]="['/player', profile().gamertag]"
@@ -17,14 +18,13 @@ import { appwrite } from '../infra/appwrite/appwrite.client';
       />
 
       <div class="min-w-0">
-        <p class="text-gray-12 font-medium truncate">
+        <p class="text-gray-12 font-medium wrap-anywhere">
           {{ profile().gamertag }}
         </p>
-        <p
-          class="text-xs text-gray-11 group-hover:text-gray-12 transition-colors"
-        >
-          Ver perfil
-        </p>
+        <div class="flex min-w-0 items-center gap-2 text-xs text-gray-11 group-hover:text-gray-12 transition-colors">
+          <span class="min-w-0 truncate">@{{ profile().gamertag }}</span>
+          <ui-founder-badge class="shrink-0" [gamertag]="profile().gamertag" />
+        </div>
       </div>
 
       <i

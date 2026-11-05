@@ -53,6 +53,7 @@ describe('OnboardingPage', () => {
         {
           provide: AuthStore,
           useValue: {
+            user: signal(null),
             profile: signal({
               $id: 'me-profile',
               fingerprint: 'me',

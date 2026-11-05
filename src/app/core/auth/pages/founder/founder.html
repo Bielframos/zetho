@@ -1,0 +1,157 @@
+<main
+  class="mx-auto flex w-full max-w-2xl flex-col px-5 py-10 md:px-8 md:py-16"
+  aria-labelledby="founder-title"
+  [attr.aria-busy]="loading()"
+>
+  @if (loading()) {
+  <div
+    class="flex min-h-80 flex-col items-center justify-center gap-4"
+    role="status"
+  >
+    <ui-loading />
+    <p class="text-sm text-gray-11">Preparando seu reconhecimento…</p>
+  </div>
+  } @else if (!auth.user()) {
+  <p class="mb-4 text-xs font-medium uppercase tracking-widest text-blue-11">
+    Edição Fundador
+  </p>
+  <h1
+    id="founder-title"
+    class="text-3xl font-semibold tracking-tight md:text-4xl"
+  >
+    Um lugar na história do Zetho.
+  </h1>
+  <p class="mt-4 leading-7 text-gray-11">
+    Entre com sua conta para descobrir sua insígnia e seu número de fundador. A
+    liberação acontece depois da confirmação do e-mail.
+  </p>
+  <a
+    routerLink="/entrar"
+    [queryParams]="{ founder: '1' }"
+    class="ui-primary-btn mt-8 self-start"
+    >Entrar na minha conta <i class="ph ph-arrow-right" aria-hidden="true"></i
+  ></a>
+  } @else if (receipt(); as receipt) { @if (receipt.status === 'awarded') {
+  <header class="text-center">
+    <p class="inline-flex items-center gap-2 text-sm text-success">
+      <i class="ph ph-check-circle" aria-hidden="true"></i> E-mail confirmado
+    </p>
+    <p class="mt-7 text-xs font-medium uppercase tracking-widest text-blue-11">
+      Edição Fundador · Zetho
+    </p>
+    <h1
+      id="founder-title"
+      class="mt-3 text-3xl font-semibold leading-tight tracking-tight md:text-5xl"
+    >
+      Você faz parte do começo.
+    </h1>
+    <p class="mx-auto mt-4 max-w-md text-base leading-7 text-gray-11">
+      Antes de muitos chegarem, você já estava aqui. Esta insígnia reconhece seu
+      lugar na fundação do Zetho.
+    </p>
+  </header>
+  <section
+    class="mt-8 border-y border-gray-6 bg-gray-2 px-5 py-8 text-center md:mt-10 md:py-10"
+    aria-label="Sua insígnia de fundador"
+  >
+    @if (!imageFailed()) {
+    <img
+      [src]="imageUrl"
+      alt="Insígnia Fundador do Zetho"
+      width="176"
+      height="176"
+      class="mx-auto h-44 w-44 object-contain"
+      (error)="imageFailed.set(true)"
+    />
+    } @else {
+    <i
+      class="ph-fill ph-seal-check mx-auto block text-8xl text-blue-11"
+      aria-hidden="true"
+    ></i>
+    }
+    <p class="mt-6 text-sm text-gray-11">Seu número de fundador</p>
+    <p
+      class="mt-2 font-mono text-5xl font-semibold tabular-nums tracking-tight text-gray-12 md:text-6xl"
+    >
+      {{ receipt.code }}
+    </p>
+    <p class="mx-auto mt-4 max-w-sm text-sm leading-6 text-gray-11">
+      Único. Seu. A insígnia acompanha seu nome nos perfis, conversas e
+      histórias que você construir por aqui.
+    </p>
+  </section>
+  @if (shareData(); as data) {
+  <div class="mt-7 flex justify-center">
+    <button type="button" class="ui-primary-btn min-h-11" (click)="share.open()">
+      <i class="ph ph-share-network" aria-hidden="true"></i> Compartilhar minha insígnia
+    </button>
+  </div>
+  <ui-share-modal #share [data]="data" />
+  }
+  <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
+    <a
+      [routerLink]="auth.profile()?.gamertag ? ['/player', auth.profile()!.gamertag] : ['/comecar']"
+      class="ui-primary-btn min-h-11 justify-center"
+      >Ver meu perfil <i class="ph ph-arrow-up-right" aria-hidden="true"></i
+    ></a>
+    <a routerLink="/feed" class="ui-secondary-btn min-h-11 justify-center"
+      >Continuar minha história</a
+    >
+  </div>
+  <p class="mt-7 text-center text-xs leading-5 text-gray-11">
+    Sua participação merece ser lembrada. Obrigado por começar com a gente.
+  </p>
+  } @else if (receipt.status === 'verification_required') {
+  <i class="ph ph-envelope-simple text-4xl text-blue-11" aria-hidden="true"></i>
+  <h1 id="founder-title" class="mt-5 text-3xl font-semibold tracking-tight">
+    Falta confirmar seu e-mail.
+  </h1>
+  <p class="mt-4 leading-7 text-gray-11">
+    Confirme que este e-mail é seu para liberar a insígnia, se sua conta fizer
+    parte da edição Fundador. Seu lugar na sequência segue a data de criação da
+    conta.
+  </p>
+  <div class="mt-6"><app-email-confirmation-notice /></div>
+  <button type="button" class="ui-ghost-btn mt-3 self-start" (click)="load()">
+    Já confirmei meu e-mail
+  </button>
+  } @else if (receipt.status === 'pending') {
+  <h1 id="founder-title" class="text-3xl font-semibold tracking-tight">
+    Seu reconhecimento está a caminho.
+  </h1>
+  <p class="mt-4 leading-7 text-gray-11">
+    Seu e-mail está confirmado. Estamos preparando seu número de fundador; tente
+    novamente em instantes.
+  </p>
+  <button type="button" class="ui-primary-btn mt-7 self-start" (click)="load()">
+    Verificar minha insígnia
+  </button>
+  } @else {
+  <h1 id="founder-title" class="text-3xl font-semibold tracking-tight">
+    Sua história também importa.
+  </h1>
+  <p class="mt-4 leading-7 text-gray-11">
+    Seu e-mail está confirmado. A edição Fundador foi reservada às primeiras mil
+    contas, além do fundador #0000. Esta conta não faz parte dessa edição, mas
+    tem muito para construir por aqui.
+  </p>
+  <a routerLink="/feed" class="ui-primary-btn mt-7 self-start"
+    >Explorar o Zetho</a
+  >
+  } } @if (error(); as error) {
+  <p
+    class="mt-5 border border-danger-line bg-danger-bg p-4 text-sm text-danger"
+    role="alert"
+  >
+    {{ error }}
+  </p>
+  @if (!receipt()) {
+  <button
+    type="button"
+    class="ui-secondary-btn mt-3 self-start"
+    (click)="load()"
+  >
+    Tentar novamente
+  </button>
+  } }
+</main>

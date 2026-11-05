@@ -6,10 +6,10 @@
     class="w-full md:flex justify-between items-end border-b border-gray-6 p-4"
   >
     <div>
-      <h3 class="text-2xl max-w-xl">
+      <h1 class="text-2xl font-medium max-w-xl">
         @if (controller.connectionType() === 'followers') { Seguidores } @else {
         Seguindo }
-      </h3>
+      </h1>
       <span class="text-gray-11"
         >@if (controller.errors()['loadMore']) { Contagem indisponível } @else { {{ controller.total() }} {{ controller.total() === 1 ? "pessoa" :
         "pessoas" }} }</span
@@ -32,19 +32,13 @@
     @for (profile of controller.profiles(); track profile.$id) {
     <ui-profile-card [profile]="profile"></ui-profile-card>
     } @empty { @if (!controller.errors()['loadMore']) {
-    <li
-      class="p-10 col-span-2 md:col-span-3 lg:col-span-4 flex flex-col items-center text-center border border-dashed border-gray-6"
-    >
-      <i class="ph ph-user-list text-[32px] mb-2"></i>
-      <h1 class="text-center text-2xl max-w-xl">
-        @if (controller.connectionType() === 'followers') { Nenhum seguidor
-        ainda } @else { Não está seguindo ninguém }
-      </h1>
-      <p class="text-center max-w-md mt-2 text-gray-11">
-        @if (controller.connectionType() === 'followers') { Quando alguém
-        começar a seguir, aparecerá aqui. } @else { Quando {{
-        currentProfile?.gamertag }} seguir alguém, aparecerá aqui. }
-      </p>
+    <li>
+      <ui-empty-state
+        icon="ph ph-user-list"
+        [title]="controller.connectionType() === 'followers' ? 'Nenhum seguidor ainda' : 'Não está seguindo ninguém'"
+        [description]="controller.connectionType() === 'followers' ? 'Quando alguém começar a seguir, aparecerá aqui.' : ('Quando ' + (currentProfile?.gamertag || 'este jogador') + ' seguir alguém, aparecerá aqui.')"
+        headingLevel="h2"
+      />
     </li>
     } }
   </ol>

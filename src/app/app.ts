@@ -1,3 +1,5 @@
+import { UiFounderBadge } from './shared/ui/founder-badge';
+import { PublicEntryLayout } from './shared/app/public-entry-layout';
 import { ColorModeStore } from './core/system/color-mode/color-mode.store';
 import { FollowControl } from './shared/ui/follow-control';
 import { ProfileThemeContrast } from './shared/ui/profile-theme-contrast';
@@ -42,7 +44,8 @@ import { InAppNotificationStore } from './core/system/notifications/in-app-notif
 
 @Component({
   selector: 'app-root',
-  imports: [FollowControl,ProfileThemeContrast,
+  imports: [UiFounderBadge, FollowControl,ProfileThemeContrast,
+    PublicEntryLayout,
     ColorModeSelector,
     UiSheet,
     AppSearchInput,
@@ -137,11 +140,13 @@ export class App {
             ]
           : []),
         { label: 'Rankings', icon: 'ph-ranking', route: ['/ranking'] },
+        { label: 'Fundadores', icon: 'ph-seal-check', route: ['/fundadores'] },
         ...(this.featureRaffles
           ? [{ label: 'Sorteios', icon: 'ph-gift', route: ['/sorteios'] }]
           : []),
       ],
       [
+        { label: 'Fórum', icon: 'ph-chats-circle', route: ['/forum'] },
         { label: 'Reviews', icon: 'ph-star', route: ['/reviews'] },
         { label: 'Notícias', icon: 'ph-newspaper', route: ['/noticias'] },
         { label: 'Listas', icon: 'ph-list-dashes', route: ['/listas'] },
@@ -223,6 +228,10 @@ export class App {
 
   usesPublicAppShell() {
     return !this.authStore.isAuthenticated() && !this.isAppShellExcludedRoute();
+  }
+
+  isPublicEntryRoute() {
+    return ['/landing', '/entrar', '/registrar'].includes(this.currentPath());
   }
 
   isLandingRoute() {

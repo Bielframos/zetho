@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
 import {
   Component,
   OnDestroy,
@@ -22,7 +23,7 @@ import {
 @Component({
   selector: 'app-ranking-page',
   standalone: true,
-  imports: [RouterLink, UiTabs, UiLoading, UiZethoIcon],
+  imports: [UiFounderBadge, RouterLink, UiTabs, UiLoading, UiZethoIcon],
   templateUrl: './ranking.html',
 })
 export class RankingPage implements OnInit, OnDestroy {

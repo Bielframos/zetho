@@ -2,6 +2,7 @@ import { StoredList, StoredRow } from '../../shared/infra/appwrite/appwrite.type
 import { ConnectionRow } from '../connections/connections.types';
 
 type UserProfile = {
+  registration?: { created: boolean; inviteAccepted: boolean };
   userId: string;
   gamertag: string;
   avatarUrl?: string;

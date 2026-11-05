@@ -1,7 +1,14 @@
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EmailConfirmationNotice } from '../../components/email-confirmation-notice';
+import { UiFounderBadge } from '../../../../shared/ui/founder-badge';
+import { ProfileSharing } from './profile-sharing';
 import { CommonModule } from '@angular/common';
 import { OnInit } from '@angular/core';
 import {
   Component,
+  afterNextRender,
+  DestroyRef,
+  ElementRef,
   computed,
   effect,
   inject,
@@ -14,7 +21,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { UiModal } from '../../../../shared/ui/modal/modal';
@@ -26,7 +33,6 @@ import {
   nameValidator,
 } from '../../../../utils/validators';
 import { UserProfileService } from '../../../userProfiles/userProfile.service';
-import { AuthService } from '../../auth.service';
 import { AuthStore } from '../../auth.store';
 import { ThemesService } from '../../../themes/themes.service';
 import { ProfileTheme } from '../../../themes/themes.types';
@@ -38,7 +44,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
   selector: 'app-account',
   standalone: true,
   imports: [
+    EmailConfirmationNotice,
     CommonModule,
+    UiFounderBadge,
+    ProfileSharing,
     UiInput,
     ReactiveFormsModule,
     UiModal,
@@ -51,9 +60,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class AccountPage {
   /** Angular `Router` usado para navegação quando não autenticado */
   private readonly router: Router = inject(Router);
-
-  /** Serviço de autenticação para ações do usuário (verificação de e-mail, etc.) */
-  private readonly authService: AuthService = inject(AuthService);
 
   /** Serviço para validações assíncronas relacionadas ao perfil */
   private readonly userProfileService: UserProfileService =
@@ -250,22 +256,6 @@ export class AccountPage {
     validators: [Validators.required],
   });
 
-  // Estado reativo da página para rastrear envio de verificação de email
-  mailVerification = signal<{ sended?: boolean; error?: boolean }>({});
-
-  /**
-   * Solicita o envio de e-mail de verificação e atualiza o estado local.
-   */
-  async requestMailVerification() {
-    try {
-      await this.authService.createEmailVerification();
-      this.mailVerification.set({ sended: true });
-    } catch (e) {
-      console.error(e);
-      this.mailVerification.set({ error: true });
-    }
-  }
-
   /**
    * Atualiza o nome do usuário no `AuthStore` e refaz a validação local.
    */
@@ -341,7 +331,19 @@ export class AccountPage {
     }
   }
 
+  private readonly emailSection = viewChild<ElementRef<HTMLElement>>('emailSection');
+
   constructor() {
+    const route = inject(ActivatedRoute);
+    const destroyRef = inject(DestroyRef);
+    afterNextRender(() => {
+      route.fragment.pipe(takeUntilDestroyed(destroyRef)).subscribe(fragment => {
+        if (fragment !== 'account-email') return;
+        const section = this.emailSection()?.nativeElement;
+        section?.scrollIntoView({ block: 'center' });
+        section?.querySelector('input')?.focus({ preventScroll: true });
+      });
+    });
     // Redireciona para a landing se o usuário não estiver autenticado
     effect(() => {
       if (!this.authStore.isAuthenticated()) {

@@ -15,16 +15,25 @@ export const AUTH_ROUTES: Routes = [
     title: 'Zetho | Minha conta',
   },
   {
-    path: 'registrar',
-    component: RegisterPage,
-    canMatch: [guestGuard],
-    title: 'Zetho | Registro',
-  },
-  {
-    path: 'entrar',
-    component: LoginPage,
-    canMatch: [guestGuard],
-    title: 'Zetho | Login',
+    path: '',
+    loadComponent: () =>
+      import('./components/auth-game-space/auth-game-space').then(
+        (m) => m.AuthGameSpace,
+      ),
+    children: [
+      {
+        path: 'registrar',
+        component: RegisterPage,
+        canMatch: [guestGuard],
+        title: 'Zetho | Registro',
+      },
+      {
+        path: 'entrar',
+        component: LoginPage,
+        canMatch: [guestGuard],
+        title: 'Zetho | Login',
+      },
+    ],
   },
   {
     path: 'recuperar-senha',
@@ -39,9 +48,13 @@ export const AUTH_ROUTES: Routes = [
     title: 'Zetho | Recuperar senha',
   },
   {
+    path: 'fundador',
+    loadComponent: () => import('./pages/founder/founder').then(m => m.FounderPage),
+    title: 'Zetho | Sua insígnia de fundador',
+  },
+  {
     path: 'verificacao',
     component: VerificationPage,
-    canMatch: [userGuard],
     title: 'Zetho | Verificação de e-mail',
   },
 ];

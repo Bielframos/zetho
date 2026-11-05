@@ -50,7 +50,15 @@ export interface ShareListData {
   itemCount: number;
 }
 
+export interface ShareFounderData {
+  kind: 'founder';
+  author: ShareAuthor;
+  code: string;
+  badgeUrl: string;
+}
+
 export type ShareCardData =
+  | ShareFounderData
   | ShareZereiData
   | ShareReviewData
   | ShareLibraryData

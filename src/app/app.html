@@ -1,5 +1,9 @@
 @if (isSplashRoute()) {
 <router-outlet />
+} @else if (isPublicEntryRoute()) {
+<app-public-entry-layout [showLogin]="isLandingRoute()">
+  <router-outlet />
+</app-public-entry-layout>
 } @else if (isOnboardingRoute()) {
 <div class="min-h-dvh bg-gray-1 text-gray-12"><router-outlet /></div>
 } @else if (usesAppShell()) {
@@ -75,13 +79,14 @@
                 class="profile-theme-avatar h-12 w-12 shrink-0 rounded-full bg-blue-12 object-cover"
               />
               <div class="min-w-0">
-                <p class="truncate font-semibold text-gray-12">
+                <p class="wrap-anywhere font-semibold text-gray-12">
                   {{ profileStore.itsMe() ? authStore.user()?.name :
                   profile.gamertag }}
                 </p>
-                <p class="truncate text-sm text-gray-11">
-                  @{{ profile.gamertag }}
-                </p>
+                <div class="flex min-w-0 items-center gap-2 text-sm text-gray-11">
+                  <span class="min-w-0 truncate">@{{ profile.gamertag }}</span>
+                  <ui-founder-badge class="shrink-0" [gamertag]="profile.gamertag" />
+                </div>
               </div>
             </div>
             @if (authStore.isAuthenticated() && !profileStore.itsMe()) {
@@ -196,12 +201,13 @@
             </a>
 
             <div class="min-w-0">
-              <p class="truncate font-semibold text-gray-12">
+              <p class="wrap-anywhere font-semibold text-gray-12">
                 {{ authStore.user()?.name }}
               </p>
-              <p class="truncate text-sm text-gray-11">
-                @{{ authStore.profile()?.gamertag }}
-              </p>
+              <div class="flex min-w-0 items-center gap-2 text-sm text-gray-11">
+                <span class="min-w-0 truncate">@{{ authStore.profile()?.gamertag }}</span>
+                <ui-founder-badge class="shrink-0" [gamertag]="authStore.profile()?.gamertag" />
+              </div>
             </div>
           </div>
 
@@ -377,6 +383,7 @@
             class="h-[34px] w-[34px] object-cover"
           />
         </a>
+        <ui-founder-badge [gamertag]="authStore.profile()?.gamertag" />
         } @else {
         <a routerLink="/registrar" class="ui-link">Criar conta</a>
         <a

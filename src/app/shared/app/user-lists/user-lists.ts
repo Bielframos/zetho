@@ -3,6 +3,7 @@ import { AuthStore } from '../../../core/auth/auth.store';
 import { ProfileStore } from '../../../core/userProfiles/profile.store';
 import { ZereiListRow } from '../../../types';
 import { UiListCard } from '../../ui/list-card';
+import { UiEmptyState } from '../../ui/empty-state';
 import { AppNewListDialog } from '../new-list-dialog/new-list-dialog';
 import { ListsController } from '../../../core/lists/lists.controller';
 
@@ -10,7 +11,7 @@ import { ListsController } from '../../../core/lists/lists.controller';
   selector: 'app-user-lists',
   standalone: true,
   templateUrl: './user-lists.html',
-  imports: [AppNewListDialog, UiListCard],
+  imports: [AppNewListDialog, UiListCard, UiEmptyState],
 })
 export class AppUserLists {
   authStore = inject(AuthStore);

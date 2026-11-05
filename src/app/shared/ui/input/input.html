@@ -12,6 +12,9 @@
 
     <input
       [type]="type"
+      [attr.autocomplete]="autocomplete || null"
+      [attr.aria-describedby]="describedBy"
+      [attr.aria-invalid]="invalid || null"
       [attr.min]="min"
       [attr.max]="max"
       [attr.step]="step"

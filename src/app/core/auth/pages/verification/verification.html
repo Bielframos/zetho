@@ -1,31 +1,58 @@
-<main class="mx-auto flex flex-col justify-center h-full gap-10 w-fit py-6 lg:py-24 px-6">
-    @if (loading()) {
-    <ui-loading></ui-loading>
-    } @else if (error(); as error) {
-    <div class="flex flex-col items-center">
-        <i class="ph ph-smiley-x-eyes text-[56px] text-danger mb-4"></i>
-        <h1
-            class="text-center text-3xl md:text-4xl max-w-xl pb-6">
-            Ops, ocorreu um erro.
-        </h1>
-        <p class="text-gray-11 text-center max-w-md mt-2">
-            {{ error }}
-        </p>
-
-        <a routerLink="/perfil" class="ui-link mt-6">Ir para o perfil</a>
-    </div>
-    } @else if (verified(); as verified) {
-    <div class="flex flex-col items-center">
-        <i class="ph ph-shield-check text-[56px] text-success mb-4"></i>
-        <h1
-            class="text-center text-3xl md:text-4xl max-w-xl pb-6">
-            Agora nós sabemos que você não é um smurf.
-        </h1>
-        <p class="text-gray-11 text-center max-w-md mt-2">
-            Seu e-mail foi verificado com sucesso.
-        </p>
-
-        <a routerLink="/perfil" class="ui-link mt-6">Ir para o perfil</a>
-    </div>
-    }
+<main
+  class="mx-auto flex w-full max-w-xl flex-col justify-center px-6 py-12 md:py-24"
+  aria-labelledby="verification-title"
+  [attr.aria-busy]="loading()"
+>
+  @if (loading()) {
+  <div
+    class="flex min-h-64 flex-col items-center justify-center gap-4"
+    role="status"
+  >
+    <ui-loading />
+    <h1 id="verification-title" class="text-lg">Confirmando seu e-mail…</h1>
+  </div>
+  } @else if (error(); as error) {
+  <i class="ph ph-envelope-simple text-4xl text-gray-11" aria-hidden="true"></i>
+  <h1
+    id="verification-title"
+    class="mt-5 text-3xl font-semibold tracking-tight"
+  >
+    Vamos confirmar sua conta.
+  </h1>
+  <p class="mt-4 leading-7 text-gray-11" role="alert">{{ error }}</p>
+  @if (authStore.user()) {
+  <a routerLink="/minha-conta" class="ui-primary-btn mt-8 self-start"
+    >Ir para Minha conta</a
+  >
+  } @else {
+  <button
+    type="button"
+    class="ui-primary-btn mt-8 self-start"
+    (click)="signIn()"
+  >
+    Entrar na minha conta
+  </button>
+  } } @else if (verified()) {
+  <p class="inline-flex items-center gap-2 text-sm text-success">
+    <i class="ph ph-check-circle" aria-hidden="true"></i> E-mail confirmado
+  </p>
+  <h1
+    id="verification-title"
+    class="mt-5 text-3xl font-semibold tracking-tight md:text-4xl"
+  >
+    Pronto para escrever sua história.
+  </h1>
+  <p class="mt-4 leading-7 text-gray-11">
+    Sua conta foi confirmada. Entre com a conta que acabou de confirmar para
+    descobrir sua insígnia e seu número, se você fizer parte da edição Fundador.
+  </p>
+  <button
+    type="button"
+    class="ui-primary-btn mt-8 self-start"
+    (click)="signIn()"
+  >
+    {{ authStore.user() ? 'Entrar com a conta confirmada' : 'Descobrir minha
+    insígnia' }} <i class="ph ph-arrow-right" aria-hidden="true"></i>
+  </button>
+  }
 </main>

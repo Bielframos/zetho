@@ -53,6 +53,27 @@ const EDGE_CACHE_10_MIN = {
 };
 
 export const serverRoutes: ServerRoute[] = [
+  {
+    path: 'forum/:slug/respostas/:parentId',
+    renderMode: RenderMode.Server,
+    headers: { 'Cache-Control': 'no-store' },
+  },
+  {
+    path: 'listas-editoriais',
+    renderMode: RenderMode.Server,
+    headers: { 'Cache-Control': 'no-store' },
+  },
+  {
+    path: 'listas-editoriais/:slug',
+    renderMode: RenderMode.Server,
+    status: 301,
+    headers: { 'Cache-Control': 'no-store' },
+  },
+  {
+    path: 'listas/:slug',
+    renderMode: RenderMode.Server,
+    headers: { 'Cache-Control': 'no-store' },
+  },
   // Estáticas puras — sem chamada de API.
   { path: 'institucional', renderMode: RenderMode.Prerender },
   { path: 'privacidade', renderMode: RenderMode.Prerender },
@@ -64,6 +85,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'sem-conexao', renderMode: RenderMode.Prerender },
 
   // Conteúdo público renderizado no servidor.
+  { path: 'fundadores', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   { path: 'landing', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   {
     path: 'jogo/:slug',
@@ -80,8 +102,22 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server,
     headers: EDGE_CACHE_10_MIN,
   },
+  {
+    path: 'forum',
+    renderMode: RenderMode.Server,
+    headers: { 'Cache-Control': 'no-store' },
+  },
+  {
+    path: 'forum/:slug',
+    renderMode: RenderMode.Server,
+    headers: { 'Cache-Control': 'no-store' },
+  },
   { path: 'reviews', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
-  { path: 'listas', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
+  {
+    path: 'listas',
+    renderMode: RenderMode.Server,
+    headers: { 'Cache-Control': 'no-store' },
+  },
   {
     path: 'recomendacoes',
     renderMode: RenderMode.Server,
@@ -138,6 +174,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'recuperar-senha', renderMode: RenderMode.Client },
   { path: 'redefinir-senha', renderMode: RenderMode.Client },
   { path: 'verificacao', renderMode: RenderMode.Client },
+  { path: 'fundador', renderMode: RenderMode.Client },
   { path: 'comecar', renderMode: RenderMode.Client },
   { path: 'dashboard', renderMode: RenderMode.Client },
   { path: 'feed', renderMode: RenderMode.Client },

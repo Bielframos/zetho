@@ -1,3 +1,4 @@
+import { UiFounderBadge } from '../../../shared/ui/founder-badge';
 import { UiSheet } from '../../../shared/ui/sheet.directive';
 import { Component, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -11,7 +12,7 @@ import { NotificationStore } from './notification.store';
 @Component({
   selector: 'app-notifications-sheet',
   standalone: true,
-  imports: [CommonModule, UiSheet],
+  imports: [UiFounderBadge, CommonModule, UiSheet],
   template: `
     <!-- Bell Trigger Button -->
     <button
@@ -126,6 +127,11 @@ import { NotificationStore } from './notification.store';
                       {{ notif.title }}
                     </h3>
                     <p class="mt-1 text-sm leading-5 text-gray-11">
+                      @if (notif.senderGamertag) {
+                        <span class="font-medium">{{ notif.senderGamertag }}</span>
+                        <ui-founder-badge [gamertag]="notif.senderGamertag" />
+                        <br />
+                      }
                       {{ notif.message }}
                     </p>
                   </div>
@@ -206,10 +212,10 @@ import { NotificationStore } from './notification.store';
                       (click)="onViewGameComment(notif)"
                       class="ui-ghost-btn"
                       data-size="sm"
-                      aria-label="Ver comentário no jogo"
+                      aria-label="Ver discussão no Fórum"
                     >
                       <i class="ph ph-arrow-right"></i>
-                      Ver comentário
+                      Ver discussão
                     </button>
                   }
                 </div>

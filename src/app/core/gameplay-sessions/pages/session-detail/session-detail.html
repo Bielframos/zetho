@@ -29,7 +29,7 @@
                 } @else {
                   <span class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-9 text-xs text-white">{{ host.gamertag.charAt(0).toUpperCase() }}</span>
                 }
-                Organizada por <span class="text-gray-12">@{{ host.gamertag }}</span>
+                Organizada por <span class="text-gray-12">@{{ host.gamertag }} <ui-founder-badge [gamertag]="host.gamertag" /></span>
               </div>
             }
           </div>
@@ -57,7 +57,7 @@
               } @else {
                 <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-9 text-xs text-white">{{ participant.profile?.gamertag?.charAt(0)?.toUpperCase() || '?' }}</span>
               }
-              <span class="text-sm text-gray-12">@{{ participant.profile?.gamertag || 'Perfil indisponível' }}</span>
+              <span class="text-sm text-gray-12">@{{ participant.profile?.gamertag || 'Perfil indisponível' }} <ui-founder-badge [gamertag]="participant.profile?.gamertag" /></span>
               @if (participant.isHost) { <span class="rounded-full bg-blue-3 px-2 py-0.5 text-xs text-blue-11">Host</span> }
             </li>
           }

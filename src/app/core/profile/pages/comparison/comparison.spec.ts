@@ -142,4 +142,142 @@ describe('Comparison page', () => {
     await fixture.whenStable();
     expect(fixture.componentInstance.result()).toBeNull();
   });
+  it('renders close button linking back to player profile', async () => {
+    const fixture = TestBed.createComponent(ProfileComparisonPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const closeBtn = fixture.nativeElement.querySelector('a[data-size="icon"]');
+    expect(closeBtn).toBeTruthy();
+    expect(closeBtn.getAttribute('aria-label')).toBe('Fechar comparação e voltar ao perfil de Peer');
+    expect(closeBtn.querySelector('i.ph-x')).toBeTruthy();
+  });
+  it('renders rows with clean left alignment and singular counter for 1 game', async () => {
+    const fixture = TestBed.createComponent(ProfileComparisonPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const counter = fixture.nativeElement.querySelector('p.border-b');
+    expect(counter?.textContent?.trim()).toBe('1 jogo · Me e Peer');
+
+    const gameLink = fixture.nativeElement.querySelector('article a[href="/jogo/game"]');
+    expect(gameLink).toBeTruthy();
+    expect(gameLink.classList.contains('justify-start')).toBeTrue();
+    expect(gameLink.classList.contains('gap-3.5')).toBeTrue();
+    expect(gameLink.classList.contains('justify-center')).toBeFalse();
+
+    const title = gameLink.querySelector('h2');
+    expect(title).toBeTruthy();
+    expect(title.classList.contains('text-left')).toBeTrue();
+    expect(title.classList.contains('text-center')).toBeFalse();
+  });
+  it('renders plural counter for multiple games and cover image with shadow and rounded corners', async () => {
+    const gameWithCover: ComparisonRow = {
+      game: { id: 'g2', name: 'Game 2', slug: 'game-2', coverUrl: 'https://example.com/cover.jpg' },
+      me: { status: 'completed', rating: 5 },
+      other: { status: 'completed', rating: 4 },
+      difference: 1,
+    };
+    load.and.resolveTo({
+      me: { id: 'me', gamertag: 'Me' },
+      other: { id: 'peer', gamertag: 'Peer' },
+      rows: [game, gameWithCover],
+      total: 2,
+      offset: 0,
+      limit: 20,
+    });
+
+    const fixture = TestBed.createComponent(ProfileComparisonPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const counter = fixture.nativeElement.querySelector('p.border-b');
+    expect(counter?.textContent?.trim()).toBe('2 jogos · Me e Peer');
+
+    const coverImg = fixture.nativeElement.querySelector('img[src="https://example.com/cover.jpg"]');
+    expect(coverImg).toBeTruthy();
+    expect(coverImg.classList.contains('rounded')).toBeTrue();
+    expect(coverImg.classList.contains('object-cover')).toBeTrue();
+    expect(coverImg.classList.contains('shadow-xs')).toBeTrue();
+  });
+  it('renders ui-empty-state when there are no items in discoveries view', async () => {
+    load.and.resolveTo({
+      me: { id: 'me', gamertag: 'Me' },
+      other: { id: 'peer', gamertag: 'Peer' },
+      rows: [],
+      total: 0,
+      offset: 0,
+      limit: 20,
+    });
+
+    const fixture = TestBed.createComponent(ProfileComparisonPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const emptyState = fixture.nativeElement.querySelector('ui-empty-state');
+    expect(emptyState).toBeTruthy();
+    expect(emptyState.textContent).toContain('Nenhuma descoberta disponível');
+    expect(emptyState.textContent).toContain('Nenhuma descoberta disponível por enquanto.');
+    expect(emptyState.querySelector('i.ph-scales')).toBeTruthy();
+  });
+  it('renders ui-empty-state with contextual copy for opinions view', async () => {
+    load.and.resolveTo({
+      me: { id: 'me', gamertag: 'Me' },
+      other: { id: 'peer', gamertag: 'Peer' },
+      rows: [],
+      total: 0,
+      offset: 0,
+      limit: 20,
+    });
+
+    const fixture = TestBed.createComponent(ProfileComparisonPage);
+    fixture.componentInstance.view.set('opinions');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const emptyState = fixture.nativeElement.querySelector('ui-empty-state');
+    expect(emptyState).toBeTruthy();
+    expect(emptyState.textContent).toContain('Nenhuma avaliação em comum');
+    expect(emptyState.textContent).toContain('Vocês ainda não têm avaliações em comum.');
+  });
+  it('renders ui-empty-state with contextual copy for common games view', async () => {
+    load.and.resolveTo({
+      me: { id: 'me', gamertag: 'Me' },
+      other: { id: 'peer', gamertag: 'Peer' },
+      rows: [],
+      total: 0,
+      offset: 0,
+      limit: 20,
+    });
+
+    const fixture = TestBed.createComponent(ProfileComparisonPage);
+    fixture.componentInstance.view.set('common');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const emptyState = fixture.nativeElement.querySelector('ui-empty-state');
+    expect(emptyState).toBeTruthy();
+    expect(emptyState.textContent).toContain('Nenhum jogo em comum');
+    expect(emptyState.textContent).toContain('Nenhum jogo em comum por enquanto.');
+  });
+  it('renders error state with warning icon and retry action when loading fails', async () => {
+    load.and.rejectWith(new Error('fail'));
+    const fixture = TestBed.createComponent(ProfileComparisonPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const alert = fixture.nativeElement.querySelector('[role="alert"]');
+    expect(alert).toBeTruthy();
+    expect(alert.querySelector('i.ph-warning-circle')).toBeTruthy();
+    expect(alert.textContent).toContain('Não foi possível carregar a comparação');
+    const retryBtn = alert.querySelector('button.ui-secondary-btn');
+    expect(retryBtn).toBeTruthy();
+    expect(retryBtn.textContent).toContain('Tentar novamente');
+  });
 });

@@ -4,35 +4,108 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+### Melhorias
+
+- Banner de destaque da Edição Fundador e da insígnia na página inicial.
+- Ajustes visuais na página inicial e na tela de cadastro.
+
+## [1.36.3] - 2026-11-03
+
+### Correções
+
+- Corrigida a exibição dos campos de formulário em Minha conta.
+
+### Melhorias
+
+- Melhorias na interface da página de perfil do usuário.
+- Nova página Fundadores, com cabeçalho centralizado, total de fundadores e grid de quatro colunas com avatares, nicknames, números de fundador e acesso aos perfis.
+- Confirmação de e-mail enviada automaticamente após o cadastro, com opções para reenviar o link e corrigir o endereço.
+- Compartilhamento da insígnia e do número de Fundador em imagens para stories e publicações.
+- Melhorias na organização e na navegação de Minha conta.
+
+## [1.36.2] - 2026-11-01
+
+### Correções
+
+- Corrigido o alinhamento dos controles de agrupamento no perfil em celulares.
+
+## [1.36.1] - 2026-11-01
+
+### Correções
+
+- Barra de agrupamento da biblioteca do perfil simplificada.
+
+## [1.36.0] - 2026-11-01
+
+### Novidades
+
+- Insígnia de Fundador com número exclusivo de #0000 a #1000, reservado pela ordem de criação da conta e liberado após confirmar o e-mail.
+- A insígnia e o número de Fundador acompanham o jogador no perfil e nas interações com a comunidade.
+- Opção de autorizar a divulgação do perfil nas redes do Zetho, disponível em Minha conta.
+- Listas oficiais do Zetho, com fontes de referência.
+
+### Melhorias
+
+- Confirmação de e-mail também funciona sem estar conectado à conta.
+- Opção “Quero jogar” disponível em notícias e listas oficiais, com retorno ao conteúdo após entrar ou criar uma conta.
+- Melhorias na navegação pelos tópicos e respostas do fórum.
+
+### Correções
+
+- Corrigido o salvamento de vários jogos em sequência em “Quero jogar”.
+- Corrigidos links de listas oficiais.
+
+## [1.35.3] - 2026-10-24
+
+### Melhorias
+
+- Melhorias na biblioteca, nas listas, nas conexões, nas Jogatinas e na comparação de perfis.
+
+## [1.35.2] - 2026-10-22
+
+### Melhorias
+
+- Telas de entrada e cadastro mais fáceis de usar.
+
+## [1.35.1] - 2026-10-22
+
+### Melhorias
+
+- Visual renovado na página inicial, no login e no cadastro.
+
+## [1.35.0] - 2026-10-22
+
+### Novidades
+
+- Novo Fórum da comunidade para criar publicações, responder a tópicos e conversar sobre seus jogos favoritos.
+
 ## [1.34.8] - 2026-10-13
 
 ### Novidades
 
-- O Zetho agora é open-source! Você pode conhecer o código, sugerir melhorias e contribuir com o projeto no GitHub, sob a licença AGPL-3.0.
-- Acesse o repositório pelo link “Código aberto” no menu ou no rodapé.
+- Código do Zetho disponível no GitHub pelo link “Código aberto” no menu e no rodapé.
 
 ### Correções
 
-- Comentários adicionados ou removidos durante o carregamento permanecem atualizados ao navegar pelo Feed.
+- Corrigida a atualização de comentários ao navegar pelo Feed.
 
 ## [1.34.7] - 2026-10-13
 
 ### Melhorias
 
-- Melhorias na interface e na experiência de uso do seletor de aparência no celular e no computador.
-- O histórico de versões ficou mais simples e fácil de consultar.
+- Melhorias no seletor de aparência e na página de histórico de versões.
 
 ## [1.34.6] - 2026-10-11
 
 ### Melhorias
 
-- Melhorias na interface e na experiência de uso dos temas de perfil e do seletor de aparência.
+- Melhorias na escolha de temas de perfil e na troca de aparência.
 
 ## [1.34.5] - 2026-10-11
 
 ### Melhorias
 
-- Melhorias na interface e na experiência de uso dos perfis e da biblioteca.
+- Melhorias na apresentação dos perfis e da biblioteca.
 
 ## [1.34.4] - 2026-10-11
 
@@ -44,13 +117,13 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- Melhorias na organização e na experiência de uso da biblioteca.
+- Biblioteca mais fácil de organizar.
 
 ## [1.34.2] - 2026-10-11
 
 ### Melhorias
 
-- Melhorias na experiência de seguir jogadores e na adaptação da aparência do aplicativo.
+- Melhorias ao seguir jogadores e alternar a aparência do aplicativo.
 
 ## [1.34.1] - 2026-10-11
 
@@ -66,23 +139,19 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- Melhorias de interface, acessibilidade e consistência visual em todo o aplicativo.
+- Melhorias de acessibilidade e aparência em todo o aplicativo.
 
 ## [1.33.1] - 2026-10-11
 
 ### Melhorias
 
-- Melhorias na interface e na experiência de uso das notificações.
+- Notificações mais fáceis de consultar.
 
 ## [1.33.0] - 2026-10-11
 
 ### Novidades
 
-- Os primeiros passos agora ajudam novos jogadores a montar a estante e descobrir perfis para seguir.
-
-### Melhorias
-
-- Melhorias na experiência de cadastro e introdução ao Zetho.
+- Primeiros passos do cadastro ajudam a montar a estante e descobrir jogadores para seguir.
 
 ## [1.32.0] - 2026-10-11
 
@@ -103,8 +172,7 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- O Dashboard agora se chama Feed e a navegação foi reorganizada no celular e no computador.
-- Melhorias gerais de interface e experiência de uso.
+- A página inicial da comunidade passa a se chamar Feed, com navegação reorganizada no celular e no computador.
 
 ## [1.30.0] - 2026-09-22
 
@@ -114,13 +182,13 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- Melhorias na organização do perfil e na escolha de plataformas.
+- Melhorias na organização do perfil e na seleção de plataformas.
 
 ## [1.29.0] - 2026-09-21
 
 ### Novidades
 
-- A área “Minha jogatina” ganhou novos detalhes sobre plataforma, conclusão e tempo de jogo.
+- A área “Minha jogatina” exibe plataforma, conclusão e tempo de jogo.
 
 ### Melhorias
 
@@ -130,13 +198,13 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- Melhorias visuais e de acessibilidade durante os carregamentos.
+- Carregamentos mais claros e acessíveis.
 
 ## [1.28.0] - 2026-09-17
 
 ### Novidades
 
-- Jogatinas ganharam páginas públicas que também podem ser acessadas por visitantes.
+- Páginas de Jogatinas acessíveis também a visitantes.
 
 ### Melhorias
 
@@ -150,13 +218,13 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- Melhorias na interface, navegação e carregamento dos rankings.
+- Rankings mais fáceis de navegar e com carregamento melhorado.
 
 ## [1.26.3] - 2026-09-12
 
 ### Melhorias
 
-- Melhorias na interface mobile e na experiência de busca.
+- Melhorias na navegação e na busca em celulares.
 
 ## [1.26.2] - 2026-09-12
 
@@ -168,7 +236,7 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- Melhorias na experiência de busca em celulares.
+- Busca mais fácil de usar em celulares.
 
 ## [1.26.0] - 2026-09-12
 
@@ -179,7 +247,7 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- Melhorias gerais de interface e experiência de uso das capas e do compartilhamento.
+- Melhorias nas capas e nas imagens de compartilhamento.
 
 ## [1.25.0] - 2026-09-12
 
@@ -213,7 +281,7 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Novidades
 
-- As páginas dos jogos ganharam um briefing com informações úteis sobre cada experiência.
+- Páginas de jogos com um resumo das principais informações sobre cada experiência.
 
 ## [1.22.0] - 2026-09-09
 
@@ -229,13 +297,13 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- Melhorias na interface e na experiência de responder a comentários.
+- Melhorias ao responder comentários.
 
 ## [1.21.1] - 2026-08-18
 
 ### Melhorias
 
-- Melhorias na interface e na experiência de uso de reviews, comentários e listas públicas.
+- Melhorias na leitura de reviews, comentários e listas públicas.
 
 ## [1.21.0] - 2026-08-18
 
@@ -243,10 +311,6 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 - Novas áreas públicas para descobrir reviews, listas e informações sobre o Zetho.
 - Agora você pode acompanhar e responder conversas diretamente pelo Feed.
-
-### Melhorias
-
-- Melhorias gerais de navegação e experiência nos comentários.
 
 ## [1.20.0] - 2026-08-13
 
@@ -272,12 +336,12 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Novidades
 
-- Publicações do Feed ganharam curtidas, comentários e conversas em sequência.
+- Curtidas, comentários e respostas disponíveis nas publicações do Feed.
 - Nova área “Meus registros” e novo menu para celulares.
 
 ### Melhorias
 
-- Melhorias gerais de interface e experiência no Feed mobile.
+- Melhorias na navegação do Feed em celulares.
 
 ## [1.18.0] - 2026-07-29
 
@@ -286,20 +350,16 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 - Nova área de Jogatinas para criar encontros e convidar suas conexões.
 - Nova central de notificações dentro do Zetho.
 
-### Melhorias
-
-- Melhorias na experiência de criação de Jogatinas e uso das notificações.
-
 ## [1.17.0] - 2026-07-21
 
 ### Novidades
 
-- Novo onboarding “Monte sua estante”, sugestões de jogadores e convites por link.
+- Novos primeiros passos “Monte sua estante”, com sugestões de jogadores e convites por link.
 - Agora você pode criar imagens para compartilhar sua biblioteca, listas e jogos concluídos.
 
 ### Melhorias
 
-- O Feed, as páginas dos jogos e outras áreas ganharam uma nova experiência de navegação.
+- Navegação renovada no Feed e nas páginas dos jogos.
 
 ## [1.16.1] - 2026-07-13
 
@@ -311,7 +371,7 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- A biblioteca agora carrega mais jogos automaticamente durante a navegação.
+- Mais jogos carregados automaticamente ao navegar pela biblioteca.
 
 ## [1.15.0] - 2026-07-12
 
@@ -321,7 +381,7 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- Melhorias na interface mobile e na atualização dos status dos jogos.
+- Melhorias na navegação em celulares e na atualização do status dos jogos.
 
 ## [1.14.0] - 2026-07-08
 
@@ -329,10 +389,6 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 - Agora você pode configurar notificações por e-mail nas páginas dos jogos.
 - Comentários ganharam mais contexto e opções de voto.
-
-### Melhorias
-
-- Melhorias gerais na experiência de conversas e votações.
 
 ## [1.13.0] - 2026-06-25
 
@@ -358,7 +414,7 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- Melhorias na apresentação das publicações e de seus autores.
+- Publicações e autores com apresentação mais clara no Feed.
 
 ## [1.9.1] - 2026-06-13
 
@@ -414,23 +470,23 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- Melhorias na interface e na experiência de uso em celulares.
+- Melhorias na navegação em celulares.
 
 ## [1.4.1] - 2026-03-09
 
 ### Melhorias
 
-- Melhorias de leitura e interface em telas menores.
+- Leitura mais confortável em telas menores.
 
 ## [1.4.0] - 2026-03-09
 
 ### Novidades
 
-- O Zetho agora pode ser instalado no celular ou computador e avisa quando você está sem conexão.
+- Zetho disponível para instalação no celular e no computador, com aviso quando estiver sem conexão.
 
 ### Melhorias
 
-- Melhorias na experiência mobile da página de conexões.
+- Melhorias na página de conexões em celulares.
 
 ## [1.3.2] - 2026-03-08
 
@@ -442,7 +498,7 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- Melhorias de privacidade e experiência ao entrar ou sair da conta.
+- Melhorias de privacidade ao entrar e sair da conta.
 
 ## [1.3.0] - 2026-03-07
 
@@ -458,7 +514,7 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- Melhorias na apresentação das capas e na experiência de adicionar jogos às listas.
+- Melhorias nas capas e ao adicionar jogos às listas.
 
 ## [1.2.0] - 2026-02-23
 
@@ -468,13 +524,13 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ### Melhorias
 
-- Melhorias na experiência de visitantes e na proteção das áreas da conta.
+- Melhorias no acesso de visitantes e na proteção das áreas da conta.
 
 ## [1.1.0] - 2026-02-20
 
 ### Novidades
 
-- Novas opções para personalizar o perfil, gerenciar a conta e conectar outras plataformas.
+- Novas opções para personalizar o perfil, gerenciar a conta e adicionar perfis de outras plataformas.
 
 ### Melhorias
 

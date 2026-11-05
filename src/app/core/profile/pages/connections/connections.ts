@@ -4,13 +4,14 @@ import { ConnectionsController } from '../../../connections/connections.controll
 import { UiSegmentedControl, UiSegmentOption } from '../../../../shared/ui/segmented-control';
 import { UiProfileCard } from '../../../../shared/ui/profile-card';
 import { UiLoading } from '../../../../shared/ui/loading';
+import { UiEmptyState } from '../../../../shared/ui/empty-state';
 import { ProfileLayoutStore } from '../../../../shared/app/profile-layout/profile-layout.store';
 
 @Component({
   selector: 'app-connections',
   standalone: true,
   templateUrl: './connections.html',
-  imports: [UiSegmentedControl, UiProfileCard, UiLoading],
+  imports: [UiSegmentedControl, UiProfileCard, UiLoading, UiEmptyState],
 })
 export class ConnectionsPage {
   readonly connectionOptions: UiSegmentOption<'followers' | 'following'>[] = [

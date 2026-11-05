@@ -19,7 +19,7 @@ import {
   RecommendationScope,
   RecommendationQuota,
 } from './game-recommender.service';
-import { RecommendationBackground } from './shader-background';
+import { ShaderBackground } from '../../shared/ui/shader-background';
 
 interface PendingAttempt {
   key: string;
@@ -33,7 +33,7 @@ interface PendingAttempt {
     DecimalPipe,
     RouterLink,
     UiLoading,
-    RecommendationBackground,
+    ShaderBackground,
   ],
   templateUrl: './game-recommender.html',
 })
