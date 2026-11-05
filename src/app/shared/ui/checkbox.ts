@@ -18,20 +18,20 @@ import {
   template: `
     <label
       [htmlFor]="name()"
-      class="group focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus-ring flex gap-2 items-center cursor-pointer"
+      class="group flex items-start gap-2.5 cursor-pointer outline-none select-none"
     >
       <div
-        class="flex items-center justify-center w-6 aspect-square rounded-sm bg-blue-1/60 border border-line-strong group-has-checked:bg-blue-9"
+        class="shrink-0 flex items-center justify-center w-5 h-5 mt-0.5 rounded-sm bg-blue-1/60 border border-line-strong transition-colors duration-150 group-has-checked:bg-blue-9 group-has-checked:border-blue-9 outline-none"
       >
         <i
-          class="ph ph-check text-white text-sm hidden group-has-checked:block"
+          class="ph ph-check text-white text-xs font-bold hidden group-has-checked:block"
         ></i>
       </div>
 
       <span class="flex flex-col gap-0.5 text-content">
-        {{ label() }}
+        <span class="text-sm font-medium leading-5 text-gray-12">{{ label() }}</span>
         @if (description()) {
-          <span class="text-gray-11 text-sm">{{ description() }}</span>
+          <span class="text-xs leading-relaxed text-gray-11">{{ description() }}</span>
         }
       </span>
 

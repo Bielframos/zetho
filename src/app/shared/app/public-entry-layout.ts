@@ -22,15 +22,17 @@ import { ColorModeSelector } from '../ui/color-mode-selector';
           <div class="flex items-center gap-2 sm:gap-4">
             <a
               routerLink="/buscar"
-              class="ui-ghost-btn min-h-11 rounded-lg text-sm"
+              class="ui-ghost-btn min-h-11 text-sm"
               >Explorar</a
             >
             @if (showLogin()) {
               <a
                 routerLink="/entrar"
-                class="ui-secondary-btn min-h-11 rounded-lg text-sm"
-                >Entrar</a
+                class="ui-secondary-btn min-h-11 text-sm"
               >
+                <i class="ph ph-sign-in" aria-hidden="true"></i>
+                Entrar
+              </a>
             }
           </div>
         </nav>
