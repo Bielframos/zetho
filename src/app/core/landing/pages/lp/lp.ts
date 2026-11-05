@@ -1,19 +1,32 @@
 import { Component, effect, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { environment } from '../../../../../environments/environment';
 import { AuthStore } from '../../../auth/auth.store';
 import { ZStatsService } from '../../../zStats/zStats.service';
 import { GameRow } from '../../../games/game.types';
 import { AppSearchInput } from '../../../../shared/app/search-input/search-input';
 import { UiGameCard } from '../../../../shared/ui/game-card/game-card';
+import { ShaderBackground } from '../../../../shared/ui/shader-background';
 import { UiSkeleton } from '../../../../shared/ui/skeleton';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, UiGameCard, UiSkeleton, AppSearchInput],
+  imports: [
+    RouterLink,
+    UiGameCard,
+    UiSkeleton,
+    AppSearchInput,
+    ShaderBackground,
+  ],
   templateUrl: './lp.html',
 })
 export class LandingPage {
+  readonly founderBadgeUrl = new URL(
+    'achievements/founder-badge/image',
+    environment.zethoApiEndpoint,
+  ).toString();
+  readonly founderBadgeFailed = signal(false);
   trendingGames = signal<GameRow[]>([]);
   loadingGames = signal(true);
   readonly previewEntries = [

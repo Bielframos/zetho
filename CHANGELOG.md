@@ -4,6 +4,13 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+## [1.36.4] - 2026-11-05
+
+### Melhorias
+
+- Banner de destaque da Edição Fundador e da insígnia na página inicial.
+- Ajustes visuais na página inicial e na tela de cadastro.
+
 ## [1.36.3] - 2026-11-03
 
 ### Correções
