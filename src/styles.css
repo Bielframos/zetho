@@ -77,8 +77,26 @@
   }
 
   ::view-transition-group(route-scope) {
-    animation-duration: 320ms;
-    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+    /* Paginas com alturas diferentes nao devem interpolar suas dimensoes. */
+    animation: none;
+  }
+
+  ::view-transition-old(route-scope),
+  ::view-transition-new(route-scope) {
+    /* Preserve o tamanho do conteudo mesmo quando o snapshot muda de altura. */
+    width: 100%;
+    height: auto;
+    object-fit: none;
+    object-position: top left;
+  }
+
+  /* O shell fica estavel enquanto apenas o conteudo da rota anima. */
+  ::view-transition-old(root) {
+    display: none;
+  }
+
+  ::view-transition-new(root) {
+    animation: none;
   }
 
   ::view-transition-old(route-scope) {
@@ -93,24 +111,24 @@
 @keyframes page-in {
   from {
     opacity: 0;
-    transform: translateY(14px) scale(0.995);
+    transform: translateY(14px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 @keyframes page-out {
   from {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 
   to {
     opacity: 0;
-    transform: translateY(-10px) scale(0.995);
+    transform: translateY(-10px);
   }
 }
 
