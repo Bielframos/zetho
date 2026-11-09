@@ -16,8 +16,17 @@
 
   <div [attr.aria-busy]="loading()">
     @if (loading()) {
-      <div class="flex justify-center px-4 py-12" role="status">
-        <ui-loading fallback="Carregando fundadores..." />
+      <div role="status">
+        <span class="sr-only">Carregando fundadores...</span>
+        <div class="grid grid-cols-2 gap-x-2 gap-y-4 p-4 sm:grid-cols-4" aria-hidden="true">
+          @for (placeholder of [0, 1, 2, 3, 4, 5, 6, 7]; track placeholder) {
+            <div class="flex min-w-0 flex-col items-center gap-2 px-2 py-3">
+              <div class="h-16 w-16 overflow-hidden rounded-full"><ui-skeleton [height]="64" /></div>
+              <div class="w-24 max-w-full"><ui-skeleton [height]="20" /></div>
+              <div class="w-20 max-w-full"><ui-skeleton [height]="16" /></div>
+            </div>
+          }
+        </div>
       </div>
     } @else if (error()) {
       <div class="space-y-4 px-4 py-10 text-center" role="alert">

@@ -77,6 +77,8 @@ describe('ListPage', () => {
     listControllerMock = {
       list: listData,
       loading: signal(false),
+      loadingMore: signal(false),
+      error: signal(undefined),
       items: signal([]),
       totalItems: signal(3),
       slug$: new Subject<string>(),

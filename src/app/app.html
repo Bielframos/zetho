@@ -155,11 +155,11 @@
             }
           </ul>
 
+          @if (profileLayoutStore.sidebarComponent(); as sidebarComponent) {
           <div class="py-2">
-            <ng-container
-              *ngComponentOutlet="profileLayoutStore.sidebarComponent()"
-            ></ng-container>
+            <ng-container *ngComponentOutlet="sidebarComponent"></ng-container>
           </div>
+          }
         </div>
       </div>
       } @else if (authStore.user()) {

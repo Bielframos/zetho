@@ -81,10 +81,18 @@
   } }
 </div>
 
+@if (controller.error() && controller.items().length) {
+  <p class="px-4 pt-4 text-sm text-danger" role="alert">Não foi possível carregar mais jogos. Tente novamente.</p>
+}
 @if (controller.hasMore()) {
-<footer class="w-full flex justify-center mt-6">
-  <button class="ui-primary-btn" (click)="controller.load({loadMore: true})">
-    Carregar mais
+<footer class="w-full flex justify-center p-4" [attr.aria-busy]="controller.loadingMore()">
+  <button type="button" class="ui-primary-btn" [disabled]="controller.loading()" (click)="controller.load({loadMore: true})">
+    @if (controller.loadingMore()) {
+      <ui-loading [inline]="true" size="sm" />
+      Carregando...
+    } @else {
+      {{ controller.error() ? 'Tentar novamente' : 'Carregar mais' }}
+    }
   </button>
 </footer>
 }
