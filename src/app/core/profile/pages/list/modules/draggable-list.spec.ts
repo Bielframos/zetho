@@ -25,6 +25,9 @@ describe('UiDraggableList', () => {
   let mockController: {
     list: ReturnType<typeof signal<any>>;
     items: ReturnType<typeof signal<any[]>>;
+    error: ReturnType<typeof signal<any>>;
+    loading: ReturnType<typeof signal<boolean>>;
+    loadingMore: ReturnType<typeof signal<boolean>>;
     hasMore: ReturnType<typeof signal<boolean>>;
     load: jasmine.Spy;
     notifyReorder: jasmine.Spy;
@@ -35,6 +38,9 @@ describe('UiDraggableList', () => {
       list: signal(null),
       items: signal<any[]>([]),
       hasMore: signal(false),
+      error: signal(undefined),
+      loading: signal(false),
+      loadingMore: signal(false),
       load: jasmine.createSpy('load'),
       notifyReorder: jasmine.createSpy('notifyReorder'),
     };
@@ -99,4 +105,16 @@ describe('UiDraggableList', () => {
     expect(fixture.nativeElement.textContent).toContain('Chrono Trigger');
     expect(fixture.nativeElement.querySelector('ui-empty-state')).toBeNull();
   });
+  it('keeps items visible and disables pagination while fetching more', () => {
+    mockController.items.set([{ $id: 'item', game: { name: 'Chrono Trigger', slug: 'chrono-trigger' } }]);
+    mockController.hasMore.set(true);
+    mockController.loading.set(true);
+    mockController.loadingMore.set(true);
+    fixture.componentRef.setInput('itsMe', false);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Chrono Trigger');
+    expect(fixture.nativeElement.querySelector('footer button').disabled).toBeTrue();
+    expect(fixture.nativeElement.querySelector('footer').textContent).toContain('Carregando');
+  });
+
 });

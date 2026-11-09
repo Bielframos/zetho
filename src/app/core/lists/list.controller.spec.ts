@@ -58,3 +58,42 @@ describe('Shared list detail loading', () => {
     expect(service.getItems).not.toHaveBeenCalled();
   });
 });
+
+describe('List pagination recovery', () => {
+  for (const system of [false, true]) {
+    it(`preserves items during pagination and retries the same offset (${system ? 'system' : 'personal'})`, async () => {
+      const firstRows = Array.from({ length: 50 }, (_, i) => ({ $id: String(i) }));
+      const pending = deferred<{ rows: unknown[]; total: number }>();
+      const list = { $id: 'list', slug: 'list' } as ZereiListRow;
+      const service = {
+        getLists: jasmine.createSpy().and.resolveTo({ rows: [list] }),
+        getSystemList: jasmine.createSpy().and.resolveTo(list),
+        getItems: jasmine.createSpy().and.resolveTo({ rows: firstRows, total: 51 }),
+      };
+      const controller = new ListController(
+        { current: () => ({ fingerprint: 'owner' }) } as unknown as ProfileStore,
+        service as unknown as ListService,
+      );
+      if (system) await controller.loadSystem('list');
+      else await controller.load({ slug: 'list' });
+      service.getItems.and.returnValue(pending.promise);
+      const loading = controller.load({ loadMore: true });
+      await Promise.resolve();
+      expect(controller.loadingMore()).toBeTrue();
+      expect(controller.items().length).toBe(50);
+      pending.resolve({ rows: [{ $id: '50' }], total: 51 });
+      await loading;
+      expect(controller.items().length).toBe(51);
+      expect(controller.loadingMore()).toBeFalse();
+      service.getItems.and.rejectWith(new Error('Offline'));
+      spyOn(console, 'error');
+      await controller.load({ loadMore: true });
+      expect(controller.items().length).toBe(51);
+      expect(controller.list()?.$id).toBe('list');
+      service.getItems.and.resolveTo({ rows: [], total: 51 });
+      await controller.load({ loadMore: true });
+      expect(service.getItems.calls.mostRecent().args[0].offset).toBe(51);
+      expect(controller.error()).toBeUndefined();
+    });
+  }
+});

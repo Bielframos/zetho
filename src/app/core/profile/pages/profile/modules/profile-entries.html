@@ -15,7 +15,7 @@
     <div class="h-4 w-28 rounded-xs bg-gray-3 motion-safe:animate-pulse"></div>
   </div>
   }
-  <ul class="grid grid-cols-4 gap-px bg-gray-6 border-b border-gray-6" role="list">
+  <ul class="grid grid-cols-3 sm:grid-cols-4 gap-px bg-gray-6 border-b border-gray-6" role="list">
     @for (i of skeletonSlots; track i) {
     <li class="flex flex-col bg-gray-1">
       <div
@@ -47,7 +47,7 @@ controller.groups(); track group.key; let firstGroup = $first) {
     {{ group.label }}
   </h2>
   }
-  <ul class="grid grid-cols-4 gap-px">
+  <ul class="grid grid-cols-3 sm:grid-cols-4 gap-px">
     @for (entry of group.entries; track entry.$id) {
     <li class="flex flex-col">
       <ui-game-card
@@ -62,9 +62,9 @@ controller.groups(); track group.key; let firstGroup = $first) {
   </ul>
 </section>
 } @empty { @if (!controller.errors()['loadMore']) {
-<ul class="grid grid-cols-4 gap-px">
+<ul class="grid grid-cols-3 sm:grid-cols-4 gap-px">
   @if (profileStore.itsMe()) {
-  <li class="col-span-4 px-4 py-10">
+  <li class="col-span-full px-4 py-10">
     @if (loadingSuggestion()) {
     <div class="flex min-h-48 items-center justify-center">
       <ui-loading></ui-loading>
@@ -103,7 +103,7 @@ controller.groups(); track group.key; let firstGroup = $first) {
     }
   </li>
   } @else {
-  <li class="col-span-4">
+  <li class="col-span-full">
     <ui-empty-state
       icon="ph ph-game-controller"
       title="Nenhum jogo registrado"

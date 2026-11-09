@@ -87,13 +87,7 @@
                 <div class="flex items-center gap-2 flex-wrap">
                   <span
                     class="text-xs font-mono font-bold tracking-[0.18em] px-2 py-0.5 rounded"
-                    [class.bg-warning-bg]="leader.position === 1"
-                    [class.text-warning]="leader.position === 1"
-                    [class.bg-gray-4]="leader.position === 2"
-                    [class.text-gray-12]="leader.position === 2"
-                    [class.bg-warning-bg]="leader.position === 3"
-                    [class.text-warning]="leader.position === 3"
-                    [class.text-gray-10]="leader.position > 3"
+                    [class]="leader.position === 1 ? 'bg-warning-bg text-warning' : leader.position === 2 ? 'bg-gray-4 text-gray-12' : leader.position === 3 ? 'bg-bronze-bg text-bronze' : 'text-gray-10'"
                   >
                     #{{ leader.position }}
                   </span>
@@ -229,13 +223,7 @@
                   <div class="flex items-center gap-2 flex-wrap">
                     <span
                       class="text-xs font-mono font-bold tracking-[0.18em] px-2 py-0.5 rounded"
-                      [class.bg-warning-bg]="leader.position === 1"
-                      [class.text-warning]="leader.position === 1"
-                      [class.bg-gray-4]="leader.position === 2"
-                      [class.text-gray-12]="leader.position === 2"
-                      [class.bg-warning-bg]="leader.position === 3"
-                      [class.text-warning]="leader.position === 3"
-                      [class.text-gray-10]="leader.position > 3"
+                      [class]="leader.position === 1 ? 'bg-warning-bg text-warning' : leader.position === 2 ? 'bg-gray-4 text-gray-12' : leader.position === 3 ? 'bg-bronze-bg text-bronze' : 'text-gray-10'"
                     >
                       #{{ leader.position }}
                     </span>

@@ -1,8 +1,7 @@
 import { UiFounderBadge } from './founder-badge';
-import { Component, input } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProfileWithConnection, UserProfileRow } from '../../types';
-import { appwrite } from '../infra/appwrite/appwrite.client';
 
 @Component({
   selector: 'ui-profile-card',
@@ -12,10 +11,20 @@ import { appwrite } from '../infra/appwrite/appwrite.client';
       [routerLink]="['/player', profile().gamertag]"
       class="group flex items-center gap-3 border-b border-gray-6 px-3 py-3 hover:bg-gray-3 transition-colors"
     >
-      <img
-        [src]="playerAvatar(profile())"
-        class="h-12 w-12 rounded-full object-cover border border-gray-6"
-      />
+      @if (profile().avatarUrl && failedAvatarUrl() !== profile().avatarUrl) {
+        <img
+          [src]="profile().avatarUrl"
+          alt=""
+          width="48"
+          height="48"
+          class="h-12 w-12 shrink-0 rounded-full object-cover border border-gray-6"
+          (error)="failedAvatarUrl.set(profile().avatarUrl)"
+        />
+      } @else {
+        <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-9 text-white" aria-hidden="true">
+          {{ profile().gamertag.charAt(0).toUpperCase() }}
+        </span>
+      }
 
       <div class="min-w-0">
         <p class="text-gray-12 font-medium wrap-anywhere">
@@ -28,7 +37,7 @@ import { appwrite } from '../infra/appwrite/appwrite.client';
       </div>
 
       <i
-        class="ph ph-arrow-right ml-auto text-gray-10 group-hover:text-blue-11 group-hover:translate-x-1 transition-all"
+        class="ph ph-arrow-right shrink-0 ml-auto text-gray-10 group-hover:text-blue-11 group-hover:translate-x-1 transition-all"
       ></i>
     </a>
   `,
@@ -36,14 +45,5 @@ import { appwrite } from '../infra/appwrite/appwrite.client';
 export class UiProfileCard {
   profile = input.required<UserProfileRow | ProfileWithConnection>();
 
-  playerAvatar(profile: UserProfileRow) {
-    if (profile.avatarUrl) return profile.avatarUrl;
-
-    return appwrite.avatars.getInitials({
-      name: profile.gamertag,
-      width: 80,
-      height: 80,
-      background: '3e63dd',
-    });
-  }
+  readonly failedAvatarUrl = signal<string | undefined>(undefined);
 }

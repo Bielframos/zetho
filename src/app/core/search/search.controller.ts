@@ -20,6 +20,7 @@ type SearchState<T> = {
   pageCount: number;
   pageSize: number;
   loading: boolean;
+  error: boolean;
   initialized: boolean;
 };
 
@@ -30,6 +31,7 @@ type SearchResultView<T> = {
   pageCount: Signal<number>;
   pageSize: number;
   loading: Signal<boolean>;
+  error: Signal<boolean>;
   initialized: Signal<boolean>;
   nextPage: () => void;
   prevPage: () => void;
@@ -61,6 +63,7 @@ export class SearchController {
     pageCount: computed(() => this.gamesState().pageCount),
     pageSize: DEFAULT_PAGE_SIZE,
     loading: computed(() => this.gamesState().loading),
+    error: computed(() => this.gamesState().error),
     initialized: computed(() => this.gamesState().initialized),
     nextPage: () => this.nextPage('games'),
     prevPage: () => this.prevPage('games'),
@@ -75,6 +78,7 @@ export class SearchController {
     pageCount: computed(() => this.playersState().pageCount),
     pageSize: DEFAULT_PAGE_SIZE,
     loading: computed(() => this.playersState().loading),
+    error: computed(() => this.playersState().error),
     initialized: computed(() => this.playersState().initialized),
     nextPage: () => this.nextPage('players'),
     prevPage: () => this.prevPage('players'),
@@ -177,6 +181,7 @@ export class SearchController {
       pageCount: 1,
       pageSize,
       loading: false,
+      error: false,
       initialized: false,
     };
   }
@@ -195,6 +200,7 @@ export class SearchController {
       page: safePage,
       loading: true,
       initialized: true,
+      error: false,
     }));
 
     const filters = this.filters();
@@ -246,10 +252,7 @@ export class SearchController {
 
       this.gamesState.update((state) => ({
         ...state,
-        results: [],
-        total: 0,
-        page: safePage,
-        pageCount: 1,
+        error: true,
       }));
     } finally {
       if (currentVersion === this.gamesRequestVersion) {
@@ -275,6 +278,7 @@ export class SearchController {
       page: safePage,
       loading: true,
       initialized: true,
+      error: false,
     }));
 
     if (!query) {
@@ -313,10 +317,7 @@ export class SearchController {
 
       this.playersState.update((state) => ({
         ...state,
-        results: [],
-        total: 0,
-        page: safePage,
-        pageCount: 1,
+        error: true,
       }));
     } finally {
       if (currentVersion === this.playersRequestVersion) {

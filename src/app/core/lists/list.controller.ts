@@ -33,11 +33,15 @@ export class ListController {
   cancelLoad() {
     this.generation++;
     this.reorderOps.set([]);
+    this.loadingMore.set(false);
   }
   async loadSystem(slug: string, loadMore = false) {
+    if (loadMore && this.loading()) return;
     this.systemSlug = slug;
     const generation = ++this.generation;
     this.loading.set(true);
+    this.loadingMore.set(loadMore);
+    this.error.set(undefined);
     if (!loadMore) {
       this.reset();
       this.list.set(null);
@@ -60,14 +64,17 @@ export class ListController {
       this.hasMore.set(this.items().length < items.total);
     } catch (error) {
       if (generation !== this.generation) return;
-      this.list.set(null);
+      if (!loadMore) this.list.set(null);
       this.error.set({
         message: 'Não foi possível carregar a lista.',
         code: String(error).includes('404') ? 404 : 503,
         type: 'list_unavailable',
       });
     } finally {
-      if (generation === this.generation) this.loading.set(false);
+      if (generation === this.generation) {
+        this.loading.set(false);
+        this.loadingMore.set(false);
+      }
     }
   }
 
@@ -84,6 +91,7 @@ export class ListController {
   hasMore = signal(false);
 
   loading = signal(false);
+  loadingMore = signal(false);
   error = signal<AppError | undefined>(undefined);
 
   private reorder$ = new Subject<void>();
@@ -119,6 +127,8 @@ export class ListController {
     try {
       if (this.loading()) return;
       this.loading.set(true);
+      this.loadingMore.set(loadMore);
+      this.error.set(undefined);
 
       const profile = this.profileStore.current();
       if (!profile) return;
@@ -136,8 +146,6 @@ export class ListController {
       if (!loadMore) {
         this.reset();
         this.currentPage.set(1);
-      } else {
-        this.currentPage.update((p) => p + 1);
       }
 
       const list =
@@ -164,7 +172,7 @@ export class ListController {
 
       const items = await this.listService.getItems({
         listId: list.$id,
-        offset: this.offset(),
+        offset: loadMore ? this.items().length : 0,
       });
 
       if (generation !== this.generation) return;
@@ -176,6 +184,7 @@ export class ListController {
         this.items.set(rows);
       }
 
+      this.currentPage.set(Math.max(1, Math.ceil(this.items().length / PAGE_SIZE)));
       const loaded = this.items().length;
       this.totalItems.set(items.total);
       this.hasMore.set(loaded < items.total);
@@ -190,7 +199,10 @@ export class ListController {
         type: error.type,
       });
     } finally {
-      if (generation === this.generation) this.loading.set(false);
+      if (generation === this.generation) {
+        this.loading.set(false);
+        this.loadingMore.set(false);
+      }
     }
   }
 
