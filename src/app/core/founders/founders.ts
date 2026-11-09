@@ -1,13 +1,13 @@
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { UiLoading } from '../../shared/ui/loading';
+import { UiSkeleton } from '../../shared/ui/skeleton';
 import { SeoService } from '../system/seo/seo.service';
 import { Founder, FoundersService } from './founders.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-founders-page',
-  imports: [RouterLink, UiLoading],
+  imports: [RouterLink, UiSkeleton],
   templateUrl: './founders.html',
 })
 export class FoundersPage implements OnInit {

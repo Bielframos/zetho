@@ -15,7 +15,6 @@ import { ProfileStore } from '../../../../userProfiles/profile.store';
         <li
           class="group"
           [attr.data-active]="currentTab() === tab.key"
-          [class.pointer-events-none]="tab.count === 0"
         >
           <a
             [routerLink]="['/player', profileStore.current()?.gamertag]"

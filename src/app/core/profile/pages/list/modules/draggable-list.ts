@@ -9,6 +9,7 @@ import {
 import { Component, inject, input } from '@angular/core';
 import { ZereiListItemRow } from '../../../../../types';
 import { UiGameCard } from '../../../../../shared/ui/game-card/game-card';
+import { UiLoading } from '../../../../../shared/ui/loading';
 import { UiEmptyState } from '../../../../../shared/ui/empty-state';
 import { AppListCardMenu } from './list-card-menu';
 import { ListController } from '../../../../lists/list.controller';
@@ -24,6 +25,7 @@ import { RouterLink } from '@angular/router';
     CdkDrag,
     UiGameCard,
     UiEmptyState,
+    UiLoading,
     AppListCardMenu,
     CdkDragHandle,
     RouterLink,

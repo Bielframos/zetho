@@ -2,13 +2,13 @@
   @if (isSystem()) {
   <p class="px-4 pt-4 text-sm text-gray-11">Por Zetho · Lista oficial</p>
   }
-  <header class="w-full flex justify-between gap-4 border-b border-gray-6 p-4">
-    <div>
-      <h1 class="text-2xl font-medium max-w-xl">
+  <header class="w-full flex flex-col sm:flex-row sm:justify-between gap-4 border-b border-gray-6 p-4">
+    <div class="min-w-0 flex-1">
+      <h1 class="text-2xl font-medium max-w-xl wrap-anywhere">
         {{controller.list()?.title}}
       </h1>
-      <p class="text-gray-11">{{controller.list()?.description}}</p>
-      <div class="mt-2 flex items-center gap-4 text-sm text-gray-11">
+      <p class="text-gray-11 wrap-anywhere">{{controller.list()?.description}}</p>
+      <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-11">
         <span
           >{{ controller.list()?.itemCount || 0 }} {{
           (controller.list()?.itemCount === 1) ? 'jogo' : 'jogos' }}</span
@@ -19,7 +19,7 @@
         }
       </div>
     </div>
-    <div class="flex items-start gap-2">
+    <div class="flex shrink-0 flex-wrap items-start gap-2">
       @if (visible()) {<button
         type="button"
         class="ui-ghost-btn min-h-11 min-w-11 cursor-pointer"
@@ -60,9 +60,9 @@
       }
     </div>
   </header>
-  @if (controller.loading()) {
+  @if (controller.loading() && !controller.loadingMore()) {
   <ui-loading></ui-loading>
-  } @else if (controller.error?.()) {
+  } @else if (controller.error() && !controller.items().length) {
   <p role="alert" class="p-4 text-gray-11">
     Não foi possível carregar esta lista.
   </p>
