@@ -1,4 +1,7 @@
 <section>
+  @if (adminEditor) {
+  <nav class="border-b border-gray-6 px-4 py-3"><a routerLink="/admin/listas" class="text-sm text-blue-11 hover:underline">← Listas oficiais</a></nav>
+  }
   @if (isSystem()) {
   <p class="px-4 pt-4 text-sm text-gray-11">Por Zetho · Lista oficial</p>
   }

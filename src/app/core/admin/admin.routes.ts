@@ -1,3 +1,4 @@
+import { SystemLists } from '../lists/system-lists';
 import { Routes } from '@angular/router';
 import { adminGuard } from '../auth/auth.guards';
 import { AdminLayout } from './layout/admin-layout';
@@ -18,7 +19,19 @@ export const ADMIN_ROUTES_CHILDREN: Routes = [
     title: 'Zetho | Painel Admin',
     children: [
       { path: '', redirectTo: 'games', pathMatch: 'full' },
-      { path: 'listas-editoriais', redirectTo: '/listas', pathMatch: 'full' },
+      { path: 'listas-editoriais', redirectTo: 'listas', pathMatch: 'full' },
+      {
+        path: 'listas',
+        component: SystemLists,
+        title: 'Admin | Listas oficiais',
+      },
+      {
+        path: 'listas/:slug',
+        loadComponent: () =>
+          import('../profile/pages/list/list').then((m) => m.ListPage),
+        data: { systemList: true, adminEditor: true },
+        title: 'Admin | Revisar lista',
+      },
       { path: 'games', component: AdminGamesPage, title: 'Admin | Games' },
       { path: 'perfis', component: AdminProfilesPage, title: 'Admin | Perfis' },
       {
