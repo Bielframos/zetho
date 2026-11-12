@@ -10,6 +10,8 @@ import {
 import { FormsModule } from '@angular/forms';
 import { SocialApi } from '../../shared/infra/social-api';
 import { GameService } from '../games/games.service';
+import { SeoService } from '../system/seo/seo.service';
+import { UiLoading } from '../../shared/ui/loading';
 import { GameRow } from '../../types';
 import { ListService } from './list.service';
 import { ZereiListRow } from './lists.type';
@@ -36,162 +38,17 @@ type Content = {
 };
 @Component({
   selector: 'app-list-publication-controls',
-  imports: [FormsModule, UiCombobox],
-  template: ` <section class="border-b border-gray-6 p-4">
-    <h2 class="text-xl">Publicação da lista</h2>
-    <p class="my-2 text-sm text-gray-11">
-      {{
-        list().status === 'draft'
-          ? 'Rascunho'
-          : list().status === 'archived'
-            ? 'Arquivada'
-            : 'Publicada'
-      }}
-    </p>
-    <p role="status" class="text-sm text-gray-11">{{ message() }}</p>
-    @if (list().status === 'draft') {
-      <form class="mt-4 flex flex-col gap-4" (ngSubmit)="save()">
-        <label
-          >Critérios da seleção<textarea
-            name="criteria"
-            [(ngModel)]="content.criteria"
-            maxlength="800"
-            class="block w-full rounded-lg border border-gray-6 bg-transparent p-2 focus:ring-2 focus:ring-focus-ring"
-          ></textarea>
-        </label>
-        <label
-          >Tipo<select
-            name="kind"
-            [(ngModel)]="content.kind"
-            class="ml-2 rounded-lg border border-gray-6 bg-gray-1 p-2"
-          >
-            <option value="thematic">Temática</option>
-            <option value="monthly">Lançamentos do mês</option>
-          </select></label
-        >
-        @if (content.kind === 'monthly') {
-          <label
-            >Período<input
-              type="month"
-              name="month"
-              [(ngModel)]="content.month"
-              class="ml-2 border border-gray-6 bg-transparent p-2"
-          /></label>
-        }
-        @for (item of content.items; track item.gameId; let index = $index) {
-          <fieldset class="border-t border-gray-6 pt-3">
-            <legend>{{ item.name }}</legend>
-            <label
-              >Justificativa<textarea
-                [name]="'reason-' + index"
-                [(ngModel)]="item.reason"
-                maxlength="400"
-                class="block w-full rounded-lg border border-gray-6 bg-transparent p-2"
-              ></textarea>
-            </label>
-            <label
-              >Fontes (uma URL por linha)<textarea
-                [name]="'sources-' + index"
-                [ngModel]="sourcesText(item.sources)"
-                (ngModelChange)="setSources(index, $event)"
-                class="block w-full rounded-lg border border-gray-6 bg-transparent p-2"
-              ></textarea>
-            </label>
-            @if (content.kind === 'monthly') {
-              <label
-                >Data de lançamento<input
-                  type="date"
-                  [name]="'date-' + index"
-                  [(ngModel)]="item.releaseDate"
-                  class="ml-2 border border-gray-6 bg-transparent p-2"
-              /></label>
-            }
-          </fieldset>
-        }
-        <button type="submit" class="ui-secondary-btn" [disabled]="busy()">
-          Salvar revisão
-        </button>
-        <label class="flex gap-2"
-          ><input
-            type="checkbox"
-            name="verified"
-            [(ngModel)]="verified"
-          />Conferi os jogos, as fontes e as datas desta versão.</label
-        >
-        <button
-          type="button"
-          class="ui-primary-btn"
-          [disabled]="busy() || !verified"
-          (click)="changeStatus('published')"
-        >
-          Publicar lista
-        </button>
-      </form>
-      <div class="mt-5 flex flex-col gap-3">
-        <ui-combobox
-          label="Adicionar jogo"
-          placeholder="Busque pelo nome do jogo"
-          [minQueryLength]="2"
-          [search]="searchGames"
-          [(selectedOptions)]="selectedGames"
-        />
-        <button
-          type="button"
-          class="ui-secondary-btn"
-          [disabled]="busy() || !selectedGames().length || items().length >= 10"
-          (click)="addGame()"
-        >
-          Adicionar à lista
-        </button>
-      </div>
-    } @else {
-      <button
-        type="button"
-        class="ui-secondary-btn my-3"
-        [disabled]="busy()"
-        (click)="changeStatus('draft')"
-      >
-        Voltar para rascunho
-      </button>
-    }
-    @if (list().status !== 'archived') {
-      <button
-        type="button"
-        class="ui-ghost-btn my-3"
-        [disabled]="busy()"
-        (click)="changeStatus('archived')"
-      >
-        Arquivar lista
-      </button>
-    }
-    @if (list().status === 'published') {
-      <button
-        type="button"
-        class="ui-secondary-btn"
-        [disabled]="busy()"
-        (click)="generatePost()"
-      >
-        Gerar rascunho do post
-      </button>
-      @if (postBody()) {
-        <h3 class="mt-4 text-xl">Prévia do post</h3>
-        <div class="prose max-w-none" [innerHTML]="postBody()"></div>
-        <button
-          type="button"
-          class="ui-primary-btn"
-          [disabled]="busy()"
-          (click)="publishPost()"
-        >
-          Publicar este post
-        </button>
-      }
-    }
-  </section>`,
+  imports: [FormsModule, UiCombobox, UiLoading],
+  templateUrl: './list-publication-controls.html',
+  styleUrl: './list-publication-controls.css',
 })
 export class ListPublicationControls implements OnDestroy {
   list = input.required<ZereiListRow>();
   items = input.required<ZereiListItemRowExpanded[]>();
   changed = output<void>();
+  removed = output<ZereiListItemRowExpanded>();
+  tab = signal<'edit' | 'preview'>('edit');
+  private seo = inject(SeoService);
   private api = inject(SocialApi);
   private games = inject(GameService);
   private lists = inject(ListService);
@@ -234,7 +91,9 @@ export class ListPublicationControls implements OnDestroy {
         gameId: item.game.$id,
         name: item.game.name,
         reason: item.reason ?? '',
-        sources: item.sources ?? [],
+        sources: item.sources?.length
+          ? [...item.sources]
+          : [this.seo.toAbsoluteUrl(`/jogo/${item.game.slug}`)],
         ...(item.releaseDate ? { releaseDate: item.releaseDate } : {}),
       })),
     };
@@ -251,15 +110,29 @@ export class ListPublicationControls implements OnDestroy {
       })),
     };
   }
-  sourcesText(sources: string[]) {
-    return sources.join('\n');
+  get dirty() {
+    return this.original !== JSON.stringify(this.payload());
   }
-  setSources(index: number, value: string) {
-    this.content.items[index].sources = value
-      .split('\n')
-      .map((s) => s.trim())
-      .filter(Boolean);
+  openPreview() {
+    if (this.dirty && this.list().status === 'draft') {
+      this.message.set('Salve as alterações para atualizar a prévia.');
+      return;
+    }
+    this.message.set('');
+    this.tab.set('preview');
+  }
+  moveItem(index: number, direction: -1 | 1) {
+    const target = index + direction;
+    if (this.busy() || target < 0 || target >= this.content.items.length)
+      return;
+    const [item] = this.content.items.splice(index, 1);
+    this.content.items.splice(target, 0, item);
     this.verified = false;
+  }
+  removeGame(gameId: string) {
+    if (this.busy() || this.dirty) return;
+    const item = this.items().find((item) => item.game.$id === gameId);
+    if (item) this.removed.emit(item);
   }
   searchGames: UiComboboxSearch = async (query) => {
     const result = await this.games.searchGame(query, { pageSize: 6 });
@@ -304,6 +177,10 @@ export class ListPublicationControls implements OnDestroy {
     const game = this.catalog.get(this.selectedGames()[0]?.id);
     if (!game) return;
     const generation = this.generation;
+    if (this.dirty) {
+      this.message.set('Salve as alterações antes de adicionar um jogo.');
+      return;
+    }
     await this.run(async (row) => {
       await this.lists.addToList({ list: row, game });
       if (generation === this.generation) this.changed.emit();

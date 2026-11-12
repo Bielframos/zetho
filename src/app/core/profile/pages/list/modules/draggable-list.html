@@ -7,62 +7,68 @@
   <div
     cdkDrag
     [cdkDragDisabled]="!itsMe()"
-    class="flex gap-4 pl-2 pr-4 py-4 md:py-2 items-center font-light relative"
+    class="relative flex min-w-0 items-center gap-4 p-4"
   >
     @if (itsMe()) {
-    <div class="cursor-grab" cdkDragHandle (click)="$event.stopPropagation()">
+    <div
+      class="shrink-0 cursor-grab"
+      cdkDragHandle
+      (click)="$event.stopPropagation()"
+    >
       <i class="ph ph-dots-six-vertical text-gray-11"></i>
     </div>
     }
-
     <a
       [routerLink]="['/jogo', item.game.slug]"
-      class="flex gap-4 items-center flex-1"
+      class="shrink-0 rounded focus-visible:ring-2 focus-visible:ring-focus-ring"
+      [attr.aria-label]="'Ver ' + item.game.name"
     >
       <ui-game-card
-        [width]="64"
+        [width]="80"
         [game]="item.game"
         transitionScope="list"
         [transitionItemId]="item.$id"
         readonlyMode
-      ></ui-game-card>
-
-      <span
-        class="font-normal font-mono text-gray-11 px-3 rounded-full bg-gray-3 w-fit"
-      >
-        {{idx + 1}}
-      </span>
-
-      <span>{{ item.game.name }} </span>
+      />
     </a>
-
-    @if (itsMe()) {
-    <app-list-card-menu [item]="item"></app-list-card-menu>
-    }
-  </div>
-  @if (controller.list()?.ownerType === 'system') {
-  <div class="px-4 pb-4 text-gray-11">
-    <p>{{item.reason}}</p>
-    @if(item.releaseDate) {
-    <p class="text-sm">Lançamento: {{item.releaseDate}}</p>
-    }
-    <div class="my-2 flex flex-wrap gap-3">
-      @for(source of item.sources ?? []; track source){<a
-        [href]="source"
-        target="_blank"
-        rel="nofollow noopener noreferrer"
-        class="text-sm text-blue-11 hover:underline"
-        >Fonte</a
-      >}
+    <div
+      class="flex min-w-0 flex-1 flex-col justify-center gap-2"
+      [class.pr-8]="itsMe()"
+    >
+      <a
+        [routerLink]="['/jogo', item.game.slug]"
+        class="flex min-w-0 items-baseline gap-2 rounded hover:text-blue-11 focus-visible:ring-2 focus-visible:ring-focus-ring"
+      >
+        <span
+          class="shrink-0 text-sm tabular-nums text-gray-11"
+          [attr.aria-label]="'Posição ' + (idx + 1)"
+          >{{ idx + 1 }}.</span
+        >
+        <span class="font-medium wrap-anywhere">{{ item.game.name }}</span>
+      </a>
+      @if (controller.list()?.ownerType === 'system') { @if (item.reason) {
+      <p
+        class="whitespace-pre-line text-sm font-light leading-6 text-gray-11 wrap-anywhere"
+      >
+        {{ item.reason }}
+      </p>
+      } @if (item.releaseDate) {
+      <p class="text-xs text-gray-11">Lançamento: {{ item.releaseDate }}</p>
+      } @if (controller.list()?.status === 'published') {
+      <app-content-game-cta
+        [game]="{id:item.game.$id,name:item.game.name,slug:item.game.slug}"
+        [contentId]="controller.list()!.$id"
+        [slug]="controller.list()!.slug"
+        [compact]="true"
+        source="editorial_list"
+      />
+      } }
     </div>
-    @if(controller.list()?.status === 'published') {<app-content-game-cta
-      [game]="{id:item.game.$id,name:item.game.name,slug:item.game.slug}"
-      [contentId]="controller.list()!.$id"
-      [slug]="controller.list()!.slug"
-      source="editorial_list"
-    />}
+    @if (itsMe()) {
+    <app-list-card-menu [item]="item" />
+    }
   </div>
-  } } @empty { @if (itsMe()) {
+  } @empty { @if (itsMe()) {
   <ui-empty-state
     icon="ph ph-list-plus"
     title="Essa lista está vazia"
@@ -82,17 +88,24 @@
 </div>
 
 @if (controller.error() && controller.items().length) {
-  <p class="px-4 pt-4 text-sm text-danger" role="alert">Não foi possível carregar mais jogos. Tente novamente.</p>
-}
-@if (controller.hasMore()) {
-<footer class="w-full flex justify-center p-4" [attr.aria-busy]="controller.loadingMore()">
-  <button type="button" class="ui-primary-btn" [disabled]="controller.loading()" (click)="controller.load({loadMore: true})">
+<p class="px-4 pt-4 text-sm text-danger" role="alert">
+  Não foi possível carregar mais jogos. Tente novamente.
+</p>
+} @if (controller.hasMore()) {
+<footer
+  class="w-full flex justify-center p-4"
+  [attr.aria-busy]="controller.loadingMore()"
+>
+  <button
+    type="button"
+    class="ui-primary-btn"
+    [disabled]="controller.loading()"
+    (click)="controller.load({loadMore: true})"
+  >
     @if (controller.loadingMore()) {
-      <ui-loading [inline]="true" size="sm" />
-      Carregando...
-    } @else {
-      {{ controller.error() ? 'Tentar novamente' : 'Carregar mais' }}
-    }
+    <ui-loading [inline]="true" size="sm" />
+    Carregando... } @else { {{ controller.error() ? 'Tentar novamente' :
+    'Carregar mais' }} }
   </button>
 </footer>
 }

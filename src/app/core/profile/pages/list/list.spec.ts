@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, Input, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -141,6 +142,7 @@ describe('ListPage', () => {
       .overrideComponent(ListPage, {
         set: {
           imports: [
+            NgTemplateOutlet,
             MockUiDraggableList,
             UiLoading,
             ReactiveFormsModule,
