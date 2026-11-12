@@ -20,7 +20,7 @@ import { AppListMenu } from './modules/list-menu';
 import { AuthStore } from '../../../auth/auth.store';
 import { ProfileStore } from '../../../userProfiles/profile.store';
 import { ListController } from '../../../lists/list.controller';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { distinctUntilChanged, map } from 'rxjs';
 import {
   DashboardService,
@@ -34,6 +34,7 @@ import { ShareCardData } from '../../../share/share.types';
   standalone: true,
   templateUrl: './list.html',
   imports: [
+    RouterLink,
     ListPublicationControls,
     UiDraggableList,
     UiLoading,
@@ -52,8 +53,10 @@ export class ListPage implements OnDestroy {
   readonly isSystem = computed(
     () => this.controller.list()?.ownerType === 'system',
   );
+  readonly adminEditor =
+    !!inject(ActivatedRoute).snapshot?.data?.['adminEditor'];
   readonly canReview = computed(
-    () => this.isSystem() && this.authStore.isAdmin(),
+    () => this.adminEditor && this.isSystem() && this.authStore.isAdmin(),
   );
   readonly visible = computed(
     () =>
@@ -146,14 +149,12 @@ export class ListPage implements OnDestroy {
             '@context': 'https://schema.org',
             '@type': 'ItemList',
             name: list.title,
-            itemListElement: this.controller
-              .items()
-              .map((item, index) => ({
-                '@type': 'ListItem',
-                position: index + 1,
-                name: item.game.name,
-                url: this.seo.toAbsoluteUrl(`/jogo/${item.game.slug}`),
-              })),
+            itemListElement: this.controller.items().map((item, index) => ({
+              '@type': 'ListItem',
+              position: index + 1,
+              name: item.game.name,
+              url: this.seo.toAbsoluteUrl(`/jogo/${item.game.slug}`),
+            })),
           });
       }
     });
