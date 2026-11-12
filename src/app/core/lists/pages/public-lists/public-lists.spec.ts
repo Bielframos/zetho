@@ -55,17 +55,22 @@ describe('PublicListsPage', () => {
       {
         $id: 'list-2',
         title: 'Indies Favoritos',
+        ownerFingerprint: 'system:zetho',
         slug: 'indies-favoritos',
         itemCount: 5,
         likeCount: 1,
         saveCount: 0,
-        author: { gamertag: 'gamer2' },
+        author: null,
       } as any,
     ]);
     fixture.detectChanges();
 
     const items = fixture.nativeElement.querySelectorAll('ul[aria-label="Listas públicas"] > li');
     expect(items.length).toBe(2);
+    expect(items[0].textContent).not.toContain('Criada pelo Zetho');
+    expect(items[1].textContent).toContain('Criada pelo Zetho');
+    expect(items[1].querySelector('a').getAttribute('href')).toBe('/listas/indies-favoritos');
+    expect(fixture.nativeElement.querySelector('app-system-lists')).toBeNull();
     expect(items[0].classList.contains('sm:odd:border-r')).toBeTrue();
     expect(items[0].classList.contains('sm:border-b')).toBeTrue();
   });

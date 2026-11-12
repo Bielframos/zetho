@@ -1,4 +1,5 @@
 import { Component, effect, inject, signal, OnDestroy } from '@angular/core';
+import { UiLoading } from '../../shared/ui/loading';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '../auth/auth.store';
 import { SocialApi } from '../../shared/infra/social-api';
@@ -6,19 +7,27 @@ import { AppNewListDialog } from '../../shared/app/new-list-dialog/new-list-dial
 import { ZereiListRow } from './lists.type';
 @Component({
   selector: 'app-system-lists',
-  imports: [RouterLink, AppNewListDialog],
+  imports: [RouterLink, AppNewListDialog, UiLoading],
   template: ` @if (auth.isAdmin()) {
     <section class="border-b border-gray-6 p-4">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <h2 class="text-xl">Listas do Zetho</h2>
-        <app-new-list-dialog />
+        <app-new-list-dialog [official]="true" />
       </div>
       <p role="status" class="mt-2 text-sm text-gray-11">{{ message() }}</p>
+      @if (loading()) {
+        <ui-loading fallback="Carregando listas oficiais" />
+      }
+      @if (!loading() && !lists().length && !message()) {
+        <p class="py-4 text-sm text-gray-11">
+          Nenhuma lista oficial encontrada.
+        </p>
+      }
       <ul class="mt-3 divide-y divide-gray-6">
         @for (list of lists(); track list.$id) {
           <li class="py-3">
             <a
-              [routerLink]="['/listas', list.slug]"
+              [routerLink]="['/admin/listas', list.slug]"
               class="text-blue-11 hover:underline"
               >{{ list.title }}</a
             ><span class="ml-3 text-sm text-gray-11">{{
@@ -43,6 +52,7 @@ export class SystemLists implements OnDestroy {
   private generation = 0;
   lists = signal<ZereiListRow[]>([]);
   message = signal('');
+  loading = signal(false);
   constructor() {
     effect(() => {
       const admin = this.auth.isAdmin();
@@ -50,6 +60,7 @@ export class SystemLists implements OnDestroy {
       const generation = ++this.generation;
       this.lists.set([]);
       this.message.set('');
+      this.loading.set(admin && !!user);
       if (admin && user)
         void this.api
           .request<{ rows: ZereiListRow[] }>('lists/system', 'GET')
@@ -61,6 +72,9 @@ export class SystemLists implements OnDestroy {
               this.message.set(
                 'Não foi possível carregar suas listas do sistema.',
               );
+          })
+          .finally(() => {
+            if (generation === this.generation) this.loading.set(false);
           });
     });
   }

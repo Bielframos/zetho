@@ -8,15 +8,14 @@
         <i class="ph ph-list-dashes"></i>
       </span>
       <div>
-        <h1 class="text-2xl text-gray-12">Listas da comunidade</h1>
+        <h1 class="text-2xl text-gray-12">Descubra listas</h1>
         <p class="text-sm text-gray-11">
-          Descubra coleções criadas por outros jogadores.
+          Seleções do Zetho e coleções da comunidade para encontrar seu próximo jogo.
         </p>
       </div>
     </div>
   </header>
 
-  <app-system-lists />
 
   @if (loading()) {
   <div
@@ -62,7 +61,7 @@
                 ? ['/player', list.author.gamertag, 'listas', list.slug]
                 : null
             "
-        class="group flex h-full flex-col gap-4 p-4 transition-colors hover:bg-gray-3"
+        class="group flex h-full flex-col gap-4 p-4 transition-colors hover:bg-gray-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus-ring"
         [attr.aria-disabled]="list.author || list.ownerFingerprint === 'system:zetho' ? null : true"
       >
         @if (coversFor(list); as covers) { @if (covers.length > 0) {
@@ -90,17 +89,21 @@
         } }
 
         <div class="min-w-0">
-          <h2 class="truncate text-lg text-gray-12 group-hover:underline">
+          @if (list.ownerFingerprint === 'system:zetho') {
+          <span class="mb-2 inline-flex items-center gap-1 rounded-full bg-blue-3 px-2 py-1 text-xs text-blue-11"><i class="ph-fill ph-seal-check" aria-hidden="true"></i> Criada pelo Zetho</span>
+          }
+          <h2 class="line-clamp-2 text-lg text-gray-12 group-hover:underline">
             {{ list.title }}
           </h2>
           <p class="wrap-anywhere text-sm text-gray-11">
-            por {{ list.ownerFingerprint === 'system:zetho' ? 'Zetho · Editorial' : list.author?.gamertag ?? list.ownerFingerprint }}
+            por {{ list.ownerFingerprint === 'system:zetho' ? 'Zetho' : list.author?.gamertag ?? list.ownerFingerprint }}
             @if (list.ownerFingerprint !== 'system:zetho') {
               <ui-founder-badge [gamertag]="list.author?.gamertag" />
             }
           </p>
         </div>
 
+        @if (list.description) {<p class="line-clamp-2 text-sm leading-relaxed text-gray-11">{{list.description}}</p>}
         <div class="mt-auto flex items-center gap-4 text-sm text-gray-11">
           <span
             class="flex items-center gap-1"

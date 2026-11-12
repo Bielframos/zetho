@@ -119,6 +119,7 @@ describe('ListPage', () => {
             profile: authProfile,
             user: signal({ $id: 'viewer-user' }),
             isAuthenticated: signal(true),
+            isAdmin: signal(true),
           },
         },
         {
@@ -355,4 +356,13 @@ describe('ListPage', () => {
       ).toBeTruthy();
     });
   });
+  it('keeps official publication and editing controls out of the public detail even for admins', () => {
+    listData.set({ ...listData(), ownerType: 'system', status: 'published', isPublic: true });
+    fixture.detectChanges();
+    expect(component.canReview()).toBeFalse();
+    expect(component.itsMe()).toBeFalse();
+    expect(fixture.nativeElement.querySelector('app-list-publication-controls')).toBeNull();
+    expect(fixture.nativeElement.querySelector('app-list-menu')).toBeNull();
+  });
+
 });
