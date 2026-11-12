@@ -1,0 +1,289 @@
+<section [attr.aria-busy]="busy()">
+  <div
+    class="flex items-center justify-between gap-3 border-b border-gray-6 px-4"
+  >
+    <nav aria-label="Visualização da lista" class="flex gap-4">
+      <button
+        type="button"
+        class="border-b-2 px-1 py-4 text-sm focus-visible:ring-2 focus-visible:ring-focus-ring"
+        [class]="tab() === 'edit' ? 'border-blue-9 text-gray-12' : 'border-transparent text-gray-11'"
+        [attr.aria-current]="tab() === 'edit' ? 'page' : null"
+        (click)="tab.set('edit')"
+      >
+        Editar lista
+      </button>
+      <button
+        type="button"
+        class="border-b-2 px-1 py-4 text-sm focus-visible:ring-2 focus-visible:ring-focus-ring"
+        [class]="tab() === 'preview' ? 'border-blue-9 text-gray-12' : 'border-transparent text-gray-11'"
+        [attr.aria-current]="tab() === 'preview' ? 'page' : null"
+        [disabled]="busy()"
+        (click)="openPreview()"
+      >
+        Prévia
+      </button>
+    </nav>
+    <span class="rounded-full bg-gray-3 px-2 py-1 text-xs text-gray-11"
+      >{{ list().status === 'draft' ? 'Rascunho' : list().status === 'archived'
+      ? 'Arquivada' : 'Publicada' }}</span
+    >
+  </div>
+  @if (message()) {
+  <p role="status" class="border-b border-gray-6 p-4 text-sm text-gray-11">
+    {{ message() }}
+  </p>
+  }
+  <div [hidden]="tab() !== 'edit'">
+    @if (list().status === 'draft') {
+    <form
+      #editorForm="ngForm"
+      (ngSubmit)="editorForm.valid && content.items.length && save()"
+    >
+      <fieldset
+        [disabled]="busy()"
+        class="min-w-0 space-y-4 border-b border-gray-6 p-4"
+      >
+        <legend class="sr-only">Dados da lista</legend>
+        <h2 class="text-lg font-medium">Sobre a lista</h2>
+        <label
+          >Nome da lista<input
+            name="title"
+            (ngModelChange)="verified = false"
+            [(ngModel)]="content.title"
+            required
+            minlength="5"
+            maxlength="64"
+        /></label>
+        <label
+          >Descrição<textarea
+            name="description"
+            (ngModelChange)="verified = false"
+            [(ngModel)]="content.description"
+            required
+            minlength="10"
+            maxlength="128"
+            rows="3"
+          ></textarea>
+        </label>
+        <label
+          >Critérios da seleção<textarea
+            name="criteria"
+            (ngModelChange)="verified = false"
+            [(ngModel)]="content.criteria"
+            required
+            minlength="20"
+            maxlength="800"
+            rows="4"
+          ></textarea>
+        </label>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <label
+            >Tipo<select
+              name="kind"
+              (ngModelChange)="verified = false"
+              [(ngModel)]="content.kind"
+            >
+              <option value="thematic">Temática</option>
+              <option value="monthly">Lançamentos do mês</option>
+            </select></label
+          >
+          @if (content.kind === 'monthly') {<label
+            >Período<input
+              type="month"
+              name="month"
+              (ngModelChange)="verified = false"
+              [(ngModel)]="content.month"
+              required /></label
+          >}
+        </div>
+      </fieldset>
+      <section class="border-b border-gray-6">
+        <header class="flex items-center justify-between gap-3 p-4">
+          <h2 class="text-lg font-medium">Jogos da seleção</h2>
+          <span class="text-sm text-gray-11"
+            >{{ content.items.length }}/10 jogos</span
+          >
+        </header>
+        <div class="divide-y divide-gray-6">
+          @for (item of content.items; track item.gameId; let index = $index) {
+          <fieldset [disabled]="busy()" class="min-w-0 space-y-3 p-4">
+            <legend class="sr-only">{{ item.name }}</legend>
+            <div class="flex flex-wrap items-center gap-3">
+              <span
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-gray-3 text-sm text-gray-11"
+                >{{ index + 1 }}</span
+              >
+              <h3 class="min-w-0 flex-1 wrap-anywhere">{{ item.name }}</h3>
+              <div class="flex shrink-0 items-center gap-1">
+                <button
+                  type="button"
+                  class="ui-ghost-btn"
+                  data-size="icon"
+                  [attr.aria-label]="'Mover ' + item.name + ' para cima'"
+                  [disabled]="busy() || index === 0"
+                  (click)="moveItem(index, -1)"
+                >
+                  <i class="ph ph-arrow-up" aria-hidden="true"></i>
+                </button>
+                <button
+                  type="button"
+                  class="ui-ghost-btn"
+                  data-size="icon"
+                  [attr.aria-label]="'Mover ' + item.name + ' para baixo'"
+                  [disabled]="busy() || index === content.items.length - 1"
+                  (click)="moveItem(index, 1)"
+                >
+                  <i class="ph ph-arrow-down" aria-hidden="true"></i>
+                </button>
+                <button
+                  type="button"
+                  class="ui-ghost-btn"
+                  data-size="icon"
+                  [attr.aria-label]="'Remover ' + item.name"
+                  [disabled]="busy() || dirty"
+                  (click)="removeGame(item.gameId)"
+                >
+                  <i class="ph ph-trash" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <label
+              >Justificativa<textarea
+                [name]="'reason-' + index"
+                (ngModelChange)="verified = false"
+                [(ngModel)]="item.reason"
+                required
+                minlength="10"
+                maxlength="400"
+                rows="4"
+              ></textarea>
+            </label>
+            @if (content.kind === 'monthly') {<label
+              >Data de lançamento<input
+                type="date"
+                [name]="'date-' + index"
+                (ngModelChange)="verified = false"
+                [(ngModel)]="item.releaseDate"
+                required /></label
+            >}
+          </fieldset>
+          } @empty {
+          <p class="px-4 pb-4 text-sm text-gray-11">
+            Adicione o primeiro jogo à seleção.
+          </p>
+          }
+        </div>
+      </section>
+      <div class="flex flex-wrap items-center justify-between gap-3 p-4">
+        <span class="text-sm text-gray-11" aria-live="polite"
+          >{{ dirty ? 'Alterações não salvas' : 'Versão salva' }}</span
+        >
+        <button
+          type="submit"
+          class="ui-secondary-btn"
+          [disabled]="busy() || editorForm.invalid || !content.items.length"
+        >
+          @if (busy()) {<ui-loading [inline]="true" size="sm" />} Salvar
+          alterações
+        </button>
+      </div>
+    </form>
+    <section class="space-y-3 border-y border-gray-6 p-4">
+      <h2 class="text-lg font-medium">Adicionar jogo</h2>
+      @if (content.items.length < 10) {
+      <ui-combobox
+        label="Buscar jogo"
+        placeholder="Busque pelo nome do jogo"
+        [minQueryLength]="2"
+        [search]="searchGames"
+        [(selectedOptions)]="selectedGames"
+      />
+      <button
+        type="button"
+        class="ui-secondary-btn"
+        [disabled]="busy() || dirty || !selectedGames().length"
+        (click)="addGame()"
+      >
+        <i class="ph ph-plus" aria-hidden="true"></i> Adicionar à lista
+      </button>
+      } @else {
+      <p class="text-sm text-gray-11">Limite de 10 jogos atingido.</p>
+      }
+    </section>
+    } @else {
+    <div class="space-y-3 border-b border-gray-6 p-4">
+      <p class="text-sm text-gray-11">
+        {{ list().status === 'published' ? 'Esta lista está publicada. Volte
+        para rascunho para editar.' : 'Esta lista está arquivada. Restaure o
+        rascunho para editar.' }}
+      </p>
+      <button
+        type="button"
+        class="ui-secondary-btn"
+        [disabled]="busy()"
+        (click)="changeStatus('draft')"
+      >
+        {{ list().status === 'archived' ? 'Restaurar rascunho' : 'Voltar para
+        rascunho' }}
+      </button>
+    </div>
+    }
+    <section class="space-y-4 p-4">
+      <h2 class="text-lg font-medium">Publicação</h2>
+      @if (list().status === 'draft') {
+      <label class="flex items-start gap-3 text-sm text-gray-11"
+        ><input
+          type="checkbox"
+          class="mt-1 h-4 w-4 shrink-0 accent-blue-9"
+          name="verified"
+          [(ngModel)]="verified"
+          [disabled]="busy() || dirty || !content.items.length"
+        />Conferi a seleção, as justificativas e as datas desta versão.</label
+      >
+      <button
+        type="button"
+        class="ui-primary-btn"
+        [disabled]="busy() || dirty || !verified || !content.items.length"
+        (click)="changeStatus('published')"
+      >
+        Publicar lista
+      </button>
+      } @if (list().status === 'published') {
+      <button
+        type="button"
+        class="ui-secondary-btn"
+        [disabled]="busy()"
+        (click)="generatePost()"
+      >
+        Gerar rascunho do post
+      </button>
+      @if (postBody()) {
+      <h3 class="font-medium">Prévia do post</h3>
+      <div
+        class="prose max-w-none border-y border-gray-6 py-4"
+        [innerHTML]="postBody()"
+      ></div>
+      <button
+        type="button"
+        class="ui-primary-btn"
+        [disabled]="busy()"
+        (click)="publishPost()"
+      >
+        Publicar este post
+      </button>
+      } } @if (list().status !== 'archived') {
+      <div class="border-t border-gray-6 pt-4">
+        <button
+          type="button"
+          class="ui-ghost-btn text-danger"
+          [disabled]="busy() || dirty"
+          (click)="changeStatus('archived')"
+        >
+          <i class="ph ph-archive" aria-hidden="true"></i> Arquivar lista
+        </button>
+      </div>
+      }
+    </section>
+  </div>
+  <div [hidden]="tab() !== 'preview'"><ng-content /></div>
+</section>

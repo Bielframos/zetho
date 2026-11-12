@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ListPublicationControls } from '../../../lists/list-publication-controls';
 import { createSsrTaskRunner } from '../../../../utils/ssr-task';
 import { SeoService } from '../../../system/seo/seo.service';
@@ -35,6 +36,7 @@ import { ShareCardData } from '../../../share/share.types';
   templateUrl: './list.html',
   imports: [
     RouterLink,
+    NgTemplateOutlet,
     ListPublicationControls,
     UiDraggableList,
     UiLoading,

@@ -18,18 +18,29 @@ import { ZEntryService } from '../zEntries/zEntries.service';
   selector: 'app-content-game-cta',
   imports: [RouterLink],
   template: `
-    <div class="flex flex-wrap items-center gap-3 py-3">
-      <a
-        [routerLink]="['/jogo', game().slug]"
-        class="min-w-0 flex-1 text-blue-11 hover:underline"
-        >{{ game().name }}</a
-      >
+    <div class="flex flex-wrap items-center gap-3" [class.py-3]="!compact()">
+      @if (!compact()) {
+        <a
+          [routerLink]="['/jogo', game().slug]"
+          class="min-w-0 flex-1 text-blue-11 hover:underline"
+          >{{ game().name }}</a
+        >
+      }
       <button
         type="button"
-        class="ui-secondary-btn text-sm"
+        class="text-sm"
+        [class]="compact() ? 'ui-ghost-btn -ml-2 px-2' : 'ui-secondary-btn'"
         [disabled]="busy() || saved()"
         (click)="save()"
       >
+        @if (compact()) {
+          <i
+            [class]="
+              saved() ? 'ph ph-check text-blue-11' : 'ph ph-bookmark-simple'
+            "
+            aria-hidden="true"
+          ></i>
+        }
         {{
           busy() ? 'Salvando…' : saved() ? 'Na sua biblioteca' : 'Quero jogar'
         }}
@@ -43,13 +54,18 @@ import { ZEntryService } from '../zEntries/zEntries.service';
         Cancelar
       </button>
     }
-    <p aria-live="polite" class="text-sm text-gray-11">{{ message() }}</p>
+    @if (message()) {
+      <p aria-live="polite" class="mt-1 text-sm text-gray-11">
+        {{ message() }}
+      </p>
+    }
   `,
 })
 export class ContentGameCta implements OnDestroy {
   game = input.required<{ id: string; name: string; slug: string }>();
   contentId = input.required<string>();
   slug = input.required<string>();
+  compact = input(false);
   source = input<'news' | 'editorial_list'>('news');
   private auth = inject(AuthStore);
   private api = inject(SocialApi);

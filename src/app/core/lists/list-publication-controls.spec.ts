@@ -3,6 +3,8 @@ import { SocialApi } from '../../shared/infra/social-api';
 import { GameService } from '../games/games.service';
 import { ListService } from './list.service';
 import { ListPublicationControls } from './list-publication-controls';
+import { ZereiListItemRowExpanded } from './list.controller';
+import { SeoService } from '../system/seo/seo.service';
 import { ZereiListRow } from './lists.type';
 function deferred<T>() {
   let resolve!: (value: T) => void;
@@ -37,6 +39,12 @@ describe('Publication within the existing list page', () => {
     TestBed.configureTestingModule({
       imports: [ListPublicationControls],
       providers: [
+        {
+          provide: SeoService,
+          useValue: {
+            toAbsoluteUrl: (path: string) => `https://zetho.test${path}`,
+          },
+        },
         { provide: SocialApi, useValue: { request } },
         {
           provide: GameService,
@@ -96,6 +104,52 @@ describe('Publication within the existing list page', () => {
       revision: 'a',
       sourcesVerified: true,
     });
+  });
+  const gameItem = (id: string, sources: string[] = []) =>
+    ({
+      $id: id,
+      game: { $id: id, name: `Jogo ${id}`, slug: id },
+      reason: 'Uma justificativa para a seleção.',
+      sources,
+    }) as ZereiListItemRowExpanded;
+  it('uses the Zetho game page as the source for new editorial items and preserves existing references', async () => {
+    select('a', 'draft');
+    fixture.componentRef.setInput('items', [
+      gameItem('one'),
+      gameItem('two', ['https://publisher.test/game']),
+    ]);
+    fixture.detectChanges();
+    await page.save();
+    const content = request.calls.mostRecent().args[2].content;
+    expect(content.items[0].sources).toEqual(['https://zetho.test/jogo/one']);
+    expect(content.items[1].sources).toEqual(['https://publisher.test/game']);
+  });
+  it('keeps unsaved edits when opening the saved preview and blocks publication', async () => {
+    select('a', 'draft');
+    page.content.title = 'Título alterado';
+    page.openPreview();
+    expect(page.tab()).toBe('edit');
+    expect(page.content.title).toBe('Título alterado');
+    expect(page.message()).toContain('Salve');
+    expect(request).not.toHaveBeenCalled();
+    page.verified = true;
+    await page.changeStatus('published');
+    expect(request).not.toHaveBeenCalled();
+  });
+  it('saves the edited game order and requires checking the new version again', async () => {
+    select('a', 'draft');
+    fixture.componentRef.setInput('items', [gameItem('one'), gameItem('two')]);
+    fixture.detectChanges();
+    page.verified = true;
+    page.moveItem(1, -1);
+    expect(page.dirty).toBeTrue();
+    expect(page.verified).toBeFalse();
+    await page.save();
+    expect(
+      request.calls
+        .mostRecent()
+        .args[2].content.items.map((item: { gameId: string }) => item.gameId),
+    ).toEqual(['two', 'one']);
   });
   it('does not reload a different list after a late save', async () => {
     const response = deferred<object>();
