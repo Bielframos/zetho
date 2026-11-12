@@ -1,0 +1,33 @@
+:host {
+  display: block;
+}
+form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-gray-11);
+}
+form input,
+form textarea,
+form select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--color-gray-6);
+  border-radius: 0.5rem;
+  background: var(--color-gray-1);
+  padding: 0.75rem;
+  color: var(--color-gray-12);
+}
+form textarea {
+  resize: vertical;
+}
+form input:focus-visible,
+form textarea:focus-visible,
+form select:focus-visible {
+  outline: 2px solid var(--color-blue-9);
+  outline-offset: 2px;
+}
+fieldset:disabled {
+  opacity: 0.6;
+}

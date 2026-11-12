@@ -1,6 +1,6 @@
 {
   "name": "zetho",
-  "version": "1.36.5",
+  "version": "1.37.0",
   "packageManager": "pnpm@11.1.2",
   "engines": {
     "node": ">=22.12.0"

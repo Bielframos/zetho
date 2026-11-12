@@ -1,17 +1,26 @@
 <section>
   @if (adminEditor) {
-  <nav class="border-b border-gray-6 px-4 py-3"><a routerLink="/admin/listas" class="text-sm text-blue-11 hover:underline">← Listas oficiais</a></nav>
-  }
-  @if (isSystem()) {
+  <nav class="border-b border-gray-6 px-4 py-3">
+    <a routerLink="/admin/listas" class="text-sm text-blue-11 hover:underline"
+      >← Listas oficiais</a
+    >
+  </nav>
+  } @if (isSystem()) {
   <p class="px-4 pt-4 text-sm text-gray-11">Por Zetho · Lista oficial</p>
   }
-  <header class="w-full flex flex-col sm:flex-row sm:justify-between gap-4 border-b border-gray-6 p-4">
+  <header
+    class="w-full flex flex-col sm:flex-row sm:justify-between gap-4 border-b border-gray-6 p-4"
+  >
     <div class="min-w-0 flex-1">
       <h1 class="text-2xl font-medium max-w-xl wrap-anywhere">
         {{controller.list()?.title}}
       </h1>
-      <p class="text-gray-11 wrap-anywhere">{{controller.list()?.description}}</p>
-      <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-11">
+      <p class="text-gray-11 wrap-anywhere">
+        {{controller.list()?.description}}
+      </p>
+      <div
+        class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-11"
+      >
         <span
           >{{ controller.list()?.itemCount || 0 }} {{
           (controller.list()?.itemCount === 1) ? 'jogo' : 'jogos' }}</span
@@ -58,7 +67,7 @@
           [class]="socialState()?.savedByMe ? 'ph-fill ph-bookmark-simple' : 'ph ph-bookmark-simple'"
         ></i>
       </button>
-      } @else if (itsMe()) {
+      } @else if (itsMe() && !adminEditor) {
       <app-list-menu></app-list-menu>
       }
     </div>
@@ -74,14 +83,36 @@
     [list]="list"
     [items]="controller.items()"
     (changed)="reloadSystem()"
-  />
-  } @if (isSystem()) { @if (controller.list()?.criteria) {
-  <div class="p-4">
-    <h2 class="text-xl">Critérios da seleção</h2>
-    <p class="mt-2 text-gray-11">{{controller.list()?.criteria}}</p>
-  </div>
-  } }
-  <ui-draggable-list [itsMe]="itsMe()"></ui-draggable-list>
+    (removed)="controller.removeItem($event)"
+  >
+    <ng-container [ngTemplateOutlet]="listPreview" />
+  </app-list-publication-controls>
+  } @else {
+  <ng-container [ngTemplateOutlet]="listPreview" />
+  }
+  <ng-template #listPreview>
+    @if (adminEditor) {
+    <div class="border-b border-gray-6 p-4">
+      <p class="mb-3 flex items-center gap-2 text-xs text-gray-11">
+        <i class="ph ph-eye" aria-hidden="true"></i> Prévia da versão salva
+      </p>
+      <h2 class="text-xl wrap-anywhere">{{ controller.list()?.title }}</h2>
+      <p class="mt-2 whitespace-pre-line text-gray-11 wrap-anywhere">
+        {{ controller.list()?.description }}
+      </p>
+    </div>
+    } @if (isSystem() && controller.list()?.criteria) {
+    <div class="border-b border-gray-6 p-4">
+      <h2 class="font-medium">Critérios da seleção</h2>
+      <p
+        class="mt-2 whitespace-pre-line text-sm leading-6 text-gray-11 wrap-anywhere"
+      >
+        {{controller.list()?.criteria}}
+      </p>
+    </div>
+    }
+    <ui-draggable-list [itsMe]="itsMe() && !adminEditor" />
+  </ng-template>
   }
 
   <ui-share-modal #shareModal [data]="shareData()"></ui-share-modal>
