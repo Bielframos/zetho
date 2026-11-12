@@ -4,6 +4,11 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+### Melhorias
+
+- Criação, revisão e publicação de listas oficiais centralizadas no painel administrativo.
+- Descoberta de listas com identificação das seleções do Zetho, descrições e navegação acessível.
+
 ## [1.36.5] - 2026-11-09
 
 ### Melhorias

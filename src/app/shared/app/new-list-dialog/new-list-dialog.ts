@@ -1,5 +1,5 @@
 import { Router } from '@angular/router';
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -19,6 +19,7 @@ import { UiCheckbox } from '../../ui/checkbox';
   imports: [UiModal, UiInput, UiCheckbox, ReactiveFormsModule],
 })
 export class AppNewListDialog {
+  official = input(false);
   authStore = inject(AuthStore);
   private router = inject(Router);
   controller = inject(ListsController);
@@ -30,12 +31,12 @@ export class AppNewListDialog {
     }),
     listDescription: new FormControl('', { nonNullable: true }),
     isPublic: new FormControl(false),
-    system: new FormControl(false),
   });
 
   async handleSubmit({ close }: { close: () => void }) {
     const created = await this.controller.createList({
-      ownerType: this.form.controls.system.value ? 'system' : 'user',
+      ownerType:
+        this.official() && this.authStore.isAdmin() ? 'system' : 'user',
       ownerFingerprint: this.authStore.profile()?.fingerprint!,
       title: this.form.controls.listName.value,
       description: this.form.controls.listDescription.value,
@@ -45,6 +46,6 @@ export class AppNewListDialog {
     if (!created) return;
     close();
     if (created.ownerType === 'system')
-      await this.router.navigate(['/listas', created.slug]);
+      await this.router.navigate(['/admin/listas', created.slug]);
   }
 }
