@@ -165,7 +165,7 @@ export class GameService {
     }
 
     const fields = opts?.summarized
-      ? ['\$id', 'name', 'slug', 'releaseYear', 'coverUrl']
+      ? ['\$id', 'name', 'slug', 'releaseYear', 'releaseDate', 'coverUrl']
       : ['*', 'involvedCompanies.name', 'involvedCompanies.slug'];
 
     const games = await this.repository.findByIds(ids, {

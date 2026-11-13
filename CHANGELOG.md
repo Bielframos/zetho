@@ -4,6 +4,12 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+## [1.37.1] - 2026-11-13
+
+### Correções
+
+- Corrigido o erro ao avaliar um jogo durante o onboarding: jogos ainda não lançados não aparecem mais como avaliáveis.
+
 ## [1.37.0] - 2026-11-12
 
 ### Novidades
