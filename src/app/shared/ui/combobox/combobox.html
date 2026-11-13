@@ -97,7 +97,10 @@
   <div
     [id]="listboxId"
     role="listbox"
-    class="discreet-scrollbar absolute inset-x-0 top-full z-20 mt-1 max-h-56 overflow-y-auto overscroll-contain rounded-lg border border-line-strong bg-gray-2 shadow-lg"
+    class="discreet-scrollbar z-20 mt-1 max-h-56 overflow-y-auto overscroll-contain rounded-lg border border-line-strong bg-gray-2 shadow-lg"
+    [class.absolute]="listLayout() === 'floating'"
+    [class.inset-x-0]="listLayout() === 'floating'"
+    [class.top-full]="listLayout() === 'floating'"
     [attr.aria-multiselectable]="multiple()"
   >
     @if (query().trim().length < minQueryLength()) {

@@ -157,6 +157,18 @@ type DraftItem = { id: string; label: string; imageUrl?: string };
         (submit)="save($event)"
       >
         <div class="flex flex-col gap-5 py-4">
+          @if (draft().length < max) {
+            <ui-combobox
+              label="Adicionar jogo"
+              placeholder="Busque pelo nome do jogo"
+              emptyText="Nenhum jogo encontrado."
+              [minQueryLength]="2"
+              listLayout="inline"
+              [search]="searchGames"
+              [selectedOptions]="picked()"
+              (selectedOptionsChange)="onPick($event)"
+            />
+          }
           @if (draft().length) {
             <ol class="flex flex-col divide-y divide-gray-6 border-y border-gray-6">
               @for (item of draft(); track item.id; let i = $index; let last = $last) {
@@ -208,17 +220,6 @@ type DraftItem = { id: string; label: string; imageUrl?: string };
             <p class="text-sm text-gray-11">Nenhum jogo escolhido ainda.</p>
           }
 
-          @if (draft().length < max) {
-            <ui-combobox
-              label="Adicionar jogo"
-              placeholder="Busque pelo nome do jogo"
-              emptyText="Nenhum jogo encontrado."
-              [minQueryLength]="2"
-              [search]="searchGames"
-              [selectedOptions]="picked()"
-              (selectedOptionsChange)="onPick($event)"
-            />
-          }
         </div>
       </ui-modal>
     }

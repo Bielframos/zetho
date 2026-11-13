@@ -107,4 +107,17 @@ describe('UiCombobox', () => {
       '2',
     ]);
   });
+
+  it('floats the list by default and keeps it in the flow when inline', () => {
+    const fixture = create(async () => []);
+    fixture.componentInstance.isOpen.set(true);
+    fixture.detectChanges();
+    const list = () => fixture.nativeElement.querySelector('[role="listbox"]') as HTMLElement;
+    expect(list().classList).toContain('absolute');
+
+    fixture.componentRef.setInput('listLayout', 'inline');
+    fixture.detectChanges();
+    expect(list().classList).not.toContain('absolute');
+    expect(list().classList).not.toContain('top-full');
+  });
 });
