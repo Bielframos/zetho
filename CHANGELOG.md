@@ -4,6 +4,8 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+## [1.38.0] - 2026-11-13
+
 ### Novidades
 
 - Agora você pode fixar seus 3 jogos favoritos no perfil, e o topo do perfil ficou mais compacto no celular e no desktop.
