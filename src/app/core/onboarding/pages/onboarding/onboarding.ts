@@ -190,11 +190,31 @@ export class OnboardingPage implements OnInit, OnDestroy {
         pageSize: 8,
         fingerprint: this.owner,
       });
-      if (version === this.searchVersion) this.results.set(res.rows);
+      // A busca devolve só o ano de lançamento; sem a data completa, jogos que
+      // saem mais tarde neste ano pareceriam avaliáveis e a API responderia 400.
+      const rows = await this.withReleaseDates(res.rows);
+      if (version === this.searchVersion) this.results.set(rows);
     } catch {
       if (version === this.searchVersion) this.searchError.set(true);
     } finally {
       if (version === this.searchVersion) this.searching.set(false);
+    }
+  }
+
+  private async withReleaseDates(rows: GameWithEntry[]) {
+    const missing = rows.filter((g) => g.releaseDate === undefined);
+    if (!missing.length) return rows;
+    try {
+      const full = await this.gameService.getGames(
+        missing.map((g) => g.$id),
+        { summarized: true, pageSize: missing.length },
+      );
+      const dates = new Map(full.map((g) => [g.$id, g.releaseDate]));
+      return rows.map((g) =>
+        dates.has(g.$id) ? { ...g, releaseDate: dates.get(g.$id)! } : g,
+      );
+    } catch {
+      return rows;
     }
   }
 
