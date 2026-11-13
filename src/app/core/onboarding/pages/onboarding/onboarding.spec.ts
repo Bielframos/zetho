@@ -27,6 +27,7 @@ describe('OnboardingPage', () => {
     deleteRating: jasmine.Spy;
   };
   let search: jasmine.Spy;
+  let getGames: jasmine.Spy;
   let navigate: jasmine.Spy;
   beforeEach(() => {
     localStorage.removeItem(key);
@@ -46,6 +47,7 @@ describe('OnboardingPage', () => {
       deleteRating: jasmine.createSpy().and.resolveTo(),
     };
     search = jasmine.createSpy().and.resolveTo({ rows: [game] });
+    getGames = jasmine.createSpy().and.resolveTo([]);
     navigate = jasmine.createSpy().and.resolveTo(true);
     TestBed.configureTestingModule({
       providers: [
@@ -61,7 +63,7 @@ describe('OnboardingPage', () => {
             }),
           },
         },
-        { provide: GameService, useValue: { searchGame: search } },
+        { provide: GameService, useValue: { searchGame: search, getGames } },
         { provide: ZEntryService, useValue: entries },
         { provide: RatingsService, useValue: ratings },
         {
@@ -80,6 +82,37 @@ describe('OnboardingPage', () => {
   afterEach(() => {
     page.ngOnDestroy();
     localStorage.removeItem(key);
+  });
+
+  it('completes the release date of compact search results to block unreleased games', async () => {
+    const year = new Date().getFullYear();
+    const future = new Date();
+    future.setDate(future.getDate() + 30);
+    const compact = {
+      $id: 'g9',
+      name: 'Later this year',
+      releaseYear: String(year),
+    } as GameWithEntry;
+    search.and.resolveTo({ rows: [compact] });
+    getGames.and.resolveTo([
+      { $id: 'g9', releaseDate: future.toISOString() },
+    ]);
+    await page.runSearch();
+    expect(getGames).toHaveBeenCalledWith(['g9'], {
+      summarized: true,
+      pageSize: 1,
+    });
+    const [row] = page.results();
+    expect(page.canPlay(row)).toBeFalse();
+    await page.saveStatus(row, 'completed');
+    expect(entries.createEntryLog).not.toHaveBeenCalled();
+  });
+
+  it('keeps results usable when release dates cannot be loaded', async () => {
+    search.and.resolveTo({ rows: [{ $id: 'g8', name: 'X' } as GameWithEntry] });
+    getGames.and.rejectWith(new Error('down'));
+    await page.runSearch();
+    expect(page.results().length).toBe(1);
   });
 
   it('renders the actual saved status when dynamic options are first created', () => {
