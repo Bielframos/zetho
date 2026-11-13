@@ -1,15 +1,15 @@
 import { UiFounderBadge } from '../../ui/founder-badge';
+import { UiProfileFavorites } from '../../ui/profile-favorites';
+import { UiProfileSocials } from '../../ui/profile-socials';
 import { FollowControl } from '../../ui/follow-control';
 import { ProfileThemeContrast } from '../../ui/profile-theme-contrast';
 import { CommonModule } from '@angular/common';
 import { NgComponentOutlet } from '@angular/common';
-import { Component, computed, effect, inject, OnDestroy } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { ProfileStore } from '../../../core/userProfiles/profile.store';
 import { ZEntriesController } from '../../../core/zEntries/zEntries.controller';
 import { ProfileLayoutStore } from './profile-layout.store';
-import { NotificationStore } from '../../../core/system/notifications/notification.store';
-import { UserProfileRow } from '../../../types';
 import { SeoService } from '../../../core/system/seo/seo.service';
 import { AuthStore } from '../../../core/auth/auth.store';
 import { getThemeMediaUrl } from '../../../core/themes/theme-media';
@@ -17,17 +17,18 @@ import { getThemeMediaUrl } from '../../../core/themes/theme-media';
 @Component({
   selector: 'app-profile-layout',
   standalone: true,
-  imports: [UiFounderBadge, FollowControl,ProfileThemeContrast,RouterLink, RouterOutlet, NgComponentOutlet],
+  imports: [UiFounderBadge, FollowControl, ProfileThemeContrast, UiProfileFavorites, UiProfileSocials, RouterLink, RouterOutlet, NgComponentOutlet],
   templateUrl: './profile-layout.html',
 })
 export class AppProfileLayout {
   private seo = inject(SeoService);
-  private notification = inject(NotificationStore);
   authStore = inject(AuthStore);
 
   profileStore = inject(ProfileStore);
   layoutStore = inject(ProfileLayoutStore);
   controller = inject(ZEntriesController);
+  bioExpanded = signal(false);
+  private lastProfileId?: string;
 
   tabs = computed(() => [
     {
@@ -51,24 +52,6 @@ export class AppProfileLayout {
     return this.profileStore.current();
   }
 
-  get hasSocialNicks() {
-    return (
-      this.profile?.socialSteam ||
-      this.profile?.socialXbox ||
-      this.profile?.socialPsn
-    );
-  }
-
-  async copySocial(key: string) {
-    try {
-      const valorParaCopiar = this.profile?.[key as keyof UserProfileRow] ?? '';
-      await navigator.clipboard.writeText(String(valorParaCopiar));
-      this.notification.show({ message: 'Copiado!', type: 'success' });
-    } catch (e) {
-      this.notification.show({ message: 'Erro ao copiar', type: 'error' });
-    }
-  }
-
   getMediaUrl(imageId: string) {
     return getThemeMediaUrl(imageId);
   }
@@ -77,6 +60,10 @@ export class AppProfileLayout {
     effect(() => {
       const profile = this.profileStore.current();
       if (!profile) return;
+      if (profile.$id !== this.lastProfileId) {
+        this.lastProfileId = profile.$id;
+        this.bioExpanded.set(false);
+      }
 
       const gamertag = profile.gamertag;
       const canonical = `/player/${encodeURIComponent(gamertag)}`;

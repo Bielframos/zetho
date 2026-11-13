@@ -50,6 +50,12 @@ export class UiCombobox {
   multiple = input(false);
   minQueryLength = input(0);
   debounceMs = input(300);
+  /**
+   * `floating` abre a lista sobre o conteúdo; `inline` a coloca no fluxo da
+   * página. Use `inline` dentro de contêineres com overflow (ex.: modais),
+   * onde a lista flutuante seria cortada.
+   */
+  listLayout = input<'floating' | 'inline'>('floating');
   search = input.required<UiComboboxSearch>();
   selectedOptions = model<UiComboboxOption[]>([]);
 

@@ -490,6 +490,7 @@ export class AuthStore {
     socialSteam?: string;
     socialPsn?: string;
     socialNintendo?: string;
+    favoriteGameIds?: string[];
   }) {
     try {
       const updatedProfile = await this.userProfileService.updateProfile(

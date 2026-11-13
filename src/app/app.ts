@@ -33,10 +33,10 @@ import { ToasterComponent } from './core/system/notifications/toaster.component'
 import { environment } from '../environments/environment';
 import { ZCoinsService } from './core/zCoins/zcoins.service';
 import { ZCoinBalance } from './shared/ui/z-coin-balance';
+import { UiProfileFavorites } from './shared/ui/profile-favorites';
+import { UiProfileSocials } from './shared/ui/profile-socials';
 import { ProfileStore } from './core/userProfiles/profile.store';
 import { ProfileLayoutStore } from './shared/app/profile-layout/profile-layout.store';
-import { NotificationStore } from './core/system/notifications/notification.store';
-import { UserProfileRow } from './types';
 import { getThemeMediaUrl } from './core/themes/theme-media';
 
 import { NotificationsSheetComponent } from './core/system/notifications/notifications-sheet.component';
@@ -56,6 +56,8 @@ import { InAppNotificationStore } from './core/system/notifications/in-app-notif
     RouterLinkActive,
     RouterOutlet,
     ToasterComponent,
+    UiProfileFavorites,
+    UiProfileSocials,
     ZCoinBalance,
   ],
   templateUrl: './app.html',
@@ -72,7 +74,6 @@ export class App {
   private route = inject(Router);
   private destroyRef = inject(DestroyRef);
   private zCoinsService = inject(ZCoinsService);
-  private notification = inject(NotificationStore);
   private inAppNotifications = inject(InAppNotificationStore);
   private document = inject(DOCUMENT);
   private searchFocusTimer?: ReturnType<typeof setTimeout>;
@@ -309,17 +310,6 @@ export class App {
   get profileSidebarHasSocialNicks() {
     const profile = this.profileSidebarProfile;
     return profile?.socialSteam || profile?.socialXbox || profile?.socialPsn;
-  }
-
-  async copyProfileSocial(key: string) {
-    try {
-      const valorParaCopiar =
-        this.profileSidebarProfile?.[key as keyof UserProfileRow] ?? '';
-      await navigator.clipboard.writeText(String(valorParaCopiar));
-      this.notification.show({ message: 'Copiado!', type: 'success' });
-    } catch (e) {
-      this.notification.show({ message: 'Erro ao copiar', type: 'error' });
-    }
   }
 
   private isAppShellExcludedRoute() {

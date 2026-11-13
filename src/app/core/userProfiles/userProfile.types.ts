@@ -22,6 +22,8 @@ type UserProfile = {
   inviteCode?: string;
   activeThemeId?: string;
   unlockedThemes?: string[];
+  /** Até 3 ids de jogos, em ordem de exibição. */
+  favoriteGameIds?: string[];
 };
 
 type UserProfileRow = StoredRow<UserProfile>;

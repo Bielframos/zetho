@@ -71,7 +71,7 @@
         }
 
         <div class="relative z-10">
-          <header class="flex items-center justify-between gap-2 px-4 py-4">
+          <header class="flex items-center justify-between gap-2 px-4 pb-2 pt-4">
             <div class="flex min-w-0 items-center gap-3">
               <img
                 [src]="profileStore.avatarUrl()"
@@ -100,44 +100,24 @@
           </header>
 
           @if (profile.bio; as bio) {
-          <div class="profile-theme-divider border-t border-gray-6 px-4 py-3">
-            <p class="text-sm">{{ bio }}</p>
-          </div>
-          } @if (profileStore.itsMe()) {
-          <div class="profile-theme-divider border-t border-gray-6 py-3">
-            <app-z-coin-balance></app-z-coin-balance>
-          </div>
-          } @if (profileSidebarHasSocialNicks) {
+          <p class="line-clamp-3 px-4 pb-3 text-sm" [title]="bio">{{ bio }}</p>
+          }
+
+          <ui-profile-favorites [profile]="profile" />
+
+          @if (profileStore.itsMe() || profileSidebarHasSocialNicks) {
           <div
-            class="profile-theme-divider flex flex-wrap gap-2 border-t border-gray-6 px-4 py-3"
+            class="profile-theme-divider flex items-center justify-between gap-2 border-t border-gray-6 px-4 py-2"
           >
-            @if (profile.socialSteam) {
-            <button
-              class="profile-theme-chip rounded-lg border border-gray-6 px-2 py-0.5 text-sm transition-colors cursor-pointer"
-              (click)="copyProfileSocial('socialSteam')"
-            >
-              Steam
-            </button>
-            } @if (profile.socialXbox) {
-            <button
-              class="profile-theme-chip rounded-lg border border-gray-6 px-2 py-0.5 text-sm transition-colors cursor-pointer"
-              (click)="copyProfileSocial('socialXbox')"
-            >
-              Xbox
-            </button>
-            } @if (profile.socialPsn) {
-            <button
-              class="profile-theme-chip rounded-lg border border-gray-6 px-2 py-0.5 text-sm transition-colors cursor-pointer"
-              (click)="copyProfileSocial('socialPsn')"
-            >
-              Playstation
-            </button>
+            @if (profileStore.itsMe()) {
+            <app-z-coin-balance [compact]="true"></app-z-coin-balance>
             }
+            <ui-profile-socials class="ml-auto" [profile]="profile" />
           </div>
           }
 
           <ul
-            class="profile-theme-divider flex flex-col gap-1 border-t border-gray-6 px-2 py-3"
+            class="profile-theme-divider flex flex-col gap-0.5 border-t border-gray-6 px-2 py-2"
           >
             @for (tab of profileTabs; track tab.key) {
             <li
@@ -156,7 +136,7 @@
           </ul>
 
           @if (profileLayoutStore.sidebarComponent(); as sidebarComponent) {
-          <div class="py-2">
+          <div class="py-1">
             <ng-container *ngComponentOutlet="sidebarComponent"></ng-container>
           </div>
           }
