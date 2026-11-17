@@ -24,10 +24,12 @@ import { ListController } from '../../../../lists/list.controller';
       #origin
       #trigger="ngMenuTrigger"
       [menu]="formatMenu()"
-      class="ui-secondary-btn focus:ring-2 ring-blue-3 outline-none"
+      type="button"
+      class="ui-ghost-btn size-11 shrink-0"
+      aria-label="Menu da lista"
       data-size="icon"
     >
-      <i class="ph ph-dots-three-vertical"></i>
+      <i class="ph ph-dots-three-vertical" aria-hidden="true"></i>
     </button>
 
     <ng-template
