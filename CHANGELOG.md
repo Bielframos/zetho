@@ -4,6 +4,10 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+### Correções
+
+- Corrigidos o estilo e o alinhamento das ações das listas.
+
 ## [1.38.0] - 2026-11-13
 
 ### Novidades

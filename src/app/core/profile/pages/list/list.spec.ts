@@ -230,9 +230,8 @@ describe('ListPage', () => {
       );
       expect(shareBtn).toBeTruthy();
       expect(shareBtn.classList.contains('ui-ghost-btn')).toBeTrue();
-      expect(shareBtn.classList.contains('min-h-11')).toBeTrue();
-      expect(shareBtn.classList.contains('min-w-11')).toBeTrue();
-      expect(shareBtn.classList.contains('cursor-pointer')).toBeTrue();
+      expect(shareBtn.classList.contains('size-11')).toBeTrue();
+      expect(shareBtn.classList.contains('shrink-0')).toBeTrue();
       expect(shareBtn.getAttribute('data-size')).toBe('icon');
 
       spyOn(component, 'openShare').and.callThrough();
@@ -256,8 +255,8 @@ describe('ListPage', () => {
       );
       expect(likeBtn).toBeTruthy();
       expect(likeBtn.classList.contains('ui-ghost-btn')).toBeTrue();
-      expect(likeBtn.classList.contains('min-h-11')).toBeTrue();
-      expect(likeBtn.classList.contains('min-w-11')).toBeTrue();
+      expect(likeBtn.classList.contains('size-11')).toBeTrue();
+      expect(likeBtn.classList.contains('shrink-0')).toBeTrue();
       expect(likeBtn.getAttribute('data-size')).toBe('icon');
       expect(likeBtn.getAttribute('aria-pressed')).toBe('false');
 
@@ -297,8 +296,8 @@ describe('ListPage', () => {
       );
       expect(saveBtn).toBeTruthy();
       expect(saveBtn.classList.contains('ui-ghost-btn')).toBeTrue();
-      expect(saveBtn.classList.contains('min-h-11')).toBeTrue();
-      expect(saveBtn.classList.contains('min-w-11')).toBeTrue();
+      expect(saveBtn.classList.contains('size-11')).toBeTrue();
+      expect(saveBtn.classList.contains('shrink-0')).toBeTrue();
       expect(saveBtn.getAttribute('data-size')).toBe('icon');
       expect(saveBtn.getAttribute('aria-pressed')).toBe('false');
       expect(saveBtn.classList.contains('text-blue-11')).toBeFalse();
