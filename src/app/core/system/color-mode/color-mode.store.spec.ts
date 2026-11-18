@@ -48,6 +48,18 @@ describe('ColorModeStore', () => {
     window.dispatchEvent(new StorageEvent('storage', { key: colorModeContract.key, newValue: 'light' }));
     expect(store.preference()).toBe('dark');
   });
+  it('ignores a legacy Tropical 6 preference and applies it only when selected as special', () => {
+    saved = 'tropical-6';
+    const store = create();
+    expect(store.effective()).toBe('light');
+    store.setSpecial('tropical-6');
+    system(true);
+    expect(store.effective()).toBe('tropical-6');
+    expect(document.documentElement.getAttribute('data-color-mode')).toBe('tropical-6');
+    expect(document.documentElement.style.colorScheme).toBe('dark');
+    store.select('system');
+    expect(store.effective()).toBe('dark');
+  });
   it('does not read browser preference during SSR or change the hydration selector initially', () => {
     TestBed.overrideProvider(PLATFORM_ID, { useValue: 'server' });
     const store = create();

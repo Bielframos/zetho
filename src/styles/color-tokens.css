@@ -1,5 +1,6 @@
 /* Palette primitives. Only this module chooses interface colors by mode. */
-:root, :root[data-color-mode="dark"], .color-mode-fixed-dark {
+:root, :root[data-color-mode="dark"], .color-mode-fixed-dark,
+.app-shell[data-color-mode="tropical-6"] {
   --gray-1: #101113;
   --gray-2: #18191b;
   --gray-3: #212225;
@@ -141,6 +142,48 @@
   --info-bg: #edf3ff;
   --info-line: #5479c3;
  }
+}
+
+:root[data-color-mode="tropical-6"],
+.app-shell[data-color-mode="tropical-6"] {
+  --gray-1: #191323;
+  --gray-2: #22192e;
+  --gray-3: #2e213b;
+  --gray-4: #392945;
+  --gray-5: #43304f;
+  --gray-6: #5a4364;
+  --gray-7: #795e81;
+  --gray-8: #9a7fa1;
+  --gray-9: #b39ab7;
+  --gray-10: #c7afca;
+  --gray-11: #dfc8df;
+  --gray-12: #fff1ed;
+  --blue-1: #1b1425;
+  --blue-2: #271a32;
+  --blue-3: #3b2148;
+  --blue-4: #4b2757;
+  --blue-5: #5c2e63;
+  --blue-6: #733668;
+  --blue-7: #96477f;
+  --blue-8: #bc5d94;
+  --blue-9: #a43972;
+  --blue-10: #b33e78;
+  --blue-11: #ffb7aa;
+  --blue-12: #ffe0cf;
+  --focus-ring: #87e5d1;
+  --line-strong: #9a7fa1;
+  color-scheme: dark;
+  --tropical-6-art: url("/tropical-6-palms.webp");
+  --tropical-6-sunset: radial-gradient(ellipse at top right, rgb(182 77 101 / .35), transparent 65%);
+  --tropical-6-surf: radial-gradient(ellipse at 0 35%, rgb(42 143 131 / .25), transparent 58%);
+  --tropical-6-pattern:
+    repeating-radial-gradient(
+      ellipse at 0 100%,
+      transparent 0 10px,
+      rgb(135 229 209 / .11) 10px 11px,
+      transparent 11px 16px
+    ) 0 0 / 96px 64px,
+    linear-gradient(150deg, #43233e, #202939);
 }
 
 /* Semantic utilities plus explicitly maintained legacy aliases. */
