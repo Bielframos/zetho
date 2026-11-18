@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UiInput } from '../../../../shared/ui/input/input';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { AuthStore } from '../../auth.store';
+import { themeCampaignId } from '../../../themes/theme-campaign-route';
 
 @Component({
   selector: 'app-login-page',
@@ -19,6 +20,7 @@ export class LoginPage {
   router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   intent = inject(ContentIntentService);
+  readonly campaignId = themeCampaignId(this.route.snapshot.queryParamMap.get('tema'));
 
   email = '';
   password = '';
@@ -39,6 +41,8 @@ export class LoginPage {
       await this.authStore.login(this.email, this.password);
       if (this.route.snapshot.queryParamMap.get('founder') === '1') {
         await this.router.navigate(['/fundador']);
+      } else if (this.campaignId) {
+        await this.router.navigate(['/temas', this.campaignId]);
       } else {
         const owner = this.authStore.profile?.()?.fingerprint;
         if (owner) this.intent.bind(owner);

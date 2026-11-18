@@ -222,6 +222,7 @@
       Já tem conta?
       <a
         routerLink="/entrar"
+        [queryParams]="campaignId ? { tema: campaignId } : undefined"
         class="inline-flex min-h-11 items-center rounded-lg text-blue-11 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
         >Entrar</a
       >

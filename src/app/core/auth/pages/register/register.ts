@@ -15,6 +15,7 @@ import { AuthStore } from '../../auth.store';
 import { UserProfileService } from '../../../userProfiles/userProfile.service';
 import { appwrite } from '../../../../shared/infra/appwrite/appwrite.client';
 import { environment } from '../../../../../environments/environment';
+import { themeCampaignId } from '../../../themes/theme-campaign-route';
 
 interface InviterPreview {
   gamertag: string;
@@ -41,6 +42,7 @@ export class RegisterPage {
   private route = inject(ActivatedRoute);
   private authStore = inject(AuthStore);
   private profileService = inject(UserProfileService);
+  readonly campaignId = themeCampaignId(this.route.snapshot.queryParamMap.get('tema'));
 
   isSubmitting = signal(false);
   inviteExpanded = signal(false);
@@ -144,7 +146,11 @@ export class RegisterPage {
         inviteCode || undefined,
         profileSharingAllowed,
       );
-      await this.router.navigate(['/comecar']);
+      if (this.campaignId) {
+        await this.router.navigate(['/comecar'], { queryParams: { tema: this.campaignId } });
+      } else {
+        await this.router.navigate(['/comecar']);
+      }
     } catch (e) {
       this.form.setErrors({ submitFailed: true });
     } finally {

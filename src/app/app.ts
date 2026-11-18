@@ -239,6 +239,12 @@ export class App {
     return this.currentPath() === '/landing';
   }
 
+  themeCampaignPreview() {
+    return this.currentPath().replace(/\/$/, '') === '/temas/tropical-6'
+      ? 'tropical-6'
+      : null;
+  }
+
   isAuthRoute() {
     const path = this.currentPath();
     const authRoutes = [
