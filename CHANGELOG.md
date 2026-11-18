@@ -4,6 +4,12 @@ Aqui você encontra as principais novidades e melhorias do Zetho.
 
 ## [Unreleased]
 
+## [1.39.0] - 2026-11-18
+
+### Novidades
+
+- Resgate temas especiais para sua conta e ative-os no seletor de aparência. A primeira campanha é Tropical 6, com resgate gratuito de 18 a 20 de novembro de 2026.
+
 ## [1.38.1] - 2026-11-17
 
 ### Correções

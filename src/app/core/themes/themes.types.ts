@@ -24,3 +24,16 @@ export interface CreateThemePayload {
   tertiaryColor?: string;
   gameId?: string;
 }
+
+export interface SpecialTheme {
+  id: string;
+  name: string;
+  appearance: string;
+}
+
+export interface ThemeCampaign extends SpecialTheme {
+  startsAt: string;
+  endsAt: string;
+  serverTime: string;
+  status: 'upcoming' | 'open' | 'ended';
+}

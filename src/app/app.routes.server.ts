@@ -86,6 +86,7 @@ export const serverRoutes: ServerRoute[] = [
 
   // Conteúdo público renderizado no servidor.
   { path: 'fundadores', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
+  { path: 'temas/:id', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   { path: 'landing', renderMode: RenderMode.Server, headers: EDGE_CACHE_5_MIN },
   {
     path: 'jogo/:slug',

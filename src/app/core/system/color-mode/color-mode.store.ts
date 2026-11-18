@@ -3,8 +3,14 @@ import { DestroyRef, Injectable, PLATFORM_ID, afterNextRender, inject, signal } 
 import { safeLocalStorage } from '../../../utils/platform-storage';
 import '../../../../../public/color-mode.js';
 
+const specialAppearances = ['tropical-6'] as const;
+export type SpecialAppearance = (typeof specialAppearances)[number];
 export type ColorPreference = 'light' | 'dark' | 'system';
-export type ColorMode = 'light' | 'dark';
+export type ColorMode = Exclude<ColorPreference, 'system'> | SpecialAppearance;
+
+export function isSpecialAppearance(value: string): value is SpecialAppearance {
+  return specialAppearances.some((appearance) => appearance === value);
+}
 export const colorModeContract = (globalThis as unknown as { ZethoColorMode: {
   key: string;
   normalize(value: unknown): ColorPreference;
@@ -18,6 +24,8 @@ export class ColorModeStore {
   private platform = inject(PLATFORM_ID);
   private destroy = inject(DestroyRef);
   private media?: MediaQueryList;
+  private readonly specialSelection = signal<SpecialAppearance | null>(null);
+  readonly special = this.specialSelection.asReadonly();
   readonly preference = signal<ColorPreference>('system');
   readonly effective = signal<ColorMode>('dark');
 
@@ -51,14 +59,20 @@ export class ColorModeStore {
   }
 
   select(preference: ColorPreference) {
+    this.specialSelection.set(null);
     this.preference.set(colorModeContract.normalize(preference));
     safeLocalStorage.setItem(colorModeContract.key, this.preference());
     this.apply();
   }
 
+  setSpecial(appearance: SpecialAppearance | null) {
+    this.specialSelection.set(appearance);
+    this.apply();
+  }
+
   private apply() {
     if (!isPlatformBrowser(this.platform)) return;
-    const mode = colorModeContract.resolve(this.preference(), this.media?.matches ?? true);
+    const mode = this.special() ?? colorModeContract.resolve(this.preference(), this.media?.matches ?? true);
     this.effective.set(mode);
     colorModeContract.apply(this.document, mode);
   }

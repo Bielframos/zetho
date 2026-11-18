@@ -1,0 +1,106 @@
+<article
+  class="mx-auto grid min-h-[calc(100dvh-5rem-env(safe-area-inset-bottom))] w-full max-w-xl place-items-center px-5 py-12 text-center sm:px-8 lg:min-h-dvh"
+>
+  <div class="w-full">
+    @if (tropical()) {
+    <span
+      class="mx-auto mb-5 grid size-14 place-items-center rounded-full border border-line-strong bg-surface-raised text-link"
+      aria-hidden="true"
+    >
+      <i class="ph ph-tree-palm text-3xl"></i>
+    </span>
+    }
+    <h1 class="text-5xl font-semibold tracking-tight text-content sm:text-6xl">
+      {{ campaign()?.name || (tropical() ? 'Tropical 6' : 'Tema especial') }}
+    </h1>
+    @if (tropical()) {
+    <p
+      class="mx-auto mt-5 max-w-[36ch] text-base leading-relaxed text-content-muted"
+    >
+      O pôr do sol de Vice City chegou mais cedo ao Zetho. Resgate o Tropical 6
+      de graça e dê um novo visual à sua biblioteca.
+    </p>
+    } @if (windowLabel()) {
+    <p
+      class="mx-auto mt-5 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-sm text-content"
+    >
+      <i
+        class="ph ph-calendar-blank text-base text-link"
+        aria-hidden="true"
+      ></i>
+      <span>
+        {{ windowLabel() }}
+        <span class="sr-only">, no horário de Brasília</span>
+      </span>
+    </p>
+    }
+
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+      @if (loading()) {
+      <ui-loading [inline]="true" size="sm" />
+      } @else if (error()) {
+      <p role="alert" class="text-sm text-danger">{{ error() }}</p>
+      <button type="button" class="ui-secondary-btn" (click)="load()">
+        Tentar novamente
+      </button>
+      } @else if (!authReady() || (auth.isAuthenticated() && themes.loading() &&
+      !owner())) {
+      <ui-loading [inline]="true" size="sm" />
+      } @else if (owner()) { @if (equipped()) {
+      <p role="status" class="text-sm text-content">
+        <i class="ph ph-check text-success" aria-hidden="true"></i>
+        Tema ativado
+      </p>
+      } @else { @if (canActivate()) {
+      <button
+        type="button"
+        class="ui-primary-btn"
+        (click)="themes.select(id())"
+      >
+        Ativar tema
+      </button>
+      }
+      <p role="status" class="text-sm text-content-muted">Tema resgatado</p>
+      } } @else if (campaign()?.status === 'upcoming') {
+      <p class="text-sm text-content">O resgate ainda não começou.</p>
+      } @else if (campaign()?.status === 'ended') {
+      <p class="text-sm text-content">O período de resgate terminou.</p>
+      @if (auth.isAuthenticated() && themes.failed()) {
+      <button type="button" class="ui-secondary-btn" (click)="themes.retry()">
+        Consultar meus temas
+      </button>
+      } } @else if (auth.isAuthenticated()) {
+      <button
+        type="button"
+        class="ui-primary-btn"
+        [disabled]="claiming()"
+        (click)="claim()"
+      >
+        {{ claiming() ? 'Resgatando…' : 'Resgatar tema' }}
+      </button>
+      } @else {
+      <a
+        class="ui-primary-btn"
+        routerLink="/entrar"
+        [queryParams]="{ tema: id() }"
+      >
+        Entrar para resgatar
+      </a>
+      <a
+        class="ui-secondary-btn"
+        routerLink="/registrar"
+        [queryParams]="{ tema: id() }"
+      >
+        Criar conta
+      </a>
+      }
+    </div>
+    @if (claimError()) {
+    <p role="alert" class="mt-3 text-sm text-danger">{{ claimError() }}</p>
+    } @if (tropical()) {
+    <p class="mt-7 text-xs text-content-subtle">
+      Uma homenagem independente do Zetho a Grand Theft Auto VI.
+    </p>
+    }
+  </div>
+</article>

@@ -7,7 +7,10 @@
 } @else if (isOnboardingRoute()) {
 <div class="min-h-dvh bg-gray-1 text-gray-12"><router-outlet /></div>
 } @else if (usesAppShell()) {
-<div class="min-h-dvh bg-gray-1 text-gray-12 lg:px-4">
+<div
+  class="app-shell min-h-dvh bg-gray-1 text-gray-12 lg:px-4"
+  [attr.data-color-mode]="themeCampaignPreview()"
+>
   <div
     class="mx-auto grid min-h-dvh w-full max-w-[1180px] grid-cols-1 lg:grid-cols-[15rem_minmax(0,1fr)_18rem]"
   >
@@ -143,18 +146,19 @@
         </div>
       </div>
       } @else if (authStore.user()) {
+      @let accountTheme = authStore.activeTheme();
       <div
         class="profile-theme-card rounded-lg border border-gray-6 relative overflow-hidden"
-        [class.has-theme]="!!authStore.activeTheme()"
-        [style.--theme-bg]="authStore.activeTheme()?.backgroundColor"
-        [style.--theme-c1]="authStore.activeTheme()?.primaryColor"
-        [style.--theme-c2]="authStore.activeTheme()?.secondaryColor"
-        [style.--theme-c3]="authStore.activeTheme()?.tertiaryColor"
-        [profileThemeBackground]="authStore.activeTheme()?.backgroundColor"
-        [profileThemePalette]="authStore.activeTheme()"
-        [style.background-color]="authStore.activeTheme()?.backgroundColor"
+        [class.has-theme]="!!accountTheme"
+        [style.--theme-bg]="accountTheme?.backgroundColor"
+        [style.--theme-c1]="accountTheme?.primaryColor"
+        [style.--theme-c2]="accountTheme?.secondaryColor"
+        [style.--theme-c3]="accountTheme?.tertiaryColor"
+        [profileThemeBackground]="accountTheme?.backgroundColor"
+        [profileThemePalette]="accountTheme"
+        [style.background-color]="accountTheme?.backgroundColor"
       >
-        @if (authStore.activeTheme()?.backgroundImageId; as imageId) {
+        @if (accountTheme?.backgroundImageId; as imageId) {
         <div
           class="profile-theme-art profile-theme-art-muted absolute inset-0 z-0 pointer-events-none"
           aria-hidden="true"

@@ -1,20 +1,29 @@
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { AuthStore } from '../auth/auth.store';
-import { ProfileTheme, CreateThemePayload } from './themes.types';
+import {
+  ProfileTheme,
+  CreateThemePayload,
+  SpecialTheme,
+  ThemeCampaign,
+} from './themes.types';
 import { safeLocalStorage } from '../../utils/platform-storage';
 
 @Injectable({ providedIn: 'root' })
 export class ThemesService {
   private authStore = inject(AuthStore);
 
-  private async request<T>(path: string, init: RequestInit = {}) {
-    const jwt = await this.authStore.getJwt();
-
-    const headers: Record<string, string> = {
-      Authorization: `Bearer ${jwt}`,
-      'x-appwrite-session': safeLocalStorage.getItem('cookieFallback') ?? '',
-    };
+  private async request<T>(
+    path: string,
+    init: RequestInit = {},
+    authenticated = true,
+  ) {
+    const headers: Record<string, string> = {};
+    if (authenticated) {
+      headers['Authorization'] = `Bearer ${await this.authStore.getJwt()}`;
+      headers['x-appwrite-session'] =
+        safeLocalStorage.getItem('cookieFallback') ?? '';
+    }
 
     if (init.body && typeof init.body === 'string') {
       headers['Content-Type'] = 'application/json';
@@ -41,6 +50,27 @@ export class ThemesService {
 
   async listThemes() {
     return this.request<ProfileTheme[]>('themes');
+  }
+
+  getThemeCampaign(id: string, signal?: AbortSignal) {
+    return this.request<ThemeCampaign>(
+      `themes/special/${encodeURIComponent(id)}`,
+      { signal },
+      false,
+    );
+  }
+
+  listOwnedSpecialThemes(signal?: AbortSignal) {
+    return this.request<SpecialTheme[]>('themes/special', { signal });
+  }
+
+  claimSpecialTheme(id: string) {
+    return this.request<SpecialTheme>(
+      `themes/special/${encodeURIComponent(id)}/claim`,
+      {
+        method: 'POST',
+      },
+    );
   }
 
   async buyTheme(id: string) {

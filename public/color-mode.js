@@ -5,9 +5,12 @@
   function resolve(preference, dark) { return normalize(preference) === 'system' ? (dark ? 'dark' : 'light') : preference; }
   function apply(document, mode) {
     document.documentElement.setAttribute('data-color-mode', mode);
-    document.documentElement.style.colorScheme = mode;
+    document.documentElement.style.colorScheme = mode === 'light' ? 'light' : 'dark';
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', mode === 'dark' ? '#101113' : '#fcfcfd');
+    if (meta) {
+      var colors = { light: '#fcfcfd', dark: '#101113', 'tropical-6': '#191323' };
+      meta.setAttribute('content', colors[mode]);
+    }
   }
   root.ZethoColorMode = { key: key, normalize: normalize, resolve: resolve, apply: apply };
   if (typeof window !== 'undefined' && root.document) {

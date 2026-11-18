@@ -12,7 +12,7 @@ import {
   ElementRef,
   viewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AppStartingRating } from '../../../../shared/ui/star-rating/star-rating';
 import { UiLoading } from '../../../../shared/ui/loading';
 import { AuthStore } from '../../../auth/auth.store';
@@ -28,6 +28,7 @@ import { GameWithEntry, ZEntryRow } from '../../../../types';
 import { safeLocalStorage } from '../../../../utils/platform-storage';
 import { isQuickEntryAvailable } from '../../../../shared/ui/game-card/game-quick-entry.store';
 import { appwrite } from '../../../../shared/infra/appwrite/appwrite.client';
+import { themeCampaignId } from '../../../themes/theme-campaign-route';
 
 @Component({
   selector: 'app-onboarding',
@@ -38,6 +39,7 @@ import { appwrite } from '../../../../shared/infra/appwrite/appwrite.client';
 })
 export class OnboardingPage implements OnInit, OnDestroy {
   private router = inject(Router);
+  private route = inject(ActivatedRoute, { optional: true });
   private intent = inject(ContentIntentService);
   private authStore = inject(AuthStore);
   private gameService = inject(GameService);
@@ -378,7 +380,10 @@ export class OnboardingPage implements OnInit, OnDestroy {
     const profile = this.authStore.profile();
     const first = this.markedList()[0];
     const returnPath = this.intent.returnPath(profile?.fingerprint);
-    const navigated = returnPath
+    const campaign = themeCampaignId(this.route?.snapshot.queryParamMap.get('tema') ?? null);
+    const navigated = campaign
+      ? await this.router.navigate(['/temas', campaign])
+      : returnPath
       ? await this.router.navigateByUrl(returnPath)
       : first && profile?.gamertag
         ? await this.router.navigate(['/player', profile.gamertag], {

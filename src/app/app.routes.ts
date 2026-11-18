@@ -24,6 +24,15 @@ export const routes: Routes = [
   ...CHANGELOG_ROUTES,
   ...LEGAL_ROUTES,
   ...AUTH_ROUTES,
+  {
+    path: 'temas/:id',
+    title: (route) =>
+      route.paramMap.get('id') === 'tropical-6'
+        ? 'Tropical 6 | Zetho'
+        : 'Temas especiais | Zetho',
+    loadComponent: () =>
+      import('./core/themes/theme-campaign').then((m) => m.ThemeCampaignPage),
+  },
   // Carregada sob demanda: o admin arrasta `ngx-tiptap` + `@tiptap/*` junto.
   // Como a rota é `RenderMode.Client` e nunca renderiza no servidor, manter
   // esse peso no bundle inicial (e no do servidor) é desperdício puro.

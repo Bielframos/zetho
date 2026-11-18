@@ -12,12 +12,14 @@
 .fallback-cover {
   @apply p-6 flex flex-col items-center justify-center text-center w-full;
   aspect-ratio: 3 / 4;
-  background-color: var(--color-surface);
   color: var(--color-content);
-  background-image: repeating-linear-gradient(
-    30deg,
-    color-mix(in srgb, var(--color-line) 45%, transparent) 0 1px,
-    transparent 1px 48px
+  background: var(
+    --tropical-6-pattern,
+    repeating-linear-gradient(
+      30deg,
+      color-mix(in srgb, var(--color-line) 45%, transparent) 0 1px,
+      transparent 1px 48px
+    ) var(--color-surface)
   );
 }
 
